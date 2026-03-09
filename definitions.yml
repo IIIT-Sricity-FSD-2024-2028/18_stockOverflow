@@ -114,17 +114,6 @@ Order Fulfillment:
     - Order Processing
     - Delivery Fulfillment
 
-Inventory Analytics and Audit:
-  definition: >
-    The analysis and verification of inventory data to identify trends,
-    discrepancies, losses, or anomalies within the system.
-  examples:
-    - Detecting stock mismatches during audits.
-    - Generating reports on fast- and slow-moving products.
-  aliases:
-    - Stock Analysis
-    - Inventory Auditing
-
 System Administrator:
   definition: >
     A privileged user responsible for monitoring system operations,
