@@ -1,216 +1,170 @@
-# Inventory Management System (IMS)
+# Stock Overflow – Inventory Management System
 
-##  Overview
+This document outlines the **problem statement**, **system actors**, and the **planned functional features** of the **Stock Overflow Inventory Management System**.
 
-The **Inventory Management System (IMS)** is a centralized, analytics-driven platform designed to help retailers efficiently manage products, inventory levels, supplier coordination, and consumer availability.
+## Problem Statement
 
-IMS integrates **Retailers, Suppliers, Consumers, POS Systems, and Administrators** into a single unified system to improve real-time stock visibility, reduce stockouts, and optimize supply chain operations across multiple stores.
+Retail stores and small businesses often face significant challenges in managing their inventory efficiently. These challenges can lead to operational inefficiencies, revenue loss, and poor customer satisfaction.
 
----
+The major problems include:
 
-##  Problem Statement
+- Lack of real-time product stock tracking across multiple stores
+- Manual inventory updates leading to human errors
+- Absence of automated low-stock alerts and reorder management
+- Limited visibility into supplier performance and delivery timelines
+- Difficulty in analyzing sales trends and predicting future demand
+- Poor tracking of product returns and stock adjustments
+- Lack of centralized reporting and monitoring for administrators
 
-Retail businesses face major challenges in managing inventory efficiently due to lack of real-time visibility, poor coordination with suppliers, and disconnected POS systems.
+Currently, many retail businesses either use manual methods or disconnected systems to manage stock. This leads to inaccurate inventory records, delayed restocking, poor supplier coordination, and inefficient business operations.
 
-Common issues include:
+## Proposed Solution
 
-- Stockouts caused by inaccurate or delayed inventory updates  
-- Overstocking due to poor demand prediction and manual ordering decisions  
-- Lack of synchronization between POS sales data and inventory records  
-- Difficulty managing inventory across multiple store branches  
-- Poor supplier coordination and unclear delivery tracking  
-- No automated reorder suggestions based on real demand trends  
-- Limited analytics to identify fast-moving and slow-moving products  
-- Manual auditing and lack of transparency in inventory movement history  
+The **Stock Overflow Inventory Management System** provides a **centralized digital environment** where **Retailers** can manage inventory, **Suppliers** can fulfill orders, **Consumers** can check availability and provide feedback, and **Administrators** can monitor and configure the overall system.
 
-###  Solution
+### Key Platform Features
 
-IMS provides a **centralized, analytics-driven digital platform** that:
+- Real-time inventory tracking
+- Multi-store inventory management
+- Supplier performance monitoring
+- Automated low-stock alerts and reorder workflows
+- Product return management
+- Demand forecasting and analytics
+- Centralized system dashboard and reports
+- Consumer product availability checking
+- Product feedback management
 
-- Automates inventory tracking  
-- Integrates POS sales updates in real time  
-- Improves supplier coordination  
-- Supports multi-store inventory operations  
-- Generates intelligent reorder recommendations  
+The platform integrates **Retailers, Suppliers, Consumers, POS Systems, and Administrators** into a single ecosystem to improve stock visibility, reduce stockouts, and optimize supply chain operations.
 
-This significantly reduces stockouts and improves overall business efficiency.
+## Identified Actors
 
----
+| Actor | Role Description |
+|-------|------------------|
+| **Retailer** | A store manager or business owner responsible for managing product inventory, monitoring stock levels, handling product returns, and analyzing inventory performance |
+| **Supplier** | An entity responsible for fulfilling purchase orders, delivering products, and maintaining supply chain operations |
+| **Consumer** | A customer who interacts with the system by checking product availability and submitting product feedback |
+| **System Administrator** | Authority responsible for managing system configuration, multi-store setup, user roles, and system-wide analytics |
 
-##  Domain Context
+## Planned Features by Actor
 
-### Domain
-**Retail Inventory and Supply Chain Management Systems**
+### 4.1 Retailer Features
 
-### Key Terms
+#### Inventory Management
 
-- **Inventory Level:** Quantity of a product available in a store at a given time  
-- **Stock Movement:** Flow of inventory from procurement → storage → sale → return  
-- **Stockout:** Situation where inventory reaches zero and the product becomes unavailable  
-- **Reorder Point:** Threshold quantity where replenishment is triggered  
-- **Demand Forecasting:** Prediction of future product demand using historical sales data  
-- **POS System (Point of Sale):** External system that records sales transactions and updates IMS inventory  
-- **Supplier Fulfillment:** Process of confirming and delivering inventory orders  
-- **Multi-Store Management:** Centralized control of inventory across multiple store branches  
-- **Audit Log:** Record of all inventory changes for accountability and analysis  
+- Add and update product inventory
+- Monitor stock levels across stores
+- Track product movement and availability
 
----
+#### Inventory Analysis
 
-##  Identified Actors
+- Analyze inventory performance
+- View stock reports and audit logs
+- Identify fast-moving and slow-moving products
 
-### 1. Retailer
-Responsible for managing products, inventory operations, store-level stock control, and ordering from suppliers.
+#### Product Returns Handling
 
-### 2. Supplier
-Responsible for fulfilling purchase orders, managing delivery schedules, and updating delivery status.
+- Process returned products
+- Update inventory after returns
+- Track return history
 
-### 3. Consumer
-End user who checks product availability and submits product feedback.
+#### Demand Forecasting
 
-### 4. System Administrator
-Responsible for controlling global system configurations, managing user roles, and maintaining system-wide reports.
+- Analyze historical sales data
+- Predict product demand trends
+- Plan restocking based on forecast insights
 
-### 5. POS System (External Actor)
-Third-party transaction system that sends sales data to IMS for real-time inventory updates.
+#### Multi-Store Inventory Management
 
----
+- Monitor inventory across multiple store locations
+- Transfer inventory between stores
+- Manage store-specific stock levels
 
-##  Planned Features for Each Actor
+### 4.2 Supplier Features
 
----
+#### Order Fulfillment
 
-## 🏪 Retailer Features
+- Receive purchase orders from retailers
+- Confirm order acceptance
+- Provide estimated delivery timelines
 
-### 1. Manage Product Catalog
-Add, update, and remove product details such as name, category, price, and store availability.
+#### Delivery Management
 
-### 2. Monitor Real-Time Inventory Levels
-View stock levels per product and per store with availability indicators.
+- Update shipment status
+- Confirm product delivery
 
-### 3. Track Complete Stock Lifecycle
-Track inventory from procurement to storage, sale, and returns with detailed movement history.
+#### Supplier Performance Monitoring
 
-### 4. Generate Reorder Recommendations
-Receive intelligent reorder quantity suggestions based on demand trends and current stock levels.
+- Track order fulfillment efficiency
+- Evaluate supplier delivery performance
+- Monitor supplier reliability and service quality
 
-### 5. Forecast Future Demand
-Use historical sales data to predict future demand and prepare inventory accordingly.
+### 4.3 Consumer Features
 
-### 6. Multi-Store Inventory Control
-Manage inventory centrally across multiple stores with branch-wise visibility.
+#### Product Availability Checking
 
-### 7. View Inventory Dashboards
-Access analytics dashboards showing stock status, turnover rates, and product performance.
+- Check product availability in stores
+- View stock status before visiting a store
 
----
+#### Product Feedback
 
-##  Supplier Features
+- Submit product reviews and feedback
+- Provide product satisfaction insights to retailers
 
-### 1. Confirm Order Fulfillment
-Approve and confirm retailer purchase orders with expected delivery dates.
+### 4.4 System Administrator Features
 
-### 2. Track Delivery Status
-Update delivery progress in real time (Processing, Shipped, Delivered, Delayed).
+#### System Configuration
 
-### 3. Monitor Supplier Performance Metrics
-View supplier performance based on delivery timeliness and fulfillment accuracy.
+- Configure system settings
+- Manage system parameters such as reorder thresholds and system rules
 
-### 4. Manage Delivery Schedules and Capacity
-Control delivery availability, shipment loads, and supply capacity.
+#### Multi-Store Setup
 
----
+- Register and manage multiple store locations
+- Configure store-level inventory structures
 
-##  Consumer Features
+#### User Role Management
 
-### 1. View Product Availability
-Check real-time availability of products at specific store locations.
+- Create and manage user roles
+- Assign system permissions
 
-### 2. Get Restock Notifications
-Receive alerts when out-of-stock products become available again.
+#### Reporting and Dashboard
 
-### 3. Submit Product Feedback
-Provide feedback including ratings, reviews, and availability complaints.
+- View system-wide inventory reports
+- Monitor retailer and supplier performance
+- Analyze inventory trends across stores
 
----
+## Key Domain Concepts
 
-##  Administrator Features
+- **Inventory Item**
+- **Stock Quantity**
+- **Purchase Order**
+- **Supplier Performance**
+- **Product Return**
+- **Inventory Audit Log**
+- **Multi-Store Inventory**
+- **Demand Forecasting**
+- **Product Feedback**
+- **POS Synchronization**
 
-### 1. Configure Multi-Store Structure
-Create and manage store branches and retailer-store hierarchies.
+## Expected Impact
 
-### 2. Manage User Roles and Permissions
-Assign and control role-based access for retailers, suppliers, and staff.
+The platform is expected to:
 
-### 3. Control Global System Configurations
-Manage system-wide settings such as reorder thresholds, analytics policies, stock alerts, and POS integration rules.
+- Improve inventory accuracy and stock visibility
+- Reduce stockouts and overstock situations
+- Enhance supply chain coordination between retailers and suppliers
+- Improve customer satisfaction through product availability information
+- Support better decision-making using analytics and forecasting
+- Simplify and automate retail inventory operations
 
-### 4. Generate System-Wide Analytics & Audit Reports
-View audit logs, analytics dashboards, and inventory performance reports across all stores.
+## Future Scope
 
----
+Future enhancements may include:
 
-##  POS Integration Features (External Actor)
-
-### 1. Auto Update Inventory from Sales
-Automatically synchronize POS transaction data to update inventory in real time.
-
-### 2. Ensure Data Synchronization Consistency
-Prevent mismatches between POS stock records and IMS inventory data.
-
----
-
-##  Core System Workflows
-
-### Workflow 1: Inventory Procurement and Stock Entry
-**Steps:**  
-Retailer places order → Supplier confirms → Delivery received → IMS updates stock → Inventory available for sale
-
----
-
-### Workflow 2: POS Sales Synchronization
-**Steps:**  
-Consumer purchases product → POS records transaction → POS sends sales data → IMS updates inventory
-
----
-
-### Workflow 3: Intelligent Reorder and Demand Forecasting
-**Steps:**  
-IMS monitors stock → Detects reorder point → Analyzes historical demand → Generates reorder suggestion → Retailer approves → Supplier receives order
-
----
-
-### Workflow 4: Multi-Store Inventory Monitoring
-**Steps:**  
-Retailer selects store → IMS displays store-wise stock → Identifies shortages → Suggests transfer/reorder → Retailer takes action
-
----
-
-### Workflow 5: Inventory Audit and Reporting
-**Steps:**  
-IMS logs stock movements → Admin generates audit report → Irregularities detected → Accountability ensured
-
----
-
-##  System Constraints and Rules
-
-### Mandatory Rules
-
-- POS sales data must update IMS inventory automatically  
-- Reorder recommendations must be generated using sales history and demand trends  
-- Every inventory change must be recorded in an audit log  
-- Multi-store data consistency must be maintained  
-- Only authorized users can modify inventory or supplier delivery data  
-
-### System Constraints
-
-- IMS depends on POS API availability for real-time synchronization  
-- Stable network connectivity is required  
-- Data consistency must be preserved across multiple stores  
-- Role-based access control must be strictly enforced  
-
----
-
-##  Project Status
-
-- **Status:** In Development 
-- **Last Updated:** February 2026  
+- AI-based demand forecasting and inventory optimization
+- Advanced analytics dashboards
+- Real-time POS and external API integrations
+- Mobile application support
+- Barcode and RFID-based inventory tracking
+- E-commerce platform integration
+- Automated supplier recommendation system
