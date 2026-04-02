@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow — Returns Management (Retailer)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* =========================================================
+       RESET & VARIABLES
+    ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #f5f6fa;
+      --sidebar-bg:   #1e1e2d;
+      --card-bg:      #ffffff;
+      --border:       #e8e9f0;
+      --text-primary: #1a1a2e;
+      --text-muted:   #6b7280;
+      --text-light:   #9ca3af;
+      --accent:       #4f46e5;
+      --accent-h:     #4338ca;
+      --accent-light: #eef2ff;
+      --green:        #10b981;
+      --green-light:  #d1fae5;
+      --green-dark:   #065f46;
+      --red:          #ef4444;
+      --red-light:    #fee2e2;
+      --red-dark:     #7f1d1d;
+      --yellow:       #f59e0b;
+      --yellow-light: #fef3c7;
+      --yellow-dark:  #92400e;
+      --orange:       #f97316;
+      --orange-light: #ffedd5;
+      --sidebar-w:    240px;
+      --header-h:     60px;
+      --r:            8px;
+      --r-lg:         12px;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,.06);
+      --shadow:       0 4px 14px rgba(0,0,0,.08);
+      --shadow-lg:    0 16px 40px rgba(0,0,0,.14);
+      --trans:        150ms ease;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      display: flex;
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       SIDEBAR
+    ========================================================= */
+    .sidebar{
+      width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
+      display:flex;flex-direction:column;
+      position:fixed;top:0;left:0;bottom:0;z-index:100;
+      overflow-y:auto;border-right:1px solid var(--border);
+      font-family:'Nunito Sans',sans-serif;
+    }
+    .sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .sb-logo{display:flex;align-items:center;gap:10px}
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .sb-logo-icon{width:34px;height:34px;background:#4e7fd9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .sb-logo-icon svg{width:18px;height:18px}
+    .sb-logo-text{font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;color:#092c4c;letter-spacing:-.2px}
+    .sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+    .sb-group{display:flex;flex-direction:column;gap:6px}
+    .sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+    .sb-divider{height:1px;background:var(--border);margin:4px 0}
+    .sb-menus{display:flex;flex-direction:column;gap:2px}
+    .sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+    .sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+    .sb-item.active{background:#fff6ee;color:#4e7fd9}
+    .sb-item.active .sb-icon svg{stroke:#4e7fd9}
+    .sb-item.active .sb-item-label{color:#4e7fd9}
+    .sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+    .sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+    .sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .sb-end-icon svg{width:10px;height:10px}
+    .sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .sb-dot-badge svg{width:10px;height:10px}
+
+    /* =========================================================
+       MAIN
+    ========================================================= */
+    .main-wrap {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+    .header {
+      height: var(--header-h);
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-left .page-title { font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
+    .header-left .page-sub   { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+    .header-right { display: flex; align-items: center; gap: 10px; }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 7px 12px;
+      background: var(--bg);
+      min-width: 220px;
+      transition: border-color var(--trans), box-shadow var(--trans);
+    }
+    .search-bar:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+      background: #fff;
+    }
+    .search-bar svg { color: var(--text-light); flex-shrink: 0; }
+    .search-input {
+      flex: 1; border: none; background: transparent;
+      font-size: 13px; font-family: inherit; color: var(--text-primary); outline: none;
+    }
+    .search-input::placeholder { color: var(--text-light); }
+    .kbd {
+      font-size: 10px; color: var(--text-light);
+      background: var(--border); padding: 2px 6px;
+      border-radius: 4px; font-family: monospace;
+    }
+
+    .icon-btn {
+      width: 36px; height: 36px;
+      border-radius: var(--r);
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-muted);
+      position: relative;
+      transition: background var(--trans);
+    }
+    .icon-btn:hover { background: var(--bg); }
+    .notif-dot {
+      width: 8px; height: 8px;
+      background: var(--red);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      position: absolute; top: -2px; right: -2px;
+    }
+    .h-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff; font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; letter-spacing: .5px;
+    }
+
+    /* =========================================================
+       PAGE CONTENT
+    ========================================================= */
+    .page-content { padding: 24px 28px; flex: 1; }
+
+    /* =========================================================
+       KPI STATS
+    ========================================================= */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      transition: box-shadow var(--trans), transform var(--trans);
+    }
+    .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+
+    .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
+    .stat-value { font-size: 28px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+    .stat-note  { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
+    .stat-up    { color: var(--green); font-weight: 700; }
+    .stat-down  { color: var(--red); font-weight: 700; }
+
+    .stat-icon {
+      width: 46px; height: 46px;
+      border-radius: var(--r);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .si-red    { background: var(--red-light); }
+    .si-yellow { background: var(--yellow-light); }
+    .si-green  { background: var(--green-light); }
+    .si-blue   { background: var(--accent-light); }
+
+    /* =========================================================
+       MAIN BODY — 2 COLUMNS
+    ========================================================= */
+    .body-cols {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* =========================================================
+       CARD
+    ========================================================= */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -.2px;
+    }
+
+    /* =========================================================
+       FILTER / CONTROLS BAR
+    ========================================================= */
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sel-wrap { position: relative; display: inline-block; }
+    .ctrl-sel {
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 8px 30px 8px 10px;
+      font-size: 12.5px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text-primary);
+      cursor: pointer;
+      appearance: none;
+      outline: none;
+      transition: border-color var(--trans);
+      font-weight: 500;
+    }
+    .ctrl-sel:focus { border-color: var(--accent); }
+    .sel-arr {
+      position: absolute; right: 8px; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--text-muted);
+      display: flex;
+    }
+
+    .btn-export {
+      display: flex; align-items: center; gap: 5px;
+      padding: 8px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      background: var(--card-bg);
+      font-size: 12.5px;
+      font-family: inherit;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--trans), color var(--trans);
+    }
+    .btn-export:hover { background: var(--bg); color: var(--text-primary); }
+
+    /* =========================================================
+       TABLE
+    ========================================================= */
+    .table-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 660px; }
+
+    thead tr { background: #fafbfc; }
+    th {
+      padding: 10px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      user-select: none;
+    }
+    .th-s { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    .th-s:hover { color: var(--text-primary); }
+    .sort-i { opacity: .35; font-size: 10px; }
+
+    td {
+      padding: 13px 12px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background var(--trans); cursor: pointer; }
+    tbody tr:hover td { background: #f9fafc; }
+    tbody tr.selected-row td { background: var(--accent-light) !important; }
+
+    /* badges */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: .7;
+    }
+    .b-pending  { background: var(--yellow-light); color: var(--yellow-dark); }
+    .b-approved { background: var(--green-light);  color: var(--green-dark); }
+    .b-rejected { background: var(--red-light);    color: var(--red-dark); }
+    .b-exchange { background: var(--accent-light); color: var(--accent); }
+
+    /* row action btns */
+    .row-acts { display: flex; gap: 6px; }
+    .btn-view {
+      padding: 5px 11px;
+      font-size: 12px; font-weight: 600; font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--card-bg);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--trans);
+    }
+    .btn-view:hover { background: var(--bg); color: var(--text-primary); }
+
+    .btn-approve {
+      padding: 5px 11px;
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      border: none; border-radius: 6px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      cursor: pointer;
+      transition: background var(--trans), transform var(--trans);
+    }
+    .btn-approve:hover { background: #bbf7d0; }
+    .btn-approve:active { transform: scale(.96); }
+
+    .btn-reject {
+      padding: 5px 11px;
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      border: none; border-radius: 6px;
+      background: var(--red-light);
+      color: var(--red-dark);
+      cursor: pointer;
+      transition: background var(--trans), transform var(--trans);
+    }
+    .btn-reject:hover { background: #fecaca; }
+    .btn-reject:active { transform: scale(.96); }
+
+    /* table footer */
+    .table-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 14px; margin-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .tbl-count { font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
+    .pagination { display: flex; gap: 4px; }
+    .pg-btn {
+      width: 30px; height: 30px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--trans);
+    }
+    .pg-btn:hover { background: var(--bg); }
+    .pg-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* =========================================================
+       RIGHT PANEL — RETURN DETAIL
+    ========================================================= */
+    .detail-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: calc(var(--header-h) + 16px);
+    }
+
+    /* Empty state */
+    .empty-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+      min-height: 260px;
+    }
+    .empty-icon { font-size: 42px; margin-bottom: 12px; opacity: .5; }
+    .empty-title { font-size: 14px; font-weight: 700; color: var(--text-muted); }
+    .empty-sub   { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+    /* Detail header */
+    .detail-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .detail-id { font-size: 13px; font-weight: 800; color: var(--accent); }
+    .detail-date { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Customer chip */
+    .cust-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 10px 12px;
+      margin-bottom: 14px;
+    }
+    .cust-av {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .cust-name { font-size: 13px; font-weight: 700; }
+    .cust-email { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+    /* Info rows */
+    .info-section { margin-bottom: 14px; }
+    .info-section-label {
+      font-size: 10.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .7px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    .info-row {
+      display: flex; justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: var(--text-muted); }
+    .info-val   { font-weight: 700; text-align: right; max-width: 60%; word-break: break-word; }
+
+    /* Product preview */
+    .product-preview {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 10px 12px;
+      margin-bottom: 14px;
+    }
+    .prod-emoji { font-size: 28px; flex-shrink: 0; }
+    .prod-name  { font-size: 13px; font-weight: 700; }
+    .prod-sku   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .prod-price { font-size: 15px; font-weight: 900; color: var(--accent); margin-left: auto; flex-shrink: 0; }
+
+    /* Notes box */
+    .notes-box {
+      background: var(--yellow-light);
+      border: 1px solid #fde68a;
+      border-radius: var(--r);
+      padding: 10px 12px;
+      font-size: 12.5px;
+      color: #78350f;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+    .notes-box-label {
+      font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .7px;
+      color: var(--yellow-dark); margin-bottom: 5px;
+    }
+
+    /* Timeline */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .tl-item { display: flex; gap: 10px; padding-bottom: 14px; position: relative; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; width: 16px; flex-shrink: 0; }
+    .tl-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0; margin-top: 3px;
+    }
+    .tl-dot.grey { background: #d1d5db; }
+    .tl-line {
+      flex: 1; width: 2px;
+      background: var(--border);
+      margin-top: 4px;
+    }
+    .tl-item:last-child .tl-line { display: none; }
+    .tl-text { font-size: 12.5px; font-weight: 600; }
+    .tl-time { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+    /* Action buttons */
+    .action-row { display: flex; gap: 8px; margin-top: 4px; }
+
+    .btn-full-approve {
+      flex: 1; padding: 12px;
+      font-size: 13px; font-weight: 800; font-family: inherit;
+      border: none; border-radius: var(--r);
+      background: var(--green);
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background var(--trans), transform var(--trans), box-shadow var(--trans);
+    }
+    .btn-full-approve:hover {
+      background: #059669;
+      box-shadow: 0 4px 14px rgba(16,185,129,.4);
+      transform: translateY(-1px);
+    }
+    .btn-full-approve:active { transform: scale(.97); }
+
+    .btn-full-reject {
+      flex: 1; padding: 12px;
+      font-size: 13px; font-weight: 800; font-family: inherit;
+      border: 1.5px solid var(--red-light);
+      border-radius: var(--r);
+      background: var(--red-light);
+      color: var(--red-dark); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background var(--trans), transform var(--trans);
+    }
+    .btn-full-reject:hover { background: #fecaca; }
+    .btn-full-reject:active { transform: scale(.97); }
+
+    .btn-full-disabled {
+      flex: 1; padding: 12px;
+      font-size: 13px; font-weight: 700; font-family: inherit;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      background: var(--bg);
+      color: var(--text-light); cursor: not-allowed;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
+    /* Refund summary bar */
+    .refund-bar {
+      background: linear-gradient(135deg, var(--accent-light), #f0f7ff);
+      border: 1px solid rgba(79,70,229,.2);
+      border-radius: var(--r);
+      padding: 12px 14px;
+    }
+    .rb-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .rb-divider { height: 1px; background: rgba(79,70,229,.15); margin: 8px 0; }
+    .rb-total { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; color: var(--text-primary); }
+    .rb-amount { color: var(--accent); font-size: 17px; font-weight: 900; }
+
+    /* =========================================================
+       RETURNED TO STOCK SECTION
+    ========================================================= */
+    .restock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .restock-card {
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px;
+      background: var(--bg);
+      transition: box-shadow var(--trans), transform var(--trans);
+    }
+    .restock-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+    .rc-icon { font-size: 26px; margin-bottom: 8px; line-height: 1; }
+    .rc-name { font-size: 13px; font-weight: 700; }
+    .rc-units { font-size: 12px; color: var(--green); font-weight: 700; margin-top: 2px; }
+    .rc-time  { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+    /* =========================================================
+       BULK ACTION BAR
+    ========================================================= */
+    .bulk-bar {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      border-radius: var(--r);
+      padding: 10px 16px;
+      margin-bottom: 14px;
+      animation: slideDown .2s ease;
+    }
+    .bulk-bar.show { display: flex; }
+    .bulk-count { font-size: 13px; font-weight: 700; color: #fff; flex: 1; }
+    .btn-bulk {
+      padding: 7px 14px;
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      border: none; border-radius: 6px;
+      cursor: pointer;
+      transition: opacity var(--trans);
+    }
+    .btn-bulk:hover { opacity: .85; }
+    .btn-bulk-approve { background: #fff; color: var(--green-dark); }
+    .btn-bulk-reject  { background: rgba(0,0,0,.25); color: #fff; }
+    .btn-bulk-clear   { background: transparent; color: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.3); }
+
+    @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+    /* =========================================================
+       MODAL OVERLAY
+    ========================================================= */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.4);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 300;
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s ease;
+      backdrop-filter: blur(2px);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--card-bg);
+      border-radius: var(--r-lg);
+      width: 420px;
+      max-width: calc(100vw - 40px);
+      box-shadow: var(--shadow-lg);
+      transform: scale(.94) translateY(8px);
+      transition: transform .2s ease;
+      overflow: hidden;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-head {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title-sm { font-size: 15px; font-weight: 800; letter-spacing: -.2px; }
+    .modal-sub-sm { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .modal-x {
+      width: 30px; height: 30px;
+      border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-muted);
+      transition: background var(--trans);
+    }
+    .modal-x:hover { background: var(--red-light); color: var(--red); }
+
+    .modal-body { padding: 16px 20px; }
+    .modal-textarea {
+      width: 100%; border: 1.5px solid var(--border); border-radius: var(--r);
+      padding: 10px 12px; font-size: 13px; font-family: inherit;
+      resize: vertical; min-height: 90px; outline: none;
+      background: var(--bg); transition: border-color var(--trans);
+    }
+    .modal-textarea:focus { border-color: var(--accent); background: #fff; }
+    .modal-textarea::placeholder { color: var(--text-light); }
+
+    .modal-foot {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+    .mf-cancel {
+      padding: 9px 16px;
+      border: 1px solid var(--border); border-radius: 6px;
+      background: var(--card-bg); font-size: 13px; font-weight: 700;
+      font-family: inherit; cursor: pointer; color: var(--text-muted);
+      transition: background var(--trans);
+    }
+    .mf-cancel:hover { background: var(--bg); }
+    .mf-confirm {
+      padding: 9px 16px;
+      border: none; border-radius: 6px;
+      font-size: 13px; font-weight: 700;
+      font-family: inherit; cursor: pointer; color: #fff;
+      transition: opacity var(--trans), transform var(--trans);
+    }
+    .mf-confirm:hover { opacity: .88; }
+    .mf-confirm:active { transform: scale(.97); }
+    .mf-green { background: var(--green); }
+    .mf-red   { background: var(--red); }
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--text-primary); color: #fff;
+      padding: 12px 16px;
+      border-radius: var(--r);
+      font-size: 13.5px; font-weight: 600;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: var(--shadow-lg);
+      z-index: 400;
+      transform: translateY(80px); opacity: 0;
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+      pointer-events: none;
+      max-width: 340px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0;
+    }
+    .ti-ok  { background: var(--green); }
+    .ti-err { background: var(--red); }
+    .ti-inf { background: var(--accent); }
+
+    /* =========================================================
+       MISC / UTILS
+    ========================================================= */
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .65s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .view-all {
+      font-size: 12px; color: var(--accent); font-weight: 600;
+      cursor: pointer; transition: opacity var(--trans);
+    }
+    .view-all:hover { opacity: .7; }
+
+    /* row entry animation */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    tbody tr { animation: fadeUp .25s ease both; }
+
+    /* Checkbox in table header */
+    .th-cb { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .cb {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border); border-radius: 4px;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all var(--trans); cursor: pointer;
+    }
+    .cb.checked { background: var(--accent); border-color: var(--accent); }
+    .cb.indeterminate { background: var(--accent); border-color: var(--accent); }
+
+    /* Urgency tag */
+    .urgency { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; }
+    .urgency.high { color: var(--red); }
+    .urgency.med  { color: var(--yellow-dark); }
+    .urgency.low  { color: var(--green-dark); }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+    @media (max-width: 1100px) {
+      .body-cols { grid-template-columns: 1fr; }
+      .detail-panel { position: static; }
+      .restock-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 680px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar { display: none; }
+      .page-content { padding: 14px; }
+      .header { padding: 0 14px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .search-bar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <!-- MAIN -->
+    <div class="sb-group">
+      <div class="sb-group-label">Main</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retialer_Dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Retailer Dashboard</span>
+          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- INVENTORY -->
+    <div class="sb-group">
+      <div class="sb-group-label">Inventory</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Product_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5L14.5 5v6L8 14.5 1.5 11V5L8 1.5z"/><path d="M1.5 5L8 8.5 14.5 5M8 8.5V14.5"/></svg></span>
+          <span class="sb-item-label">Products</span>
+        </a>
+        <a class="sb-item" href="Add_New_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="8" y1="4.5" x2="8" y2="11.5"/><line x1="4.5" y1="8" x2="11.5" y2="8"/></svg></span>
+          <span class="sb-item-label">Add Product</span>
+        </a>
+        <a class="sb-item" href="Edit_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l3 3-8.5 8.5H1.5V10.5l9-8z"/><line x1="8.5" y1="4.5" x2="11.5" y2="7.5"/></svg></span>
+          <span class="sb-item-label">Edit Product</span>
+        </a>
+        <a class="sb-item" href="Inventory_Overview.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+          <span class="sb-item-label">Inventory Overview</span>
+        </a>
+        <a class="sb-item" href="Low_Stocks.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/><polyline points="10.5,4 13.5,4 13.5,7"/></svg></span>
+          <span class="sb-item-label">Low Stocks</span>
+        </a>
+        <a class="sb-item" href="Multi_warehouse_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/><line x1="1" y1="7" x2="15" y2="7"/></svg></span>
+          <span class="sb-item-label">Multi Store View</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- STOCK -->
+    <div class="sb-group">
+      <div class="sb-group-label">Stock</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="stock_adjustment.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-item-label">Stock Adjustment</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PEOPLES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Peoples</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Customer_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Customers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="billers.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-item-label">Billers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="supplier-list.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-item-label">Suppliers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PURCHASES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Purchases</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Reorder_Recommendations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
+          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+        </a>
+        <a class="sb-item" href="Create_Purchase_Order.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-item-label">Purchase Order</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item active" href="Returns_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
+          <span class="sb-item-label">Purchase Return</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SETTINGS -->
+    <div class="sb-group">
+      <div class="sb-group-label">Settings</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- =========================================================
+     MAIN WRAP
+========================================================= -->
+<div class="main-wrap">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="page-title">Returns Management</div>
+      <div class="page-sub">Review and action incoming return requests</div>
+    </div>
+    <div class="header-right">
+      <div class="icon-btn" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="h-avatar">RK</div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-content">
+
+    <!-- KPI CARDS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Total Returns (30d)</div>
+          <div class="stat-value" id="kpi-total">47</div>
+          <div class="stat-note"><span class="stat-down">▼ 3.2%</span> vs last month</div>
+        </div>
+        <div class="stat-icon si-red">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.61"/></svg>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Pending Review</div>
+          <div class="stat-value" id="kpi-pending">12</div>
+          <div class="stat-note">need immediate action</div>
+        </div>
+        <div class="stat-icon si-yellow">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Approved & Refunded</div>
+          <div class="stat-value" id="kpi-approved">31</div>
+          <div class="stat-note"><span class="stat-up">▲ 8.2%</span> vs last month</div>
+        </div>
+        <div class="stat-icon si-green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Total Refund Value</div>
+          <div class="stat-value">₹58.2K</div>
+          <div class="stat-note">this month</div>
+        </div>
+        <div class="stat-icon si-blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN BODY -->
+    <div class="body-cols">
+
+      <!-- LEFT: RETURNS TABLE -->
+      <div>
+
+        <!-- Bulk action bar -->
+        <div class="bulk-bar" id="bulkBar">
+          <span class="bulk-count" id="bulkCount">0 selected</span>
+          <button class="btn-bulk btn-bulk-approve" onclick="bulkAction('approve')">✓ Approve All</button>
+          <button class="btn-bulk btn-bulk-reject" onclick="bulkAction('reject')">✕ Reject All</button>
+          <button class="btn-bulk btn-bulk-clear" onclick="clearSelection()">Clear</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              Return Requests
+              <span id="pendingBadge" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:var(--red);color:#fff;border-radius:50%;font-size:10px;font-weight:800;margin-left:8px;vertical-align:middle;">2</span>
+            </div>
+            <div class="controls-bar">
+              <div class="sel-wrap">
+                <select class="ctrl-sel" id="statusFilter" onchange="applyFilters()">
+                  <option value="">All Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                  <option value="Exchanged">Exchanged</option>
+                </select>
+                <span class="sel-arr">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+              <div class="sel-wrap">
+                <select class="ctrl-sel" id="reasonFilter" onchange="applyFilters()">
+                  <option value="">All Reasons</option>
+                  <option value="Defective">Defective</option>
+                  <option value="Wrong Item">Wrong Item</option>
+                  <option value="Changed Mind">Changed Mind</option>
+                  <option value="Not as Described">Not as Described</option>
+                </select>
+                <span class="sel-arr">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+              <button class="btn-export" onclick="exportCSV()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    <div class="th-cb" onclick="toggleSelectAll()">
+                      <div class="cb" id="headerCb"></div>
+                    </div>
+                  </th>
+                  <th><span class="th-s" onclick="sortBy('id')">Return ID <span class="sort-i">↕</span></span></th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th><span class="th-s" onclick="sortBy('date')">Date <span class="sort-i">↕</span></span></th>
+                  <th>Reason</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th><span class="th-s" onclick="sortBy('amount')">Amount <span class="sort-i">↕</span></span></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="table-foot">
+            <span class="tbl-count" id="tblCount">Loading…</span>
+            <div class="pagination">
+              <button class="pg-btn active">1</button>
+              <button class="pg-btn">2</button>
+              <button class="pg-btn">3</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Returned to Stock -->
+        <div class="card" style="margin-top:20px;">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;margin-right:6px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              Returned to Stock
+            </div>
+            <span class="view-all">View inventory →</span>
+          </div>
+          <div class="restock-grid" id="restockGrid"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: DETAIL PANEL -->
+      <div class="detail-panel" id="detailPanel">
+
+        <!-- Empty state (default) -->
+        <div class="card" id="emptyCard">
+          <div class="empty-panel">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">No return selected</div>
+            <div class="empty-sub">Click any row to review<br>the return details here</div>
+          </div>
+        </div>
+
+        <!-- Detail card (hidden until row clicked) -->
+        <div class="card" id="detailCard" style="display:none;">
+          <div class="detail-top">
+            <div>
+              <div class="detail-id" id="d-id">—</div>
+              <div class="detail-date" id="d-date">—</div>
+            </div>
+            <span id="d-badge"></span>
+          </div>
+
+          <!-- Customer -->
+          <div class="cust-chip" id="d-cust-chip">
+            <div class="cust-av" id="d-av"></div>
+            <div>
+              <div class="cust-name" id="d-name">—</div>
+              <div class="cust-email" id="d-email">—</div>
+            </div>
+          </div>
+
+          <!-- Product -->
+          <div class="product-preview" id="d-prod-wrap">
+            <div class="prod-emoji" id="d-emoji">📦</div>
+            <div>
+              <div class="prod-name" id="d-prod">—</div>
+              <div class="prod-sku" id="d-sku">—</div>
+            </div>
+            <div class="prod-price" id="d-price">—</div>
+          </div>
+
+          <!-- Info rows -->
+          <div class="info-section">
+            <div class="info-section-label">Return Details</div>
+            <div class="info-row">
+              <span class="info-label">Reason</span>
+              <span class="info-val" id="d-reason">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Condition</span>
+              <span class="info-val" id="d-condition">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Refund Method</span>
+              <span class="info-val" id="d-method">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Priority</span>
+              <span class="info-val" id="d-priority">—</span>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="notes-box" id="d-notes-wrap" style="display:none;">
+            <div class="notes-box-label">📝 Customer Notes</div>
+            <div id="d-notes">—</div>
+          </div>
+
+          <!-- Refund bar -->
+          <div class="refund-bar" style="margin-bottom:14px;" id="d-refund-bar">
+            <div class="rb-row"><span>Product</span><span id="d-rb-prod">—</span></div>
+            <div class="rb-row"><span>Qty</span><span>×1</span></div>
+            <div class="rb-divider"></div>
+            <div class="rb-total"><span>Refund Total</span><span class="rb-amount" id="d-rb-total">—</span></div>
+          </div>
+
+          <!-- Timeline -->
+          <div class="info-section">
+            <div class="info-section-label">Timeline</div>
+            <div class="timeline" id="d-timeline"></div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="action-row" id="d-actions"></div>
+        </div>
+
+        <!-- Quick stats card -->
+        <div class="card" id="quickStats">
+          <div class="card-title" style="font-size:13px;margin-bottom:12px;">Today's Activity</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
+              <span style="color:var(--text-muted);">Reviewed</span>
+              <span style="font-weight:800;">8 returns</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
+              <span style="color:var(--text-muted);">Approved</span>
+              <span style="font-weight:800;color:var(--green);">6</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
+              <span style="color:var(--text-muted);">Rejected</span>
+              <span style="font-weight:800;color:var(--red);">2</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
+              <span style="color:var(--text-muted);">Avg. Resolution</span>
+              <span style="font-weight:800;">4.2 hrs</span>
+            </div>
+            <div style="height:1px;background:var(--border);margin:4px 0;"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
+              <span style="color:var(--text-muted);">Refunds Issued</span>
+              <span style="font-weight:800;color:var(--accent);">₹14,200</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     CONFIRM MODAL
+========================================================= -->
+<div class="modal-overlay" id="confirmModal" onclick="closeConfirm(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title-sm" id="modalTitle">Confirm Action</div>
+        <div class="modal-sub-sm" id="modalSub">This action cannot be undone.</div>
+      </div>
+      <div class="modal-x" onclick="closeConfirm(null)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;" id="modalDesc"></div>
+      <label style="font-size:11.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;" id="notesLabel">Notes (optional)</label>
+      <textarea class="modal-textarea" id="modalNotes" placeholder="Add a reason or message…"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="mf-cancel" onclick="closeConfirm(null)">Cancel</button>
+      <button class="mf-confirm" id="modalConfirmBtn" onclick="executeAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toastIcon"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+<script>
+'use strict';
+
+/* ---- DATA ---- */
+const RETURNS = [
+  { id:'RET-001', customer:'Rajesh Kumar', email:'rajesh.k@gmail.com', product:'HDMI Cable 2m', emoji:'🔌', sku:'HDMI-2M-BLK', date:'Dec 14', dateN:20241214, reason:'Defective', condition:'Used — Good Condition', method:'Original Payment', status:'Pending', amount:499, notes:'Cable stopped working after just 2 days of regular use. No bends or damage visible.', priority:'High' },
+  { id:'RET-002', customer:'Priya Sharma', email:'priya.s@outlook.com', product:'Phone Stand', emoji:'📱', sku:'PSTAND-WHT', date:'Dec 13', dateN:20241213, reason:'Wrong Item', condition:'Sealed / Unopened', method:'Store Credit', status:'Approved', amount:899, notes:'Received black stand instead of white. Product is still sealed.', priority:'Low' },
+  { id:'RET-003', customer:'Arjun Singh', email:'arjun.singh@yahoo.in', product:'Mouse Pro', emoji:'🖱️', sku:'MPRO-WLS', date:'Dec 12', dateN:20241212, reason:'Changed Mind', condition:'Opened but Unused', method:'Original Payment', status:'Rejected', amount:2299, notes:'', priority:'Low' },
+  { id:'RET-004', customer:'Meena Patel', email:'meena.p@gmail.com', product:'USB-C Hub 7-Port', emoji:'🔋', sku:'UCH-7P-001', date:'Dec 11', dateN:20241211, reason:'Defective', condition:'Used — Good Condition', method:'Exchange', status:'Exchanged', amount:2199, notes:'Two of the seven ports stop detecting devices after 10 mins of use.', priority:'High' },
+  { id:'RET-005', customer:'Vikram Nair', email:'vnair@icloud.com', product:'Laptop Stand', emoji:'💻', sku:'LSTND-ALU', date:'Dec 10', dateN:20241210, reason:'Not as Described', condition:'Opened but Unused', method:'Bank Transfer', status:'Pending', amount:1899, notes:'Product page said max load 10kg. Actual is only 5kg. Misleading listing.', priority:'Medium' },
+  { id:'RET-006', customer:'Sonia Mehta', email:'sonia.m@hotmail.com', product:'Wireless Charger', emoji:'⚡', sku:'WCH-15W', date:'Dec 09', dateN:20241209, reason:'Defective', condition:'Used — Good Condition', method:'Original Payment', status:'Pending', amount:1299, notes:'Charges very slowly, only 5W instead of promised 15W.', priority:'High' },
+];
+
+const RESTOCKED = [
+  { icon:'🔌', name:'USB-C Hub', units:'+2 units', time:'Dec 14 · 3:12 PM' },
+  { icon:'📱', name:'Phone Stand', units:'+1 unit', time:'Dec 13 · 1:45 PM' },
+  { icon:'🖱️', name:'Mouse Pro', units:'+1 unit', time:'Dec 12 · 11:20 AM' },
+];
+
+/* ---- STATE ---- */
+let filtered = [...RETURNS];
+let selectedIds = new Set();
+let activeId = null;
+let sortField = null, sortDir = 1;
+let pendingAction = null;
+
+/* ---- BOOT ---- */
+document.addEventListener('DOMContentLoaded', () => {
+  renderTable();
+  renderRestock();
+  animateKpi();
+
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+    if (e.key === 'Escape') closeConfirm(null);
+  });
+});
+
+/* ---- NAV ---- */
+function setNav(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ---- KPI ANIMATION ---- */
+function animateKpi() {
+  [['kpi-total',47],['kpi-pending',12],['kpi-approved',31]].forEach(([id, target]) => {
+    let v = 0;
+    const step = Math.max(1, Math.ceil(target/25));
+    const el = document.getElementById(id);
+    const t = setInterval(() => { v = Math.min(v+step, target); el.textContent = v; if(v>=target) clearInterval(t); }, 35);
+  });
+}
+
+/* ---- RENDER TABLE ---- */
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">No returns match the current filters.</td></tr>`;
+    document.getElementById('tblCount').textContent = '0 results';
+    document.getElementById('pendingBadge').textContent = '0';
+    return;
+  }
+
+  const pendingCount = filtered.filter(r => r.status === 'Pending').length;
+  document.getElementById('pendingBadge').textContent = pendingCount;
+
+  filtered.forEach((r, i) => {
+    const isSelected = selectedIds.has(r.id);
+    const isActive   = r.id === activeId;
+    const tr = document.createElement('tr');
+    tr.style.animationDelay = `${i*35}ms`;
+    if (isActive) tr.classList.add('selected-row');
+
+    tr.innerHTML = `
+      <td onclick="event.stopPropagation()">
+        <div class="cb ${isSelected ? 'checked' : ''}" onclick="toggleRow('${r.id}', this)">
+          ${isSelected ? `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
+        </div>
+      </td>
+      <td><span style="font-weight:800;font-size:12.5px;color:var(--accent);">${r.id}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(r.customer)};color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials(r.customer)}</div>
+          <span style="font-weight:600;">${r.customer}</span>
+        </div>
+      </td>
+      <td>${r.product}</td>
+      <td style="color:var(--text-muted);font-size:12.5px;">${r.date}</td>
+      <td style="font-size:12.5px;">${r.reason}</td>
+      <td><span class="urgency ${r.priority === 'High' ? 'high' : r.priority === 'Medium' ? 'med' : 'low'}">${r.priority === 'High' ? '▲' : r.priority === 'Medium' ? '◆' : '▼'} ${r.priority}</span></td>
+      <td><span class="badge ${badgeClass(r.status)}">${r.status}</span></td>
+      <td style="font-weight:800;">₹${r.amount.toLocaleString('en-IN')}</td>
+      <td onclick="event.stopPropagation()">
+        <div class="row-acts">
+          <button class="btn-view" onclick="openDetail('${r.id}')">View</button>
+          ${r.status === 'Pending'
+            ? `<button class="btn-approve" onclick="openConfirm('approve','${r.id}')">✓</button>
+               <button class="btn-reject" onclick="openConfirm('reject','${r.id}')">✕</button>`
+            : ''}
+        </div>
+      </td>
+    `;
+
+    tr.addEventListener('click', () => openDetail(r.id));
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('tblCount').textContent = `Showing ${filtered.length} of ${RETURNS.length} returns`;
+  updateHeaderCb();
+}
+
+/* ---- FILTERS ---- */
+function applyFilters() {
+  const status = document.getElementById('statusFilter').value;
+  const reason = document.getElementById('reasonFilter').value;
+  const q = (document.getElementById('searchInput').value || '').toLowerCase();
+
+  filtered = RETURNS.filter(r => {
+    if (status && r.status !== status) return false;
+    if (reason && r.reason !== reason) return false;
+    if (q && !`${r.id} ${r.customer} ${r.product} ${r.reason}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  if (sortField) filtered = doSort(filtered);
+  renderTable();
+}
+
+function searchTable() { applyFilters(); }
+
+/* ---- SORT ---- */
+function sortBy(field) {
+  if (sortField === field) sortDir *= -1; else { sortField = field; sortDir = 1; }
+  document.querySelectorAll('.sort-i').forEach(el => el.textContent = '↕');
+  const icons = document.querySelectorAll('.sort-i');
+  const fields = ['id','date','amount'];
+  const idx = fields.indexOf(field);
+  if (idx >= 0 && icons[idx]) icons[idx].textContent = sortDir === 1 ? '↑' : '↓';
+  filtered = doSort(filtered);
+  renderTable();
+}
+function doSort(arr) {
+  return [...arr].sort((a,b) => {
+    if (sortField === 'id')     return sortDir * a.id.localeCompare(b.id);
+    if (sortField === 'date')   return sortDir * (a.dateN - b.dateN);
+    if (sortField === 'amount') return sortDir * (a.amount - b.amount);
+    return 0;
+  });
+}
+
+/* ---- SELECTION ---- */
+function toggleRow(id, cbEl) {
+  if (selectedIds.has(id)) {
+    selectedIds.delete(id);
+    cbEl.classList.remove('checked');
+    cbEl.innerHTML = '';
+  } else {
+    selectedIds.add(id);
+    cbEl.classList.add('checked');
+    cbEl.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  }
+  updateBulkBar();
+  updateHeaderCb();
+}
+
+function toggleSelectAll() {
+  const allSelected = selectedIds.size === filtered.length && filtered.length > 0;
+  if (allSelected) { selectedIds.clear(); } else { filtered.forEach(r => selectedIds.add(r.id)); }
+  updateBulkBar();
+  renderTable();
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  updateBulkBar();
+  renderTable();
+}
+
+function updateBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  if (selectedIds.size > 0) {
+    bar.classList.add('show');
+    document.getElementById('bulkCount').textContent = `${selectedIds.size} return${selectedIds.size > 1 ? 's' : ''} selected`;
+  } else {
+    bar.classList.remove('show');
+  }
+  updateHeaderCb();
+}
+
+function updateHeaderCb() {
+  const cb = document.getElementById('headerCb');
+  if (!cb) return;
+  cb.innerHTML = '';
+  if (filtered.length > 0 && selectedIds.size === filtered.length) {
+    cb.classList.add('checked');
+    cb.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  } else if (selectedIds.size > 0) {
+    cb.classList.add('indeterminate');
+    cb.innerHTML = `<div style="width:8px;height:2px;background:#fff;border-radius:1px;"></div>`;
+  } else {
+    cb.classList.remove('checked','indeterminate');
+  }
+}
+
+/* ---- DETAIL PANEL ---- */
+function openDetail(id) {
+  activeId = id;
+  const r = RETURNS.find(x => x.id === id);
+  if (!r) return;
+
+  document.getElementById('emptyCard').style.display = 'none';
+  document.getElementById('quickStats').style.display = 'none';
+  document.getElementById('detailCard').style.display = 'block';
+
+  document.getElementById('d-id').textContent = r.id;
+  document.getElementById('d-date').textContent = `Submitted ${r.date}, 2024`;
+  document.getElementById('d-badge').innerHTML = `<span class="badge ${badgeClass(r.status)}">${r.status}</span>`;
+
+  // Customer
+  const av = document.getElementById('d-av');
+  av.style.background = avatarColor(r.customer);
+  av.textContent = initials(r.customer);
+  document.getElementById('d-name').textContent  = r.customer;
+  document.getElementById('d-email').textContent = r.email;
+
+  // Product
+  document.getElementById('d-emoji').textContent   = r.emoji;
+  document.getElementById('d-prod').textContent    = r.product;
+  document.getElementById('d-sku').textContent     = `SKU: ${r.sku}`;
+  document.getElementById('d-price').textContent   = `₹${r.amount.toLocaleString('en-IN')}`;
+
+  // Details
+  document.getElementById('d-reason').textContent    = r.reason;
+  document.getElementById('d-condition').textContent = r.condition;
+  document.getElementById('d-method').textContent    = r.method;
+  document.getElementById('d-priority').innerHTML = `<span class="urgency ${r.priority==='High'?'high':r.priority==='Medium'?'med':'low'}">${r.priority==='High'?'▲':r.priority==='Medium'?'◆':'▼'} ${r.priority}</span>`;
+
+  // Notes
+  const nw = document.getElementById('d-notes-wrap');
+  if (r.notes) {
+    nw.style.display = 'block';
+    document.getElementById('d-notes').textContent = r.notes;
+  } else { nw.style.display = 'none'; }
+
+  // Refund bar
+  document.getElementById('d-rb-prod').textContent  = r.product;
+  document.getElementById('d-rb-total').textContent = `₹${r.amount.toLocaleString('en-IN')}`;
+
+  // Timeline
+  const tl = document.getElementById('d-timeline');
+  tl.innerHTML = buildTimeline(r);
+
+  // Actions
+  const acts = document.getElementById('d-actions');
+  if (r.status === 'Pending') {
+    acts.innerHTML = `
+      <button class="btn-full-approve" onclick="openConfirm('approve','${r.id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Approve Return
+      </button>
+      <button class="btn-full-reject" onclick="openConfirm('reject','${r.id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Reject
+      </button>
+    `;
+  } else {
+    const labels = { Approved:'Return Approved ✓', Rejected:'Return Rejected', Exchanged:'Exchange Processed' };
+    acts.innerHTML = `<div class="btn-full-disabled">${labels[r.status] || r.status}</div>`;
+  }
+
+  renderTable(); // re-highlight row
+}
+
+function buildTimeline(r) {
+  const items = [
+    { text:`Return requested by ${r.customer}`, time:`${r.date}, 2024 · 10:30 AM`, done: true },
+    { text:'Retailer notified', time:`${r.date}, 2024 · 10:31 AM`, done: true },
+  ];
+  if (r.status === 'Pending') {
+    items.push({ text:'Awaiting retailer review', time:'Pending…', done: false });
+  } else if (r.status === 'Approved') {
+    items.push({ text:'Approved by retailer', time:`${r.date}, 2024 · 2:15 PM`, done: true });
+    items.push({ text:`Refund processed via ${r.method}`, time:`${r.date}, 2024 · 4:00 PM`, done: true });
+  } else if (r.status === 'Rejected') {
+    items.push({ text:'Return rejected by retailer', time:`${r.date}, 2024 · 2:15 PM`, done: false });
+  } else if (r.status === 'Exchanged') {
+    items.push({ text:'Exchange approved', time:`${r.date}, 2024 · 1:00 PM`, done: true });
+    items.push({ text:'Replacement dispatched', time:`${r.date}, 2024 · 3:30 PM`, done: true });
+  }
+
+  return items.map((item, i) => `
+    <div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot ${item.done ? '' : 'grey'}"></div>
+        <div class="tl-line"></div>
+      </div>
+      <div>
+        <div class="tl-text">${item.text}</div>
+        <div class="tl-time">${item.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---- CONFIRM MODAL ---- */
+function openConfirm(action, id) {
+  pendingAction = { action, id };
+  const r = RETURNS.find(x => x.id === id);
+  const modal = document.getElementById('confirmModal');
+  const isApprove = action === 'approve';
+
+  document.getElementById('modalTitle').textContent = isApprove ? `Approve Return ${id}` : `Reject Return ${id}`;
+  document.getElementById('modalSub').textContent   = r ? `${r.product} — ${r.customer}` : '';
+  document.getElementById('modalDesc').textContent  = isApprove
+    ? `Approving this return will initiate a refund of ₹${r ? r.amount.toLocaleString('en-IN') : '—'} via ${r ? r.method : '—'}.`
+    : 'Rejecting this return will notify the customer with your reason.';
+  document.getElementById('modalNotes').value = '';
+  document.getElementById('notesLabel').textContent = isApprove ? 'Approval Notes (optional)' : 'Rejection Reason (optional)';
+
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.textContent = isApprove ? 'Approve & Refund' : 'Reject Return';
+  btn.className   = `mf-confirm ${isApprove ? 'mf-green' : 'mf-red'}`;
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('modalNotes').focus(), 200);
+}
+
+function closeConfirm(e) {
+  if (e && e.target !== document.getElementById('confirmModal')) return;
+  document.getElementById('confirmModal').classList.remove('open');
+  document.body.style.overflow = '';
+  pendingAction = null;
+}
+
+function executeAction() {
+  if (!pendingAction) return;
+  const { action, id } = pendingAction;
+  const r = RETURNS.find(x => x.id === id);
+  if (!r) return;
+
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.innerHTML = `<div class="spinner"></div>`;
+  btn.disabled = true;
+
+  setTimeout(() => {
+    r.status = action === 'approve' ? 'Approved' : 'Rejected';
+
+    // Update KPIs
+    const kpiP = document.getElementById('kpi-pending');
+    const kpiA = document.getElementById('kpi-approved');
+    const cur = parseInt(kpiP.textContent);
+    if (cur > 0) kpiP.textContent = cur - 1;
+    if (action === 'approve') kpiA.textContent = parseInt(kpiA.textContent) + 1;
+
+    closeConfirm(null);
+    applyFilters();
+    if (activeId === id) openDetail(id);
+
+    showToast(
+      action === 'approve'
+        ? `${id} approved — refund of ₹${r.amount.toLocaleString('en-IN')} initiated`
+        : `${id} rejected — customer will be notified`,
+      action === 'approve' ? 'ok' : 'err'
+    );
+  }, 900);
+}
+
+/* ---- BULK ACTIONS ---- */
+function bulkAction(action) {
+  const ids = [...selectedIds];
+  const modal = document.getElementById('confirmModal');
+
+  pendingAction = { action, bulk: true, ids };
+
+  const count = ids.length;
+  document.getElementById('modalTitle').textContent = action === 'approve'
+    ? `Approve ${count} Return${count > 1 ? 's' : ''}?`
+    : `Reject ${count} Return${count > 1 ? 's' : ''}?`;
+  document.getElementById('modalSub').textContent = `This will ${action} all selected return requests.`;
+  document.getElementById('modalDesc').textContent = action === 'approve'
+    ? 'All pending selected returns will be approved and refunds initiated.'
+    : 'All selected returns will be rejected and customers notified.';
+  document.getElementById('modalNotes').value = '';
+
+  const btn = document.getElementById('modalConfirmBtn');
+  btn.textContent = action === 'approve' ? `Approve All (${count})` : `Reject All (${count})`;
+  btn.className   = `mf-confirm ${action === 'approve' ? 'mf-green' : 'mf-red'}`;
+
+  // Override execute for bulk
+  btn.onclick = () => {
+    btn.innerHTML = `<div class="spinner"></div>`;
+    btn.disabled = true;
+
+    setTimeout(() => {
+      ids.forEach(id => {
+        const r = RETURNS.find(x => x.id === id);
+        if (r && r.status === 'Pending') r.status = action === 'approve' ? 'Approved' : 'Rejected';
+      });
+      selectedIds.clear();
+      closeConfirm(null);
+      applyFilters();
+      if (activeId) openDetail(activeId);
+      showToast(`${count} returns ${action}d successfully`, 'ok');
+      btn.onclick = executeAction; // restore
+    }, 900);
+  };
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+/* ---- RESTOCK ---- */
+function renderRestock() {
+  document.getElementById('restockGrid').innerHTML = RESTOCKED.map(i => `
+    <div class="restock-card">
+      <div class="rc-icon">${i.icon}</div>
+      <div class="rc-name">${i.name}</div>
+      <div class="rc-units">${i.units} restocked</div>
+      <div class="rc-time">${i.time}</div>
+    </div>
+  `).join('');
+}
+
+/* ---- EXPORT ---- */
+function exportCSV() {
+  const headers = ['Return ID','Customer','Product','Date','Reason','Priority','Status','Amount'];
+  const rows = filtered.map(r => [r.id, r.customer, r.product, r.date, r.reason, r.priority, r.status, `₹${r.amount}`]);
+  const csv = [headers,...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = `returns-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('CSV exported!', 'info');
+}
+
+/* ---- HELPERS ---- */
+function badgeClass(s) {
+  return { Pending:'b-pending', Approved:'b-approved', Rejected:'b-rejected', Exchanged:'b-exchange' }[s] || 'b-pending';
+}
+
+function initials(n) { return n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase(); }
+
+const AV_COLORS = ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899'];
+function avatarColor(n) {
+  let h = 0;
+  for (let c of n) h = (h*31 + c.charCodeAt(0)) & 0x7fffffff;
+  return AV_COLORS[h % AV_COLORS.length];
+}
+
+/* ---- TOAST ---- */
+function showToast(msg, type = 'ok') {
+  const toast = document.getElementById('toast');
+  const icon  = document.getElementById('toastIcon');
+  document.getElementById('toastMsg').textContent = msg;
+  icon.className = `toast-icon ${type === 'ok' ? 'ti-ok' : type === 'err' ? 'ti-err' : 'ti-inf'}`;
+  icon.textContent = type === 'ok' ? '✓' : type === 'err' ? '✕' : 'i';
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.remove('show'), 3400);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,300 @@
+/* auth.css */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  background-color: var(--surface-color);
+}
+
+.auth-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.auth-form-side {
+  width: 100%;
+  max-width: 500px;
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .auth-form-side {
+    width: 50%;
+    margin: 0;
+    max-width: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.auth-image-side {
+  display: none;
+  width: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .auth-image-side {
+    display: block;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+.hero-dashboard-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 3rem;
+  color: var(--text-main);
+  text-decoration: none;
+}
+.brand-icon {
+  width: 28px;
+  height: 28px;
+  background-color: var(--primary-color);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.auth-header {
+  margin-bottom: 2rem;
+}
+.auth-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.auth-header p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--text-light);
+  margin: 1.5rem 0;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-color);
+}
+.divider:not(:empty)::before {
+  margin-right: 1rem;
+}
+.divider:not(:empty)::after {
+  margin-left: 1rem;
+}
+
+.social-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  border-left: 1.5px solid var(--border-color);
+  padding: 0 0 0 10px;
+  cursor: pointer;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  z-index: 10;
+}
+
+.password-toggle-btn:hover {
+  color: var(--primary-color);
+}
+
+/* Fix: override the generic .input-icon-group svg rule for the eye icon */
+.password-toggle-btn svg {
+  position: static !important;
+  left: unset !important;
+  width: 1.2rem;
+  height: 1.2rem;
+  pointer-events: none;
+  color: inherit;
+}
+
+.input-icon-group .form-control {
+  padding-right: 7rem;
+}
+
+/* Spacing between form groups on register/login pages */
+#registerForm .form-group,
+#loginForm .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.input-icon-group:has(.is-invalid) + .invalid-feedback,
+.form-control.is-invalid + .invalid-feedback,
+.form-control.is-invalid ~ .invalid-feedback {
+  display: block;
+}
+
+.eye-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* ── OTP Verification ───────────────────────────────────── */
+.otp-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  width: 100%;
+}
+
+.otp-input {
+  width: 64px;
+  height: 64px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: var(--font-family);
+  color: var(--text-main);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: #fff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  caret-color: transparent;
+}
+
+.otp-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2);
+}
+
+.otp-input.is-invalid {
+  border-color: var(--danger-color);
+}
+
+.otp-error {
+  color: var(--danger-color);
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.otp-resend {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.otp-resend a {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ── Reset Success Screen ───────────────────────────────── */
+.reset-success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  width: 100%;
+  flex: 1;
+  justify-content: center;
+}
+
+.success-icon-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #d1fae5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.success-icon-wrap svg {
+  width: 36px;
+  height: 36px;
+  stroke: #059669;
+}
+
+.success-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.success-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+/* ── Forgot / Reset forms full width ───────────────────── */
+#forgotPasswordForm .form-group,
+#resetPasswordForm .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.copyright {
+  margin-top: auto;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.875rem;
+}

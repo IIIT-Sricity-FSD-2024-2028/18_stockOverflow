@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow — Sale Confirmed</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --card-bg: #ffffff; --border: #e8e9f0;
+      --text-primary: #1a1a2e; --text-muted: #6b7280;
+      --accent: #4f46e5; --accent-light: #eef2ff;
+      --green: #10b981; --green-light: #d1fae5;
+      --red: #ef4444; --yellow: #f59e0b; --yellow-light: #fef3c7;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); min-height: 100vh; padding: 100px 32px 32px; }
+
+    /* =============================================
+       PAGE HEADER: title + breadcrumb
+    ============================================= */
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .page-title-row { display: flex; flex-direction: column; }
+    .page-title { font-size: 22px; font-weight: 800; }
+    .page-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .icon-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+    /* =============================================
+       MAIN GRID: centered receipt
+    ============================================= */
+    .main-grid { display: flex; justify-content: center; align-items: flex-start; }
+
+    /* =============================================
+       LEFT: RECEIPT CARD
+       Shows payment success, itemized order,
+       totals, sharing buttons
+    ============================================= */
+    .receipt-card {
+      width: 310px; flex-shrink: 0;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden;
+    }
+
+    /* Receipt header: success icon + status */
+    .receipt-header {
+      background: linear-gradient(135deg, var(--green), #059669);
+      padding: 20px; text-align: center; color: #fff;
+    }
+    .receipt-success-icon { font-size: 40px; margin-bottom: 8px; }
+    .receipt-status { font-size: 18px; font-weight: 800; }
+    .receipt-time { font-size: 12px; opacity: .85; margin-top: 4px; }
+
+    /* Receipt body: store info, items, totals */
+    .receipt-body { padding: 18px; }
+
+    /* Store info section */
+    .store-info { border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+    .store-name { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+    .store-addr { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; }
+
+    /* Receipt number + date row */
+    .receipt-id-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+    .receipt-id { font-weight: 700; color: var(--text-primary); }
+
+    /* Ordered items list */
+    .item-list { margin-bottom: 14px; }
+    .item-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--border);
+    }
+    .item-row:last-child { border-bottom: none; }
+    .item-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .item-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #f1f2f6;
+      border: 1px solid var(--border);
+    }
+    .item-name { font-weight: 600; }
+    .item-qty { color: var(--text-muted); font-size: 12px; margin-left: 4px; }
+    .item-price { font-weight: 700; }
+
+    /* Totals breakdown */
+    .totals { margin-bottom: 14px; }
+    .total-row { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 6px; color: var(--text-muted); }
+    .total-row.grand { font-size: 15px; font-weight: 900; color: var(--text-primary); padding-top: 10px; border-top: 2px solid var(--text-primary); margin-top: 10px; }
+
+    /* Payment method indicator */
+    .pay-method { text-align: center; font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px; padding: 10px; background: var(--bg); border-radius: 8px; }
+    .customer-line { text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+    .thank-you { text-align: center; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+    /* Receipt action buttons (print, email, whatsapp, new sale) */
+    .receipt-actions { padding: 14px 18px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .receipt-btn { padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); font-size: 12.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background .15s; }
+    .receipt-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+    .receipt-btn.print { grid-column: span 2; background: var(--accent); color: #fff; border: none; }
+    .receipt-btn.print:hover { opacity: .9; }
+
+    /* =============================================
+       TOP NAVIGATION BAR
+    ============================================= */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 64px;
+      background: var(--card-bg); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
+      z-index: 1000;
+    }
+    .nav-logo { display: flex; align-items: center; }
+    .nav-logo img { height: 32px; width: auto; display: block; }
+    .nav-links { display: flex; gap: 30px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 14px; font-weight: 600; cursor: pointer; transition: color .2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-btn { background: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity .2s; }
+    .nav-btn:hover { opacity: .85; }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       TOP NAVIGATION BAR
+  ============================================= -->
+  <nav>
+    <div class="nav-logo"><img src="../Logo.png" alt="StockOverflow"></div>
+    <div class="nav-links">
+      <a href="consumer-landingpage.html">Browse Products</a>
+      <a href="productsearch.html">Search</a>
+      <a href="orders.html">My Orders</a>
+      <a href="return-management.html">Returns</a>
+      <a href="restockalert.html">Alerts</a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- =============================================
+       PAGE HEADER
+       Title + transaction ID + action buttons
+  ============================================= -->
+  <div class="page-header">
+    <div class="page-title-row">
+      <div class="page-title">Sale Confirmed ✅</div>
+      <div class="page-sub">Payment processed successfully — Transaction #TXN-2024-18847</div>
+    </div>
+    <div class="header-right">
+      <div class="icon-btn">🔔</div>
+      <div class="avatar">AK</div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       MAIN GRID: Receipt (left) + Summary (right)
+  ============================================= -->
+  <div class="main-grid">
+
+    <!-- =============================================
+         LEFT: RECEIPT CARD
+         Shows the full receipt in a "paper" style card
+    ============================================= -->
+    <div class="receipt-card">
+
+      <!-- Receipt header: green success banner -->
+      <div class="receipt-header">
+        <div class="receipt-success-icon">✅</div>
+        <div class="receipt-status">Payment Successful!</div>
+        <div class="receipt-time">Dec 14, 2024 at 2:47 PM · via UPI</div>
+      </div>
+
+      <div class="receipt-body">
+
+        <!-- Store info block -->
+        <div class="store-info">
+          <div class="store-name">Stockoverflow</div>
+          <div class="store-addr">
+            123 Market Street, Bangalore 560001<br/>
+            GST: 29AABCU9603R1ZP | +91 80 4567 8901
+          </div>
+        </div>
+
+        <!-- Receipt number and date on same row -->
+        <div class="receipt-id-row">
+          <span class="receipt-id">Receipt #RCP-2024-1847</span>
+          <span>Dec 14, 2024 · 2:47 PM</span>
+        </div>
+
+        <!-- Itemized list of products purchased -->
+        <div class="item-list" id="receiptItems"></div>
+
+        <!-- Order total breakdown -->
+        <div class="totals">
+          <div class="total-row"><span>Subtotal</span><span id="subtotalValue">$0</span></div>
+          <div class="total-row"><span>Tax (18%)</span><span id="taxValue">$0</span></div>
+          <div class="total-row"><span>Discount</span><span id="discountValue">-$0</span></div>
+          <div class="total-row grand"><span>TOTAL</span><span id="grandTotalValue">$0</span></div>
+        </div>
+
+        <!-- Payment method indicator -->
+        <div class="pay-method">💰 Paid via UPI — rajesh@upi</div>
+
+        <!-- Customer attribution -->
+        <div class="customer-line">Customer: Rajesh Kumar</div>
+        <div class="thank-you">Thank you for shopping with us! 🙏</div>
+
+      </div><!-- /receipt-body -->
+
+      <!-- Share/Action buttons row -->
+      <div class="receipt-actions">
+        <!-- Print full receipt -->
+        <button class="receipt-btn print">🖨️ Print Receipt</button>
+        <!-- Email receipt to customer -->
+        <button class="receipt-btn">📧 Email</button>
+        <!-- Send via WhatsApp -->
+        <button class="receipt-btn">💬 WhatsApp</button>
+        <!-- Start a new sale / reset POS -->
+        <button class="receipt-btn">🛒 New Sale</button>
+      </div>
+
+    </div><!-- /receipt-card -->
+
+  </div><!-- /main-grid -->
+
+  <script src="../js/mockData.js"></script>
+  <script src="app-flow.js"></script>
+  <script src="../retailer module/common-products.js"></script>
+  <script>
+    function loadReceiptFromProducts() {
+      const source = window.RetailerProductsData && window.RetailerProductsData.masterProducts;
+      if (!source || !Array.isArray(source) || !source.length) return;
+
+      const params = new URLSearchParams(window.location.search);
+      const sku = params.get('sku') || localStorage.getItem('imsFeedbackSku') || 'PT001';
+      const main = source.find(function(p) { return p.sku === sku; }) || source[0];
+      const secondary = source.find(function(p) { return p.sku !== main.sku; }) || main;
+      const items = [
+        { product: main, qty: 1 },
+        { product: secondary, qty: 1 }
+      ];
+
+      const host = document.getElementById('receiptItems');
+      host.innerHTML = items.map(function(line) {
+        const lineTotal = line.product.priceUSD * line.qty;
+        return `
+          <div class="item-row">
+            <div class="item-main"><img class="item-thumb" src="${line.product.productImg}" alt="${line.product.name}" loading="lazy" onerror="this.style.display='none';" /><span class="item-name">${line.product.name}</span> <span class="item-qty">×${line.qty}</span></div>
+            <div class="item-price">$${lineTotal.toLocaleString()}</div>
+          </div>
+        `;
+      }).join('');
+
+      const subtotal = items.reduce(function(sum, line) { return sum + (line.product.priceUSD * line.qty); }, 0);
+      const tax = Math.round(subtotal * 0.18);
+      const discount = Math.min(50, Math.round(subtotal * 0.05));
+      const total = subtotal + tax - discount;
+
+      document.getElementById('subtotalValue').textContent = '$' + subtotal.toLocaleString();
+      document.getElementById('taxValue').textContent = '$' + tax.toLocaleString();
+      document.getElementById('discountValue').textContent = '-$' + discount.toLocaleString();
+      document.getElementById('grandTotalValue').textContent = '$' + total.toLocaleString();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadReceiptFromProducts);
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        sessionStorage.clear();
+        window.location.href = '../../index.html';
+      }
+    }
+  </script>
+
+</body>
+</html>

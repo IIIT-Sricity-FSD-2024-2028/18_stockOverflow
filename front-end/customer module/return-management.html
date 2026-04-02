@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow — Returns Management</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --sidebar-bg: #ffffff; --card-bg: #ffffff;
+      --border: #e8e9f0; --text-primary: #000000; --text-muted: #6b7280;
+      --accent: #2563eb; --accent-light: #eef2ff; --cyan: #00BCD4; --purple: #7C3AED;
+      --green: #10b981; --green-light: #d1fae5;
+      --red: #ef4444; --red-light: #fee2e2;
+      --yellow: #f59e0b; --yellow-light: #fef3c7;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: 240px; min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; }
+    .sidebar-logo {
+      padding: 16px 24px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      min-height: 66px;
+    }
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; color: #808080; font-size: 13.5px; cursor: pointer; border-left: 3px solid transparent; }
+    .nav-item:hover { background: #f0f0f0; color: #000; }
+    .nav-item.active { background: #e0ebff; color: #2563eb; border-left-color: var(--accent); }
+    .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+    .nav-group { font-size: 10px; font-weight: 600; letter-spacing: 1px; color: #999; padding: 16px 24px 6px; text-transform: uppercase; }
+
+    /* MAIN */
+    .main-wrap { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+
+    /* HEADER */
+    .header { height: 60px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; top: 0; z-index: 10; position: sticky; }
+    .breadcrumb { font-size: 12px; color: var(--text-muted); }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+    /* PAGE CONTENT */
+    .page-content { padding: 24px 28px; flex: 1; }
+
+    /* Form Container */
+    .form-container { max-width: 450px; margin: 0 auto; }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 3px solid var(--cyan);
+      border-radius: 12px;
+      padding: 30px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    /* Form Elements */
+    .form-label {
+      display: block;
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .input-with-btn {
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-input {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      background: #fff;
+      color: #333;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .form-input:focus {
+      border-color: var(--cyan);
+      background: #fff;
+    }
+
+    .fetch-btn {
+      padding: 10px 16px;
+      background: var(--cyan);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.3s;
+    }
+
+    .fetch-btn:hover {
+      opacity: 0.9;
+    }
+
+    .item-check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      background: #fafbfc;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .item-check-row:hover {
+      background: #f5f6fa;
+      border-color: var(--cyan);
+    }
+
+    .item-check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--cyan);
+    }
+
+    .item-photo {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #f1f2f6;
+      flex-shrink: 0;
+    }
+
+    .item-fallback {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: #f1f2f6;
+    }
+
+    .item-label {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .item-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: #666;
+    }
+
+    .form-select {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      background: #fff;
+      color: #333;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      transition: border-color 0.3s;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 20px;
+      padding-right: 36px;
+    }
+
+    .form-select:focus {
+      border-color: var(--cyan);
+    }
+
+    .upload-zone {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 30px 20px;
+      text-align: center;
+      background: #fafbfc;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--cyan);
+      background: #f0f9fb;
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .upload-text {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .upload-link {
+      color: var(--cyan);
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .upload-hint {
+      font-size: 11px;
+      color: #999;
+      margin-top: 8px;
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.9;
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"></div>
+    <nav style="flex:1;padding:12px 0;">
+      <div class="nav-group">Main Menu</div>
+      <div class="nav-item">Dashboard</div>
+      <div class="nav-item">Products</div>
+      <div class="nav-item">Orders</div>
+      <div class="nav-item active">Returns</div>
+      <div class="nav-item">Restock Alerts</div>
+    </nav>
+      <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
+      <button type="button" class="sidebar-logout-btn" onclick="window.location.href='../biller module/index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="breadcrumb">
+        <a href="#">Dashboard</a> / <span>Return Management</span>
+      </div>
+      <div class="header-right">
+        <div class="avatar">C</div>
+      </div>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="page-content">
+      <div class="form-container">
+        <div class="card">
+          <div class="card-title">↩️ Initiate Return</div>
+
+          <!-- Order number lookup -->
+          <div class="form-group">
+            <label class="form-label">Order / Receipt No.</label>
+            <div class="input-with-btn">
+              <input class="form-input" type="text" placeholder="#ORD-2024-035" value="#ORD-2024-035">
+              <button class="fetch-btn">Fetch</button>
+            </div>
+          </div>
+
+          <!-- Items to return -->
+          <div class="form-group">
+            <label class="form-label">Select items to return:</label>
+            <div id="returnItemsList"></div>
+          </div>
+
+          <!-- Return reason -->
+          <div class="form-group">
+            <label class="form-label">Return Reason</label>
+            <select class="form-select">
+              <option>Defective / Not Working</option>
+              <option>Wrong Item Received</option>
+              <option>Changed Mind</option>
+              <option>Not as Described</option>
+            </select>
+          </div>
+
+          <!-- Item condition -->
+          <div class="form-group">
+            <label class="form-label">Item Condition</label>
+            <select class="form-select">
+              <option>Sealed / Unopened</option>
+              <option>Opened but Unused</option>
+              <option>Used — Good Condition</option>
+              <option>Damaged</option>
+            </select>
+          </div>
+
+          <!-- Refund method -->
+          <div class="form-group">
+            <label class="form-label">Refund Method</label>
+            <select class="form-select">
+              <option>Original Payment Method</option>
+              <option>Store Credit</option>
+              <option>Gift Card</option>
+            </select>
+          </div>
+
+          <!-- Evidence images -->
+          <div class="form-group">
+            <label class="form-label">Evidence Images</label>
+            <div class="upload-zone">
+              <div class="upload-icon">📎</div>
+              <div class="upload-text">Drag & drop or <span class="upload-link">browse</span></div>
+              <div class="upload-hint">PNG, JPG up to 10MB</div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea class="form-input" placeholder="Additional notes about the return..."></textarea>
+          </div>
+
+          <!-- Submit button -->
+          <button class="submit-btn">↩️ Submit Return Request</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /main-wrap -->
+
+  <script src="../js/mockData.js"></script>
+  <script src="app-flow.js"></script>
+  <script src="../retailer module/common-products.js"></script>
+  <script>
+    function getQuerySku() {
+      return new URLSearchParams(window.location.search).get('sku');
+    }
+
+    function renderReturnItems() {
+      const source = window.RetailerProductsData && window.RetailerProductsData.masterProducts;
+      const host = document.getElementById('returnItemsList');
+      if (!source || !Array.isArray(source)) {
+        host.innerHTML = '<p>Unable to load products.</p>';
+        return;
+      }
+
+      const skuFromQuery = getQuerySku();
+      const items = source.slice();
+      host.innerHTML = items.map(function(product, idx) {
+        const checked = skuFromQuery ? product.sku === skuFromQuery : idx === 0;
+        return `
+          <label class="item-check-row">
+            <input type="checkbox" ${checked ? 'checked' : ''} data-sku="${product.sku}">
+            <img class="item-photo" src="${product.productImg}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <span class="item-fallback" style="display:none;">${product.emoji || '📦'}</span>
+            <span class="item-label">${product.name} <span style="color:#6b7280;font-weight:500;">(${product.sku})</span></span>
+            <span class="item-price">$${product.priceUSD.toLocaleString()}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderReturnItems);
+  </script>
+
+</body>
+</html>

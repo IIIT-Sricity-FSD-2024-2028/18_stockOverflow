@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow — Feedback</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --card-bg: #ffffff; --border: #e8e9f0;
+      --text-primary: #1a1a2e; --text-muted: #6b7280;
+      --accent: #4f46e5; --accent-light: #eef2ff;
+      --green: #10b981; --green-light: #d1fae5;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); min-height: 100vh; padding: 32px; }
+
+    /* =============================================
+       PAGE WRAPPER — centered two-column layout
+       Left = form | Right = stats sidebar
+    ============================================= */
+    .page-wrap { max-width: 2120px; margin: 0 auto; display: flex; gap: 24px; }
+
+    /* =============================================
+       FORM CONTAINER (left, ~60% width)
+    ============================================= */
+    .form-container { flex: 1; }
+
+    /* =============================================
+       STEPPER / PROGRESS BAR
+       3 numbered steps: Select Product → Feedback → Submit
+    ============================================= */
+    .stepper {
+      display: flex; align-items: center; background: var(--card-bg);
+      border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px;
+      margin-bottom: 24px;
+    }
+    .step {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+    }
+    .step-circle {
+      width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700; color: var(--text-muted);
+      background: var(--bg); flex-shrink: 0; transition: all .2s;
+    }
+    .step.active .step-circle  { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .step.done .step-circle    { background: var(--green); border-color: var(--green); color: #fff; }
+    .step-label { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+    .step.active .step-label   { color: var(--text-primary); }
+    /* Connecting line between steps */
+    .step-line { flex: 1; height: 2px; background: var(--border); margin: 0 16px; }
+    .step-line.done { background: var(--green); }
+
+    /* Section cards inside the form */
+    .form-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; margin-bottom: 20px;
+    }
+    .form-section-title { font-size: 15px; font-weight: 700; margin-bottom: 18px; color: var(--text-primary); }
+
+    /* Form label */
+    label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+
+    /* Text input / textarea base style */
+    .form-input {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 10px 14px; font-size: 14px; color: var(--text-primary);
+      background: var(--bg); outline: none; transition: border-color .2s;
+    }
+    .form-input:focus { border-color: var(--accent); background: #fff; }
+    textarea.form-input { resize: vertical; min-height: 140px; }
+
+    /* =============================================
+         PRODUCT SEARCH RESULT ROW
+         Shown after typing in search field
+    ============================================= */
+    .product-result {
+      display: flex; align-items: center; gap: 14px; border: 1.5px solid var(--accent);
+      border-radius: 10px; padding: 12px 16px; background: var(--accent-light); margin-top: 10px;
+    }
+    .product-result-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-result-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .tiny-product-img {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      object-fit: cover;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .product-result-info { flex: 1; }
+    .product-result-name { font-size: 15px; font-weight: 700; }
+    .product-result-tags { display: flex; gap: 8px; margin-top: 6px; }
+    .result-tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+    .tag-sku  { background: #fff; color: var(--text-muted); border: 1px solid var(--border); }
+    .tag-stock { background: var(--green-light); color: #065f46; }
+    .product-result-arrow { font-size: 18px; color: var(--accent); }
+
+    /* =============================================
+         FEEDBACK TYPE CARDS
+         4 icon cards: quality / stock / pricing / other
+    ============================================= */
+    .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .type-card {
+      border: 2px solid var(--border); border-radius: 10px; padding: 16px 14px;
+      cursor: pointer; display: flex; align-items: flex-start; gap: 14px;
+      transition: border-color .2s, background .2s;
+    }
+    .type-card:hover { border-color: var(--accent); background: var(--accent-light); }
+    .type-card.selected { border-color: var(--accent); background: var(--accent-light); }
+    .type-icon { font-size: 28px; }
+    .type-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .type-desc { font-size: 12px; color: var(--text-muted); }
+
+    /* =============================================
+         STAR RATING WIDGET
+         5 clickable stars with label
+    ============================================= */
+    .star-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .star { font-size: 40px; cursor: pointer; opacity: .3; transition: opacity .15s, transform .1s; }
+    .star.active { opacity: 1; }
+    .star:hover { transform: scale(1.1); }
+    .rating-label { font-size: 14px; color: var(--accent); font-weight: 700; margin-left: 8px; }
+
+    /* =============================================
+         CHARACTER COUNTER
+    ============================================= */
+    .counter-row { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--text-muted); }
+
+    /* =============================================
+         FILE UPLOAD DROP ZONE
+    ============================================= */
+    .upload-zone {
+      border: 2px dashed var(--border); border-radius: 10px; padding: 28px;
+      text-align: center; background: var(--bg); cursor: pointer; transition: border-color .2s;
+    }
+    .upload-zone:hover { border-color: var(--accent); background: var(--accent-light); }
+    .upload-icon { font-size: 36px; margin-bottom: 8px; }
+    .upload-text { font-size: 14px; color: var(--text-muted); }
+    .upload-text a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .upload-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    /* =============================================
+         SUBMIT BUTTON
+    ============================================= */
+    .submit-btn {
+      width: 100%; padding: 16px; background: var(--accent); color: #fff; border: none;
+      border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: opacity .15s;
+    }
+    .submit-btn:hover { opacity: .9; }
+
+    /* =============================================
+       RIGHT SIDEBAR — Rating stats + recent reviews
+    ============================================= */
+    .sidebar-col { width: 380px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; }
+    .side-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .side-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+
+    /* Rating bars in sidebar */
+    .rating-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .r-star { font-size: 12px; width: 24px; }
+    .r-bar-wrap { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+    .r-bar { height: 100%; background: var(--accent); border-radius: 4px; }
+    .r-pct { font-size: 12px; color: var(--text-muted); width: 28px; text-align: right; }
+
+    /* Avg rating + total reviews numbers */
+    .rating-nums { display: flex; gap: 16px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .rn-big { font-size: 28px; font-weight: 900; }
+    .rn-sub { font-size: 11px; color: var(--text-muted); }
+    .rn-divider { width: 1px; background: var(--border); }
+
+    /* "Why feedback matters" bullet list */
+    .why-item { display: flex; align-items: center; gap: 10px; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .why-item:last-child { border-bottom: none; }
+    .why-icon { font-size: 16px; }
+
+    /* Recent feedback review cards */
+    .review-card { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .review-card:last-child { border-bottom: none; }
+    .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .reviewer-name { font-size: 14px; font-weight: 700; }
+    .review-stars { font-size: 12px; }
+    .review-text { font-size: 13px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <!-- =============================================
+         LEFT: THE FEEDBACK FORM
+    ============================================= -->
+    <div class="form-container">
+
+      <!-- =============================================
+           STEP INDICATOR (3 steps)
+      ============================================= -->
+      <div class="stepper">
+        <!-- Step 1: active (current step) -->
+        <div class="step active">
+          <div class="step-circle">1</div>
+          <div class="step-label">Select Product</div>
+        </div>
+        <div class="step-line"></div>
+
+        <!-- Step 2: not yet reached -->
+        <div class="step">
+          <div class="step-circle">2</div>
+          <div class="step-label">Feedback Details</div>
+        </div>
+        <div class="step-line"></div>
+
+        <!-- Step 3: not yet reached -->
+        <div class="step">
+          <div class="step-circle">3</div>
+          <div class="step-label">Submit</div>
+        </div>
+      </div>
+
+      <!-- =============================================
+           SECTION 1: SELECT PRODUCT
+      ============================================= -->
+      <div class="form-card">
+        <div class="form-section-title">Select Product</div>
+
+        <!-- Product name / SKU search field -->
+        <label>Search Product</label>
+        <div style="position:relative;">
+          <input id="productSearchInput" class="form-input" type="text" placeholder="Search product by name or SKU..." />
+        </div>
+
+        <div class="product-result" id="selectedProductCard" style="display:none;">
+          <div class="product-result-icon"><img id="selectedProductImg" src="" alt="Selected product" loading="lazy" /></div>
+          <div class="product-result-info">
+            <div class="product-result-name" id="selectedProductName">Product</div>
+            <div class="product-result-tags">
+              <span class="result-tag tag-sku" id="selectedProductSku">SKU</span>
+              <span class="result-tag tag-stock" id="selectedProductStock">In Stock</span>
+            </div>
+          </div>
+          <div class="product-result-arrow">✓</div>
+        </div>
+        <div id="searchResults" style="margin-top:10px;"></div>
+      </div>
+
+      <!-- =============================================
+           SECTION 2: FEEDBACK TYPE
+           4 cards the user can pick
+      ============================================= -->
+      <div class="form-card">
+        <div class="form-section-title">Feedback Type</div>
+
+        <div class="type-grid">
+          <!-- Type 1: Product Quality -->
+          <div class="type-card selected">
+            <div class="type-icon">🏆</div>
+            <div>
+              <div class="type-name">Product Quality</div>
+              <div class="type-desc">Share quality issues</div>
+            </div>
+          </div>
+
+          <!-- Type 2: Stock Issue -->
+          <div class="type-card">
+            <div class="type-icon">📦</div>
+            <div>
+              <div class="type-name">Stock Issue</div>
+              <div class="type-desc">Availability concern</div>
+            </div>
+          </div>
+
+          <!-- Type 3: Pricing Concern -->
+          <div class="type-card">
+            <div class="type-icon">💰</div>
+            <div>
+              <div class="type-name">Pricing Concern</div>
+              <div class="type-desc">Price feedback</div>
+            </div>
+          </div>
+
+          <!-- Type 4: Other -->
+          <div class="type-card">
+            <div class="type-icon">💬</div>
+            <div>
+              <div class="type-name">Other</div>
+              <div class="type-desc">Anything else</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================
+           SECTION 3: STAR RATING + COMMENTS
+      ============================================= -->
+      <div class="form-card">
+        <!-- Star rating label -->
+        <div class="form-section-title">Rating</div>
+        <div class="star-row">
+          <!-- 5 clickable star icons, 4 are active -->
+          <span class="star active">⭐</span>
+          <span class="star active">⭐</span>
+          <span class="star active">⭐</span>
+          <span class="star active">⭐</span>
+          <span class="star">⭐</span>
+          <span class="rating-label">Great</span>
+        </div>
+
+        <!-- Comments textarea -->
+        <label style="margin-top:20px;">Your Comments</label>
+        <textarea class="form-input" placeholder="Describe your experience in detail — what worked, what didn't, and any suggestions..."></textarea>
+
+        <!-- Character counter -->
+        <div class="counter-row">
+          <span>Be specific — better feedback helps us improve faster.</span>
+          <span>0 / 500</span>
+        </div>
+      </div>
+
+      <!-- =============================================
+           SECTION 4: FILE ATTACHMENTS (optional)
+      ============================================= -->
+      <div class="form-card">
+        <div class="form-section-title">
+          Attachments <span style="font-size:12px;color:var(--text-muted);font-weight:400;">(optional)</span>
+        </div>
+
+        <!-- Drag-and-drop zone -->
+        <div class="upload-zone">
+          <div class="upload-icon">📎</div>
+          <div class="upload-text">Drag & drop images here or <a href="#">browse files</a></div>
+          <div class="upload-hint">PNG, JPG up to 10MB each</div>
+        </div>
+      </div>
+
+      <!-- SUBMIT BUTTON -->
+      <button class="submit-btn">📤 Submit Feedback</button>
+
+    </div><!-- /form-container -->
+
+    <!-- =============================================
+         RIGHT SIDEBAR: Stats + Recent Reviews
+    ============================================= -->
+    <div class="sidebar-col">
+
+      <!-- RATING DISTRIBUTION -->
+      <div class="side-card">
+        <div class="side-title">📊 Rating Distribution</div>
+
+        <div class="rating-row"><span class="r-star">5⭐</span><div class="r-bar-wrap"><div class="r-bar" id="feedback-fill-5" style="width:0%"></div></div><span class="r-pct" id="feedback-pct-5">0%</span></div>
+        <div class="rating-row"><span class="r-star">4⭐</span><div class="r-bar-wrap"><div class="r-bar" id="feedback-fill-4" style="width:0%"></div></div><span class="r-pct" id="feedback-pct-4">0%</span></div>
+        <div class="rating-row"><span class="r-star">3⭐</span><div class="r-bar-wrap"><div class="r-bar" id="feedback-fill-3" style="width:0%"></div></div><span class="r-pct" id="feedback-pct-3">0%</span></div>
+        <div class="rating-row"><span class="r-star">2⭐</span><div class="r-bar-wrap"><div class="r-bar" id="feedback-fill-2" style="width:0%"></div></div><span class="r-pct" id="feedback-pct-2">0%</span></div>
+        <div class="rating-row"><span class="r-star">1⭐</span><div class="r-bar-wrap"><div class="r-bar" id="feedback-fill-1" style="width:0%"></div></div><span class="r-pct" id="feedback-pct-1">0%</span></div>
+
+        <!-- Avg rating + total reviews summary -->
+        <div class="rating-nums">
+          <div><div class="rn-big" id="feedback-avg">0.0</div><div class="rn-sub">Avg Rating</div></div>
+          <div class="rn-divider"></div>
+          <div><div class="rn-big" id="feedback-total">0</div><div class="rn-sub">Total Reviews</div></div>
+        </div>
+      </div>
+
+      <!-- WHY FEEDBACK MATTERS -->
+      <div class="side-card">
+        <div class="side-title">💡 Why feedback matters</div>
+        <div class="why-item"><span class="why-icon">✅</span> Helps retailers restock popular items faster</div>
+        <div class="why-item"><span class="why-icon">✅</span> Improves product quality over time</div>
+        <div class="why-item"><span class="why-icon">✅</span> Drives better pricing decisions</div>
+      </div>
+
+      <!-- RECENT FEEDBACK SNIPPET -->
+      <div class="side-card">
+        <div class="side-title">🗣 Recent Feedback</div>
+        <div id="recentFeedbackList"></div>
+
+      </div>
+
+    </div><!-- /sidebar-col -->
+
+  </div><!-- /page-wrap -->
+
+  <script src="../js/mockData.js"></script>
+  <script src="../retailer module/common-products.js"></script>
+  <script src="app-flow.js"></script>
+  <script>
+    let selectedProductSku = null;
+
+    function getSkuFromQuery() {
+      return new URLSearchParams(window.location.search).get('sku');
+    }
+
+    function productStockLabel(product) {
+      if (product.qty === 0) return 'Out of Stock';
+      if (product.qty <= product.max * 0.2) return 'Low Stock';
+      return 'In Stock';
+    }
+
+    function paintSelectedProduct(product) {
+      document.getElementById('selectedProductCard').style.display = 'flex';
+      const selectedImg = document.getElementById('selectedProductImg');
+      selectedImg.src = product.productImg;
+      selectedImg.alt = product.name;
+      document.getElementById('selectedProductName').textContent = product.name;
+      document.getElementById('selectedProductSku').textContent = product.sku;
+      document.getElementById('selectedProductStock').textContent = productStockLabel(product);
+      document.getElementById('productSearchInput').value = product.name;
+      selectedProductSku = product.sku;
+    }
+
+    function renderSearchResults(products, query) {
+      const host = document.getElementById('searchResults');
+      if (!query) {
+        host.innerHTML = '';
+        return;
+      }
+
+      const filtered = products.filter(function(product) {
+        return [product.name, product.sku, product.brand, product.category]
+          .join(' ')
+          .toLowerCase()
+          .includes(query.toLowerCase());
+      }).slice(0, 5);
+
+      if (!filtered.length) {
+        host.innerHTML = '<div style="font-size:12px;color:#6b7280;">No products found.</div>';
+        return;
+      }
+
+      host.innerHTML = filtered.map(function(product) {
+        return `
+          <button type="button" data-sku="${product.sku}" style="width:100%;text-align:left;cursor:pointer;background:#fff;border:1px solid #e8e9f0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
+            <img class="tiny-product-img" src="${product.productImg}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';" /><strong>${product.name}</strong> <span style="color:#6b7280;">(${product.sku})</span>
+          </button>
+        `;
+      }).join('');
+
+      host.querySelectorAll('button[data-sku]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const sku = btn.getAttribute('data-sku');
+          const selected = products.find(function(p) { return p.sku === sku; });
+          if (selected) paintSelectedProduct(selected);
+          host.innerHTML = '';
+        });
+      });
+    }
+
+    function renderRecentFeedback(products) {
+      const host = document.getElementById('recentFeedbackList');
+      if (!host) return;
+
+      const samples = products
+        .slice()
+        .sort(function(a, b) { return b.soldThisMonth - a.soldThisMonth; })
+        .slice(0, 3);
+
+      host.innerHTML = samples.map(function(product, idx) {
+        const rating = Math.max(3, 5 - idx);
+        return `
+          <div class="review-card">
+            <div class="review-header">
+              <div class="reviewer-name">${product.brand} Buyer</div>
+              <div class="review-stars">${'⭐'.repeat(rating)}</div>
+            </div>
+            <div class="review-text"><img class="tiny-product-img" src="${product.productImg}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';" />${product.name} (${product.sku}) was rated highly for value and delivery.</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderRecentFeedbackFromSubmittedFeedback() {
+      const host = document.getElementById('recentFeedbackList');
+      if (!host) return;
+
+      let appState = { feedback: [] };
+      try {
+        appState = JSON.parse(localStorage.getItem('imsAppStateV1') || '{"feedback":[]}');
+      } catch (_err) {
+        appState = { feedback: [] };
+      }
+
+      const allFeedback = Array.isArray(appState.feedback) ? appState.feedback : [];
+      const latest = allFeedback.slice().sort(function(a, b) {
+        return new Date(b.date || 0) - new Date(a.date || 0);
+      }).slice(0, 3);
+
+      if (!latest.length) {
+        host.innerHTML = '<div style="font-size:12px;color:#6b7280;">No submitted feedback yet.</div>';
+        return;
+      }
+
+      host.innerHTML = latest.map(function(item) {
+        const safeRating = Math.max(1, Math.min(5, Number(item && item.rating) || 0));
+        const productName = (item && item.productName) || 'Product';
+        const sku = (item && item.sku) || 'N/A';
+        return `
+          <div class="review-card">
+            <div class="review-header">
+              <div class="reviewer-name">Recent Buyer</div>
+              <div class="review-stars">${'⭐'.repeat(safeRating)}</div>
+            </div>
+            <div class="review-text">${productName} (${sku}) — ${(item && item.comment) || 'No comment provided.'}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderRatingDistributionFromSubmittedFeedback() {
+      let appState = { feedback: [] };
+      try {
+        appState = JSON.parse(localStorage.getItem('imsAppStateV1') || '{"feedback":[]}');
+      } catch (_err) {
+        appState = { feedback: [] };
+      }
+
+      const allFeedback = Array.isArray(appState.feedback) ? appState.feedback : [];
+      const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+      allFeedback.forEach(function(item) {
+        const rating = Math.max(1, Math.min(5, Number(item && item.rating) || 0));
+        if (counts[rating] !== undefined) {
+          counts[rating] += 1;
+        }
+      });
+
+      const total = allFeedback.length;
+      const weighted = (counts[1] * 1) + (counts[2] * 2) + (counts[3] * 3) + (counts[4] * 4) + (counts[5] * 5);
+      const avg = total ? (weighted / total) : 0;
+
+      [1, 2, 3, 4, 5].forEach(function(star) {
+        const pct = total ? Math.round((counts[star] / total) * 100) : 0;
+        const fill = document.getElementById('feedback-fill-' + star);
+        const pctEl = document.getElementById('feedback-pct-' + star);
+        if (fill) fill.style.width = pct + '%';
+        if (pctEl) pctEl.textContent = pct + '%';
+      });
+
+      const avgEl = document.getElementById('feedback-avg');
+      const totalEl = document.getElementById('feedback-total');
+      if (avgEl) avgEl.textContent = avg.toFixed(1);
+      if (totalEl) totalEl.textContent = total.toLocaleString();
+    }
+
+    window.renderRatingDistributionFromSubmittedFeedback = renderRatingDistributionFromSubmittedFeedback;
+    window.renderRecentFeedbackFromSubmittedFeedback = renderRecentFeedbackFromSubmittedFeedback;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const source = window.RetailerProductsData && window.RetailerProductsData.masterProducts;
+      if (!source || !Array.isArray(source)) return;
+
+      const presetSku = getSkuFromQuery() || localStorage.getItem('imsFeedbackSku');
+      const preset = source.find(function(p) { return p.sku === presetSku; }) || source[0];
+      if (preset) paintSelectedProduct(preset);
+
+      const search = document.getElementById('productSearchInput');
+      search.addEventListener('input', function() {
+        renderSearchResults(source, search.value.trim());
+      });
+
+      renderRecentFeedbackFromSubmittedFeedback();
+      if (!document.getElementById('recentFeedbackList').innerHTML.trim()) {
+        renderRecentFeedback(source);
+      }
+      renderRatingDistributionFromSubmittedFeedback();
+    });
+  </script>
+
+</body>
+</html>

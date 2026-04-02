@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockOverflow – Billers Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<style>
+
+:root {
+  --bg: #f5f6fa;
+  --card: #ffffff;
+  --sidebar: #1a1d2e;
+  --primary: #5b67ca;
+  --primary-light: #eef0fd;
+  --success: #22c55e;
+  --success-light: #dcfce7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  --text-primary: #1a1d2e;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 16px rgba(0,0,0,.07);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar-w: 252px;
+  --topbar-h: 58px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);display:flex;min-height:100vh;font-size:14px}
+/* SIDEBAR — Figma Exact */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;border-right:1px solid var(--border);
+  font-family:'Nunito Sans',sans-serif;
+}
+.sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sidebar-logo img { height: 30px; width: auto; display: block; }
+.sb-logo-icon{width:34px;height:34px;background:#4e7fd9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon svg{width:18px;height:18px}
+.sb-logo-text{font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;color:#092c4c;letter-spacing:-.2px}
+.sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+.sb-group{display:flex;flex-direction:column;gap:6px}
+.sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+.sb-divider{height:1px;background:var(--border);margin:4px 0}
+.sb-menus{display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+.sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+.sb-item.active{background:#fff6ee;color:#4e7fd9}
+.sb-item.active .sb-icon svg{stroke:#4e7fd9}
+.sb-item.active .sb-item-label{color:#4e7fd9}
+.sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+.sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-end-icon svg{width:10px;height:10px}
+.sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-dot-badge svg{width:10px;height:10px}
+/* MAIN */
+.main{margin-left:252px;flex:1;min-width:0}
+/* TOPBAR */
+.topbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:58px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.breadcrumb{font-size:12.5px;color:var(--text-secondary)}
+.breadcrumb span{color:var(--text-primary);font-weight:600}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;width:210px}
+.search-bar svg{width:13px;height:13px;color:var(--text-muted);flex-shrink:0}
+.search-bar input{border:none;background:transparent;outline:none;font-size:13px;color:var(--text-primary);font-family:inherit;width:100%}
+.search-bar input::placeholder{color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-icon-btn{width:35px;height:35px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .15s}
+.topbar-icon-btn:hover{background:var(--bg)}
+.topbar-icon-btn svg{width:15px;height:15px;color:var(--text-secondary)}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--danger);border-radius:50%;border:2px solid var(--card)}
+.topbar-avatar{width:33px;height:33px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* ─── BILLERS PAGE STYLES ─────────────────────── */
+.bl-content{padding:24px 28px 40px;max-width:1400px}
+.bl-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.bl-page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;line-height:27px;color:#212b36}
+.bl-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#646b72;margin-top:2px}
+
+/* Toolbar buttons */
+.bl-toolbar{display:flex;align-items:center;gap:8px}
+.bl-icon-btn{width:34px;height:34px;border:1px solid #e6eaed;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s}
+.bl-icon-btn:hover{background:#f5f6fa}
+.bl-icon-btn img{width:20px;height:20px;object-fit:contain}
+.bl-btn-primary{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#2e6bc5;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;transition:background .14s}
+.bl-btn-primary:hover{background:#2460b0}
+.bl-btn-primary svg{width:13px;height:13px}
+
+/* Table card */
+.bl-table-card{background:#fff;border:1px solid #e6eaed;border-radius:5px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden}
+
+/* Table toolbar */
+.bl-table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #e6eaed;gap:16px}
+.bl-search{display:flex;align-items:center;gap:8px;border:1px solid #e6eaed;border-radius:5px;padding:4px 8px;width:200px;background:#fff}
+.bl-search svg{width:14px;height:14px;color:#a6aaaf;flex-shrink:0}
+.bl-search input{border:none;outline:none;font-family:'Nunito Sans',sans-serif;font-size:14px;color:#212b36;background:transparent;width:100%}
+.bl-search input::placeholder{color:#a6aaaf;font-weight:700}
+.bl-filter-group{display:flex;align-items:center;gap:8px;margin-left:auto}
+.bl-filter-btn{display:flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid #e6eaed;border-radius:5px;background:#fff;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#212b36;transition:background .14s}
+.bl-filter-btn:hover{background:#f5f6fa}
+.bl-filter-btn svg{width:14px;height:14px;color:#646b72}
+
+/* Table proper */
+.bl-table-wrap{overflow-x:auto}
+table.bl-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:13px}
+table.bl-table thead tr{background:#f2f2f2}
+table.bl-table th{padding:8px 15px;text-align:left;font-size:11px;font-weight:700;color:#212b36;white-space:nowrap;border-bottom:1px solid #e6eaed;height:33px;letter-spacing:.5px;text-transform:uppercase}
+table.bl-table th.th-check{width:60px;padding:8px 12px}
+table.bl-table th .sort-icon{display:inline-flex;align-items:center;gap:4px}
+table.bl-table th .sort-icon svg{width:10px;height:10px;color:#646b72;vertical-align:middle}
+table.bl-table td{padding:10px 15px;border-bottom:1px solid #e6eaed;vertical-align:middle;height:50px;background:#fff}
+table.bl-table td:first-child{width:60px}
+table.bl-table tbody tr:last-child td{border-bottom:none}
+table.bl-table tbody tr:hover td{background:#fafafa}
+
+/* Checkbox */
+.bl-checkbox{width:16px;height:16px;border:1px solid #e6eaed;border-radius:5px;background:#fff;appearance:none;-webkit-appearance:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.bl-checkbox:checked{background:#2e6bc5;border-color:#2e6bc5}
+.bl-checkbox:checked::after{content:"";display:block;width:9px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+
+/* Biller cell with avatar */
+.biller-cell{display:flex;align-items:center;gap:8px}
+.biller-avatar{width:32px;height:32px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;border:none}
+.biller-name{font-weight:700;color:#212b36;font-size:13px}
+
+/* Text cell */
+.cell-text{font-weight:600;color:#646b72;font-size:13px}
+
+/* Status badge */
+.bl-status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-weight:600;font-size:11px}
+.bl-status-active{background:#dcfce7;color:#15803d}
+.bl-status-inactive{background:#fee2e2;color:#b91c1c}
+
+/* Action buttons */
+.action-cell{display:flex;align-items:center;gap:4px}
+.act-btn{width:28px;height:28px;border:1px solid #e6eaed;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s;flex-shrink:0}
+.act-btn:hover{background:#f5f6fa}
+.act-btn.view{background:#f9fafb}
+.act-btn svg{width:13px;height:13px;color:#646b72}
+.act-btn.del svg{color:#ef4444}
+.act-btn.del:hover{background:#fee2e2;border-color:#fca5a5}
+.act-btn.edit:hover{background:#eef0fd}
+
+/* Table footer / pagination */
+.bl-table-footer{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:#fff;border-top:1px solid #e6eaed}
+.bl-rows-per-page{display:flex;align-items:center;gap:8px;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#646b72}
+.bl-rpp-select{display:flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid #e6eaed;border-radius:5px;cursor:pointer;background:#fff}
+.bl-rpp-select span{font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;color:#212b36}
+.bl-rpp-select svg{width:12px;height:12px;color:#646b72}
+.bl-pagination{display:flex;align-items:center;gap:15px}
+.bl-page-nav{width:16px;height:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#646b72;transition:color .15s}
+.bl-page-nav:hover{color:#212b36}
+.bl-page-nav svg{width:14px;height:14px}
+.bl-pages{display:flex;align-items:center;gap:8px}
+.bl-page-btn{width:24px;height:24px;border-radius:20px;border:1px solid #e6eaed;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;color:#646b72;transition:all .14s}
+.bl-page-btn:hover{background:#f5f6fa}
+.bl-page-btn.active{background:#2e6bc5;border-color:#2e6bc5;color:#fff}
+.bl-page-dots{font-size:12px;color:#646b72;display:flex;align-items:center}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal-content{background:#fff;border-radius:8px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid #e6eaed}
+.modal-title{font-size:16px;font-weight:700;color:#212b36}
+.modal-close{width:28px;height:28px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#646b72;font-size:20px}
+.modal-body{padding:20px}
+.modal-footer{display:flex;gap:12px;justify-content:flex-end;padding:15px 20px;border-top:1px solid #e6eaed;background:#f9fafb}
+
+/* Form in modal */
+.form-group{display:flex;flex-direction:column;margin-bottom:16px}
+.form-label{font-size:12px;font-weight:700;color:#212b36;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-input{border:1px solid #e6eaed;border-radius:5px;padding:8px 12px;font-family:'Nunito Sans',sans-serif;font-size:13px;color:#212b36;background:#fff;transition:border-color .15s;outline:none}
+.form-input:focus{border-color:#2e6bc5;box-shadow:0 0 0 3px rgba(46,107,197,.1)}
+.form-input::placeholder{color:#a6aaaf}
+
+.btn-secondary{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#e6e6e6;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#212b36;white-space:nowrap;transition:background .14s}
+.btn-secondary:hover{background:#d4d4d4}
+.btn-danger{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#ef4444;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;transition:background .14s}
+.btn-danger:hover{background:#dc2626}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR — Figma Exact -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <!-- MAIN -->
+    <div class="sb-group">
+      <div class="sb-group-label">Main</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retialer_Dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Retailer Dashboard</span>
+          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- INVENTORY -->
+    <div class="sb-group">
+      <div class="sb-group-label">Inventory</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Product_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5L14.5 5v6L8 14.5 1.5 11V5L8 1.5z"/><path d="M1.5 5L8 8.5 14.5 5M8 8.5V14.5"/></svg></span>
+          <span class="sb-item-label">Products</span>
+        </a>
+        <a class="sb-item" href="Add_New_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="8" y1="4.5" x2="8" y2="11.5"/><line x1="4.5" y1="8" x2="11.5" y2="8"/></svg></span>
+          <span class="sb-item-label">Add Product</span>
+        </a>
+        <a class="sb-item" href="Edit_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l3 3-8.5 8.5H1.5V10.5l9-8z"/><line x1="8.5" y1="4.5" x2="11.5" y2="7.5"/></svg></span>
+          <span class="sb-item-label">Edit Product</span>
+        </a>
+        <a class="sb-item" href="Inventory_Overview.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+          <span class="sb-item-label">Inventory Overview</span>
+        </a>
+        <a class="sb-item" href="Low_Stocks.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/><polyline points="10.5,4 13.5,4 13.5,7"/></svg></span>
+          <span class="sb-item-label">Low Stocks</span>
+        </a>
+        <a class="sb-item" href="Multi_warehouse_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/><line x1="1" y1="7" x2="15" y2="7"/></svg></span>
+          <span class="sb-item-label">Multi Store View</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- STOCK -->
+    <div class="sb-group">
+      <div class="sb-group-label">Stock</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="stock_adjustment.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-item-label">Stock Adjustment</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PEOPLES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Peoples</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Customer_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Customers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="billers.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-item-label">Billers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="supplier-list.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-item-label">Suppliers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PURCHASES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Purchases</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Reorder_Recommendations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
+          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+        </a>
+        <a class="sb-item" href="Create_Purchase_Order.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-item-label">Purchase Order</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="Returns_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
+          <span class="sb-item-label">Purchase Return</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SETTINGS -->
+    <div class="sb-group">
+      <div class="sb-group-label">Settings</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">Dashboard / <span>Billers</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="topbar-avatar">RS</div>
+    </div>
+  </header>
+
+<!-- BILLERS MAIN -->
+<div class="main">
+  <div class="bl-content">
+
+    <!-- PAGE HEADER -->
+    <div class="bl-page-header">
+      <div>
+        <div class="bl-page-title">Billers</div>
+        <div class="bl-breadcrumb">Dashboard > Billers</div>
+      </div>
+      <div class="bl-toolbar">
+        <button class="bl-btn-primary" onclick="openAddModal()">
+          <svg viewBox="0 0 13 13" fill="none" stroke="#fff" stroke-width="1.5">
+            <circle cx="6.5" cy="6.5" r="5.5"/>
+            <line x1="6.5" y1="4" x2="6.5" y2="9"/>
+            <line x1="4" y1="6.5" x2="9" y2="6.5"/>
+          </svg>
+          Add Biller
+        </button>
+      </div>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="bl-table-card">
+
+      <!-- Table Toolbar -->
+      <div class="bl-table-toolbar">
+        <div class="bl-search">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="6" cy="6" r="4.5"/>
+            <line x1="9.5" y1="9.5" x2="13" y2="13"/>
+          </svg>
+          <input type="text" placeholder="Search" id="searchInput" oninput="filterTable()"/>
+        </div>
+        <div class="bl-filter-group">
+          <div class="bl-filter-btn" onclick="toggleFilter('status')">
+            Status
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,5 7,9 11,5"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="bl-table-wrap">
+        <table class="bl-table" id="billersTable">
+          <thead>
+            <tr>
+              <th class="th-check">
+                <input type="checkbox" class="bl-checkbox" id="selectAll" onchange="toggleAll(this)"/>
+              </th>
+              <th>Code</th>
+              <th>Biller</th>
+              <th>Company Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Country</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="billersTableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer / Pagination -->
+      <div class="bl-table-footer">
+        <div class="bl-rows-per-page">
+          Row Per Page
+          <div class="bl-rpp-select">
+            <span id="rppVal">10</span>
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,4 6,8 10,4"/></svg>
+          </div>
+          Entries
+        </div>
+        <div class="bl-pagination" id="paginationContainer">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="billerModal" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Add New Biller</h2>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="billerForm">
+        <div class="form-group">
+          <label class="form-label">Biller Name</label>
+          <input type="text" id="billerName" class="form-input" placeholder="Full name" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company Name</label>
+          <input type="text" id="companyName" class="form-input" placeholder="Company name" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="email" class="form-input" placeholder="email@example.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" id="phone" class="form-input" placeholder="+1 (555) 000-0000" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Country</label>
+          <input type="text" id="country" class="form-input" placeholder="Country name" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="status" class="form-input" required>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="bl-btn-primary" onclick="saveBiller()">Save Biller</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────────────
+// DATA
+// ──────────────────────────────────────────────────────
+const billers = [
+  { id: 1, code: 'BI001', name: 'Shaun Farley',    company: 'GreenTech Industries',  email: 'shaun@example.com',     phone: '+18647961254', country: 'USA',       status: 'active',   avatar: '#4CAF50' },
+  { id: 2, code: 'BI002', name: 'Jenny Ellis',     company: 'BlueSky Logistics',     email: 'jenny@example.com',     phone: '+13197521863', country: 'Germany',   status: 'active',   avatar: '#2196F3' },
+  { id: 3, code: 'BI003', name: 'Leon Baxter',     company: 'EcoFarm Organics',      email: 'leon@example.com',      phone: '+18496275831', country: 'Japan',     status: 'active',   avatar: '#FF9800' },
+  { id: 4, code: 'BI004', name: 'Karen Flores',    company: 'SmartTech Solutions',   email: 'karen@example.com',     phone: '+18731498524', country: 'Austria',   status: 'active',   avatar: '#E91E63' },
+  { id: 5, code: 'BI005', name: 'Michael Dawson',  company: 'Fresh Supplies',        email: 'michael@example.com',   phone: '+12876928738', country: 'Turkey',    status: 'active',   avatar: '#9C27B0' },
+  { id: 6, code: 'BI006', name: 'Karen Galvan',    company: 'BrightSource Lighting', email: 'karen@example.com',     phone: '+17534896148', country: 'Mexico',    status: 'active',   avatar: '#F44336' },
+  { id: 7, code: 'BI007', name: 'Thomas Ward',     company: 'Global Tech Industries',email: 'thomas@example.com',    phone: '+16482479624', country: 'France',    status: 'active',   avatar: '#00BCD4' },
+  { id: 8, code: 'BI008', name: 'Aliza Duncan',    company: 'HealthWell Pharma',     email: 'aliza@example.com',     phone: '+13175964827', country: 'Greece',    status: 'active',   avatar: '#4CAF50' },
+  { id: 9, code: 'BI009', name: 'James Higham',    company: 'HomeStyle Furnishings', email: 'james@example.com',     phone: '+13875196482', country: 'Italy',     status: 'active',   avatar: '#FF5722' },
+  { id: 10, code: 'BI010', name: 'Sarah Mitchell', company: 'Quantum Solutions',     email: 'sarah@example.com',     phone: '+44201234567', country: 'UK',        status: 'active',   avatar: '#673AB7' },
+];
+
+let currentPage = 1;
+let rowsPerPage = 10;
+let filteredBillers = [...billers];
+let editingId = null;
+
+// ──────────────────────────────────────────────────────
+// TABLE FUNCTIONS
+// ──────────────────────────────────────────────────────
+function renderTable() {
+  const tbody = document.getElementById('billersTableBody');
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageData = filteredBillers.slice(start, end);
+
+  tbody.innerHTML = pageData.map(b => `
+    <tr>
+      <td><input type="checkbox" class="bl-checkbox row-check"/></td>
+      <td><span class="cell-text">${b.code}</span></td>
+      <td>
+        <div class="biller-cell">
+          <div class="biller-avatar" style="background:${b.avatar}">${b.name.charAt(0)}</div>
+          <span class="biller-name">${b.name}</span>
+        </div>
+      </td>
+      <td><span class="cell-text">${b.company}</span></td>
+      <td><span class="cell-text">${b.email}</span></td>
+      <td><span class="cell-text">${b.phone}</span></td>
+      <td><span class="cell-text">${b.country}</span></td>
+      <td><span class="bl-status-badge bl-status-${b.status}">${b.status === 'active' ? '✓ Active' : '✗ Inactive'}</span></td>
+      <td>
+        <div class="action-cell">
+          <div class="act-btn view" title="View" onclick="viewBiller(${b.id})">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+              <path d="M1 7s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5z"/>
+              <circle cx="7" cy="7" r="2"/>
+            </svg>
+          </div>
+          <div class="act-btn edit" title="Edit" onclick="editBiller(${b.id})">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+              <path d="M9.5 1.5l3 3-8 8H1.5V9.5l8-8z"/>
+              <line x1="7.5" y1="3.5" x2="10.5" y2="6.5"/>
+            </svg>
+          </div>
+          <div class="act-btn del" title="Delete" onclick="deleteBiller(${b.id})">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+              <polyline points="1,3 13,3"/>
+              <path d="M4.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M5 3v8.5M9 3v8.5M2.5 3l.7 9a1 1 0 001 .9h5.6a1 1 0 001-.9l.7-9"/>
+            </svg>
+          </div>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const totalPages = Math.ceil(filteredBillers.length / rowsPerPage);
+  const container = document.getElementById('paginationContainer');
+
+  let html = `
+    <div class="bl-page-nav" onclick="goPage(${currentPage - 1})" title="Previous">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,2 4,7 9,12"/></svg>
+    </div>
+    <div class="bl-pages">
+  `;
+
+  const visiblePages = [];
+  for (let i = 1; i <= Math.min(3, totalPages); i++) visiblePages.push(i);
+  const showEllipsis = totalPages > 4;
+  const showLast = totalPages > 3;
+
+  visiblePages.forEach(p => {
+    html += `<div class="bl-page-btn${currentPage===p?' active':''}" onclick="goPage(${p})">${p}</div>`;
+  });
+
+  if (showEllipsis) {
+    html += `<span class="bl-page-dots">…</span>`;
+  }
+
+  if (showLast && !visiblePages.includes(totalPages)) {
+    html += `<div class="bl-page-btn${currentPage===totalPages?' active':''}" onclick="goPage(${totalPages})">${totalPages}</div>`;
+  }
+
+  html += `
+    </div>
+    <div class="bl-page-nav" onclick="goPage(${currentPage + 1})" title="Next">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="5,2 10,7 5,12"/></svg>
+    </div>
+  `;
+  container.innerHTML = html;
+}
+
+function goPage(p) {
+  const totalPages = Math.ceil(filteredBillers.length / rowsPerPage);
+  if (p < 1 || p > totalPages) return;
+  currentPage = p;
+  renderTable();
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  filteredBillers = billers.filter(b =>
+    (b.code || '').toLowerCase().includes(q) ||
+    (b.name || '').toLowerCase().includes(q) ||
+    (b.company || '').toLowerCase().includes(q) ||
+    (b.email || '').toLowerCase().includes(q) ||
+    (b.phone || '').includes(q) ||
+    (b.country || '').toLowerCase().includes(q)
+  );
+  currentPage = 1;
+  renderTable();
+}
+
+function toggleAll(cb) {
+  document.querySelectorAll('.row-check').forEach(c => c.checked = cb.checked);
+}
+
+// ──────────────────────────────────────────────────────
+// MODAL FUNCTIONS
+// ──────────────────────────────────────────────────────
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Biller';
+  document.getElementById('billerForm').reset();
+  document.getElementById('billerModal').classList.add('active');
+}
+
+function editBiller(id) {
+  if(window.event) window.event.stopPropagation();
+  const biller = billers.find(b => b.id === id);
+  if (!biller) return;
+  
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Biller';
+  document.getElementById('billerName').value = biller.name;
+  document.getElementById('companyName').value = biller.company;
+  document.getElementById('email').value = biller.email;
+  document.getElementById('phone').value = biller.phone;
+  document.getElementById('country').value = biller.country;
+  document.getElementById('status').value = biller.status;
+  document.getElementById('billerModal').classList.add('active');
+}
+
+function closeModal(event) {
+  if (event && event.target.id !== 'billerModal') return;
+  document.getElementById('billerModal').classList.remove('active');
+  editingId = null;
+}
+
+function saveBiller() {
+  const name = document.getElementById('billerName').value.trim();
+  const company = document.getElementById('companyName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const country = document.getElementById('country').value.trim();
+  const status = document.getElementById('status').value;
+
+  if (!name || !company || !email || !phone || !country) {
+    alert('Please fill in all fields');
+    return;
+  }
+
+  if (editingId) {
+    // Edit existing
+    const biller = billers.find(b => b.id === editingId);
+    if (biller) {
+      biller.name = name;
+      biller.company = company;
+      biller.email = email;
+      biller.phone = phone;
+      biller.country = country;
+      biller.status = status;
+    }
+  } else {
+    // Add new
+    const newCode = 'BI' + String(billers.length + 1).padStart(3, '0');
+    const colors = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63', '#9C27B0', '#F44336', '#00BCD4', '#673AB7'];
+    const newBiller = {
+      id: Math.max(...billers.map(b => b.id)) + 1,
+      code: newCode,
+      name: name,
+      company: company,
+      email: email,
+      phone: phone,
+      country: country,
+      status: status,
+      avatar: colors[Math.floor(Math.random() * colors.length)]
+    };
+    billers.unshift(newBiller);
+  }
+
+  filteredBillers = [...billers];
+  currentPage = 1;
+  renderTable();
+  closeModal();
+  showNotification(editingId ? 'Biller updated successfully!' : 'Biller added successfully!');
+}
+
+function deleteBiller(id) {
+  if(window.event) window.event.stopPropagation();
+  if (!confirm('Delete this biller?')) return;
+  const idx = billers.findIndex(b => b.id === id);
+  if (idx !== -1) billers.splice(idx, 1);
+  filteredBillers = [...billers];
+  currentPage = 1;
+  renderTable();
+  showNotification('Biller deleted successfully!');
+}
+
+function viewBiller(id) {
+  if(window.event) window.event.stopPropagation();
+  const biller = billers.find(b => b.id === id);
+  if (biller) {
+    alert(`${biller.name}\n${biller.company}\n${biller.email}\n${biller.phone}\n${biller.country}\nStatus: ${biller.status}`);
+  }
+}
+
+function toggleFilter(type) {
+  alert('Filter by ' + type + ' - To be implemented');
+}
+
+function showNotification(msg) {
+  alert(msg);
+}
+
+function setSbActive(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('.sb-item[href="billers.html"]').classList.add('active');
+  renderTable();
+});
+</script>
+</body>
+</html>

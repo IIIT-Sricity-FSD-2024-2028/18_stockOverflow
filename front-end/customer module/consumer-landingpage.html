@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow - Browse Products</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --sidebar-bg: #ffffff; --card-bg: #ffffff;
+      --border: #e8e9f0; --text-primary: #000000; --text-muted: #6b7280;
+      --accent: #2563eb; --accent-light: #eef2ff;
+      --green: #10b981; --green-light: #d1fae5;
+      --yellow: #f59e0b; --yellow-light: #fef3c7;
+      --red: #ef4444; --red-light: #fee2e2;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 240px; min-height: 100vh; background: var(--sidebar-bg);
+      display: flex; flex-direction: column; flex-shrink: 0;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      border-right: 1px solid var(--border);
+    }
+    .sidebar-logo {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      min-height: 66px;
+    }
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .nav-group-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 1px; color: var(--text-muted);
+      padding: 16px 24px 6px; text-transform: uppercase;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 24px;
+      color: #808080; font-size: 13.5px; cursor: pointer;
+      border-left: 3px solid transparent; text-decoration: none;
+    }
+    .nav-item:hover { background: #f0f0f0; color: #000000; }
+    .nav-item.active { background: #e8f1ff; color: #2563eb; border-left-color: var(--accent); }
+
+    .main-wrap { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .header {
+      height: 60px; background: var(--card-bg); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 28px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .header-title { font-size: 20px; font-weight: 700; }
+    .header-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .header-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--text-muted);
+      border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .header-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .page-content { padding: 24px 28px; flex: 1; }
+    .hero {
+      border: 1px solid var(--border); border-radius: 16px;
+      background: linear-gradient(130deg, #f7fbff 0%, #edf4ff 45%, #f5f9ff 100%);
+      padding: 30px; display: flex; justify-content: space-between; align-items: center; gap: 24px;
+      margin-bottom: 24px;
+    }
+    .hero-text { max-width: 580px; }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+    }
+    .hero-title {
+      font-size: 36px; line-height: 1.15; letter-spacing: -0.6px; font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .hero-subtitle {
+      color: var(--text-muted); font-size: 14px; line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .hero-cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .cta-text-link {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      align-self: center;
+    }
+    .cta-text-link:hover { text-decoration: underline; }
+    .cta-secondary {
+      border: 1px solid var(--border); border-radius: 10px; padding: 11px 18px;
+      font-size: 13px; font-weight: 700; background: #fff; color: var(--text-muted); cursor: pointer;
+    }
+    .cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-chip {
+      min-width: 220px; border: 1px solid #dbe6ff; border-radius: 12px;
+      background: #ffffffd9; padding: 16px;
+    }
+    .hero-chip-title { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .hero-chip-value { font-size: 28px; font-weight: 800; color: var(--accent); }
+    .hero-chip-sub { margin-top: 4px; font-size: 12px; color: #1f2937; }
+
+    .products-section { border: 1px solid var(--border); border-radius: 16px; background: var(--card-bg); padding: 20px; }
+    .products-section + .products-section { margin-top: 18px; }
+    .section-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 16px; margin-bottom: 18px;
+    }
+    .section-title { font-size: 24px; font-weight: 900; letter-spacing: -.5px; }
+    .section-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+    .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 1280px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 860px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) {
+      .products-grid { grid-template-columns: 1fr; }
+      .hero { flex-direction: column; align-items: flex-start; }
+      .main-wrap { margin-left: 0; }
+      .sidebar { position: static; width: 100%; min-height: auto; }
+      .page-content { padding: 16px; }
+    }
+
+    .prod-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden; transition: box-shadow .2s, transform .12s;
+    }
+    .prod-card:hover { box-shadow: 0 8px 18px rgba(37,99,235,.14); transform: translateY(-3px); }
+    .prod-img-area {
+      height: 150px; background: linear-gradient(135deg, #f0f0ff, #e8e8ff);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .prod-img-photo { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
+    .img-fallback {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      font-size: 46px;
+    }
+    .stock-badge {
+      position: absolute; top: 10px; right: 10px;
+      font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 20px;
+    }
+    .sb-available { background: var(--green-light); color: #065f46; }
+    .sb-low { background: var(--yellow-light); color: #78350f; }
+    .sb-out { background: var(--red-light); color: #7f1d1d; }
+    .prod-body { padding: 14px 14px 12px; }
+    .prod-meta { font-size: 10px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+    .prod-name { font-size: 14px; font-weight: 700; margin-bottom: 8px; line-height: 1.35; min-height: 38px; }
+    .prod-price { font-size: 18px; font-weight: 900; color: var(--accent); margin-bottom: 4px; }
+    .prod-stock { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+    .prod-stock.low { color: var(--yellow); font-weight: 600; }
+    .prod-stock.out { color: var(--red); font-weight: 600; }
+    .view-btn {
+      width: 100%; padding: 10px; border: none; background: var(--accent-light);
+      color: var(--accent); border-radius: 8px; font-size: 12.5px; font-weight: 700;
+      cursor: pointer;
+    }
+    .view-btn:hover { background: var(--accent); color: #fff; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"></div>
+    <nav style="flex:1;padding:12px 0;">
+      <div class="nav-group-label">Main Menu</div>
+      <a class="nav-item active" href="consumer-landingpage.html">Products</a>
+      <a class="nav-item" href="productsearch.html">Search</a>
+      <a class="nav-item" href="orders.html">Orders</a>
+      <a class="nav-item" href="return-management.html">Returns</a>
+      <a class="nav-item" href="restockalert.html">Alerts</a>
+    </nav>
+      <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
+      <button type="button" class="sidebar-logout-btn" onclick="window.location.href='../biller module/index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="header">
+      <div>
+        <div class="header-title">Discover Products</div>
+        <div class="header-sub">Trending picks and fresh arrivals from retailer inventory</div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn" onclick="window.location.href='orders.html'">My Orders</button>
+        <button class="header-btn" onclick="window.location.href='../index.html'">Logout</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <section class="hero">
+        <div class="hero-text">
+          <div class="hero-eyebrow">Curated Storefront</div>
+          <h1 class="hero-title">Explore the Full Retailer Catalog, Updated Live</h1>
+          <p class="hero-subtitle">
+            Browse every product available from retailer inventory in one place.
+            Every card here is generated directly from shared retailer product data.
+          </p>
+          <div class="hero-cta-row">
+            <a class="cta-text-link" href="#allProductsContainer">View All Products</a>
+            <a class="cta-secondary" href="productsearch.html">Advanced Search</a>
+          </div>
+        </div>
+        <div class="hero-chip">
+          <div class="hero-chip-title">Live Catalog</div>
+          <div class="hero-chip-value" id="productCountHero">0</div>
+          <div class="hero-chip-sub">products available now</div>
+        </div>
+      </section>
+
+      <section class="products-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">All Products</h2>
+            <p class="section-sub">Live retailer inventory - <span id="allCount">0</span> items</p>
+          </div>
+        </div>
+        <div class="products-grid" id="allProductsContainer"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/mockData.js"></script>
+  <script src="app-flow.js"></script>
+  <script src="../retailer module/common-products.js"></script>
+  <script>
+    function renderLandingSections() {
+      const allContainer = document.getElementById('allProductsContainer');
+      const allCount = document.getElementById('allCount');
+      const heroCount = document.getElementById('productCountHero');
+
+      if (!window.RetailerProductsData || !window.RetailerProductsData.masterProducts) {
+        allContainer.innerHTML = '<p>Unable to load product data.</p>';
+        return;
+      }
+
+      const allProducts = window.RetailerProductsData.masterProducts;
+      heroCount.textContent = allProducts.length;
+
+      allCount.textContent = allProducts.length;
+      allContainer.innerHTML = '';
+
+      allProducts.forEach(function(product) {
+        allContainer.appendChild(createProductCard(product));
+      });
+    }
+
+    function createProductCard(product) {
+      const stockPercent = (product.qty / product.max) * 100;
+      let stockStatus = 'available';
+      let statusText = 'Available';
+      let statusBadgeClass = 'sb-available';
+
+      if (product.qty === 0) {
+        stockStatus = 'out';
+        statusText = 'Out of Stock';
+        statusBadgeClass = 'sb-out';
+      } else if (stockPercent <= 20) {
+        stockStatus = 'low';
+        statusText = 'Low Stock';
+        statusBadgeClass = 'sb-low';
+      }
+
+      const card = document.createElement('div');
+      card.className = 'prod-card';
+      card.dataset.sku = product.sku;
+      card.innerHTML = `
+        <div class="prod-img-area">
+          <img class="prod-img-photo" src="${product.productImg}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+          <div class="img-fallback" style="display:none;">${product.emoji || '📦'}</div>
+          <span class="stock-badge ${statusBadgeClass}">● ${statusText}</span>
+        </div>
+        <div class="prod-body">
+          <div class="prod-meta">${product.category} • ${product.brand}</div>
+          <div class="prod-name">${product.name}</div>
+          <div class="prod-price">$${product.priceUSD.toLocaleString()}</div>
+          <div class="prod-stock ${stockStatus !== 'available' ? stockStatus : ''}">${statusText} • ${product.qty} ${product.unit}s</div>
+          <button class="view-btn" data-sku="${product.sku}">View Details</button>
+        </div>
+      `;
+
+      return card;
+    }
+
+    document.addEventListener('DOMContentLoaded', renderLandingSections);
+  </script>
+
+</body>
+</html>
