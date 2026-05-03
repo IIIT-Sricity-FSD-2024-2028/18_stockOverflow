@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockOverflow – Stock Adjustment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<style>
+
+:root {
+  --bg: #f5f6fa;
+  --card: #ffffff;
+  --sidebar: #1a1d2e;
+  --primary: #5b67ca;
+  --primary-light: #eef0fd;
+  --success: #22c55e;
+  --success-light: #dcfce7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  --text-primary: #1a1d2e;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 16px rgba(0,0,0,.07);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar-w: 252px;
+  --topbar-h: 58px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);display:flex;min-height:100vh;font-size:14px}
+/* SIDEBAR — Figma Exact */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;border-right:1px solid var(--border);
+  font-family:'Nunito Sans',sans-serif;
+}
+.sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sidebar-logo img { height: 30px; width: auto; display: block; }
+.sb-logo-icon{width:34px;height:34px;background:#4e7fd9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon svg{width:18px;height:18px}
+.sb-logo-text{font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;color:#092c4c;letter-spacing:-.2px}
+.sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+.sb-group{display:flex;flex-direction:column;gap:6px}
+.sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+.sb-divider{height:1px;background:var(--border);margin:4px 0}
+.sb-menus{display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+.sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+.sb-item.active{background:#fff6ee;color:#4e7fd9}
+.sb-item.active .sb-icon svg{stroke:#4e7fd9}
+.sb-item.active .sb-item-label{color:#4e7fd9}
+.sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+.sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-end-icon svg{width:10px;height:10px}
+.sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-dot-badge svg{width:10px;height:10px}
+/* MAIN */
+.main{margin-left:252px;flex:1;min-width:0}
+/* TOPBAR */
+.topbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:58px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.breadcrumb{font-size:12.5px;color:var(--text-secondary)}
+.breadcrumb span{color:var(--text-primary);font-weight:600}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;width:210px}
+.search-bar svg{width:13px;height:13px;color:var(--text-muted);flex-shrink:0}
+.search-bar input{border:none;background:transparent;outline:none;font-size:13px;color:var(--text-primary);font-family:inherit;width:100%}
+.search-bar input::placeholder{color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-icon-btn{width:35px;height:35px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .15s}
+.topbar-icon-btn:hover{background:var(--bg)}
+.topbar-icon-btn svg{width:15px;height:15px;color:var(--text-secondary)}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--danger);border-radius:50%;border:2px solid var(--card)}
+.topbar-avatar{width:33px;height:33px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.date-badge{display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);cursor:pointer;background:var(--card);transition:background .15s;white-space:nowrap}
+.date-badge:hover{background:var(--bg)}
+.date-badge svg{width:13px;height:13px}
+/* CONTENT */
+.content{padding:22px 26px 40px;max-width:1180px}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.page-title{font-size:21px;font-weight:700;letter-spacing:-.4px}
+.page-subtitle{font-size:12.5px;color:var(--text-secondary);margin-top:3px}
+/* NOTIFICATION */
+.notification-bar{display:flex;align-items:center;gap:10px;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:18px;font-size:12.5px;color:#92400e}
+.notification-bar svg{width:13px;height:13px;flex-shrink:0;color:var(--warning)}
+.close-btn{margin-left:auto;cursor:pointer;opacity:.5;transition:opacity .15s}
+.close-btn:hover{opacity:1}
+/* SECTION LABEL */
+.section-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow-sm);transition:box-shadow .2s,transform .2s;cursor:pointer}
+.metric-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.metric-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.metric-icon svg{width:18px;height:18px}
+.metric-icon.blue{background:var(--primary-light)}.metric-icon.blue svg{color:var(--primary)}
+.metric-icon.red{background:var(--danger-light)}.metric-icon.red svg{color:var(--danger)}
+.metric-icon.green{background:var(--success-light)}.metric-icon.green svg{color:var(--success)}
+.metric-icon.orange{background:var(--warning-light)}.metric-icon.orange svg{color:var(--warning)}
+.metric-info{flex:1;min-width:0}
+.metric-label{font-size:12px;color:var(--text-secondary);font-weight:500;margin-bottom:5px}
+.metric-value-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.metric-value{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.badge{display:inline-flex;align-items:center;gap:2px;padding:2px 7px;border-radius:20px;font-size:10.5px;font-weight:600}
+.badge.up{background:var(--success-light);color:#15803d}
+.badge.down{background:var(--danger-light);color:#b91c1c}
+.badge.neutral{background:var(--border-light);color:var(--text-secondary)}
+.badge svg{width:9px;height:9px}
+/* FIN CARDS */
+.fin-cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.fin-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);transition:box-shadow .2s,transform .2s;cursor:pointer}
+.fin-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.fin-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.fin-card-val{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.fin-card-label{font-size:12px;color:var(--text-secondary);margin-top:2px;font-weight:500}
+.fin-card-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fin-card-icon svg{width:15px;height:15px}
+.fin-card-divider{border:none;border-top:1px solid var(--border-light);margin:0 0 9px}
+.fin-card-footer{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--text-secondary)}
+.fin-card-footer a{color:var(--primary);font-weight:600;cursor:pointer;text-decoration:none}
+/* LAYOUT */
+.two-col{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:14px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.two-col-eq{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.three-col-last{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
+.panel-header{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border-light);gap:9px}
+.panel-icon{width:28px;height:28px;border-radius:7px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.panel-icon svg{width:13px;height:13px;color:var(--primary)}
+.panel-title{font-size:14px;font-weight:700;flex:1;letter-spacing:-.2px}
+.panel-link{font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;white-space:nowrap}
+.panel-link:hover{text-decoration:underline}
+.filter-tabs{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.filter-tab{padding:4px 9px;font-size:11.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-right:1px solid var(--border)}
+.filter-tab:last-child{border-right:none}
+.filter-tab:hover{background:var(--bg)}
+.filter-tab.active{background:var(--primary);color:#fff}
+.panel-select{display:flex;align-items:center;gap:5px;padding:5px 9px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11.5px;color:var(--text-secondary);cursor:pointer;background:var(--card);transition:background .15s;white-space:nowrap}
+.panel-select:hover{background:var(--bg)}
+.panel-select svg{width:11px;height:11px}
+/* CHART */
+.chart-area{padding:14px 18px 18px}
+.chart-legend{display:flex;gap:18px;margin-bottom:14px}
+.legend-item{display:flex;align-items:center;gap:8px}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-val{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.legend-lbl{font-size:11px;color:var(--text-secondary)}
+/* ANIMATIONS */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.metric-card,.fin-card,.panel{animation:fadeInUp .32s ease both}
+.cards-grid .metric-card:nth-child(1){animation-delay:.04s}
+.cards-grid .metric-card:nth-child(2){animation-delay:.09s}
+.cards-grid .metric-card:nth-child(3){animation-delay:.14s}
+.cards-grid .metric-card:nth-child(4){animation-delay:.19s}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+
+/* ─── STOCK ADJUSTMENT PAGE STYLES ─────────────────────── */
+.sa-content{padding:24px 28px 40px;max-width:1200px}
+.sa-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.sa-page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;line-height:27px;color:#212b36}
+.sa-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#646b72;margin-top:2px}
+
+/* Toolbar buttons */
+.sa-toolbar{display:flex;align-items:center;gap:8px}
+.sa-icon-btn{width:34px;height:34px;border:1px solid #e6eaed;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s}
+.sa-icon-btn:hover{background:#f5f6fa}
+.sa-icon-btn img{width:20px;height:20px;object-fit:contain}
+.sa-btn-primary{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#2e6bc5;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;transition:background .14s}
+.sa-btn-primary:hover{background:#2460b0}
+.sa-btn-primary svg{width:13px;height:13px}
+.sa-btn-secondary{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#092c4c;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;transition:background .14s}
+.sa-btn-secondary:hover{background:#0a3660}
+.sa-btn-secondary svg{width:13px;height:13px}
+
+/* FORM CARD */
+.sa-form-card{background:#fff;border:1px solid #e6eaed;border-radius:8px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden;margin-bottom:24px}
+.sa-form-header{padding:16px 20px;border-bottom:1px solid #e6eaed;background:#f9fafb}
+.sa-form-title{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#212b36;margin:0}
+.sa-form-body{padding:20px}
+.sa-form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.sa-form-group{display:flex;flex-direction:column}
+.sa-form-group-full{grid-column:1/-1}
+.sa-form-label{font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;color:#212b36;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.sa-form-input{border:1px solid #e6eaed;border-radius:5px;padding:8px 12px;font-family:'Nunito Sans',sans-serif;font-size:14px;color:#212b36;background:#fff;transition:border-color .15s;outline:none}
+.sa-form-input:focus{border-color:#2e6bc5;box-shadow:0 0 0 3px rgba(46,107,197,.1)}
+.sa-form-input::placeholder{color:#a6aaaf}
+.sa-form-readonly{background:#f5f6fa;cursor:not-allowed}
+.sa-form-textarea{resize:vertical;min-height:80px;font-family:'Nunito Sans',sans-serif}
+.sa-radio-group{display:flex;gap:16px;align-items:center}
+.sa-radio-label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.sa-radio-label input{width:16px;height:16px;cursor:pointer;accent-color:#2e6bc5}
+.sa-radio-text{font-family:'Nunito Sans',sans-serif;font-size:13px;color:#212b36;font-weight:600}
+.sa-form-actions{display:flex;gap:12px;justify-content:flex-end;border-top:1px solid #e6eaed;padding-top:16px}
+
+/* HISTORY CARD */
+.sa-history-card{background:#fff;border:1px solid #e6eaed;border-radius:8px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden}
+.sa-history-header{padding:16px 20px;border-bottom:1px solid #e6eaed;background:#f9fafb}
+.sa-history-title{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#212b36;margin:0}
+
+/* Table card */
+.sa-table-card{background:#fff;border:1px solid #e6eaed;border-radius:5px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden}
+
+/* Table toolbar */
+.sa-table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #e6eaed;gap:16px}
+.sa-search{display:flex;align-items:center;gap:8px;border:1px solid #e6eaed;border-radius:5px;padding:4px 8px;width:200px;background:#fff}
+.sa-search svg{width:14px;height:14px;color:#a6aaaf;flex-shrink:0}
+.sa-search input{border:none;outline:none;font-family:'Nunito Sans',sans-serif;font-size:14px;color:#212b36;background:transparent;width:100%}
+.sa-search input::placeholder{color:#a6aaaf;font-weight:700}
+.sa-filter-group{display:flex;align-items:center;gap:8px;margin-left:auto}
+.sa-filter-btn{display:flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid #e6eaed;border-radius:5px;background:#fff;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#212b36;transition:background .14s}
+.sa-filter-btn:hover{background:#f5f6fa}
+.sa-filter-btn svg{width:14px;height:14px;color:#646b72}
+
+/* Table proper */
+.sa-table-wrap{overflow-x:auto}
+table.sa-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:13px}
+table.sa-table thead tr{background:#f2f2f2}
+table.sa-table th{padding:8px 15px;text-align:left;font-size:11px;font-weight:700;color:#212b36;white-space:nowrap;border-bottom:1px solid #e6eaed;height:33px;letter-spacing:.5px;text-transform:uppercase}
+table.sa-table th.th-check{width:60px;padding:8px 12px}
+table.sa-table th .sort-icon{display:inline-flex;align-items:center;gap:4px}
+table.sa-table th .sort-icon svg{width:10px;height:10px;color:#646b72;vertical-align:middle}
+table.sa-table td{padding:10px 15px;border-bottom:1px solid #e6eaed;vertical-align:middle;height:50px;background:#fff}
+table.sa-table td:first-child{width:60px}
+table.sa-table tbody tr:last-child td{border-bottom:none}
+table.sa-table tbody tr:hover td{background:#fafafa}
+
+/* Checkbox */
+.sa-checkbox{width:16px;height:16px;border:1px solid #e6eaed;border-radius:5px;background:#fff;appearance:none;-webkit-appearance:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.sa-checkbox:checked{background:#2e6bc5;border-color:#2e6bc5}
+.sa-checkbox:checked::after{content:"";display:block;width:9px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+
+/* Type/Status badge */
+.sa-type-add{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#dcfce7;color:#15803d;font-weight:600;font-size:11px}
+.sa-type-remove{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#fee2e2;color:#b91c1c;font-weight:600;font-size:11px}
+.sa-status-completed{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#dcfce7;color:#15803d;font-weight:600;font-size:11px}
+.sa-status-pending{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#fef3c7;color:#92400e;font-weight:600;font-size:11px}
+
+/* Action buttons */
+.action-cell{display:flex;align-items:center;gap:4px}
+.act-btn{width:28px;height:28px;border:1px solid #e6eaed;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s;flex-shrink:0}
+.act-btn:hover{background:#f5f6fa}
+.act-btn.view{background:#f9fafb}
+.act-btn svg{width:13px;height:13px;color:#646b72}
+.act-btn.del svg{color:#ef4444}
+.act-btn.del:hover{background:#fee2e2;border-color:#fca5a5}
+.act-btn.edit:hover{background:#eef0fd}
+
+/* Table footer / pagination */
+.sa-table-footer{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:#fff;border-top:1px solid #e6eaed}
+.sa-rows-per-page{display:flex;align-items:center;gap:8px;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#646b72}
+.sa-rpp-select{display:flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid #e6eaed;border-radius:5px;cursor:pointer;background:#fff}
+.sa-rpp-select span{font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;color:#212b36}
+.sa-rpp-select svg{width:12px;height:12px;color:#646b72}
+.sa-pagination{display:flex;align-items:center;gap:15px}
+.sa-page-nav{width:16px;height:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#646b72;transition:color .15s}
+.sa-page-nav:hover{color:#212b36}
+.sa-page-nav svg{width:14px;height:14px}
+.sa-pages{display:flex;align-items:center;gap:8px}
+.sa-page-btn{width:24px;height:24px;border-radius:20px;border:1px solid #e6eaed;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;color:#646b72;transition:all .14s}
+.sa-page-btn:hover{background:#f5f6fa}
+.sa-page-btn.active{background:#2e6bc5;border-color:#2e6bc5;color:#fff}
+.sa-page-dots{font-size:12px;color:#646b72;display:flex;align-items:center}
+
+/* Person cell */
+.person-cell{display:flex;align-items:center;gap:8px}
+.person-img{width:24px;height:24px;border-radius:3px;object-fit:cover;flex-shrink:0}
+.person-name{font-weight:600;color:#212b36;font-size:13px;white-space:nowrap}
+
+/* Text cell */
+.cell-text{font-weight:600;color:#646b72;font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR — Figma Exact -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <!-- MAIN -->
+    <div class="sb-group">
+      <div class="sb-group-label">Main</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retialer_Dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Retailer Dashboard</span>
+          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- INVENTORY -->
+    <div class="sb-group">
+      <div class="sb-group-label">Inventory</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Product_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5L14.5 5v6L8 14.5 1.5 11V5L8 1.5z"/><path d="M1.5 5L8 8.5 14.5 5M8 8.5V14.5"/></svg></span>
+          <span class="sb-item-label">Products</span>
+        </a>
+        <a class="sb-item" href="Add_New_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="8" y1="4.5" x2="8" y2="11.5"/><line x1="4.5" y1="8" x2="11.5" y2="8"/></svg></span>
+          <span class="sb-item-label">Add Product</span>
+        </a>
+        <a class="sb-item" href="Edit_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l3 3-8.5 8.5H1.5V10.5l9-8z"/><line x1="8.5" y1="4.5" x2="11.5" y2="7.5"/></svg></span>
+          <span class="sb-item-label">Edit Product</span>
+        </a>
+        <a class="sb-item" href="Inventory_Overview.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+          <span class="sb-item-label">Inventory Overview</span>
+        </a>
+        <a class="sb-item" href="Low_Stocks.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/><polyline points="10.5,4 13.5,4 13.5,7"/></svg></span>
+          <span class="sb-item-label">Low Stocks</span>
+        </a>
+        <a class="sb-item" href="Multi_warehouse_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/><line x1="1" y1="7" x2="15" y2="7"/></svg></span>
+          <span class="sb-item-label">Multi Store View</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- STOCK -->
+    <div class="sb-group">
+      <div class="sb-group-label">Stock</div>
+      <div class="sb-menus">
+        <a class="sb-item active" href="stock_adjustment.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-item-label">Stock Adjustment</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PEOPLES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Peoples</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Customer_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Customers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="billers.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-item-label">Billers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="supplier-list.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-item-label">Suppliers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PURCHASES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Purchases</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Reorder_Recommendations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
+          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+        </a>
+        <a class="sb-item" href="Create_Purchase_Order.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-item-label">Purchase Order</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="Returns_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
+          <span class="sb-item-label">Purchase Return</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SETTINGS -->
+    <div class="sb-group">
+      <div class="sb-group-label">Settings</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="logout()">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">Dashboard / <span>Stock Adjustment</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="topbar-avatar">RS</div>
+    </div>
+  </header>
+
+<!-- STOCK ADJUSTMENT MAIN -->
+<div class="main">
+  <div class="sa-content">
+
+    <!-- PAGE HEADER -->
+    <div class="sa-page-header">
+      <div>
+        <div class="sa-page-title">Stock Adjustment</div>
+        <div class="sa-breadcrumb">Dashboard > Stock Adjustment</div>
+      </div>
+      <div class="sa-toolbar">
+        <button class="sa-btn-secondary" onclick="exportAdjustments()">
+          <svg viewBox="0 0 13 13" fill="none" stroke="#fff" stroke-width="1.5">
+            <path d="M1.5 8.5V11c0 .83.67 1.5 1.5 1.5h7c.83 0 1.5-.67 1.5-1.5v-2.5"/>
+            <polyline points="3.5,5 6.5,8 9.5,5"/>
+            <line x1="6.5" y1="8" x2="6.5" y2="1.5"/>
+          </svg>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- ADJUSTMENT FORM CARD -->
+    <div class="sa-form-card">
+      <div class="sa-form-header">
+        <h3 class="sa-form-title">Create New Adjustment</h3>
+      </div>
+      <div class="sa-form-body">
+        <div class="sa-form-grid">
+          <!-- Product Selection -->
+          <div class="sa-form-group">
+            <label class="sa-form-label">Product</label>
+            <select id="productSelect" class="sa-form-input" onchange="updateStockInfo()">
+              <option value="">-- Select Product --</option>
+              <option value="PT001">Lenovo IdeaPad 3</option>
+              <option value="PT002">Beats Pro</option>
+              <option value="PT003">Nike Jordan</option>
+              <option value="PT004">Apple Series 5 Watch</option>
+              <option value="PT005">Amazon Echo Dot</option>
+              <option value="PT006">Sanford Chair Sofa</option>
+              <option value="PT007">Red Premium Satchel</option>
+              <option value="PT008">Iphone 14 Pro</option>
+              <option value="PT009">Gaming Chair</option>
+              <option value="PT010">Borealis Backpack</option>
+            </select>
+          </div>
+
+          <!-- Warehouse Selection -->
+          <div class="sa-form-group">
+            <label class="sa-form-label">Warehouse</label>
+            <select id="warehouseSelect" class="sa-form-input" onchange="updateStockInfo()">
+              <option value="">-- Select Warehouse --</option>
+              <option value="Lavish Warehouse">Lavish Warehouse</option>
+              <option value="Quaint Warehouse">Quaint Warehouse</option>
+              <option value="Traditional Warehouse">Traditional Warehouse</option>
+              <option value="Cool Warehouse">Cool Warehouse</option>
+              <option value="Overflow Warehouse">Overflow Warehouse</option>
+              <option value="Nova Storage Hub">Nova Storage Hub</option>
+              <option value="Retail Supply Hub">Retail Supply Hub</option>
+              <option value="EdgeWare Solutions">EdgeWare Solutions</option>
+              <option value="North Zone Warehouse">North Zone Warehouse</option>
+              <option value="Fulfillment Hub">Fulfillment Hub</option>
+            </select>
+          </div>
+
+          <!-- Current Stock (Read-only) -->
+          <div class="sa-form-group">
+            <label class="sa-form-label">Current Stock</label>
+            <input type="text" id="currentStockDisplay" class="sa-form-input sa-form-readonly" readonly value="0 units"/>
+          </div>
+
+          <!-- Adjustment Type -->
+          <div class="sa-form-group">
+            <label class="sa-form-label">Adjustment Type</label>
+            <div class="sa-radio-group">
+              <label class="sa-radio-label">
+                <input type="radio" name="adjustmentType" value="add" checked onchange="updateAdjustmentUI()"/>
+                <span class="sa-radio-text">Add Stock</span>
+              </label>
+              <label class="sa-radio-label">
+                <input type="radio" name="adjustmentType" value="remove" onchange="updateAdjustmentUI()"/>
+                <span class="sa-radio-text">Remove Stock</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Adjustment Quantity -->
+          <div class="sa-form-group">
+            <label class="sa-form-label">Quantity to Adjust</label>
+            <input type="number" id="adjustmentQty" class="sa-form-input" placeholder="0" min="0" value="0"/>
+          </div>
+
+          <!-- Reason -->
+          <div class="sa-form-group">
+            <label class="sa-form-label">Reason</label>
+            <select id="reasonSelect" class="sa-form-input">
+              <option value="">-- Select Reason --</option>
+              <option value="Recount">Physical Recount</option>
+              <option value="Damage">Damaged Goods</option>
+              <option value="Loss">Shrinkage/Loss</option>
+              <option value="Return">Customer Return</option>
+              <option value="Transfer">Inter-Warehouse Transfer</option>
+              <option value="Correction">Inventory Correction</option>
+              <option value="Expiry">Expired/Obsolete</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Notes -->
+          <div class="sa-form-group sa-form-group-full">
+            <label class="sa-form-label">Notes</label>
+            <textarea id="notesInput" class="sa-form-input sa-form-textarea" placeholder="Add any additional notes..." rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="sa-form-actions">
+          <button class="sa-btn-secondary" onclick="resetForm()">Reset</button>
+          <button class="sa-btn-primary" onclick="submitAdjustment()">Submit Adjustment</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADJUSTMENT HISTORY CARD -->
+    <div class="sa-history-card">
+      <div class="sa-history-header">
+        <h3 class="sa-history-title">Adjustment History</h3>
+      </div>
+
+      <!-- Table Toolbar -->
+      <div class="sa-table-toolbar">
+        <div class="sa-search">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="6" cy="6" r="4.5"/>
+            <line x1="9.5" y1="9.5" x2="13" y2="13"/>
+          </svg>
+          <input type="text" placeholder="Search adjustments..." id="searchInput" oninput="filterTable()"/>
+        </div>
+        <div class="sa-filter-group">
+          <div class="sa-filter-btn" onclick="toggleFilter('type')">
+            Type
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,5 7,9 11,5"/></svg>
+          </div>
+          <div class="sa-filter-btn" onclick="toggleFilter('status')">
+            Status
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,5 7,9 11,5"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="sa-table-wrap">
+        <table class="sa-table" id="adjustmentTable">
+          <thead>
+            <tr>
+              <th class="th-check">
+                <input type="checkbox" class="sa-checkbox" id="selectAll" onchange="toggleAll(this)"/>
+              </th>
+              <th>Product</th>
+              <th>Warehouse</th>
+              <th>Type</th>
+              <th>Quantity</th>
+              <th>Reason</th>
+              <th>Date</th>
+              <th>Adjusted By</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="adjustmentTableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer / Pagination -->
+      <div class="sa-table-footer">
+        <div class="sa-rows-per-page">
+          Row Per Page
+          <div class="sa-rpp-select">
+            <span id="rppVal">10</span>
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,4 6,8 10,4"/></svg>
+          </div>
+          Entries
+        </div>
+        <div class="sa-pagination" id="paginationContainer">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="api-config.js"></script>
+<script src="common-products.js"></script>
+<script>
+// ──────────────────────────────────────────────────────
+// PRODUCT INVENTORY DATA
+// ──────────────────────────────────────────────────────
+let productInventory = {
+  'PT001': { name: 'Lenovo IdeaPad 3',     stock: 100 },
+  'PT002': { name: 'Beats Pro',            stock: 140 },
+  'PT003': { name: 'Nike Jordan',          stock: 300 },
+  'PT004': { name: 'Apple Series 5 Watch', stock: 450 },
+  'PT005': { name: 'Amazon Echo Dot',      stock: 320 },
+  'PT006': { name: 'Sanford Chair Sofa',   stock: 650 },
+  'PT007': { name: 'Red Premium Satchel',  stock: 700 },
+  'PT008': { name: 'Iphone 14 Pro',        stock: 630 },
+  'PT009': { name: 'Gaming Chair',         stock: 410 },
+  'PT010': { name: 'Borealis Backpack',    stock: 550 },
+};
+productInventory = {};
+
+function initProductInventoryFromShared() {
+  const shared = window.RetailerProductsData;
+  if (!shared || !Array.isArray(shared.masterProducts)) return;
+
+  productInventory = {};
+  shared.masterProducts.forEach(function (p) {
+    productInventory[p.sku] = {
+      name: p.name,
+      stock: p.qty
+    };
+  });
+}
+
+function populateProductSelect() {
+  const productSelect = document.getElementById('productSelect');
+  if (!productSelect) return;
+
+  const keys = Object.keys(productInventory).sort();
+  productSelect.innerHTML = '<option value="">-- Select Product --</option>' + keys.map(function (sku) {
+    const product = productInventory[sku];
+    return '<option value="' + sku + '">' + product.name + ' (' + sku + ')</option>';
+  }).join('');
+}
+
+// ──────────────────────────────────────────────────────
+// ADJUSTMENT HISTORY DATA
+// ──────────────────────────────────────────────────────
+const adjustmentHistory = [];
+adjustmentHistory.splice(0, adjustmentHistory.length);
+
+let currentPage = 1;
+let rowsPerPage = 10;
+let filteredAdjustments = [...adjustmentHistory];
+
+// ──────────────────────────────────────────────────────
+// FORM FUNCTIONS
+// ──────────────────────────────────────────────────────
+function updateStockInfo() {
+  const productId = document.getElementById('productSelect').value;
+  const display = productId && productInventory[productId] 
+    ? productInventory[productId].stock + ' units' 
+    : '0 units';
+  document.getElementById('currentStockDisplay').value = display;
+}
+
+function updateAdjustmentUI() {
+  const type = document.querySelector('input[name="adjustmentType"]:checked').value;
+  // Could update UI based on type if needed
+}
+
+function resetForm() {
+  document.getElementById('productSelect').value = '';
+  document.getElementById('warehouseSelect').value = '';
+  document.getElementById('adjustmentQty').value = '0';
+  document.getElementById('reasonSelect').value = '';
+  document.getElementById('notesInput').value = '';
+  document.querySelector('input[name="adjustmentType"][value="add"]').checked = true;
+  updateStockInfo();
+}
+
+function submitAdjustment() {
+  const product = document.getElementById('productSelect').value;
+  const warehouse = document.getElementById('warehouseSelect').value;
+  const qty = parseInt(document.getElementById('adjustmentQty').value) || 0;
+  const reason = document.getElementById('reasonSelect').value;
+  const notes = document.getElementById('notesInput').value;
+  const type = document.querySelector('input[name="adjustmentType"]:checked').value;
+
+  if (!product || !warehouse || qty <= 0 || !reason) {
+    alert('Please fill in all required fields');
+    return;
+  }
+
+  const productName = productInventory[product].name;
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, ' ');
+  
+  const newAdjustment = {
+    id: adjustmentHistory.length + 1,
+    product: productName,
+    warehouse: warehouse,
+    type: type,
+    qty: qty,
+    reason: reason,
+    date: dateStr,
+    person: 'Current User',
+    personImg: 'https://www.figma.com/api/mcp/asset/70e2ee73-c607-4c1f-9c9a-0cbe445512f4',
+    status: 'completed',
+    notes: notes
+  };
+
+  adjustmentHistory.unshift(newAdjustment);
+  filteredAdjustments = [...adjustmentHistory];
+  currentPage = 1;
+  renderTable();
+  resetForm();
+  showNotification('Stock adjustment recorded successfully!');
+}
+
+function showNotification(msg) {
+  alert(msg); // Simple notification - could be replaced with toast
+}
+
+// ──────────────────────────────────────────────────────
+// TABLE FUNCTIONS
+// ──────────────────────────────────────────────────────
+function renderTable() {
+  const tbody = document.getElementById('adjustmentTableBody');
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageData = filteredAdjustments.slice(start, end);
+
+  if (!pageData.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="padding:28px;text-align:center;color:#6b7280;font-family:\'Nunito Sans\',sans-serif;">No stock adjustments recorded for this store yet.</td></tr>';
+    renderPagination();
+    return;
+  }
+
+  tbody.innerHTML = pageData.map(a => `
+    <tr>
+      <td><input type="checkbox" class="sa-checkbox row-check"/></td>
+      <td><span class="cell-text">${a.product}</span></td>
+      <td><span class="cell-text">${a.warehouse}</span></td>
+      <td><span class="sa-type-${a.type}">${a.type === 'add' ? '+ Add' : '- Remove'}</span></td>
+      <td><span class="cell-text">${a.qty} units</span></td>
+      <td><span class="cell-text">${a.reason}</span></td>
+      <td><span class="cell-text">${a.date}</span></td>
+      <td>
+        <div class="person-cell">
+          <img class="person-img" src="${a.personImg}" alt="${a.person}" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\'/>'" style="width:24px;height:24px;border-radius:3px"/>
+          <span class="person-name">${a.person}</span>
+        </div>
+      </td>
+      <td><span class="sa-status-${a.status}">${a.status === 'completed' ? '✓ Completed' : '⏳ Pending'}</span></td>
+      <td>
+        <div class="action-cell">
+          <div class="act-btn view" title="View" onclick="viewDetail(${a.id})">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+              <path d="M1 7s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5z"/>
+              <circle cx="7" cy="7" r="2"/>
+            </svg>
+          </div>
+          <div class="act-btn edit" title="Edit" onclick="editAdjustment(${a.id})">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+              <path d="M9.5 1.5l3 3-8 8H1.5V9.5l8-8z"/>
+              <line x1="7.5" y1="3.5" x2="10.5" y2="6.5"/>
+            </svg>
+          </div>
+          <div class="act-btn del" title="Delete" onclick="deleteAdjustment(${a.id})">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+              <polyline points="1,3 13,3"/>
+              <path d="M4.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M5 3v8.5M9 3v8.5M2.5 3l.7 9a1 1 0 001 .9h5.6a1 1 0 001-.9l.7-9"/>
+            </svg>
+          </div>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const totalPages = Math.ceil(filteredAdjustments.length / rowsPerPage);
+  const container = document.getElementById('paginationContainer');
+
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = `
+    <div class="sa-page-nav" onclick="goPage(${currentPage - 1})" title="Previous">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,2 4,7 9,12"/></svg>
+    </div>
+    <div class="sa-pages">
+  `;
+
+  const visiblePages = [];
+  for (let i = 1; i <= Math.min(3, totalPages); i++) visiblePages.push(i);
+  const showEllipsis = totalPages > 4;
+  const showLast = totalPages > 3;
+
+  visiblePages.forEach(p => {
+    html += `<div class="sa-page-btn${currentPage===p?' active':''}" onclick="goPage(${p})">${p}</div>`;
+  });
+
+  if (showEllipsis) {
+    html += `<span class="sa-page-dots">…</span>`;
+  }
+
+  if (showLast && !visiblePages.includes(totalPages)) {
+    html += `<div class="sa-page-btn${currentPage===totalPages?' active':''}" onclick="goPage(${totalPages})">${totalPages}</div>`;
+  }
+
+  html += `
+    </div>
+    <div class="sa-page-nav" onclick="goPage(${currentPage + 1})" title="Next">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="5,2 10,7 5,12"/></svg>
+    </div>
+  `;
+  container.innerHTML = html;
+}
+
+function goPage(p) {
+  const totalPages = Math.ceil(filteredAdjustments.length / rowsPerPage);
+  if (p < 1 || p > totalPages) return;
+  currentPage = p;
+  renderTable();
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  filteredAdjustments = adjustmentHistory.filter(a =>
+    a.product.toLowerCase().includes(q) ||
+    a.warehouse.toLowerCase().includes(q) ||
+    a.reason.toLowerCase().includes(q) ||
+    a.person.toLowerCase().includes(q) ||
+    a.notes.toLowerCase().includes(q)
+  );
+  currentPage = 1;
+  renderTable();
+}
+
+function toggleAll(cb) {
+  document.querySelectorAll('.row-check').forEach(c => c.checked = cb.checked);
+}
+
+function deleteAdjustment(id) {
+  if (!confirm('Delete this adjustment record?')) return;
+  const idx = adjustmentHistory.findIndex(a => a.id === id);
+  if (idx !== -1) adjustmentHistory.splice(idx, 1);
+  filteredAdjustments = adjustmentHistory.filter(a =>
+    a.product.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()) ||
+    a.warehouse.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase())
+  );
+  currentPage = 1;
+  renderTable();
+}
+
+function viewDetail(id) {
+  const adj = adjustmentHistory.find(a => a.id === id);
+  if (adj) {
+    alert(`Product: ${adj.product}\nWarehouse: ${adj.warehouse}\nType: ${adj.type}\nQuantity: ${adj.qty}\nReason: ${adj.reason}\nDate: ${adj.date}\nAdjusted By: ${adj.person}\nNotes: ${adj.notes}`);
+  }
+}
+
+function editAdjustment(id) {
+  alert('Edit functionality would open a modal with adjustment details');
+}
+
+function toggleFilter(type) {
+  alert('Filter by ' + type + ' - To be implemented');
+}
+
+function exportAdjustments() {
+  const csv = 'Product,Warehouse,Type,Quantity,Reason,Date,Person,Status,Notes\n' + 
+    adjustmentHistory.map(a => 
+      `"${a.product}","${a.warehouse}","${a.type}","${a.qty}","${a.reason}","${a.date}","${a.person}","${a.status}","${a.notes}"`
+    ).join('\n');
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'stock_adjustments.csv';
+  a.click();
+}
+
+function setSbActive(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  initProductInventoryFromShared();
+  populateProductSelect();
+  renderTable();
+});
+</script>
+<script>
+let stockAdjustmentTypeFilter = '';
+let stockAdjustmentStatusFilter = '';
+
+function syncAdjustmentHistory(entries) {
+  adjustmentHistory.splice(0, adjustmentHistory.length);
+  entries.forEach(function (entry) {
+    adjustmentHistory.push(entry);
+  });
+}
+
+async function loadStockAdjustmentPage() {
+  try {
+    const results = await Promise.all([
+      window.RetailerApi.getProducts(),
+      window.RetailerApi.getStockAdjustments(),
+    ]);
+
+    productInventory = {};
+    results[0].forEach(function (product) {
+      productInventory[product.sku] = {
+        name: product.name,
+        stock: Number(product.qty) || 0,
+      };
+    });
+
+    syncAdjustmentHistory(results[1]);
+    populateProductSelect();
+    updateStockInfo();
+    filterTable();
+  } catch (error) {
+    console.error('Error loading stock adjustment data:', error);
+    productInventory = {};
+    adjustmentHistory.splice(0, adjustmentHistory.length);
+    populateProductSelect();
+    filterTable();
+    window.RetailerUi.showToast(window.RetailerUi.getErrorMessage(error), 'error');
+  }
+}
+
+submitAdjustment = async function () {
+  const productSku = document.getElementById('productSelect').value;
+  const currentStore = window.RetailerApi.getCurrentStore();
+  const warehouse = currentStore ? currentStore.name : '';
+  const qty = parseInt(document.getElementById('adjustmentQty').value, 10) || 0;
+  const reason = document.getElementById('reasonSelect').value;
+  const notes = document.getElementById('notesInput').value.trim();
+  const type = document.querySelector('input[name="adjustmentType"]:checked').value;
+
+  if (!productSku || qty <= 0 || !reason) {
+    window.RetailerUi.showToast('Please fill in all required fields.', 'error');
+    return;
+  }
+
+  try {
+    await window.RetailerApi.createStockAdjustment({
+      productSku: productSku,
+      warehouse: warehouse,
+      type: type,
+      qty: qty,
+      reason: reason,
+      notes: notes,
+    });
+    resetForm();
+    await loadStockAdjustmentPage();
+    window.RetailerUi.showToast('Stock adjustment recorded successfully.', 'success');
+  } catch (error) {
+    window.RetailerUi.showToast(
+      'Could not record stock adjustment: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+showNotification = function (msg) {
+  window.RetailerUi.showToast(msg, 'success');
+};
+
+filterTable = function () {
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  filteredAdjustments = adjustmentHistory.filter(function (adjustment) {
+    const matchesQuery =
+      !query ||
+      adjustment.product.toLowerCase().includes(query) ||
+      adjustment.warehouse.toLowerCase().includes(query) ||
+      adjustment.reason.toLowerCase().includes(query) ||
+      adjustment.person.toLowerCase().includes(query) ||
+      adjustment.notes.toLowerCase().includes(query);
+    const matchesType = !stockAdjustmentTypeFilter || adjustment.type === stockAdjustmentTypeFilter;
+    const matchesStatus = !stockAdjustmentStatusFilter || adjustment.status === stockAdjustmentStatusFilter;
+    return matchesQuery && matchesType && matchesStatus;
+  });
+  currentPage = 1;
+  renderTable();
+};
+
+deleteAdjustment = async function (id) {
+  if (!confirm('Delete this adjustment record?')) {
+    return;
+  }
+
+  try {
+    await window.RetailerApi.deleteStockAdjustment(id);
+    await loadStockAdjustmentPage();
+    window.RetailerUi.showToast('Adjustment record deleted.', 'success');
+  } catch (error) {
+    window.RetailerUi.showToast(
+      'Could not delete adjustment: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+toggleFilter = function (type) {
+  if (type === 'type') {
+    const values = ['', 'add', 'remove'];
+    const index = Math.max(0, values.indexOf(stockAdjustmentTypeFilter));
+    stockAdjustmentTypeFilter = values[(index + 1) % values.length];
+    document.querySelectorAll('.sa-filter-btn')[0].childNodes[0].textContent = stockAdjustmentTypeFilter
+      ? 'Type: ' + stockAdjustmentTypeFilter
+      : 'Type';
+  } else {
+    const values = ['', 'completed', 'pending'];
+    const index = Math.max(0, values.indexOf(stockAdjustmentStatusFilter));
+    stockAdjustmentStatusFilter = values[(index + 1) % values.length];
+    document.querySelectorAll('.sa-filter-btn')[1].childNodes[0].textContent = stockAdjustmentStatusFilter
+      ? 'Status: ' + stockAdjustmentStatusFilter
+      : 'Status';
+  }
+
+  filterTable();
+};
+
+document.addEventListener('DOMContentLoaded', loadStockAdjustmentPage);
+document.addEventListener('DOMContentLoaded', function () {
+  const warehouseSelect = document.getElementById('warehouseSelect');
+  if (warehouseSelect && warehouseSelect.parentElement) {
+    warehouseSelect.parentElement.style.display = 'none';
+  }
+});
+
+exportAdjustments = function () {
+  const headers = ['Product', 'Store', 'Type', 'Quantity', 'Reason', 'Date', 'Adjusted By', 'Status', 'Notes'];
+  const rows = adjustmentHistory.map(function (adjustment) {
+    return [
+      adjustment.product,
+      adjustment.warehouse || '',
+      adjustment.type,
+      adjustment.qty,
+      adjustment.reason,
+      adjustment.date,
+      adjustment.person,
+      adjustment.status,
+      adjustment.notes || '',
+    ];
+  });
+  const csv = [headers]
+    .concat(rows)
+    .map(function (row) {
+      return row.map(function (value) {
+        return '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+      }).join(',');
+    })
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'stock-adjustments.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+  window.RetailerUi.showToast('Adjustment export is ready.', 'success');
+};
+</script>
+</body>
+</html>

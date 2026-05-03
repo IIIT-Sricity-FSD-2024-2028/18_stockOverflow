@@ -1,0 +1,32 @@
+import { JsonDbService } from '../common/json-db.service';
+import { ProductsService } from '../products/products.service';
+import { ReturnRecord } from '../common/database.types';
+import { CreateReturnDto } from './dto/create-return.dto';
+import { UpdateReturnDto } from './dto/update-return.dto';
+export declare class ReturnsService {
+    private readonly db;
+    private readonly productsService;
+    constructor(db: JsonDbService, productsService: ProductsService);
+    findAll(retailerId?: string, storeId?: string, customerLookup?: string): ReturnRecord[];
+    findOne(id: string, retailerId?: string, storeId?: string, customerLookup?: string): ReturnRecord;
+    create(createReturnDto: CreateReturnDto): ReturnRecord;
+    update(id: string, updateReturnDto: UpdateReturnDto): ReturnRecord;
+    private buildReturnRecord;
+    private saveReturns;
+    private normalizeReturnRecord;
+    private applyApprovedReturnInventory;
+    private resolveTransactionContext;
+    private findTransactionItem;
+    private resolveCustomer;
+    private resolveProduct;
+    private resolveAmount;
+    private normalizeStatus;
+    private normalizePriority;
+    private inferPriority;
+    private normalizeDate;
+    private toDateNumber;
+    private toMoney;
+    private buildFallbackImage;
+    private normalizeText;
+    private matchesScope;
+}

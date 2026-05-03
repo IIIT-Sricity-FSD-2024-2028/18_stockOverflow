@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockOverflow – Consumer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Page shell ── */
+    html, body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f0f0;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    .consumer {
+      position: relative;
+      width: min(1440px, calc(100% - 24px));
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #fff;
+      border: 2px solid #CED4DA;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: relative;
+      width: 100%;
+      height: 72px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      z-index: 10;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .nav-logo {
+      position: absolute;
+      left: 115.19px;
+      top: 20px;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 29px;
+      letter-spacing: -0.5px;
+      color: #38BDF8;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      position: absolute;
+      left: 1105px;
+      top: 21px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 20px;
+      letter-spacing: -0.5px;
+      color: rgba(0,0,0,0.7);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: #38BDF8; }
+
+    .btn-logout {
+      position: absolute;
+      left: 1274px;
+      top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: transparent;
+      border: 1.5px solid #EF4444;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-logout:hover { background: #fee2e2; }
+    .btn-logout svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .btn-logout span {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 20px;
+      color: #EF4444;
+    }
+
+    /* ══════════════════════════════
+       HERO SECTION
+    ══════════════════════════════ */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 600px;
+      background: #F5F5F5;
+      overflow: hidden;
+    }
+
+    /* subtle decorative blob */
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      right: 80px;
+      top: 40px;
+      background: radial-gradient(circle, rgba(56,189,248,.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-text {
+      position: absolute;
+      width: 604.81px;
+      height: 340px;
+      left: 115.19px;
+      top: 130px;
+    }
+
+    .hero-text h1 {
+      position: absolute;
+      width: 520px;
+      height: 180px;
+      left: 0;
+      top: -6px;
+      font-weight: 700;
+      font-size: 60px;
+      line-height: 60px;
+      letter-spacing: -0.5px;
+      color: #000;
+    }
+
+    .hero-text h1 span { color: #38BDF8; }
+
+    .hero-text p {
+      position: absolute;
+      width: 413px;
+      left: 0;
+      top: 206px;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: -0.5px;
+      color: rgba(0,0,0,0.8);
+    }
+
+    .btn-browse {
+      position: absolute;
+      width: 195.23px;
+      height: 56px;
+      left: 0;
+      top: 284px;
+      background: #38BDF8;
+      border: none;
+      border-radius: 9999px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 56px;
+      text-align: center;
+      letter-spacing: -0.5px;
+      color: #0F172A;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+      white-space: nowrap;
+    }
+    .btn-browse:hover { background: #0ea5e9; transform: translateY(-2px); }
+
+    /* Hero image area */
+    .hero-img-wrap {
+      position: absolute;
+      width: 384px;
+      height: 384px;
+      right: 220.81px;
+      top: 108px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-img-placeholder {
+      width: 384px;
+      height: 384px;
+      border-radius: 24px;
+      overflow: hidden;
+      background: transparent;
+      box-shadow: 0 20px 60px rgba(56,189,248,.12);
+    }
+    .hero-img-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* ══════════════════════════════
+       PRODUCTS SECTION
+    ══════════════════════════════ */
+    .products-section {
+      position: relative;
+      width: 100%;
+      padding: 64px 0 72px;
+      background: rgba(19,19,19,0.04);
+    }
+
+    .products-section h2 {
+      position: relative;
+      width: min(1200px, calc(100% - 64px));
+      margin: 0 auto 24px;
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 36px;
+      letter-spacing: -0.5px;
+      color: #000;
+    }
+
+    .products-grid {
+      position: relative;
+      width: min(1200px, calc(100% - 64px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    /* ── Individual product card ── */
+    .product-card {
+      position: relative;
+      width: 100%;
+      min-height: 376px;
+      border-radius: 16px;
+      overflow: visible;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.15);
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 8px;
+    }
+
+    /* image area */
+    .card-img {
+      width: 100%;
+      height: 190px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-img .img-placeholder {
+      width: 100%;
+      height: 100%;
+      margin-top: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .card-img .img-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      padding: 12px;
+    }
+    .card-img .img-placeholder .img-fallback {
+      width: 100%;
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      color: rgba(15,23,42,.45);
+    }
+
+    .card-name {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: -0.5px;
+      color: #000;
+    }
+
+    .card-meta {
+      font-size: 12px;
+      line-height: 16px;
+      letter-spacing: -0.2px;
+      color: rgba(0,0,0,0.56);
+    }
+
+    .card-price {
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 22px;
+      letter-spacing: -0.5px;
+      color: #38BDF8;
+    }
+
+    .card-stock {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 17px;
+      letter-spacing: -0.5px;
+      color: rgba(0,0,0,0.7);
+    }
+    .card-stock.low { color: #f97316; }
+    .card-stock.out { color: #dc2626; }
+
+    .card-btn {
+      position: relative;
+      width: 100%;
+      height: 48px;
+      background: #38BDF8;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 48px;
+      text-align: center;
+      letter-spacing: -0.5px;
+      color: #0F172A;
+      cursor: pointer;
+      transition: background .2s;
+      margin-top: auto;
+    }
+    .card-btn:hover { background: #0ea5e9; }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      background: #a5afc5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer p {
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 20px;
+      letter-spacing: -0.5px;
+      color: rgba(255, 255, 255, 0.448);
+      text-align: center;
+    }
+
+    /* ── Fade-in animation ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-text { animation: fadeUp .6s ease both; }
+    .hero-img-wrap { animation: fadeUp .6s .15s ease both; }
+    .product-card { animation: fadeUp .5s ease both; }
+    .card-0 { animation-delay: .05s; }
+    .card-1 { animation-delay: .1s; }
+    .card-2 { animation-delay: .15s; }
+    .card-3 { animation-delay: .2s; }
+    .card-4 { animation-delay: .25s; }
+    .card-5 { animation-delay: .3s; }
+    .card-6 { animation-delay: .35s; }
+    .card-7 { animation-delay: .4s; }
+
+    /* Responsive layout so the page fits smaller screens */
+    @media (max-width: 1200px) {
+      .consumer {
+        width: calc(100% - 16px);
+      }
+
+      .nav-logo,
+      .nav-links,
+      .btn-logout {
+        position: static;
+      }
+
+      nav {
+        height: auto;
+        padding: 14px 16px;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .hero {
+        height: auto;
+        padding: 28px 16px 32px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .hero-text,
+      .hero-img-wrap {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .hero-text h1,
+      .hero-text p,
+      .btn-browse {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .hero-text h1 {
+        font-size: 42px;
+        line-height: 1.1;
+      }
+
+      .hero-text p {
+        margin-top: 16px;
+      }
+
+      .btn-browse {
+        margin-top: 20px;
+        max-width: 240px;
+        line-height: 48px;
+      }
+
+      .hero-img-placeholder {
+        width: min(384px, 100%);
+        height: min(384px, calc(100vw - 56px));
+        margin: 0 auto;
+      }
+
+      .products-section {
+        padding: 36px 0 48px;
+      }
+
+      .products-section h2,
+      .products-grid {
+        width: calc(100% - 32px);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-text h1 {
+        font-size: 34px;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 18px;
+      }
+
+      .btn-logout {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="consumer">
+  <!-- ═══ NAV ═══ -->
+  <nav>
+    <div class="nav-logo">StockOverflow</div>
+    <div class="nav-links">
+      <a href="productsearch.html">Products</a>
+      <a href="orders.html">Orders</a>
+    </div>
+    <button class="btn-logout" id="logoutbutton">
+      <!-- logout icon -->
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.5 17.5H4.17A1.67 1.67 0 0 1 2.5 15.83V4.17A1.67 1.67 0 0 1 4.17 2.5H7.5" stroke="#EF4444" stroke-width="1.667" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M13.33 14.17 17.5 10l-4.17-4.17" stroke="#EF4444" stroke-width="1.667" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M17.5 10H7.5" stroke="#EF4444" stroke-width="1.667" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Logout</span>
+    </button>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Find Products That Fit Your <span>Workflow</span></h1>
+      <p>Browse professional tools, electronics, and accessories. Reserve products instantly and review them after delivery.</p>
+      <button class="btn-browse" id="browseproduct">Browse Products</button>
+    </div>
+
+    <div class="hero-img-wrap">
+      <div class="hero-img-placeholder">
+        <img src="./cart-image.png" alt="Shopping cart with floating products" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PRODUCTS ═══ -->
+  <section class="products-section">
+    <h2>Top Rated Products By Category</h2>
+
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <p>© 2026 StockOverflow</p>
+  </footer>
+
+</div><!-- /consumer -->
+
+<script src="../js/api-config.js"></script>
+<script src="../js/commerce-api.js"></script>
+<script>
+  function getStockMeta(product) {
+    if (!product || Number(product.qty) === 0) {
+      return { key: 'out', label: 'Out of Stock' };
+    }
+    if (Number(product.qty) <= Number(product.max || 0) * 0.2) {
+      return { key: 'low', label: 'Low Stock' };
+    }
+    return { key: 'in', label: 'Available' };
+  }
+
+  function formatPrice(value) {
+    return '$' + Number(value || 0).toLocaleString();
+  }
+
+  function getRatingMeta(product) {
+    const directAvg = Number(product && product.ratingAvg);
+    const directCount = Number(product && product.ratingCount);
+    const feedback = Array.isArray(product && product.feedback) ? product.feedback : [];
+
+    if (Number.isFinite(directAvg) && directAvg > 0) {
+      return {
+        avg: directAvg,
+        count: Number.isFinite(directCount) && directCount > 0 ? Math.floor(directCount) : feedback.length
+      };
+    }
+
+    if (!feedback.length) {
+      return { avg: 0, count: 0 };
+    }
+
+    const total = feedback.reduce(function(sum, item) {
+      return sum + (Number(item.rating) || 0);
+    }, 0);
+
+    return {
+      avg: total / feedback.length,
+      count: feedback.length
+    };
+  }
+
+  function pickTopRatedProductsByCategory(products) {
+    const winners = Object.create(null);
+
+    (Array.isArray(products) ? products : []).forEach(function(product) {
+      const category = (product && product.category ? String(product.category).trim() : '') || 'General';
+      const current = winners[category];
+
+      const currentRating = current ? getRatingMeta(current) : { avg: -1, count: -1 };
+      const nextRating = getRatingMeta(product);
+
+      const isBetterRating = nextRating.avg > currentRating.avg;
+      const isSameRatingMoreReviews = nextRating.avg === currentRating.avg && nextRating.count > currentRating.count;
+      const isSameRatingAndReviewsMoreSales = nextRating.avg === currentRating.avg && nextRating.count === currentRating.count
+        && (Number(product.soldThisMonth) || 0) > (Number(current && current.soldThisMonth) || 0);
+
+      if (!current || isBetterRating || isSameRatingMoreReviews || isSameRatingAndReviewsMoreSales) {
+        winners[category] = product;
+      }
+    });
+
+    return Object.keys(winners).sort().map(function(category) {
+      return winners[category];
+    });
+  }
+
+  function buildProductCard(product) {
+    const stock = getStockMeta(product);
+    const rating = getRatingMeta(product);
+
+    return `
+      <article class="product-card" data-sku="${product.sku}">
+        <div class="card-inner">
+          <div class="card-img">
+            <div class="img-placeholder" style="background:${product.palette && product.palette[0] ? product.palette[0] : 'linear-gradient(135deg,#e0f7ff,#bae6fd)'};">
+              <img src="${product.productImg || ''}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+              <div class="img-fallback">${product.emoji || '📦'}</div>
+            </div>
+          </div>
+          <div class="card-name">${product.name}</div>
+          <div class="card-meta">${product.category} · ${product.brand} · ${product.sku}</div>
+          <div class="card-meta">Rating ${rating.avg ? rating.avg.toFixed(1) : '0.0'} (${rating.count})</div>
+          <div class="card-price">${formatPrice(product.priceUSD)}</div>
+          <div class="card-stock ${stock.key === 'low' ? 'low' : stock.key === 'out' ? 'out' : ''}">${stock.label} • ${Number(product.qty || 0)} units</div>
+          <button class="card-btn" type="button" data-sku="${product.sku}">View Product</button>
+        </div>
+      </article>
+    `;
+  }
+
+  function openProductDetailBySku(sku) {
+    if (!sku) return;
+    try {
+      localStorage.setItem('imsSelectedSku', sku);
+    } catch (_err) {
+      // Continue with URL parameter fallback.
+    }
+    window.location.href = 'product-detail.html?sku=' + encodeURIComponent(sku);
+  }
+
+  async function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) {
+      return;
+    }
+
+    try {
+      const source = await window.ImsApi.getProducts();
+      if (!source.length) {
+        grid.innerHTML = '<p>No products available right now.</p>';
+        return;
+      }
+
+      const topRatedByCategory = pickTopRatedProductsByCategory(source);
+      grid.innerHTML = topRatedByCategory.map(buildProductCard).join('');
+
+      grid.querySelectorAll('.card-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+          openProductDetailBySku(button.dataset.sku || '');
+        });
+      });
+    } catch (error) {
+      grid.innerHTML = '<p>Unable to load products right now.</p>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', renderProducts);
+
+    document.getElementById("logoutbutton").addEventListener("click", function() {
+    window.location.href = "../index.html";});
+
+      document.getElementById("browseproduct").addEventListener("click", function() {
+    window.location.href = "productsearch.html";
+  });
+
+// AUTH GUARD
+const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+if (!session || session.role !== 'consumer') {
+  window.location.href = '../index.html';
+}
+</script>                          
+
+</body>
+</html>

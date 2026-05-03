@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow — POS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f2f3f7;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+      --border: #e7e8ed;
+      --text-primary: #1f2937;
+      --text-muted: #6b7280;
+      --accent: #1d4ed8;
+      --accent-light: #e8efff;
+      --success: #0ea5a4;
+      --danger: #ef4444;
+      --orange: #f59e0b;
+      --dark-blue: #0f2f57;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      display: flex;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar {
+      width: 92px;
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 20;
+      padding: 10px 8px;
+    }
+    .sidebar-logo {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 6px 0 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .sidebar-logo img { width: 62px; height: auto; display: block; }
+    .cat-item {
+      width: 62px;
+      min-height: 62px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      border-radius: 8px;
+      margin: 5px auto;
+      border: 1px solid var(--border);
+      background: #f8f9fc;
+      transition: all .18s;
+    }
+    .cat-item:hover {
+      border-color: #cfd5e1;
+      transform: translateY(-1px);
+    }
+    .cat-item.active {
+      background: var(--accent-light);
+      border-color: #99b8ff;
+    }
+    .cat-label {
+      font-size: 10px;
+      color: #4b5563;
+      text-align: center;
+      line-height: 1.15;
+    }
+
+    .main-wrap {
+      margin-left: 92px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      gap: 8px;
+      padding-bottom: 20px;
+    }
+
+    .header {
+      height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .header-time {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0f766e;
+      background: #e8fbf8;
+      border: 1px solid #9de7df;
+      padding: 4px 8px;
+      border-radius: 7px;
+      white-space: nowrap;
+    }
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      justify-content: center;
+    }
+    .header-store-btn {
+      padding: 7px 10px;
+      background: #5b21b6;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #storeSwitcher {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: #f9fafb;
+      cursor: pointer;
+    }
+    .header-right { display: flex; align-items: center; gap: 6px; }
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #bfdbfe;
+    }
+
+    .pos-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 8px;
+      max-height: calc(100vh - 140px);
+    }
+    .product-area {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .pos-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+    .pos-welcome h2 { font-size: 16px; font-weight: 700; }
+    .pos-welcome p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .pos-search-row { display: flex; align-items: center; gap: 8px; }
+    .pos-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 10px;
+      background: #fff;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    .pos-search input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 170px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+    .btn-outline,
+    .btn-primary2 {
+      border-radius: 7px;
+      font-size: 11px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-outline {
+      border: 1px solid #dbe5ff;
+      color: #1e3a8a;
+      background: #eef3ff;
+    }
+    .btn-primary2 {
+      border: 1px solid #ffd8a8;
+      background: #fff4e5;
+      color: #b45309;
+    }
+    .select-input { cursor: pointer; }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-content: start;
+    }
+    .product-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .product-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 7px 14px rgba(15, 23, 42, 0.08);
+    }
+    .product-img {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      background: linear-gradient(145deg, #fafbff, #eef2ff);
+      border-bottom: 1px solid var(--border);
+    }
+    .product-info { padding: 8px 10px 9px; }
+    .product-cat {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.2;
+      min-height: 12px;
+      text-transform: none;
+    }
+    .product-name {
+      font-size: 12px;
+      font-weight: 600;
+      margin: 3px 0 7px;
+      line-height: 1.2;
+      min-height: 30px;
+    }
+    .product-bottom { display: flex; justify-content: space-between; align-items: center; }
+    .product-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .qty-ctrl { display: flex; align-items: center; gap: 4px; }
+    .qty-btn {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid #d1d5db;
+      font-size: 11px;
+      background: #f9fafb;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .qty-btn:hover { background: #e5e7eb; }
+    .qty-count { min-width: 12px; font-size: 11px; font-weight: 700; text-align: center; }
+    .is-hidden { display: none !important; }
+
+    .cart-panel {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .cart-header {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .cart-title { font-size: 24px; font-weight: 700; }
+    .cart-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      background: #1f3a8a;
+      border-radius: 5px;
+      padding: 2px 6px;
+    }
+    .cart-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 7px;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .customer-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .select-input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 8px 10px;
+      background: #f9fafb;
+      color: #4b5563;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .icon-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .order-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .order-section-title { font-size: 13px; font-weight: 700; }
+    .item-count-badge {
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .empty-cart {
+      text-align: center;
+      padding: 18px 10px;
+      color: var(--text-muted);
+    }
+    .empty-cart-icon { font-size: 30px; margin-bottom: 8px; }
+    .empty-cart p { font-size: 11px; line-height: 1.35; }
+    .order-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+    .order-item {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #f9fafb;
+      padding: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .order-item-name { font-weight: 600; }
+    .order-item-meta { font-size: 11px; color: var(--text-muted); }
+    .divider { border: none; border-top: 1px dashed #d9dce3; margin: 12px 0; }
+
+    .summary-section { padding-bottom: 10px; }
+    .summary-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .summary-label { color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .summary-value { font-weight: 600; }
+    .summary-total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 10px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f2f57;
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .pay-btn {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #fff;
+      padding: 7px 4px;
+      font-size: 11px;
+      color: #4b5563;
+      cursor: pointer;
+    }
+    .pay-btn:hover,
+    .pay-btn.active {
+      background: #eaf1ff;
+      color: #1d4ed8;
+      border-color: #93c5fd;
+    }
+    .pay-icon { display: block; font-size: 13px; margin-bottom: 2px; }
+
+    .cart-actions {
+      padding: 12px 12px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .cart-btn {
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 16px 12px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .cart-btn-secondary {
+      background: #f9fafb;
+      color: #374151;
+      border: 1px solid var(--border);
+    }
+    .cart-btn-primary {
+      background: var(--dark-blue);
+      color: #fff;
+      font-size: 18px;
+      padding: 16px 20px;
+      min-height: 54px;
+      font-weight: 800;
+      transition: all 0.2s ease;
+    }
+    .cart-btn-primary:hover {
+      background: #0d1f3c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 47, 87, 0.3);
+    }
+    .cart-btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .bottom-bar {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      padding: 8px 0 2px;
+      background: transparent;
+    }
+    .action-btn {
+      border: none;
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    #viewOrdersBtn { background: #0f2f57; }
+    #resetOrderBtn { background: #4338ca; }
+    #transactionBtn { background: var(--danger); }
+
+    .sidebar-logout-wrap {
+      width: 100%;
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .sidebar-logout-btn {
+      width: 100%;
+      border: 1px solid #fecaca;
+      background: #fff1f2;
+      color: #b91c1c;
+      border-radius: 8px;
+      padding: 8px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 1440px) {
+      .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .pos-body { grid-template-columns: minmax(0, 1fr) 340px; }
+    }
+
+    @media (max-width: 1100px) {
+      .pos-body { grid-template-columns: 1fr; }
+      .cart-panel { min-height: 440px; }
+      body { overflow: auto; }
+    }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      background: #111827;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 1000;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       LEFT SIDEBAR — Category Navigation
+       Vertical icons for filtering product categories
+  ============================================= -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"/></div>
+
+    <!-- Category list scrolls vertically -->
+    <div style="padding: 12px 0; overflow-y: auto; width: 100%;">
+      <div class="cat-item active" data-category="all">
+        <span class="cat-label">All</span>
+      </div>
+      <div class="cat-item" data-category="electronics">
+        <span class="cat-label">Headset</span>
+      </div>
+      <div class="cat-item" data-category="footwear">
+        <span class="cat-label">Shoes</span>
+      </div>
+      <div class="cat-item" data-category="mobiles">
+        <span class="cat-label">Mobiles</span>
+      </div>
+      <div class="cat-item" data-category="accessories">
+        <span class="cat-label">Watches</span>
+      </div>
+      <div class="cat-item" data-category="laptops">
+        <span class="cat-label">Laptops</span>
+      </div>
+      <div class="cat-item" data-category="appliances">
+        <span class="cat-label">Appliances</span>
+      </div>
+    </div>
+      <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
+      <button type="button" id="logout" class="sidebar-logout-btn"  style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <!-- =============================================
+       MAIN CONTENT
+  ============================================= -->
+  <div class="main-wrap">
+
+    <!-- POS TOP HEADER -->
+    <header class="header">
+      <!-- Current time display -->
+      <div class="header-time">🕒 --:-- --</div>
+
+      <!-- Store switcher and utility buttons -->
+      <div class="header-center">
+        <button class="header-store-btn" id="newOrderBtn">Dashboard</button>
+        <div id="storeSwitcher">
+          <span>🏬</span> <span>Freshmart</span> <span>▾</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+
+        <div class="avatar">WA</div>
+      </div>
+    </header>
+
+    <!-- POS BODY: product area + cart -->
+    <div class="pos-body">
+
+      <!-- =============================================
+           CENTER: PRODUCT BROWSING AREA
+      ============================================= -->
+      <div class="product-area">
+
+        <!-- Welcome + Search row -->
+        <div class="pos-header">
+          <div class="pos-welcome">
+            <h2>Welcome, Wesley Adrian</h2>
+            <p>Mon, 24 December 2025</p>
+          </div>
+          <div class="pos-search-row">
+            <!-- Product search input -->
+            <div class="pos-search">
+              🔎 <input type="text" placeholder="Search Product" id="productSearch" />
+            </div>
+            <button class="btn-outline" id="filterBtn">View All Brands</button>
+            <button class="btn-primary2" id="addProductBtn">Featured</button>
+          </div>
+        </div>
+
+        <!-- =============================================
+             RESERVED PRODUCTS SECTION
+        ============================================= -->
+        <div id="reservedSection" style="display:none;margin-bottom:16px;padding:12px;border-radius:10px;background:#fef3c7;border:1px solid #fcd34d;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#78350f;">📦 Your Reserved Products</div>
+          <div id="reservedList" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+        </div>
+
+        <!-- =============================================
+             PRODUCT GRID — generated from retailer module data
+        ============================================= -->
+        <div class="product-grid" id="productGrid"></div><!-- /product-grid -->
+
+        <!-- BOTTOM ACTION BAR inside product area -->
+        <div class="bottom-bar" style="margin-top:20px;border-top:1px solid var(--border);border-radius:10px;">
+          <button class="action-btn" id="viewOrdersBtn">🛒 View Orders</button>
+          <button class="action-btn" id="resetOrderBtn">🔁 Reset</button>
+          <button class="action-btn" id="transactionBtn">� Transactions</button>
+        </div>
+
+      </div><!-- /product-area -->
+
+      <!-- =============================================
+           ORDERS MODAL — Shows reserved products from customers
+      ============================================= -->
+      <div id="ordersModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:600px; max-height:600px; overflow-y:auto;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="font-size:18px; font-weight:600;">Reserved Orders</h3>
+            <button onclick="document.getElementById('ordersModal').style.display='none'" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+          </div>
+          <div id="reservedOrdersList" style="display:flex; flex-direction:column; gap:10px;">
+            <p style="text-align:center; color:var(--text-muted);">No reserved orders</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================
+           RIGHT PANEL: CART / ORDER
+           Shows current order, totals, payment options
+      ============================================= -->
+      <div class="cart-panel">
+
+        <!-- Cart header -->
+        <div class="cart-header">
+          <div class="cart-title">Order List</div>
+          <div class="cart-badge">#ORD123</div>
+          <span id="clearCartBtn" style="font-size:14px;cursor:pointer;color:var(--text-muted);">🗑</span>
+        </div>
+
+        <div class="cart-body">
+
+          <!-- Customer selector -->
+          <div class="section-label">Customer Information</div>
+          <div class="customer-row">
+            <div class="select-input" id="customerSelector">
+              Walk In Customer <span>▾</span>
+            </div>
+            <div class="icon-circle" id="addCustomerBtn">⚇</div>
+            <div class="icon-circle" id="scanCustomerBtn">⇄</div>
+          </div>
+
+          <hr class="divider" />
+
+          <!-- Order items section -->
+          <div class="order-section-header">
+            <div class="order-section-title">Order Items</div>
+            <div class="item-count-badge">0</div>
+          </div>
+
+          <!-- Empty cart placeholder — shown when no items added -->
+          <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <p>No products added yet.<br/>Select items from the left to begin.</p>
+          </div>
+
+          <div class="order-items-list is-hidden" id="orderItemsList"></div>
+
+          <hr class="divider" />
+
+          <!-- =============================================
+               PAYMENT SUMMARY
+               Lists subtotal, shipping, tax, coupon, discount
+          ============================================= -->
+          <div class="summary-section">
+            <div class="summary-title">Payment Summary</div>
+
+            <div class="summary-row">
+              <span class="summary-label">Sub Total</span>
+              <span class="summary-value" id="subtotalValue">₹0.00</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Shipping ✏️</span>
+              <input type="number" id="shippingInput" value="0" min="0" step="0.01" class="editable-field" placeholder="0" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:13px;text-align:right;" />
+              <span style="color:var(--text-muted);font-size:12px;" id="shippingValue">₹0.00</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Tax ✏️</span>
+              <input type="number" id="taxInput" value="0" min="0" step="0.01" class="editable-field" placeholder="0" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:13px;text-align:right;" />
+              <span style="color:var(--text-muted);font-size:12px;" id="taxValue">₹0.00</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Coupon</span>
+              <input type="number" id="couponInput" value="0" min="-99999" step="0.01" class="editable-field" placeholder="0" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:13px;text-align:right;" />
+              <span style="color:var(--text-muted);font-size:12px;" id="couponValue">₹0.00</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Discount</span>
+              <input type="number" id="discountInput" value="0" min="0" step="0.01" class="editable-field" placeholder="0" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:13px;text-align:right;" />
+              <span style="color:var(--text-muted);font-size:12px;" id="discountValue">₹0.00</span>
+            </div>
+
+            <!-- Roundoff toggle row -->
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;">
+              <input id="roundoffToggle" type="checkbox" style="width:30px;height:16px;accent-color:var(--accent);" />
+              <span style="color:var(--text-muted);">Roundoff</span>
+              <span style="margin-left:auto;font-weight:600;" id="roundoffValue">₹0.00</span>
+            </div>
+          </div>
+
+          <!-- Grand total row -->
+          <div class="summary-total-row">
+            <span>Total Payable</span>
+            <span id="totalPayableValue">₹0.00</span>
+          </div>
+
+          <!-- =============================================
+               PAYMENT METHOD SELECTION
+               Click to choose how the customer pays
+          ============================================= -->
+          <div class="summary-title" style="margin-top:16px;">Select Payment</div>
+          <div class="payment-grid">
+            <button class="pay-btn active">
+              <span class="pay-icon">💵</span> Cash
+            </button>
+            <button class="pay-btn">
+              <span class="pay-icon">💳</span> Card
+            </button>
+            <button class="pay-btn">
+              <span class="pay-icon">⭐</span> Points
+            </button>
+            <button class="pay-btn">
+              <span class="pay-icon">📁</span> Deposit
+            </button>
+            <button class="pay-btn">
+              <span class="pay-icon">🧾</span> Cheque
+            </button>
+            <button class="pay-btn">
+              <span class="pay-icon">🎁</span> Gift Card
+            </button>
+            <button class="pay-btn">
+              <span class="pay-icon">🧾</span> Scan & Pay
+            </button>
+            <button class="pay-btn">
+              <span class="pay-icon">📂</span> Pay Later
+            </button>
+            <button class="pay-btn">
+              <span class="pay-icon">🧷</span> External
+            </button>
+          </div>
+
+        </div><!-- /cart-body -->
+
+        <!-- CART ACTION BUTTONS: Charge -->
+        <div class="cart-actions">
+          <button class="cart-btn cart-btn-primary" id="chargeBtn">Place Order</button>
+        </div>
+
+      </div><!-- /cart-panel -->
+
+    </div><!-- /pos-body -->
+  </div><!-- /main-wrap -->
+  <div class="toast" id="toast"></div>
+
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script src="pos-app.js"></script>
+
+</body>
+</html>
+

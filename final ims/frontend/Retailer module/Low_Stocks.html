@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockOverflow – Low Stocks</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════════════ */
+:root {
+  --bg: #f5f6fa;
+  --card: #ffffff;
+  --primary: #2e6bc5;
+  --primary-light: #eef3fc;
+  --primary-dark: #092c4c;
+  --success: #22c55e;
+  --success-light: #dcfce7;
+  --success-dark: #15803d;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --danger-dark: #991b1b;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --warning-dark: #92400e;
+  --orange: #f97316;
+  --orange-light: #ffedd5;
+  --orange-dark: #9a3412;
+  --text-primary: #212b36;
+  --text-secondary: #646b72;
+  --text-muted: #a6aaaf;
+  --border: #e6eaed;
+  --border-light: #f0f2f4;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+  --shadow-card: 0 1px 3px rgba(0,0,0,.08);
+  --radius-card: 8px;
+  --radius-input: 5px;
+  --sidebar-w: 252px;
+  --topbar-h: 65px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  display: flex;
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ════════════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════════════ */
+.sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w);
+  background: #fff;
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+  overflow-y: auto; border-right: 1px solid var(--border);
+  font-family: 'Nunito Sans', sans-serif;
+}
+.sidebar-title {
+  height: var(--topbar-h);
+  display: flex; align-items: center;
+  padding: 10px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.sb-logo { display: flex; align-items: center; gap: 10px; }
+.sidebar-logo img { height: 30px; width: auto; display: block; }
+.sb-logo-icon {
+  width: 34px; height: 34px; background: #4e7fd9;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sb-logo-icon svg { width: 18px; height: 18px; }
+.sb-logo-text { font-family: 'Nunito Sans', sans-serif; font-weight: 700; font-size: 15px; color: #092c4c; letter-spacing: -.2px; }
+.sidebar-body { display: flex; flex-direction: column; gap: 16px; padding: 20px 16px; flex: 1; }
+.sb-group { display: flex; flex-direction: column; gap: 6px; }
+.sb-group-label { font-size: 11px; font-weight: 700; color: #092c4c; font-family: 'Nunito Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; padding: 0 8px; margin-bottom: 2px; }
+.sb-divider { height: 1px; background: var(--border); margin: 4px 0; }
+.sb-menus { display: flex; flex-direction: column; gap: 2px; }
+.sb-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 6px;
+  cursor: pointer; text-decoration: none;
+  transition: background .13s, color .13s;
+  color: #4a5568; font-size: 13.5px; font-weight: 600; line-height: 1.4;
+  font-family: 'Nunito Sans', sans-serif;
+}
+.sb-item:hover { background: #f5f6fa; color: var(--text-primary); }
+.sb-item.active { background: #fff6ee; color: #4e7fd9; }
+.sb-item.active .sb-icon svg { stroke: #4e7fd9; }
+.sb-item.active .sb-item-label { color: #4e7fd9; }
+.sb-icon { width: 17px; height: 17px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.sb-icon svg { width: 17px; height: 17px; display: block; transition: stroke .13s; }
+.sb-item-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-end-icon { width: 16px; height: 16px; border-radius: 50%; background: #f0f2f4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sb-end-icon svg { width: 10px; height: 10px; }
+.sb-dot-badge { width: 16px; height: 16px; border-radius: 50%; background: #fff0e6; border: 1px solid #ffd9b7; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sb-dot-badge svg { width: 10px; height: 10px; }
+
+/* ════════════════════════════════════════════
+   MAIN SHELL
+════════════════════════════════════════════ */
+.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* ════════════════════════════════════════════
+   TOPBAR
+════════════════════════════════════════════ */
+.topbar {
+  height: var(--topbar-h);
+  background: #fff; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  position: sticky; top: 0; z-index: 50; flex-shrink: 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.tb-breadcrumb { font-size: 12.5px; color: var(--text-secondary); font-family: 'Nunito Sans', sans-serif; }
+.tb-breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+.tb-breadcrumb a:hover { color: var(--primary); }
+.tb-breadcrumb .sep { margin: 0 5px; opacity: .4; }
+.tb-breadcrumb .current { color: var(--text-primary); font-weight: 700; }
+.topbar-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 7px 12px; width: 220px;
+}
+.topbar-search svg { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+.topbar-search input { border: none; background: transparent; outline: none; font-size: 13px; color: var(--text-primary); font-family: 'Nunito Sans', sans-serif; width: 100%; }
+.topbar-search input::placeholder { color: var(--text-muted); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.tb-date {
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  font-size: 12.5px; color: var(--text-secondary); cursor: pointer;
+  font-family: 'Nunito Sans', sans-serif; font-weight: 600;
+  white-space: nowrap; background: #fff; transition: background .13s;
+}
+.tb-date:hover { background: var(--bg); }
+.tb-date svg { width: 14px; height: 14px; }
+.tb-icon-btn {
+  width: 36px; height: 36px; border-radius: 6px;
+  border: 1px solid var(--border); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; transition: background .13s;
+}
+.tb-icon-btn:hover { background: var(--bg); }
+.tb-icon-btn svg { width: 16px; height: 16px; color: var(--text-secondary); }
+.notif-dot { position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; background: #ef4444; border-radius: 50%; border: 2px solid #fff; }
+.tb-avatar { width: 34px; height: 34px; border-radius: 50%; background: #5b67ca; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-family: 'Nunito Sans', sans-serif; }
+
+/* ════════════════════════════════════════════
+   PAGE CONTENT
+════════════════════════════════════════════ */
+.page-wrap { padding: 24px 28px 48px; flex: 1; overflow-y: auto; }
+
+/* PAGE HEADER */
+.page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+.page-title { font-family: 'Nunito Sans', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1.35; }
+.page-subtitle { font-family: 'Nunito Sans', sans-serif; font-size: 13px; color: var(--text-secondary); font-weight: 600; margin-top: 3px; }
+.page-head-actions { display: flex; align-items: center; gap: 8px; }
+
+/* ════════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: var(--radius-input); border: none;
+  font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .14s; white-space: nowrap; line-height: 1;
+}
+.btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.btn-primary { background: #2e6bc5; color: #fff; }
+.btn-primary:hover { background: #2460b0; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(46,107,197,.3); }
+.btn-primary:active { transform: none; }
+.btn-dark { background: #092c4c; color: #fff; }
+.btn-dark:hover { background: #0b3660; }
+.btn-outline { background: #fff; color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-outline:hover { background: var(--bg); color: var(--text-primary); }
+.btn-warning { background: var(--warning-light); color: var(--warning-dark); border: 1px solid #fcd34d; }
+.btn-warning:hover { background: #fde68a; }
+.btn-danger-outline { background: #fff; color: var(--danger); border: 1px solid #fca5a5; }
+.btn-danger-outline:hover { background: var(--danger-light); }
+.btn-success { background: var(--success-light); color: var(--success-dark); border: 1px solid #86efac; }
+.btn-success:hover { background: #bbf7d0; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+/* ════════════════════════════════════════════
+   ALERT BANNER
+════════════════════════════════════════════ */
+.alert-banner {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: #fff7ed; border: 1px solid #fed7aa;
+  border-radius: var(--radius-card); padding: 14px 18px;
+  margin-bottom: 20px;
+  animation: fadeDown .3s ease;
+}
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.alert-icon { width: 36px; height: 36px; background: var(--orange-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.alert-icon svg { width: 18px; height: 18px; color: var(--orange); }
+.alert-title { font-family: 'Nunito Sans', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--orange-dark); }
+.alert-sub { font-family: 'Nunito Sans', sans-serif; font-size: 12.5px; color: #9a3412; margin-top: 2px; line-height: 1.5; }
+.alert-close { margin-left: auto; cursor: pointer; color: #fdba74; font-size: 18px; line-height: 1; flex-shrink: 0; transition: color .13s; padding: 2px; }
+.alert-close:hover { color: var(--orange); }
+
+/* ════════════════════════════════════════════
+   KPI CARDS ROW
+════════════════════════════════════════════ */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+
+.kpi-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-card); padding: 16px 18px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow .18s, transform .18s;
+  animation: fadeUp .25s ease both;
+}
+.kpi-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); transform: translateY(-2px); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.kpi-left { flex: 1; }
+.kpi-label { font-family: 'Nunito Sans', sans-serif; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px; }
+.kpi-value { font-family: 'Nunito Sans', sans-serif; font-size: 26px; font-weight: 800; color: var(--text-primary); line-height: 1; letter-spacing: -.5px; }
+.kpi-sub { font-family: 'Nunito Sans', sans-serif; font-size: 11.5px; color: var(--text-muted); margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+.kpi-trend-up { color: var(--success-dark); font-weight: 700; }
+.kpi-trend-down { color: var(--danger); font-weight: 700; }
+
+.kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.kpi-icon svg { width: 20px; height: 20px; }
+.kpi-red { background: var(--danger-light); color: var(--danger); }
+.kpi-orange { background: var(--orange-light); color: var(--orange); }
+.kpi-yellow { background: var(--warning-light); color: var(--warning); }
+.kpi-blue { background: var(--primary-light); color: var(--primary); }
+
+/* ════════════════════════════════════════════
+   TWO COLUMN LAYOUT
+════════════════════════════════════════════ */
+.body-grid { display: grid; grid-template-columns: 1fr 300px; gap: 18px; align-items: start; }
+
+/* ════════════════════════════════════════════
+   CARD
+════════════════════════════════════════════ */
+.card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  overflow: hidden; margin-bottom: 16px;
+}
+.card:last-child { margin-bottom: 0; }
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid var(--border-light);
+  flex-wrap: wrap; gap: 10px;
+}
+.card-title {
+  font-family: 'Nunito Sans', sans-serif; font-size: 14px;
+  font-weight: 700; color: #092c4c;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title-icon { width: 26px; height: 26px; border-radius: 6px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.card-title-icon svg { width: 13px; height: 13px; color: var(--primary); }
+.card-title-icon.orange { background: var(--orange-light); }
+.card-title-icon.orange svg { color: var(--orange); }
+.card-title-icon.red { background: var(--danger-light); }
+.card-title-icon.red svg { color: var(--danger); }
+.card-body { padding: 0; }
+
+/* ════════════════════════════════════════════
+   FILTER / CONTROLS BAR
+════════════════════════════════════════════ */
+.filter-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 20px; border-bottom: 1px solid var(--border-light); }
+
+.filter-search {
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--border); border-radius: var(--radius-input);
+  padding: 8px 12px; background: #fff; min-width: 200px; flex: 1; max-width: 300px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.filter-search:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46,107,197,.08); }
+.filter-search svg { width: 13px; height: 13px; color: var(--text-muted); flex-shrink: 0; }
+.filter-search input { border: none; background: transparent; outline: none; font-size: 13px; color: var(--text-primary); font-family: 'Nunito Sans', sans-serif; width: 100%; }
+.filter-search input::placeholder { color: var(--text-muted); }
+
+.sel-wrap { position: relative; display: inline-block; }
+.sel-wrap::after {
+  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary); pointer-events: none;
+}
+.filter-sel {
+  height: 36px; padding: 0 30px 0 10px;
+  border: 1px solid var(--border); border-radius: var(--radius-input);
+  background: #fff; color: var(--text-primary);
+  font-size: 12.5px; font-family: 'Nunito Sans', sans-serif; font-weight: 600;
+  cursor: pointer; appearance: none; outline: none; transition: border-color .15s;
+}
+.filter-sel:focus { border-color: var(--primary); }
+
+.filter-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+/* ════════════════════════════════════════════
+   TAB PILLS
+════════════════════════════════════════════ */
+.tab-pills { display: flex; gap: 4px; padding: 12px 20px 0; border-bottom: 1px solid var(--border-light); }
+.tab-pill {
+  padding: 8px 16px; border-radius: 6px 6px 0 0;
+  font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: color .14s, border-color .14s;
+  white-space: nowrap;
+}
+.tab-pill:hover { color: var(--text-primary); }
+.tab-pill.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 20px; font-size: 10px; font-weight: 800; padding: 0 5px; margin-left: 5px; }
+.tab-pill.active .tab-count { background: var(--primary); color: #fff; }
+.tab-pill:not(.active) .tab-count { background: #f0f2f4; color: var(--text-secondary); }
+
+/* ════════════════════════════════════════════
+   TABLE
+════════════════════════════════════════════ */
+.table-wrap { overflow-x: auto; }
+table.main-table { width: 100%; border-collapse: collapse; font-family: 'Nunito Sans', sans-serif; font-size: 13px; }
+table.main-table thead tr { background: #f5f6fa; }
+table.main-table th {
+  padding: 10px 14px; text-align: left;
+  font-size: 11px; font-weight: 700; color: var(--text-secondary);
+  white-space: nowrap; border-bottom: 1px solid var(--border);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+table.main-table th:first-child { padding-left: 20px; }
+table.main-table th:last-child { padding-right: 20px; }
+table.main-table td { padding: 13px 14px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+table.main-table td:first-child { padding-left: 20px; }
+table.main-table td:last-child { padding-right: 20px; }
+table.main-table tbody tr { transition: background .12s; cursor: pointer; }
+table.main-table tbody tr:hover td { background: #fafbfc; }
+table.main-table tbody tr:last-child td { border-bottom: none; }
+table.main-table tbody tr.selected-row td { background: #f0f5ff !important; }
+
+/* Checkbox */
+.cb-wrap { display: flex; align-items: center; justify-content: center; }
+.cb {
+  width: 16px; height: 16px; border: 2px solid var(--border);
+  border-radius: 4px; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; transition: all .13s;
+}
+.cb.checked { background: var(--primary); border-color: var(--primary); }
+.cb.indeterminate { background: var(--primary); border-color: var(--primary); }
+
+/* Product cell */
+.prod-cell { display: flex; align-items: center; gap: 10px; }
+.prod-emoji-box {
+  width: 38px; height: 38px; border-radius: 8px;
+  background: linear-gradient(135deg, #f0f4ff, #e8eeff);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.prod-name { font-weight: 700; color: #092c4c; font-size: 13px; line-height: 1.3; }
+.prod-sku { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* Stock progress bar */
+.stock-cell { min-width: 140px; }
+.stock-bar-wrap { height: 6px; background: #f0f2f4; border-radius: 20px; overflow: hidden; margin-top: 5px; }
+.stock-bar { height: 100%; border-radius: 20px; transition: width .4s ease; }
+.bar-danger { background: var(--danger); }
+.bar-warning { background: var(--warning); }
+.bar-orange { background: var(--orange); }
+.bar-success { background: var(--success); }
+.stock-nums { display: flex; align-items: baseline; gap: 3px; }
+.stock-current { font-weight: 800; font-size: 14px; }
+.stock-max { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+/* Urgency badge */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .7; }
+.badge-critical { background: var(--danger-light); color: var(--danger); }
+.badge-low { background: var(--warning-light); color: var(--warning-dark); }
+.badge-moderate { background: var(--orange-light); color: var(--orange-dark); }
+.badge-ok { background: var(--success-light); color: var(--success-dark); }
+
+/* Row actions */
+.row-acts { display: flex; align-items: center; gap: 6px; }
+.act-btn {
+  width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 6px;
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .13s, border-color .13s; flex-shrink: 0;
+}
+.act-btn:hover { background: var(--bg); }
+.act-btn svg { width: 13px; height: 13px; color: var(--text-secondary); }
+.act-btn.reorder { border-color: #c7d7f5; background: var(--primary-light); }
+.act-btn.reorder:hover { background: #dce8f8; }
+.act-btn.reorder svg { color: var(--primary); }
+.act-btn.del:hover { background: var(--danger-light); border-color: #fca5a5; }
+.act-btn.del svg { color: var(--danger); }
+
+/* TABLE FOOTER */
+.table-foot { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid var(--border-light); }
+.tfoot-info { font-family: 'Nunito Sans', sans-serif; font-size: 12.5px; color: var(--text-secondary); font-weight: 600; }
+.pagination { display: flex; gap: 4px; }
+.pg-btn {
+  width: 30px; height: 30px; border-radius: 6px;
+  border: 1px solid var(--border); background: #fff;
+  font-size: 12px; font-weight: 700; font-family: 'Nunito Sans', sans-serif;
+  color: var(--text-secondary); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .13s;
+}
+.pg-btn:hover { background: var(--bg); }
+.pg-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+/* BULK ACTION BAR */
+.bulk-bar {
+  display: none; align-items: center; gap: 10px;
+  background: #092c4c; border-radius: var(--radius-card);
+  padding: 10px 18px; margin: 0 0 16px;
+  animation: slideDown .2s ease;
+}
+.bulk-bar.show { display: flex; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+.bulk-count { font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700; color: #fff; flex: 1; }
+.bulk-btn {
+  padding: 6px 14px; font-size: 12px; font-weight: 700; font-family: 'Nunito Sans', sans-serif;
+  border: none; border-radius: 5px; cursor: pointer; transition: opacity .13s;
+}
+.bulk-btn:hover { opacity: .85; }
+.bulk-po { background: #2e6bc5; color: #fff; }
+.bulk-alert { background: var(--warning-light); color: var(--warning-dark); }
+.bulk-dismiss { background: rgba(255,255,255,.12); color: rgba(255,255,255,.8); }
+
+/* ════════════════════════════════════════════
+   RIGHT PANEL
+════════════════════════════════════════════ */
+.right-panel { display: flex; flex-direction: column; gap: 16px; position: sticky; top: calc(var(--topbar-h) + 16px); }
+
+/* Urgency breakdown */
+.urgency-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 0; }
+.urgency-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border-light);
+}
+.urgency-row:last-child { border-bottom: none; padding-bottom: 0; }
+.urgency-left { display: flex; align-items: center; gap: 8px; }
+.urgency-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.urgency-label { font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.urgency-sub { font-family: 'Nunito Sans', sans-serif; font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.urgency-val { font-family: 'Nunito Sans', sans-serif; font-size: 18px; font-weight: 800; color: var(--text-primary); }
+
+/* Mini bar chart */
+.mini-chart { padding: 16px 20px; }
+.mc-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.mc-bar-row:last-child { margin-bottom: 0; }
+.mc-label { font-family: 'Nunito Sans', sans-serif; font-size: 11.5px; color: var(--text-secondary); font-weight: 600; min-width: 80px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-bar-track { flex: 1; height: 8px; background: #f0f2f4; border-radius: 20px; overflow: hidden; }
+.mc-bar-fill { height: 100%; border-radius: 20px; transition: width .5s ease; }
+.mc-val { font-family: 'Nunito Sans', sans-serif; font-size: 11.5px; font-weight: 700; color: var(--text-primary); min-width: 24px; text-align: right; flex-shrink: 0; }
+
+/* Quick actions */
+.quick-actions { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+.qa-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 7px;
+  border: 1px solid var(--border); background: #fff;
+  cursor: pointer; transition: all .14s; text-decoration: none;
+  font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--text-primary);
+}
+.qa-btn:hover { background: var(--bg); border-color: #c7d7f5; transform: translateX(2px); }
+.qa-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.qa-icon svg { width: 14px; height: 14px; }
+.qa-icon.blue { background: var(--primary-light); color: var(--primary); }
+.qa-icon.orange { background: var(--orange-light); color: var(--orange); }
+.qa-icon.green { background: var(--success-light); color: var(--success-dark); }
+.qa-icon.red { background: var(--danger-light); color: var(--danger); }
+.qa-text { flex: 1; }
+.qa-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 1px; }
+.qa-arrow { color: var(--text-muted); }
+.qa-arrow svg { width: 12px; height: 12px; }
+
+/* ════════════════════════════════════════════
+   DETAIL DRAWER (slide-in)
+════════════════════════════════════════════ */
+.drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 200; opacity: 0; pointer-events: none; transition: opacity .25s; backdrop-filter: blur(2px); }
+.drawer-overlay.open { opacity: 1; pointer-events: all; }
+
+.drawer {
+  position: fixed; top: 0; right: -480px; bottom: 0; width: 460px;
+  background: #fff; z-index: 201; box-shadow: -8px 0 40px rgba(0,0,0,.12);
+  transition: right .28s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.drawer.open { right: 0; }
+
+.drawer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.drawer-title { font-family: 'Nunito Sans', sans-serif; font-size: 16px; font-weight: 800; color: #092c4c; }
+.drawer-close { width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .13s; }
+.drawer-close:hover { background: var(--danger-light); color: var(--danger); }
+.drawer-close svg { width: 13px; height: 13px; }
+
+.drawer-body { flex: 1; overflow-y: auto; padding: 20px 22px; }
+.drawer-body::-webkit-scrollbar { width: 4px; }
+.drawer-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.d-section { margin-bottom: 20px; }
+.d-section-label { font-family: 'Nunito Sans', sans-serif; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin-bottom: 10px; }
+.d-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-light); font-family: 'Nunito Sans', sans-serif; font-size: 13px; }
+.d-row:last-child { border-bottom: none; }
+.d-label { color: var(--text-secondary); font-weight: 500; }
+.d-val { font-weight: 700; color: var(--text-primary); text-align: right; }
+.d-product-hero { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg, #f0f4ff, #e8eeff); border-radius: 10px; padding: 16px; margin-bottom: 18px; }
+.d-prod-emoji { font-size: 40px; }
+.d-prod-name { font-family: 'Nunito Sans', sans-serif; font-size: 16px; font-weight: 800; color: #092c4c; }
+.d-prod-sku { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-family: 'Nunito Sans', sans-serif; }
+
+/* Stock gauge in drawer */
+.gauge-wrap { position: relative; margin: 10px 0; }
+.gauge-track { height: 14px; background: #f0f2f4; border-radius: 20px; overflow: hidden; }
+.gauge-fill { height: 100%; border-radius: 20px; transition: width .5s ease; }
+.gauge-labels { display: flex; justify-content: space-between; margin-top: 5px; font-family: 'Nunito Sans', sans-serif; font-size: 11px; color: var(--text-muted); font-weight: 600; }
+
+.drawer-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 8px; flex-shrink: 0; }
+.drawer-footer .btn { flex: 1; justify-content: center; }
+
+/* Adjust stock input in drawer */
+.adj-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.adj-btn { width: 34px; height: 34px; border: 1.5px solid var(--border); border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; font-weight: 700; transition: all .13s; color: var(--text-secondary); }
+.adj-btn:hover { background: var(--bg); color: var(--primary); border-color: #c7d7f5; }
+.adj-input { flex: 1; height: 34px; border: 1.5px solid var(--border); border-radius: 6px; text-align: center; font-family: 'Nunito Sans', sans-serif; font-size: 15px; font-weight: 800; color: var(--text-primary); outline: none; background: var(--bg); transition: border-color .13s; }
+.adj-input:focus { border-color: var(--primary); background: #fff; }
+.adj-input::-webkit-outer-spin-button, .adj-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* ════════════════════════════════════════════
+   MODAL
+════════════════════════════════════════════ */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .2s; backdrop-filter: blur(3px); }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: #fff; border-radius: 10px; width: 420px; max-width: calc(100vw - 40px); box-shadow: 0 20px 60px rgba(0,0,0,.15); transform: scale(.95) translateY(8px); transition: transform .2s; overflow: hidden; }
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-family: 'Nunito Sans', sans-serif; font-size: 15px; font-weight: 800; color: #092c4c; }
+.modal-x { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 5px; background: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); transition: background .12s; }
+.modal-x:hover { background: var(--danger-light); color: var(--danger); }
+.modal-body { padding: 18px 20px; font-family: 'Nunito Sans', sans-serif; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.modal-foot { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+.modal-cancel { padding: 8px 16px; border: 1px solid var(--border); border-radius: 5px; background: #fff; font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; color: var(--text-secondary); transition: background .12s; }
+.modal-cancel:hover { background: var(--bg); }
+.modal-confirm { padding: 8px 18px; border: none; border-radius: 5px; background: var(--primary); color: #fff; font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .12s; }
+.modal-confirm:hover { background: #2460b0; }
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+.toast { position: fixed; bottom: 24px; right: 24px; z-index: 999; background: #092c4c; color: #fff; border-radius: 8px; padding: 13px 18px; font-family: 'Nunito Sans', sans-serif; font-size: 13px; font-weight: 700; display: none; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,.18); animation: fadeUp .25s ease; min-width: 220px; }
+.toast.show { display: flex; }
+.toast-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.toast-success { background: #15803d; }
+.toast-warning { background: #92400e; }
+.toast-error { background: #991b1b; }
+
+/* ════════════════════════════════════════════
+   SCROLLBAR
+════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+  SIDEBAR
+═══════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <div class="sb-group">
+      <div class="sb-group-label">Main</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retialer_Dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Retailer Dashboard</span>
+          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Inventory</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Product_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5L14.5 5v6L8 14.5 1.5 11V5L8 1.5z"/><path d="M1.5 5L8 8.5 14.5 5M8 8.5V14.5"/></svg></span>
+          <span class="sb-item-label">Products</span>
+        </a>
+        <a class="sb-item" href="Add_New_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="8" y1="4.5" x2="8" y2="11.5"/><line x1="4.5" y1="8" x2="11.5" y2="8"/></svg></span>
+          <span class="sb-item-label">Add Product</span>
+        </a>
+        <a class="sb-item" href="Edit_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l3 3-8.5 8.5H1.5V10.5l9-8z"/><line x1="8.5" y1="4.5" x2="11.5" y2="7.5"/></svg></span>
+          <span class="sb-item-label">Edit Product</span>
+        </a>
+        <a class="sb-item" href="Inventory_Overview.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+          <span class="sb-item-label">Inventory Overview</span>
+        </a>
+        <a class="sb-item active" href="Low_Stocks.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/><polyline points="10.5,4 13.5,4 13.5,7"/></svg></span>
+          <span class="sb-item-label">Low Stocks</span>
+        </a>
+        <a class="sb-item" href="Multi_warehouse_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/><line x1="1" y1="7" x2="15" y2="7"/></svg></span>
+          <span class="sb-item-label">Multi Store View</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Stock</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="stock_adjustment.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-item-label">Stock Adjustment</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Peoples</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Customer_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Customers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="billers.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-item-label">Billers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="supplier-list.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-item-label">Suppliers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Purchases</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Reorder_Recommendations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
+          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+        </a>
+        <a class="sb-item" href="Create_Purchase_Order.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-item-label">Purchase Order</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="Returns_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
+          <span class="sb-item-label">Purchase Return</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Settings</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="logout()">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════
+  MAIN
+═══════════════════════════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="tb-breadcrumb">
+        <a href="Retialer_Dashboard.html">Home</a><span class="sep">/</span>
+        <a href="Product_List.html">Inventory</a><span class="sep">/</span>
+        <span class="current">Low Stocks</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="tb-avatar">RS</div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-wrap">
+
+    <!-- PAGE HEADER -->
+    <div class="page-head">
+      <div>
+        <div class="page-title">Low Stocks</div>
+        <div class="page-subtitle">Inventory / Low Stocks — Monitor and restock critical inventory</div>
+      </div>
+      <div class="page-head-actions">
+        <button class="btn btn-outline" onclick="exportCSV()">
+          <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 9.5v2h10v-2"/><line x1="6.5" y1="1.5" x2="6.5" y2="8.5"/><polyline points="3.5,5.5 6.5,8.5 9.5,5.5"/></svg>
+          Export
+        </button>
+        <button class="btn btn-warning" onclick="openReorderAll()">
+          <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,4 1,9 6,9"/><path d="M2 9A5.5 5.5 0 1012 7"/></svg>
+          Auto Reorder All
+        </button>
+        <button class="btn btn-primary" onclick="openCreatePO()">
+          <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="6.5" y1="1.5" x2="6.5" y2="11.5"/><line x1="1.5" y1="6.5" x2="11.5" y2="6.5"/></svg>
+          Create PO
+        </button>
+      </div>
+    </div>
+
+    <!-- ALERT BANNER -->
+    <div class="alert-banner" id="alertBanner">
+      <div class="alert-icon">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 1.5L16.5 15H1.5L9 1.5z"/><line x1="9" y1="7" x2="9" y2="10.5"/><circle cx="9" cy="12.5" r=".7" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div>
+        <div class="alert-title" id="alertTitle">Low stock items need attention</div>
+        <div class="alert-sub" id="alertSub">Loading current low-stock status…</div>
+      </div>
+      <div class="alert-close" onclick="document.getElementById('alertBanner').style.display='none'">✕</div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card" style="animation-delay:0ms">
+        <div class="kpi-left">
+          <div class="kpi-label">Out of Stock</div>
+          <div class="kpi-value" id="kpi-oos">4</div>
+          <div class="kpi-sub"><span class="kpi-trend-down">▲ 2</span> since last week</div>
+        </div>
+        <div class="kpi-icon kpi-red">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="8.5"/><line x1="7" y1="7" x2="13" y2="13"/><line x1="13" y1="7" x2="7" y2="13"/></svg>
+        </div>
+      </div>
+      <div class="kpi-card" style="animation-delay:60ms">
+        <div class="kpi-left">
+          <div class="kpi-label">Critical (&lt;10 units)</div>
+          <div class="kpi-value" id="kpi-critical">11</div>
+          <div class="kpi-sub"><span class="kpi-trend-down">▲ 5</span> since last week</div>
+        </div>
+        <div class="kpi-icon kpi-orange">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 2L18 17H2L10 2z"/><line x1="10" y1="8" x2="10" y2="12"/><circle cx="10" cy="14.5" r=".8" fill="currentColor" stroke="none"/></svg>
+        </div>
+      </div>
+      <div class="kpi-card" style="animation-delay:120ms">
+        <div class="kpi-left">
+          <div class="kpi-label">Low Stock (10–30)</div>
+          <div class="kpi-value" id="kpi-low">18</div>
+          <div class="kpi-sub"><span class="kpi-trend-up">▼ 3</span> vs last month</div>
+        </div>
+        <div class="kpi-icon kpi-yellow">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3,15 7,10 10,13 14,7 17,10"/><polyline points="14,7 17,7 17,10"/></svg>
+        </div>
+      </div>
+      <div class="kpi-card" style="animation-delay:180ms">
+        <div class="kpi-left">
+          <div class="kpi-label">Pending Reorders</div>
+          <div class="kpi-value" id="kpi-pending">7</div>
+          <div class="kpi-sub">POs awaiting delivery</div>
+        </div>
+        <div class="kpi-icon kpi-blue">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h14v12H3V5z"/><path d="M7 5V3h6v2"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="11" y2="13"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN BODY GRID -->
+    <div class="body-grid">
+
+      <!-- LEFT: TABLE -->
+      <div>
+
+        <!-- BULK ACTION BAR -->
+        <div class="bulk-bar" id="bulkBar">
+          <span class="bulk-count" id="bulkCount">0 items selected</span>
+          <button class="bulk-btn bulk-po" onclick="bulkCreatePO()">
+            <svg width="12" height="12" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" style="display:inline;vertical-align:-2px;margin-right:4px"><path d="M9 2H4a1 1 0 00-1 1v7a1 1 0 001 1h5a1 1 0 001-1V2z"/></svg>
+            Create PO
+          </button>
+          <button class="bulk-btn bulk-alert" onclick="bulkSetAlert()">Set Alerts</button>
+          <button class="bulk-btn bulk-dismiss" onclick="clearSelection()">✕ Clear</button>
+        </div>
+
+        <div class="card">
+          <!-- TABS -->
+          <div class="tab-pills">
+            <div class="tab-pill active" onclick="setTab(this,'all')" data-tab="all">
+              All Low Stock <span class="tab-count" id="tab-all-count">33</span>
+            </div>
+            <div class="tab-pill" onclick="setTab(this,'oos')" data-tab="oos">
+              Out of Stock <span class="tab-count" id="tab-oos-count">4</span>
+            </div>
+            <div class="tab-pill" onclick="setTab(this,'critical')" data-tab="critical">
+              Critical <span class="tab-count" id="tab-crit-count">11</span>
+            </div>
+            <div class="tab-pill" onclick="setTab(this,'low')" data-tab="low">
+              Low Stock <span class="tab-count" id="tab-low-count">18</span>
+            </div>
+          </div>
+
+          <!-- FILTER BAR -->
+          <div class="filter-bar">
+            <div class="filter-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="tableSearch" placeholder="Search product, SKU…" oninput="applyFilters()"/>
+            </div>
+            <div class="sel-wrap">
+              <select class="filter-sel" id="catFilter" onchange="applyFilters()">
+                <option value="">All Categories</option>
+                <option>Electronics</option>
+                <option>Furniture</option>
+                <option>Office</option>
+                <option>Peripherals</option>
+                <option>Storage</option>
+                <option>Networking</option>
+                <option>Apparel</option>
+              </select>
+            </div>
+            <div class="sel-wrap">
+              <select class="filter-sel" id="warehouseFilter" onchange="applyFilters()">
+                <option value="">All Warehouses</option>
+                <option>Main Warehouse – A1</option>
+                <option>Main Warehouse – A2</option>
+                <option>East Wing – C3</option>
+                <option>West Wing – D1</option>
+              </select>
+            </div>
+            <div class="sel-wrap">
+              <select class="filter-sel" id="sortFilter" onchange="applyFilters()">
+                <option value="urgency">Sort: Urgency</option>
+                <option value="name">Sort: Name A–Z</option>
+                <option value="stock-asc">Sort: Stock ↑</option>
+                <option value="stock-desc">Sort: Stock ↓</option>
+                <option value="value">Sort: Value</option>
+              </select>
+            </div>
+            <div class="filter-right">
+              <button class="btn btn-outline btn-sm" onclick="applyFilters()">
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="1.5" y1="4" x2="11.5" y2="4"/><line x1="3" y1="6.5" x2="10" y2="6.5"/><line x1="5" y1="9" x2="8" y2="9"/></svg>
+                Filter
+              </button>
+            </div>
+          </div>
+
+          <!-- TABLE -->
+          <div class="table-wrap">
+            <table class="main-table">
+              <thead>
+                <tr>
+                  <th style="width:36px">
+                    <div class="cb-wrap">
+                      <div class="cb" id="headerCb" onclick="toggleSelectAll()" title="Select all"></div>
+                    </div>
+                  </th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Urgency</th>
+                  <th>Stock Level</th>
+                  <th>Reorder Pt.</th>
+                  <th>Supplier</th>
+                  <th>Est. Value</th>
+                  <th style="width:100px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- TABLE FOOTER -->
+          <div class="table-foot">
+            <span class="tfoot-info" id="tblInfo">Showing 0 results</span>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+
+        <!-- Urgency Breakdown -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="card-title-icon red">
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.5 1.5L12 11.5H1L6.5 1.5z"/><line x1="6.5" y1="5.5" x2="6.5" y2="8.5"/><circle cx="6.5" cy="10" r=".6" fill="currentColor" stroke="none"/></svg>
+              </div>
+              Urgency Breakdown
+            </div>
+          </div>
+          <div class="urgency-list">
+            <div class="urgency-row">
+              <div class="urgency-left">
+                <div class="urgency-dot" style="background:#ef4444"></div>
+                <div>
+                  <div class="urgency-label">Out of Stock</div>
+                  <div class="urgency-sub">Immediate action</div>
+                </div>
+              </div>
+              <div class="urgency-val" style="color:#ef4444" id="urg-oos">4</div>
+            </div>
+            <div class="urgency-row">
+              <div class="urgency-left">
+                <div class="urgency-dot" style="background:#f97316"></div>
+                <div>
+                  <div class="urgency-label">Critical &lt;10</div>
+                  <div class="urgency-sub">Order within 24h</div>
+                </div>
+              </div>
+              <div class="urgency-val" style="color:#f97316" id="urg-crit">11</div>
+            </div>
+            <div class="urgency-row">
+              <div class="urgency-left">
+                <div class="urgency-dot" style="background:#f59e0b"></div>
+                <div>
+                  <div class="urgency-label">Low 10–30</div>
+                  <div class="urgency-sub">Order within 1 week</div>
+                </div>
+              </div>
+              <div class="urgency-val" style="color:#f59e0b" id="urg-low">18</div>
+            </div>
+            <div class="urgency-row">
+              <div class="urgency-left">
+                <div class="urgency-dot" style="background:#2e6bc5"></div>
+                <div>
+                  <div class="urgency-label">Pending POs</div>
+                  <div class="urgency-sub">On its way</div>
+                </div>
+              </div>
+              <div class="urgency-val" style="color:#2e6bc5" id="urg-po">7</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Breakdown -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="card-title-icon orange">
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="7" width="3" height="5" rx=".5"/><rect x="5" y="4" width="3" height="8" rx=".5"/><rect x="9" y="1" width="3" height="11" rx=".5"/></svg>
+              </div>
+              By Category
+            </div>
+          </div>
+          <div class="mini-chart" id="catChart"></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="card-title-icon">
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="1,4 1,9 6,9"/><path d="M2 9A5.5 5.5 0 1012 7"/></svg>
+              </div>
+              Quick Actions
+            </div>
+          </div>
+          <div class="quick-actions">
+            <div class="qa-btn" onclick="openCreatePO()">
+              <div class="qa-icon blue"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v7a1 1 0 001 1h5a1 1 0 001-1V2z"/><polyline points="9,2 9,5 12,5"/><line x1="5" y1="7" x2="8" y2="7"/></svg></div>
+              <div class="qa-text">
+                <div>Create Purchase Order</div>
+                <div class="qa-sub">For critical items</div>
+              </div>
+              <div class="qa-arrow"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></div>
+            </div>
+            <div class="qa-btn" onclick="openReorderAll()">
+              <div class="qa-icon orange"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="1,4 1,9 6,9"/><path d="M2 9A5.5 5.5 0 1012 7"/></svg></div>
+              <div class="qa-text">
+                <div>Auto Reorder Critical</div>
+                <div class="qa-sub">Reorder all 0-stock items</div>
+              </div>
+              <div class="qa-arrow"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></div>
+            </div>
+            <a class="qa-btn" href="Add_New_Product.html">
+              <div class="qa-icon green"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="6.5" y1="1.5" x2="6.5" y2="11.5"/><line x1="1.5" y1="6.5" x2="11.5" y2="6.5"/></svg></div>
+              <div class="qa-text">
+                <div>Add New Product</div>
+                <div class="qa-sub">Expand your catalogue</div>
+              </div>
+              <div class="qa-arrow"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></div>
+            </a>
+            <div class="qa-btn" onclick="exportCSV()">
+              <div class="qa-icon red"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 9.5v2h10v-2"/><line x1="6.5" y1="1.5" x2="6.5" y2="8.5"/><polyline points="3.5,5.5 6.5,8.5 9.5,5.5"/></svg></div>
+              <div class="qa-text">
+                <div>Export Report</div>
+                <div class="qa-sub">Download CSV / Excel</div>
+              </div>
+              <div class="qa-arrow"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /right-panel -->
+    </div><!-- /body-grid -->
+  </div><!-- /page-wrap -->
+</div><!-- /main -->
+
+<!-- ═══════════════════════════════════
+  DETAIL DRAWER
+═══════════════════════════════════ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer(event)">
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div class="drawer-title" id="drawerTitle">Product Detail</div>
+      <div class="drawer-close" onclick="closeDrawerForce()">
+        <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="2" y1="2" x2="11" y2="11"/><line x1="11" y1="2" x2="2" y2="11"/></svg>
+      </div>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-footer" id="drawerFooter"></div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Confirm Action</div>
+      <div class="modal-x" onclick="closeModalForce()">✕</div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="modal-cancel" onclick="closeModalForce()">Cancel</button>
+      <button class="modal-confirm" id="modalConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" viewBox="0 0 20 20" fill="none" stroke="#22c55e" stroke-width="2" id="toastIcon"><circle cx="10" cy="10" r="8.5"/><polyline points="6.5,10 9,12.5 13.5,7"/></svg>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script src="common-products.js"></script>
+<script src="api-config.js"></script>
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════ */
+let PRODUCTS = [];
+/* const PRODUCTS = [
+  { id:'P001', name:'USB-C Hub 7-Port',         emoji:'🔌', sku:'UCH-7P-001',  cat:'Electronics', stock:0,  minStock:15, maxStock:100, reorderPt:20, reorderQty:50, supplier:'ABC Suppliers',   unitPrice:2199, warehouse:'Main Warehouse – A1', lastOrdered:'Dec 10, 2024', leadDays:5  },
+  { id:'P002', name:'Mechanical Keyboard',       emoji:'⌨️', sku:'KBD-MCH-002', cat:'Peripherals', stock:3,  minStock:10, maxStock:80,  reorderPt:15, reorderQty:30, supplier:'Global Trade Ltd', unitPrice:3499, warehouse:'Main Warehouse – A2', lastOrdered:'Dec 05, 2024', leadDays:7  },
+  { id:'P003', name:'Standing Desk',             emoji:'🏢', sku:'DESK-STD-003',cat:'Furniture',   stock:0,  minStock:5,  maxStock:30,  reorderPt:8,  reorderQty:15, supplier:'Premium Goods Co', unitPrice:22999,warehouse:'West Wing – D1',       lastOrdered:'Nov 28, 2024', leadDays:14 },
+  { id:'P004', name:'Wireless Charger 15W',      emoji:'⚡', sku:'WCH-15W-004', cat:'Electronics', stock:5,  minStock:20, maxStock:150, reorderPt:25, reorderQty:60, supplier:'ABC Suppliers',   unitPrice:1299, warehouse:'Main Warehouse – A1', lastOrdered:'Dec 08, 2024', leadDays:4  },
+  { id:'P005', name:'Monitor Arm Single',        emoji:'🦾', sku:'MON-ARM-005', cat:'Furniture',   stock:0,  minStock:8,  maxStock:40,  reorderPt:12, reorderQty:20, supplier:'Rapid Imports Co', unitPrice:3199, warehouse:'East Wing – C3',      lastOrdered:'Dec 01, 2024', leadDays:10 },
+  { id:'P006', name:'Laptop Stand Aluminium',    emoji:'💻', sku:'LSTND-006',   cat:'Furniture',   stock:7,  minStock:15, maxStock:80,  reorderPt:20, reorderQty:35, supplier:'Global Trade Ltd', unitPrice:1899, warehouse:'Main Warehouse – A2', lastOrdered:'Dec 03, 2024', leadDays:6  },
+  { id:'P007', name:'Ergonomic Mouse Pad',       emoji:'🖲️', sku:'MPAD-ER-007', cat:'Peripherals', stock:9,  minStock:25, maxStock:200, reorderPt:30, reorderQty:80, supplier:'ABC Suppliers',   unitPrice:899,  warehouse:'Main Warehouse – A1', lastOrdered:'Dec 07, 2024', leadDays:3  },
+  { id:'P008', name:'Webcam HD 1080p',           emoji:'📷', sku:'CAM-HD-008',  cat:'Electronics', stock:6,  minStock:12, maxStock:60,  reorderPt:15, reorderQty:25, supplier:'Premium Goods Co', unitPrice:3899, warehouse:'East Wing – C3',      lastOrdered:'Nov 30, 2024', leadDays:8  },
+  { id:'P009', name:'Noise-Cancel Headphones',   emoji:'🎧', sku:'HEAD-NC-009', cat:'Electronics', stock:4,  minStock:10, maxStock:50,  reorderPt:12, reorderQty:20, supplier:'Global Trade Ltd', unitPrice:7499, warehouse:'Main Warehouse – A1', lastOrdered:'Dec 02, 2024', leadDays:9  },
+  { id:'P010', name:'External SSD 1TB',          emoji:'💾', sku:'SSD-1T-010',  cat:'Storage',     stock:8,  minStock:20, maxStock:120, reorderPt:25, reorderQty:50, supplier:'Rapid Imports Co', unitPrice:6499, warehouse:'Main Warehouse – A2', lastOrdered:'Dec 06, 2024', leadDays:5  },
+  { id:'P011', name:'Router Dual-Band',          emoji:'📡', sku:'RTR-DB-011',  cat:'Networking',  stock:0,  minStock:10, maxStock:50,  reorderPt:12, reorderQty:20, supplier:'ABC Suppliers',   unitPrice:4199, warehouse:'West Wing – D1',       lastOrdered:'Nov 25, 2024', leadDays:7  },
+  { id:'P012', name:'27" 4K Monitor',            emoji:'🖥️', sku:'MON-4K-012',  cat:'Electronics', stock:2,  minStock:8,  maxStock:30,  reorderPt:10, reorderQty:15, supplier:'Global Trade Ltd', unitPrice:28999,warehouse:'Main Warehouse – A1', lastOrdered:'Nov 20, 2024', leadDays:14 },
+  { id:'P013', name:'Portable Speaker',          emoji:'🔊', sku:'SPK-PT-013',  cat:'Electronics', stock:10, minStock:20, maxStock:100, reorderPt:25, reorderQty:40, supplier:'Premium Goods Co', unitPrice:2499, warehouse:'East Wing – C3',      lastOrdered:'Dec 04, 2024', leadDays:6  },
+  { id:'P014', name:'Cable Organiser Kit',       emoji:'🔗', sku:'CBL-ORG-014', cat:'Office',      stock:12, minStock:50, maxStock:500, reorderPt:60, reorderQty:150,supplier:'Rapid Imports Co', unitPrice:349,  warehouse:'Main Warehouse – A2', lastOrdered:'Dec 09, 2024', leadDays:3  },
+  { id:'P015', name:'Wireless Keyboard',         emoji:'⌨️', sku:'KBD-WL-015',  cat:'Peripherals', stock:14, minStock:25, maxStock:120, reorderPt:30, reorderQty:50, supplier:'ABC Suppliers',   unitPrice:2299, warehouse:'Main Warehouse – A1', lastOrdered:'Dec 01, 2024', leadDays:5  },
+  { id:'P016', name:'USB Flash Drive 64GB',      emoji:'🔑', sku:'USB-64G-016', cat:'Storage',     stock:18, minStock:80, maxStock:500, reorderPt:100,reorderQty:200,supplier:'Global Trade Ltd', unitPrice:599,  warehouse:'East Wing – C3',      lastOrdered:'Dec 11, 2024', leadDays:3  },
+  { id:'P017', name:'Desk Organiser Tray',       emoji:'🗂️', sku:'DESK-ORG-017',cat:'Office',      stock:20, minStock:40, maxStock:200, reorderPt:50, reorderQty:100,supplier:'Premium Goods Co', unitPrice:699,  warehouse:'Main Warehouse – A2', lastOrdered:'Dec 05, 2024', leadDays:4  },
+  { id:'P018', name:'Laptop Backpack',           emoji:'🎒', sku:'BAG-LP-018',  cat:'Apparel',     stock:22, minStock:30, maxStock:150, reorderPt:35, reorderQty:60, supplier:'Rapid Imports Co', unitPrice:1899, warehouse:'West Wing – D1',       lastOrdered:'Nov 29, 2024', leadDays:8  },
+  { id:'P019', name:'A4 Paper Ream',             emoji:'📄', sku:'PPR-A4-019',  cat:'Office',      stock:25, minStock:100,maxStock:1000,reorderPt:120,reorderQty:300,supplier:'ABC Suppliers',   unitPrice:450,  warehouse:'Main Warehouse – A1', lastOrdered:'Dec 10, 2024', leadDays:2  },
+  { id:'P020', name:'Ethernet Cable 5m',         emoji:'🌐', sku:'ETH-5M-020',  cat:'Networking',  stock:28, minStock:60, maxStock:400, reorderPt:70, reorderQty:150,supplier:'Global Trade Ltd', unitPrice:299,  warehouse:'East Wing – C3',      lastOrdered:'Dec 08, 2024', leadDays:3  },
+  { id:'P021', name:'Ergonomic Office Chair',    emoji:'🪑', sku:'OFC-CHR-021', cat:'Furniture',   stock:1,  minStock:5,  maxStock:25,  reorderPt:8,  reorderQty:12, supplier:'Premium Goods Co', unitPrice:12999,warehouse:'West Wing – D1',       lastOrdered:'Nov 15, 2024', leadDays:21 },
+  { id:'P022', name:'Phone Stand (White)',        emoji:'📱', sku:'PSTAND-022',  cat:'Peripherals', stock:11, minStock:30, maxStock:200, reorderPt:40, reorderQty:80, supplier:'Rapid Imports Co', unitPrice:899,  warehouse:'Main Warehouse – A2', lastOrdered:'Dec 07, 2024', leadDays:4  },
+  { id:'P023', name:'Monitor USB-C Cable',       emoji:'🖥️', sku:'MCB-USB-023', cat:'Networking',  stock:16, minStock:50, maxStock:300, reorderPt:60, reorderQty:120,supplier:'ABC Suppliers',   unitPrice:799,  warehouse:'Main Warehouse – A1', lastOrdered:'Dec 09, 2024', leadDays:4  },
+  { id:'P024', name:'Label Printer Rolls',       emoji:'🏷️', sku:'LBL-RLL-024', cat:'Office',      stock:30, minStock:100,maxStock:800, reorderPt:120,reorderQty:250,supplier:'Global Trade Ltd', unitPrice:580,  warehouse:'East Wing – C3',      lastOrdered:'Dec 03, 2024', leadDays:5  },
+];
+
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let filtered = [...PRODUCTS];
+let selectedIds = new Set();
+let activeTab = 'all';
+let sortField = 'urgency';
+let drawerProduct = null;
+let ITEMS_PER_PAGE = 10;
+let currentPage = 1;
+
+/* ════════════════════════════════════════════
+  URGENCY HELPERS
+════════════════════════════════════════════ */
+function getUrgency(p) {
+  const stock = p.stock || 0;
+  const minStock = p.minStock || 10;
+  const maxStock = p.maxStock || 100;
+  const pct = maxStock > 0 ? stock / maxStock : 0;
+
+  if (stock === 0) return 'oos';
+  if (stock <= minStock || pct <= 0.2) return 'critical';
+  if (pct <= 0.3 || stock <= (p.reorderPt || minStock * 1.5)) return 'low';
+  return 'ok';
+}
+
+function getUrgencyLabel(p) {
+  const u = getUrgency(p);
+  if (u === 'oos')      return { label: 'Out of Stock', cls: 'badge-critical', barCls: 'bar-danger', color: '#ef4444' };
+  if (u === 'critical') return { label: 'Critical',     cls: 'badge-moderate', barCls: 'bar-orange', color: '#f97316' };
+  return { label: 'OK', cls: 'badge-ok', barCls: 'bar-success', color: '#22c55e' };
+}
+function urgencyOrder(p) { return getUrgency(p) === 'oos' ? 0 : getUrgency(p) === 'critical' ? 1 : 2; }
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadProducts().then(() => {
+    populateCategoryOptions();
+    populateWarehouseOptions();
+    applyFilters();
+    renderCatChart();
+    updateKPIs();
+    updateAlertBanner();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrawerForce(); closeModalForce(); } });
+});
+
+async function loadProducts() {
+  try {
+    const products = await RetailerApi.getProducts();
+    if (!Array.isArray(products)) {
+      PRODUCTS = [];
+      filtered = [];
+      return;
+    }
+
+    PRODUCTS = products.map(mapRetailerProduct);
+    filtered = [...PRODUCTS];
+  } catch (error) {
+    console.error('Failed to load products from API:', error);
+    PRODUCTS = [];
+    filtered = [];
+    if (window.RetailerUi && RetailerUi.showToast) {
+      RetailerUi.showToast(RetailerUi.getErrorMessage(error), 'error');
+    }
+  }
+}
+
+function mapRetailerProduct(product) {
+  const qty = Number(product.qty) || 0;
+  const min = Number(product.min) || 0;
+  const max = Number(product.max) || 0;
+  const reorderPoint = Number(product.reorderPoint || product.reorderPt || product.min || 0);
+  const reorderQty = Number(product.reorderQty || 0) || Math.max(1, Math.round(min * 1.5), 10);
+
+  return {
+    id: product.id || product._id || product.sku || String(Math.random()).slice(2),
+    name: product.name || 'Unnamed product',
+    sku: product.sku || '',
+    cat: product.category || product.subcategory || 'Uncategorized',
+    stock: qty,
+    minStock: min,
+    maxStock: max,
+    reorderPt: reorderPoint || min,
+    reorderQty: reorderQty,
+    supplier: product.supplier || 'Unknown supplier',
+    warehouse: normalizeWarehouse(product.warehouse),
+    unitPrice: Number(product.price || product.priceUSD || product.finalPrice || 0),
+    emoji: product.emoji || '📦',
+    lastOrdered: product.lastOrdered || product.updatedAt || 'N/A',
+    leadDays: Number(product.leadDays || 7),
+  };
+}
+
+function normalizeWarehouse(value) {
+  return value && String(value).trim() ? String(value).trim() : 'Main Warehouse';
+}
+
+function populateCategoryOptions() {
+  const catSelect = document.getElementById('catFilter');
+  const categories = Array.from(new Set(PRODUCTS.map(p => p.cat).filter(Boolean))).sort();
+  catSelect.innerHTML = '<option value="">All Categories</option>' + categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+}
+
+function populateWarehouseOptions() {
+  const whSelect = document.getElementById('warehouseFilter');
+  const warehouses = Array.from(new Set(PRODUCTS.map(p => p.warehouse).filter(Boolean))).sort();
+  whSelect.innerHTML = '<option value="">All Warehouses</option>' + warehouses.map(wh => `<option value="${wh}">${wh}</option>`).join('');
+}
+
+function updateAlertBanner() {
+  const oos = PRODUCTS.filter(p => getUrgency(p) === 'oos').length;
+  const critical = PRODUCTS.filter(p => getUrgency(p) === 'critical').length;
+  const low = PRODUCTS.filter(p => getUrgency(p) === 'low').length;
+  const totalLow = oos + critical + low;
+  const total = PRODUCTS.length;
+
+  const title = totalLow > 0 ? `${totalLow} low-stock item${totalLow !== 1 ? 's' : ''} need${totalLow !== 1 ? '' : 's'} attention` : 'All stock levels healthy';
+  const sub = total === 0
+    ? 'No inventory loaded yet. Please check the backend connection.'
+    : `Currently ${oos} out-of-stock, ${critical} critical, ${low} low-stock across ${total} products.`;
+
+  document.getElementById('alertTitle').textContent = title;
+  document.getElementById('alertSub').textContent = sub;
+}
+
+/* ════════════════════════════════════════════
+   FILTERS & SORT
+════════════════════════════════════════════ */
+function applyFilters() {
+  const q   = (document.getElementById('tableSearch').value || '').toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+  const wh  = document.getElementById('warehouseFilter').value;
+  const srt = document.getElementById('sortFilter').value;
+
+  filtered = PRODUCTS.filter(p => {
+    const urgency = getUrgency(p);
+    if (activeTab === 'all' && urgency === 'ok') return false;
+    if (activeTab === 'oos'      && urgency !== 'oos')      return false;
+    if (activeTab === 'critical' && urgency !== 'critical') return false;
+    if (activeTab === 'low'      && urgency !== 'low')      return false;
+    if (cat && p.cat !== cat) return false;
+    if (wh  && p.warehouse !== wh) return false;
+    if (q && !p.name.toLowerCase().includes(q) && !p.sku.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  if (srt === 'urgency')    filtered.sort((a,b) => urgencyOrder(a) - urgencyOrder(b) || a.stock - b.stock);
+  if (srt === 'name')       filtered.sort((a,b) => a.name.localeCompare(b.name));
+  if (srt === 'stock-asc')  filtered.sort((a,b) => a.stock - b.stock);
+  if (srt === 'stock-desc') filtered.sort((a,b) => b.stock - a.stock);
+  if (srt === 'value')      filtered.sort((a,b) => (b.stock*b.unitPrice) - (a.stock*a.unitPrice));
+
+  currentPage = 1;
+  renderTable();
+  updateKPIs();
+}
+
+function setTab(el, tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-pill').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+/* ════════════════════════════════════════════
+   RENDER TABLE
+════════════════════════════════════════════ */
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const page  = filtered.slice(start, start + ITEMS_PER_PAGE);
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);font-family:'Nunito Sans',sans-serif;font-size:13.5px;">
+      <div style="font-size:36px;margin-bottom:10px;opacity:.3">📦</div>
+      <div style="font-weight:700;margin-bottom:4px;">No products found</div>
+      <div style="font-size:12px;">Try adjusting the filters or search query</div>
+    </td></tr>`;
+    document.getElementById('tblInfo').textContent = '0 results';
+    renderPagination();
+    return;
+  }
+
+  tbody.innerHTML = page.map((p, i) => {
+    const u = getUrgencyLabel(p);
+    const pct = p.maxStock > 0 ? Math.round((p.stock / p.maxStock) * 100) : 0;
+    const isSel = selectedIds.has(p.id);
+    const estVal = (p.stock * p.unitPrice).toLocaleString('en-IN');
+    const delay = i * 30;
+
+    return `
+      <tr class="${isSel ? 'selected-row' : ''}" style="animation:fadeUp .2s ease ${delay}ms both" onclick="openDrawer('${p.id}')">
+        <td onclick="event.stopPropagation()">
+          <div class="cb-wrap">
+            <div class="cb ${isSel ? 'checked' : ''}" onclick="toggleRow('${p.id}',this)">
+              ${isSel ? `<svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="2"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5"/></svg>` : ''}
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="prod-cell">
+            <div class="prod-emoji-box">${p.emoji}</div>
+            <div>
+              <div class="prod-name">${p.name}</div>
+              <div class="prod-sku">${p.sku}</div>
+            </div>
+          </div>
+        </td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-secondary);font-weight:600">${p.cat}</td>
+        <td><span class="badge ${u.cls}">${u.label}</span></td>
+        <td>
+          <div class="stock-cell">
+            <div class="stock-nums">
+              <span class="stock-current" style="color:${u.color}">${p.stock}</span>
+              <span class="stock-max">/ ${p.maxStock}</span>
+            </div>
+            <div class="stock-bar-wrap">
+              <div class="stock-bar ${u.barCls}" style="width:${pct}%"></div>
+            </div>
+          </div>
+        </td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text-primary)">${p.reorderPt}</td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-secondary)">${p.supplier}</td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#092c4c">₹${estVal}</td>
+        <td onclick="event.stopPropagation()">
+          <div class="row-acts">
+            <div class="act-btn reorder" title="Reorder now" onclick="reorderProduct('${p.id}')">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,4 1,7 4,7"/><path d="M1.5 7A5.5 5.5 0 1011 4"/></svg>
+            </div>
+            <div class="act-btn" title="Adjust stock" onclick="openDrawer('${p.id}')">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l2 2-7 7H3.5V9l7-6.5z"/></svg>
+            </div>
+            <div class="act-btn del" title="Dismiss alert" onclick="dismissAlert('${p.id}')">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,3 12,3"/><path d="M4 3V2a1 1 0 011-1h3a1 1 0 011 1v1M5 6v4M8 6v4M2 3l.6 8a1 1 0 001 .9h5.8a1 1 0 001-.9L11 3"/></svg>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('tblInfo').textContent = `Showing ${start + 1}–${Math.min(start + ITEMS_PER_PAGE, filtered.length)} of ${filtered.length} result${filtered.length !== 1 ? 's' : ''}`;
+  renderPagination();
+  updateHeaderCb();
+}
+
+/* ════════════════════════════════════════════
+   PAGINATION
+════════════════════════════════════════════ */
+function renderPagination() {
+  const total = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const pg = document.getElementById('pagination');
+  if (total <= 1) { pg.innerHTML = ''; return; }
+
+  let html = '';
+  if (currentPage > 1) html += `<button class="pg-btn" onclick="goPage(${currentPage-1})">‹</button>`;
+  for (let i = 1; i <= Math.min(total, 5); i++) {
+    html += `<button class="pg-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  if (total > 5) html += `<span style="padding:0 4px;color:var(--text-muted);font-size:12px;align-self:center">…</span><button class="pg-btn ${total===currentPage?'active':''}" onclick="goPage(${total})">${total}</button>`;
+  if (currentPage < total) html += `<button class="pg-btn" onclick="goPage(${currentPage+1})">›</button>`;
+  pg.innerHTML = html;
+}
+function goPage(n) { currentPage = n; renderTable(); window.scrollTo({top:200,behavior:'smooth'}); }
+
+/* ════════════════════════════════════════════
+   SELECTION
+════════════════════════════════════════════ */
+function toggleRow(id, cbEl) {
+  if (selectedIds.has(id)) {
+    selectedIds.delete(id);
+    cbEl.classList.remove('checked');
+    cbEl.innerHTML = '';
+  } else {
+    selectedIds.add(id);
+    cbEl.classList.add('checked');
+    cbEl.innerHTML = `<svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="2"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5"/></svg>`;
+  }
+  updateBulkBar();
+  updateHeaderCb();
+}
+
+function toggleSelectAll() {
+  const pgIds = filtered.slice((currentPage-1)*ITEMS_PER_PAGE, currentPage*ITEMS_PER_PAGE).map(p => p.id);
+  const allSel = pgIds.every(id => selectedIds.has(id));
+  if (allSel) pgIds.forEach(id => selectedIds.delete(id));
+  else        pgIds.forEach(id => selectedIds.add(id));
+  updateBulkBar();
+  renderTable();
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  updateBulkBar();
+  renderTable();
+}
+
+function updateBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  if (selectedIds.size > 0) {
+    bar.classList.add('show');
+    document.getElementById('bulkCount').textContent = `${selectedIds.size} item${selectedIds.size > 1 ? 's' : ''} selected`;
+  } else {
+    bar.classList.remove('show');
+  }
+}
+
+function updateHeaderCb() {
+  const cb = document.getElementById('headerCb');
+  const pgIds = filtered.slice((currentPage-1)*ITEMS_PER_PAGE, currentPage*ITEMS_PER_PAGE).map(p => p.id);
+  if (!pgIds.length) { cb.className = 'cb'; cb.innerHTML = ''; return; }
+  const allSel = pgIds.every(id => selectedIds.has(id));
+  const someSel = pgIds.some(id => selectedIds.has(id));
+  cb.className = 'cb' + (allSel || someSel ? ' checked' : '');
+  cb.innerHTML = allSel
+    ? `<svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="2"><polyline points="1.5,4.5 3.5,6.5 7.5,2.5"/></svg>`
+    : someSel
+    ? `<div style="width:8px;height:2px;background:#fff;border-radius:1px"></div>` : '';
+}
+
+/* ════════════════════════════════════════════
+   KPI UPDATE
+════════════════════════════════════════════ */
+function updateKPIs() {
+  const oos      = PRODUCTS.filter(p => getUrgency(p) === 'oos').length;
+  const critical = PRODUCTS.filter(p => getUrgency(p) === 'critical').length;
+  const low      = PRODUCTS.filter(p => getUrgency(p) === 'low').length;
+
+  document.getElementById('kpi-oos').textContent      = oos;
+  document.getElementById('kpi-critical').textContent  = critical;
+  document.getElementById('kpi-low').textContent       = low;
+  document.getElementById('urg-oos').textContent       = oos;
+  document.getElementById('urg-crit').textContent      = critical;
+  document.getElementById('urg-low').textContent       = low;
+
+  // Tab counts
+  document.getElementById('tab-all-count').textContent  = (oos + critical + low);
+  document.getElementById('tab-oos-count').textContent  = oos;
+  document.getElementById('tab-crit-count').textContent = critical;
+  document.getElementById('tab-low-count').textContent  = low;
+}
+
+/* ════════════════════════════════════════════
+   CATEGORY CHART
+════════════════════════════════════════════ */
+function renderCatChart() {
+  const cats = {};
+  const lowStockProducts = PRODUCTS.filter(p => ['oos', 'critical', 'low'].includes(getUrgency(p)));
+  lowStockProducts.forEach(p => { cats[p.cat] = (cats[p.cat] || 0) + 1; });
+  const sorted = Object.entries(cats).sort((a,b) => b[1]-a[1]).slice(0,6);
+  const max = sorted.length ? Math.max(...sorted.map(([,v]) => v)) : 0;
+  const COLORS = ['#ef4444','#f97316','#f59e0b','#2e6bc5','#22c55e','#a855f7'];
+
+  document.getElementById('catChart').innerHTML = sorted.map(([cat, cnt], i) => `
+    <div class="mc-bar-row">
+      <div class="mc-label" title="${cat}">${cat}</div>
+      <div class="mc-bar-track">
+        <div class="mc-bar-fill" style="width:${max ? (cnt/max)*100 : 0}%;background:${COLORS[i]};animation-delay:${i*80}ms"></div>
+      </div>
+      <div class="mc-val">${cnt}</div>
+    </div>
+  `).join('');
+}
+
+/* ════════════════════════════════════════════
+   DRAWER
+════════════════════════════════════════════ */
+function openDrawer(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  drawerProduct = p;
+  const u = getUrgencyLabel(p);
+  const pct = p.maxStock > 0 ? Math.round((p.stock / p.maxStock) * 100) : 0;
+
+  document.getElementById('drawerTitle').textContent = 'Stock Detail';
+  document.getElementById('drawerBody').innerHTML = `
+    <div class="d-product-hero">
+      <div class="d-prod-emoji">${p.emoji}</div>
+      <div>
+        <div class="d-prod-name">${p.name}</div>
+        <div class="d-prod-sku">${p.sku} &nbsp;·&nbsp; ${p.cat}</div>
+        <div style="margin-top:6px"><span class="badge ${u.cls}">${u.label}</span></div>
+      </div>
+    </div>
+
+    <div class="d-section">
+      <div class="d-section-label">Stock Status</div>
+      <div style="margin-bottom:4px;display:flex;align-items:baseline;gap:6px">
+        <span style="font-family:'Nunito Sans',sans-serif;font-size:28px;font-weight:900;color:${u.color}">${p.stock}</span>
+        <span style="font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--text-muted)">/ ${p.maxStock} max</span>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-track">
+          <div class="gauge-fill ${u.barCls}" style="width:${pct}%"></div>
+        </div>
+        <div class="gauge-labels">
+          <span>0</span>
+          <span>Min: ${p.minStock}</span>
+          <span>Reorder: ${p.reorderPt}</span>
+          <span>${p.maxStock}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-section">
+      <div class="d-section-label">Adjust Stock</div>
+      <div class="adj-row">
+        <div class="adj-btn" onclick="adjStock(-1)">−</div>
+        <input class="adj-input" type="number" id="adjInput" value="${p.stock}" min="0"/>
+        <div class="adj-btn" onclick="adjStock(1)">+</div>
+      </div>
+      <div style="font-family:'Nunito Sans',sans-serif;font-size:11.5px;color:var(--text-muted);margin-top:6px">Edit quantity directly or use +/− for incremental adjustments</div>
+    </div>
+
+    <div class="d-section">
+      <div class="d-section-label">Inventory Info</div>
+      <div class="d-row"><span class="d-label">Min Stock Alert</span><span class="d-val">${p.minStock} units</span></div>
+      <div class="d-row"><span class="d-label">Reorder Point</span><span class="d-val">${p.reorderPt} units</span></div>
+      <div class="d-row"><span class="d-label">Reorder Qty</span><span class="d-val">${p.reorderQty} units</span></div>
+      <div class="d-row"><span class="d-label">Max Stock</span><span class="d-val">${p.maxStock} units</span></div>
+      <div class="d-row"><span class="d-label">Unit Price</span><span class="d-val">₹${p.unitPrice.toLocaleString('en-IN')}</span></div>
+      <div class="d-row"><span class="d-label">Stock Value</span><span class="d-val" style="color:var(--primary)">₹${(p.stock*p.unitPrice).toLocaleString('en-IN')}</span></div>
+    </div>
+
+    <div class="d-section">
+      <div class="d-section-label">Location & Supply</div>
+      <div class="d-row"><span class="d-label">Warehouse</span><span class="d-val">${p.warehouse}</span></div>
+      <div class="d-row"><span class="d-label">Supplier</span><span class="d-val">${p.supplier}</span></div>
+      <div class="d-row"><span class="d-label">Lead Time</span><span class="d-val">${p.leadDays} days</span></div>
+      <div class="d-row"><span class="d-label">Last Ordered</span><span class="d-val">${p.lastOrdered}</span></div>
+      <div class="d-row"><span class="d-label">Est. Arrival</span><span class="d-val">${getETA(p.leadDays)}</span></div>
+    </div>
+  `;
+
+  document.getElementById('drawerFooter').innerHTML = `
+    <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="closeDrawerForce()">Close</button>
+    <button class="btn btn-warning" style="flex:1;justify-content:center" onclick="saveStockAdj('${p.id}')">Save Adjustment</button>
+    <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="reorderProduct('${p.id}')">
+      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,4 1,7 4,7"/><path d="M1.5 7A5.5 5.5 0 1011 4"/></svg>
+      Reorder
+    </button>
+  `;
+
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function getETA(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function adjStock(delta) {
+  const inp = document.getElementById('adjInput');
+  if (!inp) return;
+  inp.value = Math.max(0, parseInt(inp.value || 0) + delta);
+}
+
+function saveStockAdj(id) {
+  const inp = document.getElementById('adjInput');
+  if (!inp) return;
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const newQty = Math.max(0, parseInt(inp.value || 0));
+  const diff = newQty - p.stock;
+  p.stock = newQty;
+  closeDrawerForce();
+  applyFilters();
+  showToast(`Stock updated: ${p.name} → ${newQty} units (${diff >= 0 ? '+' : ''}${diff})`, 'success');
+}
+
+function closeDrawer(e) {
+  if (e && e.target !== document.getElementById('drawerOverlay')) return;
+  closeDrawerForce();
+}
+function closeDrawerForce() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ════════════════════════════════════════════
+   ACTIONS
+════════════════════════════════════════════ */
+function reorderProduct(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  closeDrawerForce();
+  openConfirmModal(
+    `Reorder: ${p.name}`,
+    `This will create a purchase order for <strong>${p.reorderQty} units</strong> of <em>${p.name}</em> from <strong>${p.supplier}</strong>.<br><br>Estimated arrival: <strong>${getETA(p.leadDays)}</strong> (${p.leadDays} days lead time).`,
+    '#2e6bc5',
+    'Create Purchase Order',
+    () => {
+      showToast(`PO created for ${p.name} — ${p.reorderQty} units from ${p.supplier}`, 'success');
+      document.getElementById('kpi-pending').textContent = parseInt(document.getElementById('kpi-pending').textContent) + 1;
+      document.getElementById('urg-po').textContent = parseInt(document.getElementById('urg-po').textContent) + 1;
+    }
+  );
+}
+
+function dismissAlert(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  openConfirmModal(
+    'Dismiss Alert',
+    `Dismiss the low-stock alert for <strong>${p.name}</strong>? It will still appear if restocked or critically low again.`,
+    '#ef4444',
+    'Dismiss Alert',
+    () => {
+      showToast(`Alert dismissed for ${p.name}`, 'warning');
+    }
+  );
+}
+
+function openReorderAll() {
+  const oos = PRODUCTS.filter(p => p.stock === 0);
+  openConfirmModal(
+    'Auto Reorder All Critical Items',
+    `This will create purchase orders for <strong>${oos.length} out-of-stock products</strong>.<br><br>Each PO will be sent to the respective supplier with default reorder quantities.`,
+    '#2e6bc5',
+    'Reorder All',
+    () => {
+      showToast(`${oos.length} purchase orders created for out-of-stock items!`, 'success');
+    }
+  );
+}
+
+function openCreatePO() {
+  const sel = selectedIds.size > 0 ? [...selectedIds] : PRODUCTS.filter(p => getUrgency(p) === 'oos').map(p => p.id);
+  openConfirmModal(
+    'Create Purchase Order',
+    `Create a combined purchase order for <strong>${sel.length} product${sel.length !== 1 ? 's' : ''}</strong> selected?<br><br>You'll be redirected to the PO creation page.`,
+    '#092c4c',
+    'Create PO',
+    () => {
+      showToast(`Redirecting to Purchase Order creation…`, 'success');
+      setTimeout(() => window.location.href = 'Create_Purchase_Order.html', 1200);
+    }
+  );
+}
+
+function bulkCreatePO() {
+  openConfirmModal(
+    `Create PO for ${selectedIds.size} Items`,
+    `This will generate a purchase order for <strong>${selectedIds.size} selected product${selectedIds.size !== 1 ? 's' : ''}</strong>.`,
+    '#2e6bc5',
+    'Create PO',
+    () => { clearSelection(); showToast(`Purchase order created for ${selectedIds.size} items`, 'success'); }
+  );
+}
+
+function bulkSetAlert() {
+  showToast(`Stock alerts set for ${selectedIds.size} items`, 'success');
+  clearSelection();
+}
+
+/* ════════════════════════════════════════════
+   EXPORT
+════════════════════════════════════════════ */
+function exportCSV() {
+  const headers = ['Product','SKU','Category','Stock','Min Stock','Reorder Point','Reorder Qty','Supplier','Urgency','Unit Price','Est. Value'];
+  const rows = PRODUCTS.map(p => [
+    p.name, p.sku, p.cat, p.stock, p.minStock, p.reorderPt, p.reorderQty,
+    p.supplier, getUrgencyLabel(p).label, `₹${p.unitPrice}`, `₹${p.stock*p.unitPrice}`
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = `low-stocks-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('Report exported as CSV!', 'success');
+}
+
+/* ════════════════════════════════════════════
+   CONFIRM MODAL
+════════════════════════════════════════════ */
+let _pendingAction = null;
+function openConfirmModal(title, body, color, confirmLabel, action) {
+  _pendingAction = action;
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = body;
+  const btn = document.getElementById('modalConfirm');
+  btn.textContent = confirmLabel;
+  btn.style.background = color;
+  btn.onclick = () => { _pendingAction && _pendingAction(); closeModalForce(); };
+  document.getElementById('confirmModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(e) { if (e && e.target !== document.getElementById('confirmModal')) return; closeModalForce(); }
+function closeModalForce() {
+  document.getElementById('confirmModal').classList.remove('open');
+  if (!document.getElementById('drawer').classList.contains('open')) document.body.style.overflow = '';
+}
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  const icon  = document.getElementById('toastIcon');
+  const types = {
+    success: { cls: 'toast-success', stroke: '#22c55e', icon: `<circle cx="10" cy="10" r="8.5"/><polyline points="6.5,10 9,12.5 13.5,7"/>` },
+    warning: { cls: 'toast-warning', stroke: '#f59e0b', icon: `<path d="M10 2L18 17H2L10 2z"/><line x1="10" y1="8" x2="10" y2="12"/><circle cx="10" cy="14.5" r=".7" fill="currentColor" stroke="none"/>` },
+    error:   { cls: 'toast-error',   stroke: '#ef4444', icon: `<circle cx="10" cy="10" r="8.5"/><line x1="7" y1="7" x2="13" y2="13"/><line x1="13" y1="7" x2="7" y2="13"/>` },
+  };
+  const t = types[type] || types.success;
+  toast.className = `toast show ${t.cls}`;
+  icon.setAttribute('stroke', t.stroke);
+  icon.innerHTML = t.icon;
+  document.getElementById('toastMsg').textContent = msg;
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+</script>
+</body>
+</html>
+

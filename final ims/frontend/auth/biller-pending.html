@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Pending Validation - Stock Overflow</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-form-side">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+          </svg>
+        </div>
+        Stock Overflow
+      </a>
+
+      <div class="auth-header">
+        <h1>Account Validation Pending</h1>
+        <p>Your biller account request has been submitted and is currently under review by a retailer. You will receive access once approved.</p>
+      </div>
+
+      <div class="pending-status">
+        <div class="status-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12,6 12,12 16,14"></polyline>
+          </svg>
+        </div>
+        <h3>Validation in Progress</h3>
+        <p>Please check back later or contact support if you have any questions.</p>
+        
+        <div style="margin-top: 2rem;">
+          <p style="color: #6b7280; margin-bottom: 1rem;">Once approved, you can login below:</p>
+          <form id="billerLoginForm" style="max-width: 300px; margin: 0 auto;">
+            <div class="form-group" style="padding: 0; width: 100%;">
+              <label class="form-label" for="email">Email</label>
+              <div class="input-icon-group">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <input type="email" class="form-control" id="email" placeholder="your.email@example.com" required>
+              </div>
+            </div>
+            <div class="form-group" style="padding: 0; width: 100%;">
+              <label class="form-label" for="password">Password</label>
+              <div class="input-icon-group">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <input type="password" class="form-control" id="password" placeholder="••••••••" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="background-color: var(--primary-color); margin-top: 1rem;">Login</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="auth-footer" style="margin-top: 2rem;">
+        <a href="../index.html" style="color: var(--primary-color); font-weight: 600;">← Back to Home</a>
+      </div>
+
+      <div class="copyright" style="margin-top: auto; padding-top: 2rem;">
+        © 2026 Stock Overflow
+      </div>
+    </div>
+    <div class="auth-image-side">
+      <img src="../assets/warehouse-empl.jpeg" alt="Stock Overflow Warehouse" class="hero-dashboard-img">
+    </div>
+  </div>
+
+  <style>
+    .pending-status {
+      text-align: center;
+      padding: 2rem 0;
+    }
+    .status-icon {
+      margin-bottom: 1rem;
+    }
+    .pending-status h3 {
+      color: #f59e0b;
+      margin-bottom: 0.5rem;
+    }
+    .pending-status p {
+      color: #6b7280;
+    }
+  </style>
+
+  <script src="../js/mockData.js"></script>
+  <script>
+    // Utility for email validation
+    const isValidEmail = (email) => {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
+    // Check request status on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const email = localStorage.getItem('biller_pending_email');
+        if (email) {
+          const requestsResponse = await fetch('http://localhost:3001/api/billers/requests');
+          const requests = await requestsResponse.json();
+          const userRequest = requests.find(r => r.email === email);
+          
+          if (userRequest) {
+            if (userRequest.status === 'approved') {
+              // Show success message and login form
+              document.querySelector('.auth-header h1').textContent = 'Request Approved!';
+              document.querySelector('.auth-header p').textContent = 'Your biller request has been approved. You can now login below.';
+              document.querySelector('.status-icon').innerHTML = `
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              `;
+              document.querySelector('.pending-status h3').textContent = 'Welcome to Stock Overflow!';
+              document.querySelector('.pending-status p').textContent = 'Your biller account is ready. Please login with your email and the temporary password.';
+            } else if (userRequest.status === 'rejected') {
+              // Redirect to rejected page
+              window.location.href = 'biller-rejected.html';
+            } else {
+              // Still pending, show pending message
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error checking request status:', error);
+      }
+    });
+
+    // Biller login form
+    const loginForm = document.getElementById('billerLoginForm');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        let isValid = true;
+
+        // Reset
+        emailInput.classList.remove('is-invalid');
+        passwordInput.classList.remove('is-invalid');
+
+        // Validate Email
+        if (!emailInput.value.trim() || !isValidEmail(emailInput.value)) {
+          emailInput.classList.add('is-invalid');
+          isValid = false;
+        }
+
+        // Validate Password
+        if (!passwordInput.value.trim()) {
+          passwordInput.classList.add('is-invalid');
+          isValid = false;
+        }
+
+        if (isValid) {
+          try {
+            // Check if the biller request was approved by checking backend
+            const requestsResponse = await fetch('http://localhost:3001/api/billers/requests');
+            const requests = await requestsResponse.json();
+            const userRequest = requests.find(r => r.email === emailInput.value.trim());
+            
+            if (!userRequest) {
+              alert('No biller request found for this email. Please submit a request first.');
+              return;
+            }
+            
+            if (userRequest.status === 'rejected') {
+              alert('Your biller request has been rejected by the retailer.');
+              return;
+            }
+            
+            if (userRequest.status === 'pending') {
+              alert('Your biller request is still pending approval.');
+              return;
+            }
+            
+            // If approved, try to login via backend
+            const loginResponse = await fetch('http://localhost:3001/api/users/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: emailInput.value.trim(),
+                password: passwordInput.value.trim()
+              })
+            });
+            
+            if (loginResponse.ok) {
+              const user = await loginResponse.json();
+              if (user.role.toLowerCase() === 'biller') {
+                // Store session
+                localStorage.setItem('so_session', JSON.stringify({
+                  id: user.id,
+                  name: user.name,
+                  email: user.email,
+                  role: user.role,
+                  store: user.store
+                }));
+                window.location.href = '../biller module/pos.html';
+              } else {
+                alert('Access denied. Only approved billers can login here.');
+              }
+            } else {
+              const error = await loginResponse.json();
+              alert('Login failed: ' + (error.message || 'Invalid credentials'));
+            }
+          } catch (error) {
+            alert('Login failed: ' + error.message + '. Your account may not be approved yet.');
+          }
+        }
+      });
+
+      // Real-time validation clearing
+      loginForm.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('input', () => {
+          input.classList.remove('is-invalid');
+        });
+      });
+    }
+
+    // Check if already logged in
+    const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+    if (session && session.role === 'biller') {
+      window.location.href = '../biller module/pos.html';
+    }
+  </script>
+</body>
+</html>

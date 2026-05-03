@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockOverflow - Returns Management</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+      --border: #e8e9f0;
+      --text-primary: #000000;
+      --text-muted: #6b7280;
+      --accent: #2563eb;
+      --cyan: #00bcd4;
+      --purple: #7c3aed;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; border-right: 1px solid var(--border); }
+    .sidebar-logo { padding: 16px 24px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; min-height: 66px; }
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; color: #808080; font-size: 13.5px; cursor: pointer; border-left: 3px solid transparent; }
+    .nav-item.active { background: #e0ebff; color: #2563eb; border-left-color: var(--accent); }
+    .nav-group { font-size: 10px; font-weight: 600; letter-spacing: 1px; color: #999; padding: 16px 24px 6px; text-transform: uppercase; }
+    .main-wrap { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .header { height: 60px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 10; }
+    .breadcrumb { font-size: 12px; color: var(--text-muted); }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .page-content { padding: 24px 28px; flex: 1; }
+    .form-container { max-width: 720px; margin: 0 auto; }
+    .card { background: var(--card-bg); border: 3px solid var(--cyan); border-radius: 12px; padding: 30px; }
+    .history-card { margin-top: 20px; border-color: var(--purple); }
+    .card-title { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 24px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 12px; color: #999; margin-bottom: 8px; font-weight: 600; }
+    .input-with-btn { display: flex; gap: 10px; }
+    .form-input, .form-select { width: 100%; border: 1px solid #ddd; border-radius: 6px; padding: 10px 12px; font-size: 13px; background: #fff; color: #333; outline: none; }
+    .fetch-btn { padding: 10px 16px; background: var(--cyan); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .item-check-row { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; margin-bottom: 10px; background: #fafbfc; cursor: pointer; }
+    .item-photo { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; background: #f1f2f6; }
+    .item-fallback { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; background: #f1f2f6; color: #4b5563; font-weight: 700; }
+    .item-label { flex: 1; font-size: 13px; font-weight: 600; color: #333; }
+    .item-price { font-size: 13px; font-weight: 700; color: #666; }
+    textarea.form-input { resize: vertical; min-height: 80px; font-family: inherit; }
+    .upload-zone { border: 2px dashed #ccc; border-radius: 8px; padding: 30px 20px; text-align: center; background: #fafbfc; color: #6b7280; font-size: 13px; }
+    .submit-btn { width: 100%; padding: 14px; background: var(--purple); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .return-history-list { display: flex; flex-direction: column; gap: 12px; }
+    .return-history-empty { font-size: 12px; color: var(--text-muted); }
+    .return-history-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px; background: #fafbff; }
+    .return-history-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .return-history-name { font-size: 14px; font-weight: 700; color: #1f2937; }
+    .return-history-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .return-history-body { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; margin-top: 12px; }
+    .return-history-detail { font-size: 12px; color: #374151; }
+    .return-history-detail strong { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #6b7280; margin-bottom: 4px; }
+    .return-history-status { display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-approved { background: #dcfce7; color: #166534; }
+    .status-rejected { background: #fee2e2; color: #991b1b; }
+    .status-exchanged { background: #e0e7ff; color: #3730a3; }
+    @media (max-width: 768px) {
+      .form-container { max-width: 100%; }
+      .return-history-body { grid-template-columns: 1fr; }
+      .input-with-btn { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow" /></div>
+    <nav style="flex:1;padding:12px 0;">
+      <div class="nav-group">Main Menu</div>
+      <div class="nav-item">Dashboard</div>
+      <div class="nav-item">Products</div>
+      <div class="nav-item">Orders</div>
+      <div class="nav-item active">Returns</div>
+      <div class="nav-item">Restock Alerts</div>
+    </nav>
+    <div style="margin-top:auto;padding-top:14px;">
+      <button type="button" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <div class="header">
+      <div class="breadcrumb">Dashboard / Return Management</div>
+      <div class="avatar">C</div>
+    </div>
+
+    <div class="page-content">
+      <div class="form-container">
+        <div class="card">
+          <div class="card-title">Initiate Return</div>
+          <div class="form-group">
+            <label class="form-label">Order / Receipt No.</label>
+            <div class="input-with-btn">
+              <input id="orderInput" class="form-input" type="text" placeholder="ORD123456" />
+              <button class="fetch-btn" type="button">Fetch</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Select items to return:</label>
+            <div id="returnItemsList"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Return Reason</label>
+            <select class="form-select">
+              <option>Defective / Not Working</option>
+              <option>Wrong Item Received</option>
+              <option>Changed Mind</option>
+              <option>Not as Described</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Item Condition</label>
+            <select class="form-select">
+              <option>Sealed / Unopened</option>
+              <option>Opened but Unused</option>
+              <option>Used - Good Condition</option>
+              <option>Damaged</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Refund Method</label>
+            <select class="form-select">
+              <option>Original Payment Method</option>
+              <option>Store Credit</option>
+              <option>Gift Card</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Evidence Images</label>
+            <div class="upload-zone">Attach supporting photos if needed. Product evidence is optional for now.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea class="form-input" placeholder="Additional notes about the return..."></textarea>
+          </div>
+          <button class="submit-btn">Submit Return Request</button>
+        </div>
+
+        <div class="card history-card">
+          <div class="card-title">Your Return Requests</div>
+          <div id="submittedReturnsList" class="return-history-list">
+            <div class="return-history-empty">Loading recent return requests...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script src="app-flow.js"></script>
+  <script>
+    const returnPageState = {
+      productsBySku: {},
+      transactions: [],
+    };
+    let returnHistoryRefreshTimer = null;
+
+    function getQuerySku() {
+      return new URLSearchParams(window.location.search).get('sku');
+    }
+
+    function getQueryOrderId() {
+      return new URLSearchParams(window.location.search).get('orderId');
+    }
+
+    function formatReturnDate(value) {
+      if (!value) return 'Just now';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    function getStatusClass(status) {
+      const normalized = String(status || 'Pending').toLowerCase();
+      if (normalized === 'approved') return 'status-approved';
+      if (normalized === 'rejected') return 'status-rejected';
+      if (normalized === 'exchanged') return 'status-exchanged';
+      return 'status-pending';
+    }
+
+    function getProductSnapshot(sku) {
+      if (!sku) return {};
+      return returnPageState.productsBySku[sku] || {};
+    }
+
+    function getFallbackBadge(product) {
+      return (product && String(product.emoji || '').trim()) || 'PKG';
+    }
+
+    async function hydrateReturnContext() {
+      try {
+        const products = await window.ImsApi.getProducts();
+        returnPageState.productsBySku = (products || []).reduce(function(acc, product) {
+          if (product && product.sku) {
+            acc[product.sku] = product;
+          }
+          return acc;
+        }, {});
+      } catch (_error) {
+        returnPageState.productsBySku = {};
+      }
+
+      try {
+        returnPageState.transactions = await window.ImsApi.getTransactions();
+      } catch (_error) {
+        returnPageState.transactions = [];
+      }
+    }
+
+    function enrichReturnItem(item, orderId) {
+      const sku = String(item && item.sku || '').trim();
+      const product = getProductSnapshot(sku);
+      return {
+        sku: sku,
+        name: String(item && item.name || product.name || 'Product').trim(),
+        totalSpent: Number(item && (item.total || item.totalSpent || item.price) || product.price || 0),
+        productImg: String(item && item.productImg || product.productImg || '').trim(),
+        emoji: String(item && item.emoji || product.emoji || 'PKG').trim(),
+        orderId: String(orderId || item && item.lastOrderId || '').trim()
+      };
+    }
+
+    async function resolveReturnSource(orderId) {
+      const trimmedOrderId = String(orderId || '').trim();
+      if (trimmedOrderId && window.ImsApi && typeof window.ImsApi.getTransactionByOrderId === 'function') {
+        const transaction = await window.ImsApi.getTransactionByOrderId(trimmedOrderId);
+        if (transaction && Array.isArray(transaction.items) && transaction.items.length) {
+          return transaction.items.map(function(item) {
+            return enrichReturnItem(item, transaction.orderId);
+          });
+        }
+      }
+
+      let purchased = [];
+      try {
+        purchased = await window.ImsApi.getPurchasedProducts();
+      } catch (_error) {
+        purchased = [];
+      }
+
+      return purchased.map(function(item) {
+        return enrichReturnItem(item, item.lastOrderId);
+      });
+    }
+
+    async function renderReturnItems(orderId) {
+      const source = await resolveReturnSource(orderId);
+      const host = document.getElementById('returnItemsList');
+      if (!source.length) {
+        host.innerHTML = '<p style="font-size:12px;color:#6b7280;">No purchased products available for return.</p>';
+        return;
+      }
+
+      const skuFromQuery = getQuerySku();
+      host.innerHTML = source.map(function(product, idx) {
+        const checked = skuFromQuery ? product.sku === skuFromQuery : idx === 0;
+        const fallback = getFallbackBadge(product);
+        return (
+          '<label class="item-check-row">' +
+            '<input type="checkbox" ' + (checked ? 'checked ' : '') + 'data-sku="' + product.sku + '" data-name="' + product.name + '" data-order-id="' + product.orderId + '">' +
+            '<img class="item-photo" src="' + (product.productImg || '') + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';" />' +
+            '<span class="item-fallback" style="display:none;">' + fallback + '</span>' +
+            '<span class="item-label">' + product.name + ' <span style="color:#6b7280;font-weight:500;">(' + product.sku + ')</span></span>' +
+            '<span class="item-price">$' + Number(product.totalSpent || 0).toLocaleString() + '</span>' +
+          '</label>'
+        );
+      }).join('');
+    }
+
+    async function loadReturnHistory() {
+      const host = document.getElementById('submittedReturnsList');
+      const skuSet = {};
+      const orderIdSet = {};
+
+      returnPageState.transactions.forEach(function(transaction) {
+        if (transaction && transaction.orderId) {
+          orderIdSet[transaction.orderId] = true;
+        }
+        (transaction && transaction.items || []).forEach(function(item) {
+          if (item && item.sku) {
+            skuSet[item.sku] = true;
+          }
+        });
+      });
+
+      let items = [];
+      try {
+        items = await window.ImsApi.getReturns();
+      } catch (_error) {
+        items = window.CommerceData && typeof window.CommerceData.getReturns === 'function'
+          ? window.CommerceData.getReturns()
+          : [];
+      }
+
+      const filtered = (items || []).filter(function(entry) {
+        return orderIdSet[entry.orderId] || skuSet[entry.sku];
+      }).sort(function(left, right) {
+        return new Date(right.date || 0) - new Date(left.date || 0);
+      });
+
+      if (!filtered.length) {
+        host.innerHTML = '<div class="return-history-empty">No return requests submitted yet.</div>';
+        return;
+      }
+
+      host.innerHTML = filtered.map(function(entry) {
+        const product = getProductSnapshot(entry.sku);
+        const displayName = entry.product || entry.productName || product.name || 'Product';
+        return (
+          '<div class="return-history-item">' +
+            '<div class="return-history-top">' +
+              '<div>' +
+                '<div class="return-history-name">' + displayName + '</div>' +
+                '<div class="return-history-meta">Order ' + (entry.orderId || 'N/A') + ' • ' + (entry.sku || 'No SKU') + ' • ' + formatReturnDate(entry.date) + '</div>' +
+              '</div>' +
+              '<span class="return-history-status ' + getStatusClass(entry.status) + '">' + (entry.status || 'Pending') + '</span>' +
+            '</div>' +
+            '<div class="return-history-body">' +
+              '<div class="return-history-detail"><strong>Reason</strong>' + (entry.reason || '-') + '</div>' +
+              '<div class="return-history-detail"><strong>Refund Method</strong>' + (entry.method || entry.refundMethod || 'Original Payment Method') + '</div>' +
+              '<div class="return-history-detail"><strong>Condition</strong>' + (entry.condition || '-') + '</div>' +
+              '<div class="return-history-detail"><strong>Notes</strong>' + (entry.notes || 'No extra notes added.') + '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    window.loadReturnItemsForOrder = async function(orderId) {
+      await renderReturnItems(orderId);
+    };
+
+    window.loadReturnHistory = async function() {
+      await loadReturnHistory();
+    };
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      await hydrateReturnContext();
+      await loadReturnHistory();
+
+      let latest = null;
+      try {
+        latest = await window.ImsApi.getLatestTransaction();
+      } catch (_error) {
+        latest = null;
+      }
+
+      if (latest && latest.orderId) {
+        document.getElementById('orderInput').value = latest.orderId;
+      }
+      const requestedOrderId = getQueryOrderId() || '';
+      if (requestedOrderId) {
+        document.getElementById('orderInput').value = requestedOrderId;
+      }
+
+      await renderReturnItems(requestedOrderId || (latest && latest.orderId ? latest.orderId : ''));
+
+      if (returnHistoryRefreshTimer) {
+        clearInterval(returnHistoryRefreshTimer);
+      }
+      returnHistoryRefreshTimer = setInterval(async function() {
+        await loadReturnHistory();
+      }, 5000);
+
+      window.addEventListener('beforeunload', function() {
+        if (returnHistoryRefreshTimer) {
+          clearInterval(returnHistoryRefreshTimer);
+          returnHistoryRefreshTimer = null;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

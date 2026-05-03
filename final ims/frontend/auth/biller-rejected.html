@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Rejected - Stock Overflow</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-form-side">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+          </svg>
+        </div>
+        Stock Overflow
+      </a>
+
+      <div class="auth-header">
+        <h1>Request Rejected</h1>
+        <p>Your biller request has been rejected by the retailer. You can submit a new request or contact support for more information.</p>
+      </div>
+
+      <div class="pending-status">
+        <div class="status-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <h3>Application Not Approved</h3>
+        <p>The retailer has decided not to approve your biller application at this time.</p>
+        
+        <div style="margin-top: 2rem;">
+          <p style="color: #6b7280; margin-bottom: 1rem;">You can try submitting a new request:</p>
+          <button onclick="goToBillerApplication()" style="display: inline-block; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Submit New Request</button>
+        </div>
+      </div>
+
+      <div class="auth-footer" style="margin-top: 2rem;">
+        <a href="../index.html" style="color: var(--primary-color); font-weight: 600;">← Back to Home</a>
+      </div>
+
+      <div class="copyright" style="margin-top: auto; padding-top: 2rem;">
+        © 2026 Stock Overflow
+      </div>
+    </div>
+    <div class="auth-image-side">
+      <img src="../assets/warehouse-empl.jpeg" alt="Stock Overflow Warehouse" class="hero-dashboard-img">
+    </div>
+  </div>
+
+  <style>
+    .pending-status {
+      text-align: center;
+      padding: 2rem 0;
+    }
+    .status-icon {
+      margin-bottom: 1rem;
+    }
+    .pending-status h3 {
+      color: #ef4444;
+      margin-bottom: 0.5rem;
+    }
+    .pending-status p {
+      color: #6b7280;
+    }
+  </style>
+
+  <script>
+    // Check if user has a rejected request and redirect accordingly
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const email = localStorage.getItem('biller_pending_email');
+        if (email) {
+          const requestsResponse = await fetch('http://localhost:3000/billers/requests');
+          const requests = await requestsResponse.json();
+          const userRequest = requests.find(r => r.email === email);
+          
+          if (userRequest && userRequest.status === 'rejected') {
+            // Stay on this page
+          } else if (userRequest && userRequest.status === 'approved') {
+            // Redirect to login
+            window.location.href = 'biller-pending.html';
+          } else {
+            // No request or still pending, redirect to pending page
+            window.location.href = 'biller-pending.html';
+          }
+        } else {
+          // No pending email, redirect to home
+          window.location.href = '../index.html';
+        }
+      } catch (error) {
+        console.error('Error checking request status:', error);
+        // On error, redirect to home
+        window.location.href = '../index.html';
+      }
+    });
+
+    function goToBillerApplication() {
+      // Redirect to index.html with parameter to open biller modal
+      window.location.href = '../index.html?openBillerModal=true';
+    }
+  </script>
+</body>
+</html>

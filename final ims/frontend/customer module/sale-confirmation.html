@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow - Sale Confirmed</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --card-bg: #ffffff; --border: #e8e9f0;
+      --text-primary: #1a1a2e; --text-muted: #6b7280;
+      --accent: #4f46e5; --accent-light: #eef2ff; --green: #10b981;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); min-height: 100vh; padding: 100px 32px 32px; }
+    nav { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; z-index: 1000; }
+    .nav-logo img { height: 32px; width: auto; display: block; }
+    .nav-links { display: flex; gap: 30px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 14px; font-weight: 600; }
+    .nav-btn { background: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .page-title { font-size: 22px; font-weight: 800; }
+    .page-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
+    .main-grid { display: flex; justify-content: center; align-items: flex-start; }
+    .receipt-card { width: 360px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .receipt-header { background: linear-gradient(135deg, var(--green), #059669); padding: 20px; text-align: center; color: #fff; }
+    .receipt-success-icon { font-size: 40px; margin-bottom: 8px; }
+    .receipt-status { font-size: 18px; font-weight: 800; }
+    .receipt-time { font-size: 12px; opacity: .85; margin-top: 4px; }
+    .receipt-body { padding: 18px; }
+    .store-info { border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+    .store-name { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+    .store-addr { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; }
+    .receipt-id-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+    .receipt-id { font-weight: 700; color: var(--text-primary); }
+    .item-list { margin-bottom: 14px; }
+    .item-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+    .item-main { display: flex; align-items: center; gap: 8px; }
+    .item-thumb { width: 24px; height: 24px; border-radius: 6px; object-fit: cover; background: #f1f2f6; border: 1px solid var(--border); }
+    .item-name { font-weight: 600; }
+    .item-qty { color: var(--text-muted); font-size: 12px; margin-left: 4px; }
+    .item-price { font-weight: 700; }
+    .totals { margin-bottom: 14px; }
+    .total-row { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 6px; color: var(--text-muted); }
+    .total-row.grand { font-size: 15px; font-weight: 900; color: var(--text-primary); padding-top: 10px; border-top: 2px solid var(--text-primary); margin-top: 10px; }
+    .pay-method, .customer-line, .thank-you { text-align: center; font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px; }
+    .thank-you { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .pending-wrap { margin-top: 12px; text-align: center; }
+    .pending-pill {
+      display: inline-block;
+      font-size: 12px;
+      color: #1d4ed8;
+      background: #e0ecff;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 700;
+    }
+    .receipt-actions { padding: 14px 18px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .receipt-btn { padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); font-size: 12.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .receipt-btn.print { grid-column: span 2; background: var(--accent); color: #fff; border: none; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-logo"><img src="Logo.png" alt="StockOverflow"></div>
+    <div class="nav-links">
+      <a href="consumer-landingpage.html">Browse Products</a>
+      <a href="productsearch.html">Search</a>
+      <a href="orders.html">My Orders</a>
+      <a href="return-management.html">Returns</a>
+      <a href="restockalert.html">Alerts</a>
+    </div>
+    <div><button class="nav-btn" onclick="logout()">Logout</button></div>
+  </nav>
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Sale Confirmed</div>
+      <div class="page-sub" id="pageSub">Payment processed successfully</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="receipt-card">
+      <div class="receipt-header">
+        <div class="receipt-success-icon">✓</div>
+        <div class="receipt-status" id="receiptStatus">Payment Successful!</div>
+        <div class="receipt-time" id="receiptTime">Recent purchase</div>
+      </div>
+
+      <div class="receipt-body">
+        <div class="store-info">
+          <div class="store-name" id="storeName">Stock Overflow</div>
+          <div class="store-addr" id="storeAddress">Inventory and billing summary for your most recent order.</div>
+        </div>
+
+        <div class="receipt-id-row">
+          <span class="receipt-id" id="receiptId">Receipt</span>
+          <span id="receiptDate">Recent</span>
+        </div>
+
+        <div class="item-list" id="receiptItems"></div>
+
+        <div class="totals">
+          <div class="total-row"><span>Subtotal</span><span id="subtotalValue">$0</span></div>
+          <div class="total-row"><span>Tax</span><span id="taxValue">$0</span></div>
+          <div class="total-row"><span>Discount</span><span id="discountValue">-$0</span></div>
+          <div class="total-row grand"><span>TOTAL</span><span id="grandTotalValue">$0</span></div>
+        </div>
+
+        <div class="pay-method" id="payMethod">Paid via card</div>
+        <div class="customer-line" id="customerLine">Customer</div>
+        <div class="thank-you">Thank you for shopping with us.</div>
+        <div class="pending-wrap" id="pendingWrap" style="display:none;">
+          <div class="pending-pill" id="pendingText">Processing order request...</div>
+        </div>
+      </div>
+
+      <div class="receipt-actions">
+        <button class="receipt-btn print">Print Receipt</button>
+        <button class="receipt-btn">Email</button>
+        <button class="receipt-btn">WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script src="app-flow.js"></script>
+  <script>
+    function getParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    async function findPendingRequest(requestId) {
+      if (!requestId) return null;
+      try {
+        return await window.ImsApi.getReservationRequest(requestId);
+      } catch (_error) {
+        return null;
+      }
+    }
+
+    async function markPendingRequestStatus(requestId, updates) {
+      if (!requestId) return;
+      await window.ImsApi.updateReservationRequest(requestId, updates || {});
+    }
+
+    async function runPendingReserveFlow() {
+      const isPending = getParam('pendingReserve') === '1';
+      if (!isPending) {
+        return false;
+      }
+
+      const sku = getParam('sku') || '';
+      const requestId = getParam('requestId') || '';
+      const qty = Math.max(1, Number(getParam('qty')) || 1);
+      const payment = getParam('payment') || 'Cash';
+      const store = getParam('store') || 'Global Hub';
+      const pendingWrap = document.getElementById('pendingWrap');
+      const pendingText = document.getElementById('pendingText');
+
+      document.getElementById('pageSub').textContent = 'Order request sent to POS. Waiting for processing...';
+      document.getElementById('receiptStatus').textContent = 'Order Processing';
+      document.getElementById('receiptTime').textContent = 'Awaiting confirmation';
+      document.getElementById('receiptId').textContent = requestId ? ('Request #' + requestId) : 'Pending Request';
+      document.getElementById('storeName').textContent = store;
+      document.getElementById('storeAddress').textContent = 'Your order is being validated against live store inventory.';
+      document.getElementById('payMethod').textContent = 'Payment method selected: ' + payment;
+      document.getElementById('customerLine').textContent = 'Customer: Processing';
+      if (pendingWrap) pendingWrap.style.display = 'block';
+
+      let secondsLeft = 10;
+      const timer = setInterval(async function() {
+        const request = await findPendingRequest(requestId);
+        if (request && request.status === 'completed') {
+          clearInterval(timer);
+          const query = new URLSearchParams({ orderId: request.orderId || '' });
+          window.location.href = 'sale-confirmation.html?' + query.toString();
+          return;
+        }
+
+        secondsLeft -= 1;
+        if (pendingText) {
+          pendingText.textContent = 'Processing order request... ' + secondsLeft + 's';
+        }
+        if (secondsLeft <= 0) {
+          clearInterval(timer);
+          window.location.href = 'orders.html';
+        }
+      }, 1000);
+
+      return true;
+    }
+
+    async function loadReceipt() {
+      const requestedOrderId = getParam('orderId') || '';
+      let latest = null;
+      const products = await window.ImsApi.getProducts();
+
+      if (requestedOrderId) {
+        try {
+          latest = await window.ImsApi.getTransactionByOrderId(requestedOrderId);
+        } catch (_error) {
+          latest = null;
+        }
+      }
+
+      if (!latest) {
+        latest = await window.ImsApi.getLatestTransaction();
+      }
+
+      if (!latest) {
+        window.location.href = 'orders.html';
+        return;
+      }
+
+      document.getElementById('pageSub').textContent = 'Payment processed successfully - Transaction ' + latest.orderId;
+      document.getElementById('receiptTime').textContent = new Date(latest.timestamp).toLocaleString();
+      document.getElementById('receiptId').textContent = 'Receipt #' + latest.orderId;
+      document.getElementById('receiptDate').textContent = new Date(latest.timestamp).toLocaleString();
+      document.getElementById('storeName').textContent = latest.store || 'Stock Overflow';
+      document.getElementById('storeAddress').textContent = 'Store: ' + (latest.store || 'Global Hub') + ' · Status: ' + (latest.status || 'Delivered');
+      document.getElementById('payMethod').textContent = 'Paid via ' + (latest.paymentMethod || 'Cash');
+      document.getElementById('customerLine').textContent = 'Customer: ' + (latest.customer || 'Walk-in Customer');
+
+      document.getElementById('receiptItems').innerHTML = latest.items.map(function(item) {
+        const product = products.find(function(entry) {
+          return entry && entry.sku === item.sku;
+        }) || null;
+        return `
+          <div class="item-row">
+            <div class="item-main">
+              <img class="item-thumb" src="${(product && product.productImg) || ''}" alt="${item.name}" loading="lazy" onerror="this.style.display='none';" />
+              <span class="item-name">${item.name}</span>
+              <span class="item-qty">x${item.quantity}</span>
+            </div>
+            <div class="item-price">$${Number(item.total || 0).toLocaleString()}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('subtotalValue').textContent = '$' + Number(latest.subtotal || 0).toLocaleString();
+      document.getElementById('taxValue').textContent = '$' + Number(latest.tax || 0).toLocaleString();
+      document.getElementById('discountValue').textContent = '-$' + Number(latest.discount || 0).toLocaleString();
+      document.getElementById('grandTotalValue').textContent = '$' + Number(latest.finalTotal || 0).toLocaleString();
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      if (!await runPendingReserveFlow()) {
+        await loadReceipt();
+      }
+    });
+
+    function logout() {
+      if (window.DB) DB.logout();
+      window.location.href = '../index.html';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification - Stock Overflow</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-form-side">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+          </svg>
+        </div>
+        Stock Overflow
+      </a>
+
+      <div class="auth-header">
+        <h1>Email OTP<br>Verification</h1>
+        <p id="otpSubtitle">Enter the OTP sent to your registered email.</p>
+      </div>
+
+      <form id="otpForm" novalidate>
+        <div class="otp-group">
+          <input type="text" class="otp-input" id="otp1" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+          <input type="text" class="otp-input" id="otp2" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+          <input type="text" class="otp-input" id="otp3" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+          <input type="text" class="otp-input" id="otp4" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+        </div>
+
+        <div id="otpError" class="otp-error" style="display:none;">Please enter all 4 digits.</div>
+
+        <div class="otp-resend">
+          Didn't get the OTP? <a href="#" id="resendOtp">Resend OTP</a>
+        </div>
+
+        <div style="width: 100%;">
+          <button type="submit" class="btn btn-primary btn-block">Verify &amp; Proceed</button>
+        </div>
+      </form>
+
+      <div class="copyright">
+        © 2026 Stock Overflow
+      </div>
+    </div>
+    <div class="auth-image-side">
+      <img src="../assets/verify.jpeg" alt="Stock Overflow Warehouse" class="hero-dashboard-img">
+    </div>
+  </div>
+
+  <script src="../js/mockData.js"></script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>

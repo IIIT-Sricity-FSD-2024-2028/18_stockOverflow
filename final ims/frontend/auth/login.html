@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - Stock Overflow</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-form-side">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+          </svg>
+        </div>
+        Stock Overflow
+      </a>
+
+      <div class="auth-header">
+        <h1>Sign In</h1>
+        <p>Access the Stock Overflow dashboard using your email and password.</p>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group" style="padding: 0 4rem; width: 100%; max-width: 500px;">
+          <label class="form-label">Email</label>
+          <div class="input-icon-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <input type="email" class="form-control" id="email" placeholder="your.email@example.com" required>
+          </div>
+          <div class="invalid-feedback">Please enter a valid email address.</div>
+        </div>
+
+        <div class="form-group" style="padding: 0 4rem; width: 100%; max-width: 500px;">
+          <label class="form-label">Password</label>
+          <div class="input-icon-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" class="form-control" id="password" placeholder="••••••••" required>
+            <button type="button" class="password-toggle-btn" data-target="password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+          <div class="invalid-feedback">Password is required.</div>
+        </div>
+
+        <div class="form-options" style="padding: 0 4rem; width: 100%; max-width: 500px;">
+          <label class="form-check">
+            <input type="checkbox"> Remember Me
+          </label>
+          <a href="forgot-password.html">Forgot Password?</a>
+        </div>
+
+        <div class="form-group" style="padding: 0 4rem; width: 100%; max-width: 500px; margin-bottom: 0.5rem;">
+           <div id="loginError" class="invalid-feedback" style="display:none; text-align: center; margin-bottom: 1rem;"></div>
+        </div>
+
+        <div style="padding: 0 4rem; width: 100%; max-width: 500px;">
+          <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        </div>
+
+        <div class="auth-footer" style="padding: 0 4rem; width: 100%; max-width: 500px;">
+          New to Stock Overflow? <a href="register.html">Create an account</a>
+        </div>
+      </form>
+
+      <div class="copyright">
+        © 2026 Stock Overflow
+      </div>
+    </div>
+    <div class="auth-image-side">
+      <img src="../assets/workers.jpeg" alt="Stock Overflow Warehouse" class="hero-dashboard-img">
+    </div>
+
+  </div>
+
+  <!-- <script src="../js/mockData.js"></script> -->
+  <script src="../js/auth.js"></script>
+</body>
+</html>

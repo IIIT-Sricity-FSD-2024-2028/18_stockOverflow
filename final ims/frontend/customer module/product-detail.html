@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow — Product Detail</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --sidebar-bg: #ffffff; --card-bg: #ffffff;
+      --border: #e8e9f0; --text-primary: #000000; --text-muted: #6b7280;
+      --accent: #2563eb; --accent-light: #eef2ff;
+      --green: #10b981; --green-light: #d1fae5;
+      --red: #ef4444; --red-light: #fee2e2;
+      --yellow: #f59e0b; --yellow-light: #fef3c7;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: 240px; min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; }
+    .sidebar-logo {
+      padding: 16px 24px;
+      border-bottom: 1px solid #e8e9f0;
+      display: flex;
+      align-items: center;
+      min-height: 66px;
+    }
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; color: #808080; font-size: 13.5px; cursor: pointer; border-left: 3px solid transparent; }
+    .nav-item:hover { background: #f0f0f0; color: #000000; }
+    .nav-item.active { background: #e8f1ff; color: #2563eb; border-left-color: var(--accent); }
+    .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+    .nav-group { font-size: 10px; font-weight: 600; letter-spacing: 1px; color: #6b7280; padding: 16px 24px 6px; text-transform: uppercase; }
+
+    /* MAIN */
+    .main-wrap { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+
+    /* HEADER */
+    .header { height: 60px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; top: 0; z-index: 10; position: sticky; }
+    .breadcrumb { font-size: 12px; color: var(--text-muted); }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .search-bar { display: flex; align-items: center; gap: 6px; border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; background: var(--bg); font-size: 13px; color: var(--text-muted); cursor: text; }
+
+    .page-content { padding: 24px 28px; flex: 1; display: flex; gap: 24px; }
+
+    /* =============================================
+       LEFT COLUMN
+       Product images + specs + description
+    ============================================= */
+    .left-col { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Product image gallery card */
+    .img-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden;
+    }
+    .img-main {
+      height: 200px; background: linear-gradient(135deg, #f0f0ff, #ddddf5);
+      display: flex; align-items: center; justify-content: center; font-size: 80px;
+    }
+    .img-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 14px;
+    }
+    .img-thumbs {
+      display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border);
+    }
+    .thumb {
+      width: 56px; height: 56px; border-radius: 8px; background: var(--bg);
+      border: 2px solid transparent; display: flex; align-items: center; justify-content: center;
+      font-size: 22px; cursor: pointer;
+      overflow: hidden;
+    }
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .thumb.active { border-color: var(--accent); }
+
+    /* Product description + specs card */
+    .detail-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+    }
+    .detail-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+    .prod-name-h { font-size: 22px; font-weight: 800; }
+    .reserve-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+    /* Tag badges below product name */
+    .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .tag-sku    { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .tag-cat    { background: var(--accent-light); color: var(--accent); }
+    .tag-status { background: var(--yellow-light); color: #78350f; }
+    .tag-brand  { background: var(--green-light); color: #065f46; }
+
+    /* Product description paragraph */
+    .prod-desc { font-size: 13px; line-height: 1.7; color: var(--text-muted); margin-bottom: 16px; }
+
+    /* Spec grid: 2-col rows */
+    .spec-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .spec-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--border);
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-row:nth-child(odd) { background: #fafbfc; }
+    .spec-key { color: var(--text-muted); font-weight: 500; }
+    .spec-val { font-weight: 600; }
+
+    /* =============================================
+       RIGHT COLUMN
+       Stock widget + store breakdown + ratings
+    ============================================= */
+    .right-col { width: 440px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; }
+
+    .r-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .r-card-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+
+    /* Big stock number */
+    .stock-hero { text-align: center; margin-bottom: 14px; }
+    .stock-big { font-size: 56px; font-weight: 900; color: var(--text-primary); line-height: 1; }
+    .stock-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+    .stock-status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; background: var(--yellow-light); color: #78350f; margin-top: 8px; }
+
+    /* Mini sparkline bar chart (CSS bars) */
+    .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 48px; margin-bottom: 6px; }
+    .bar { flex: 1; border-radius: 4px 4px 0 0; background: var(--accent-light); }
+    .bar.fill { background: var(--accent); }
+    .chart-label { font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 14px; }
+    .trend-chart-canvas { width: 100% !important; height: 72px !important; }
+
+    /* Store availability list */
+    .store-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .store-row:last-child { border-bottom: none; }
+    .store-name { font-size: 13px; font-weight: 600; }
+    .store-status { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-top: 4px; display: inline-block; }
+    .s-in    { background: var(--green-light); color: #065f46; }
+    .s-low   { background: var(--yellow-light); color: #78350f; }
+    .s-out   { background: var(--red-light); color: #7f1d1d; }
+    .store-qty { font-size: 24px; font-weight: 800; }
+
+    /* Rating distribution */
+    .rating-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .rating-stars { font-size: 12px; width: 28px; }
+    .rating-bar-wrap { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+    .rating-bar-fill { height: 100%; border-radius: 4px; background: var(--accent); }
+    .rating-pct { font-size: 12px; color: var(--text-muted); width: 32px; text-align: right; }
+
+    /* Rating summary numbers */
+    .rating-summary { display: flex; gap: 16px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .rating-big { font-size: 28px; font-weight: 900; }
+    .rating-sub { font-size: 11px; color: var(--text-muted); }
+    .divider-v { width: 1px; background: var(--border); }
+
+    /* Recent feedback list */
+    .feedback-list { display: flex; flex-direction: column; gap: 12px; }
+    .feedback-item { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; background: #fbfcff; }
+    .feedback-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+    .feedback-meta { font-size: 12px; color: var(--text-muted); }
+    .feedback-stars { font-size: 12px; }
+    .feedback-type { font-size: 11px; font-weight: 600; color: var(--accent); }
+    .feedback-text { font-size: 12.5px; color: var(--text-primary); line-height: 1.45; }
+    .feedback-empty { font-size: 12px; color: var(--text-muted); }
+
+    .reserve-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1200;
+      padding: 16px;
+    }
+    .reserve-modal.show { display: flex; }
+    .reserve-card {
+      width: min(480px, 100%);
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 48px rgba(15, 23, 42, 0.2);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .reserve-title { font-size: 18px; font-weight: 800; }
+    .reserve-sub { font-size: 12.5px; color: var(--text-muted); }
+    .reserve-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .reserve-field { display: flex; flex-direction: column; gap: 5px; }
+    .reserve-field label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .reserve-field input,
+    .reserve-field select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    .reserve-field-full { grid-column: 1 / -1; }
+    .reserve-availability {
+      font-size: 12px;
+      color: #065f46;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .reserve-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .reserve-btn-secondary,
+    .reserve-btn-primary {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    .reserve-btn-secondary { background: #f8fafc; color: #334155; }
+    .reserve-btn-primary { background: var(--accent); color: #fff; border-color: #1d4ed8; }
+  </style>
+  <script src="../retailer module/common-products.js"></script>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
+    <nav style="flex:1;padding:12px 0;">
+      <div class="nav-group">Main Menu</div>
+      <div class="nav-item">Dashboard</div>
+      <div class="nav-item active">Products</div>
+      <div class="nav-item">Orders</div>
+      <div class="nav-item">Returns</div>
+    </nav>
+      <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
+      <button type="button" class="sidebar-logout-btn" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+
+    <!-- HEADER with breadcrumb -->
+    <header class="header">
+      <div class="breadcrumb">
+        <a href="productsearch.html">Products</a> › <a href="#">Product Details</a> › <span id="breadcrumb-sku">Apple MacBook Pro 14" M3-MBP-M3-14</span>
+      </div>
+      <div class="header-right">
+        <div class="search-bar">🔍 Search... <kbd style="font-size:11px;color:#bbb">⌘K</kbd></div>
+        <div class="avatar">AK</div>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- =============================================
+           LEFT COLUMN: Images + Description + Specs
+      ============================================= -->
+      <div class="left-col">
+
+        <!-- Product image card -->
+        <div class="img-card">
+          <div class="img-main" id="product-emoji"><img id="product-main-img" src="" alt="Product image" loading="lazy" /></div>
+          <!-- Thumbnail strip for multiple images -->
+          <div class="img-thumbs">
+            <div class="thumb active" id="thumb-1" data-img=""><img id="thumb-img-1" src="" alt="Product image thumbnail" loading="lazy" /></div>
+            <div class="thumb" id="thumb-2" data-img=""><img id="thumb-img-2" src="" alt="Product image thumbnail" loading="lazy" /></div>
+            <div class="thumb" id="thumb-3" data-img=""><img id="thumb-img-3" src="" alt="Product image thumbnail" loading="lazy" /></div>
+          </div>
+        </div>
+
+        <!-- Product details: name, tags, description, specs -->
+        <div class="detail-card">
+          <div class="detail-header">
+            <div class="prod-name-h" id="product-name">Apple MacBook Pro 14" M3</div>
+            <!-- Reserve button for low-stock items -->
+            <button class="reserve-btn" id="reserve-btn" onclick="reserveProduct()">+ Reserve</button>
+          </div>
+
+          <!-- Tag row: SKU / Category / Stock status / Brand -->
+          <div class="tag-row">
+            <span class="tag tag-sku" id="tag-sku">MBP-M3-14</span>
+            <span class="tag tag-cat" id="tag-category">Electronics</span>
+            <span class="tag tag-status" id="tag-status">✓ Low Stock</span>
+            <span class="tag tag-brand" id="tag-brand">Apple</span>
+          </div>
+
+          <!-- Long description paragraph -->
+          <p class="prod-desc" id="product-description">
+            The 14-inch MacBook Pro with the Apple M3 chip delivers exceptional performance and efficiency for
+            demanding professional tasks. It features a stunning 14" Liquid Retina XDR display with mini-LED
+            technology, offering extreme brightness, deep blacks, and accurate colors for creative workflows.
+            The powerful Apple M3 chip integrates a high-performance CPU, advanced GPU with hardware-accelerated
+            ray tracing, and a Neural Engine optimized for AI and machine learning tasks.
+          </p>
+
+          <!-- Spec table: 2-column grid -->
+          <div class="spec-grid">
+            <div class="spec-row"><span class="spec-key">Supplier</span><span class="spec-val" id="spec-supplier">Apple Inc.</span></div>
+            <div class="spec-row"><span class="spec-key">Category</span><span class="spec-val" id="spec-category">Laptops</span></div>
+            <div class="spec-row"><span class="spec-key">SKU</span><span class="spec-val" id="spec-sku">MBP-M3-14</span></div>
+            <div class="spec-row"><span class="spec-key">Brand</span><span class="spec-val" id="spec-brand">Apple</span></div>
+            <div class="spec-row"><span class="spec-key">Unit</span><span class="spec-val" id="spec-unit">Pc</span></div>
+            <div class="spec-row"><span class="spec-key">Price (USD)</span><span class="spec-val" id="spec-price">$1,999</span></div>
+            <div class="spec-row"><span class="spec-key">Min Order Qty</span><span class="spec-val">1 unit</span></div>
+            <div class="spec-row"><span class="spec-key">Lead Time</span><span class="spec-val">5–7 days</span></div>
+          </div>
+        </div>
+
+      </div><!-- /left-col -->
+
+      <!-- =============================================
+           RIGHT COLUMN: Stock + Stores + Ratings
+      ============================================= -->
+      <div class="right-col">
+
+        <!-- STOCK AVAILABILITY CARD -->
+        <div class="r-card">
+          <div class="r-card-title">📦 Stock Overview</div>
+
+          <!-- Big stock count hero -->
+          <div class="stock-hero">
+            <div class="stock-big" id="stock-total">45</div>
+            <div class="stock-label">Total Units Available</div>
+            <div class="stock-status" id="stock-status-badge">● Low Stock</div>
+          </div>
+
+          <!-- 7-day sparkline chart -->
+          <div class="chart-bars">
+            <canvas id="stock-trend-canvas" class="trend-chart-canvas" aria-label="7-day stock trend" role="img"></canvas>
+          </div>
+          <div class="chart-label">7-day stock trend</div>
+
+          <!-- Per-store availability breakdown -->
+          <div class="r-card-title" style="margin-bottom:10px;">🏪 Store-wise Availability</div>
+
+          <!-- Store availability list will be populated dynamically -->
+          <div id="store-list"></div>
+
+        </div><!-- /stock card -->
+
+        <!-- RATING DISTRIBUTION CARD -->
+        <div class="r-card">
+          <div class="r-card-title">⭐ Rating Distribution</div>
+
+          <!-- 5-bar rating breakdown -->
+          <div class="rating-row">
+            <span class="rating-stars">5⭐</span>
+            <div class="rating-bar-wrap"><div class="rating-bar-fill" id="rating-fill-5" style="width:0%"></div></div>
+            <span class="rating-pct" id="rating-pct-5">0%</span>
+          </div>
+          <div class="rating-row">
+            <span class="rating-stars">4⭐</span>
+            <div class="rating-bar-wrap"><div class="rating-bar-fill" id="rating-fill-4" style="width:0%"></div></div>
+            <span class="rating-pct" id="rating-pct-4">0%</span>
+          </div>
+          <div class="rating-row">
+            <span class="rating-stars">3⭐</span>
+            <div class="rating-bar-wrap"><div class="rating-bar-fill" id="rating-fill-3" style="width:0%"></div></div>
+            <span class="rating-pct" id="rating-pct-3">0%</span>
+          </div>
+          <div class="rating-row">
+            <span class="rating-stars">2⭐</span>
+            <div class="rating-bar-wrap"><div class="rating-bar-fill" id="rating-fill-2" style="width:0%"></div></div>
+            <span class="rating-pct" id="rating-pct-2">0%</span>
+          </div>
+          <div class="rating-row">
+            <span class="rating-stars">1⭐</span>
+            <div class="rating-bar-wrap"><div class="rating-bar-fill" id="rating-fill-1" style="width:0%"></div></div>
+            <span class="rating-pct" id="rating-pct-1">0%</span>
+          </div>
+
+          <!-- Summary: avg rating + total reviews -->
+          <div class="rating-summary">
+            <div>
+              <div class="rating-big" id="rating-avg">0.0</div>
+              <div class="rating-sub">Avg Rating</div>
+            </div>
+            <div class="divider-v"></div>
+            <div>
+              <div class="rating-big" id="rating-total">0</div>
+              <div class="rating-sub">Total Reviews</div>
+            </div>
+          </div>
+
+        </div><!-- /ratings card -->
+
+        <div class="r-card">
+          <div class="r-card-title">🗣 Recent Feedback</div>
+          <div id="recent-feedback-list" class="feedback-list">
+            <div class="feedback-empty">No feedback yet for this product.</div>
+          </div>
+        </div>
+
+      </div><!-- /right-col -->
+
+    </div><!-- /page-content -->
+  </div><!-- /main-wrap -->
+
+  <div id="reserveModal" class="reserve-modal" aria-hidden="true">
+    <div class="reserve-card" role="dialog" aria-modal="true" aria-label="Reserve product checkout">
+      <div class="reserve-title">Reserve Product</div>
+      <div class="reserve-sub" id="reserveProductMeta">Configure quantity, store and payment before sending request to POS.</div>
+
+      <div class="reserve-grid">
+        <div class="reserve-field reserve-field-full">
+          <label for="reserveStoreSelect">Store Availability</label>
+          <select id="reserveStoreSelect"></select>
+        </div>
+
+        <div class="reserve-field">
+          <label for="reserveQtyInput">Quantity</label>
+          <input id="reserveQtyInput" type="number" min="1" step="1" value="1" />
+        </div>
+
+        <div class="reserve-field">
+          <label for="reservePaymentSelect">Payment Method</label>
+          <select id="reservePaymentSelect">
+            <option value="">Select payment</option>
+            <option value="Cash">Cash</option>
+            <option value="Card">Card</option>
+            <option value="UPI">UPI</option>
+          </select>
+        </div>
+
+        <div class="reserve-field reserve-field-full">
+          <div id="reserveAvailabilityText" class="reserve-availability">Available: 0 units</div>
+        </div>
+      </div>
+
+      <div class="reserve-actions">
+        <button type="button" id="reserveCancelBtn" class="reserve-btn-secondary">Cancel</button>
+        <button type="button" id="reservePlaceBtn" class="reserve-btn-primary">Place Order</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script src="app-flow.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    let stockTrendChart = null;
+    let selectedProductForReserve = null;
+    let selectedStoreAvailability = [];
+    let cachedStores = [];
+
+    function getStoreLabelById(storeId, fallbackIndex) {
+      const matched = Array.isArray(cachedStores)
+        ? cachedStores.find(function(store) { return store && store.id === storeId; })
+        : null;
+      return (matched && matched.name) || ('Store ' + (fallbackIndex + 1));
+    }
+
+    function resolveStoreAvailability(product, lowStockThreshold) {
+      const entries = Array.isArray(product && product.storeInventory) ? product.storeInventory : [];
+      if (!entries.length) {
+        return [];
+      }
+
+      const dynamicLowThreshold = Math.max(1, Math.ceil(lowStockThreshold / 2));
+      return entries.map(function(entry, index) {
+        const qty = Math.max(0, Number(entry && entry.qty) || 0);
+        const status = qty === 0 ? 'Out of Stock' : (qty <= dynamicLowThreshold ? 'Low Stock' : 'In Stock');
+        return {
+          storeId: entry && entry.storeId ? entry.storeId : ('s' + (index + 1)),
+          storeName: getStoreLabelById(entry && entry.storeId, index),
+          qty: qty,
+          status: status
+        };
+      });
+    }
+
+    function destroyTrendChart() {
+      if (stockTrendChart) {
+        stockTrendChart.destroy();
+        stockTrendChart = null;
+      }
+    }
+
+    function renderStockTrendChart(product, totalQty) {
+      const canvas = document.getElementById('stock-trend-canvas');
+      if (!canvas || typeof Chart === 'undefined') {
+        return;
+      }
+
+      const soldThisMonth = Math.max(0, Number(product && product.soldThisMonth) || 0);
+      const baseDailySales = soldThisMonth / 30;
+      const trendFactor = product && product.trend === 'up' ? 1 : 0.6;
+      const labels = ['D-6', 'D-5', 'D-4', 'D-3', 'D-2', 'D-1', 'Today'];
+      const series = [];
+
+      for (let i = 0; i < labels.length; i++) {
+        const wave = 1 + (Math.sin((i + 1) * 1.2) * 0.18);
+        const daySales = Math.max(0, baseDailySales * trendFactor * wave);
+        const projected = Math.max(0, totalQty + (soldThisMonth * 0.25) - (daySales * (labels.length - i)));
+        series.push(Number(projected.toFixed(1)));
+      }
+
+      destroyTrendChart();
+      stockTrendChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Stock',
+            data: series,
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37,99,235,0.12)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 0,
+            pointHoverRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return 'Stock: ' + context.parsed.y;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: '#6b7280', maxRotation: 0, autoSkipPadding: 16 }
+            },
+            y: {
+              grid: { color: 'rgba(107,114,128,0.14)' },
+              ticks: { color: '#6b7280' }
+            }
+          }
+        }
+      });
+    }
+
+    // Function to get URL parameters
+    function getUrlParameter(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    function getCommonProductImages(product) {
+      const images = [];
+
+      function pushUnique(src) {
+        const value = String(src || '').trim();
+        if (!value) return;
+        if (images.indexOf(value) === -1) {
+          images.push(value);
+        }
+      }
+
+      pushUnique(product && product.productImg);
+      if (Array.isArray(product && product.galleryImages)) {
+        product.galleryImages.forEach(pushUnique);
+      }
+
+      return images;
+    }
+
+    // Function to populate product details from common-products.js
+    async function loadProductDetails() {
+      const requestedSku = getUrlParameter('sku') || localStorage.getItem('imsSelectedSku') || '';
+      const requestedName = getUrlParameter('name') || '';
+      const sourceProducts = await window.ImsApi.getProducts();
+      cachedStores = await window.ImsApi.getStores();
+
+      if (!sourceProducts.length) {
+        console.error('No products available for detail page');
+        return;
+      }
+
+      let product = sourceProducts.find(function(p) {
+        return p && p.sku === requestedSku;
+      });
+
+      if (!product && requestedName) {
+        const normalizedName = requestedName.toLowerCase();
+        product = sourceProducts.find(function(p) {
+          return p && p.name && p.name.toLowerCase() === normalizedName;
+        });
+      }
+
+      if (!product) {
+        product = sourceProducts[0];
+      }
+
+      if (product && product.sku) {
+        localStorage.setItem('imsSelectedSku', product.sku);
+      }
+
+      const commonImages = getCommonProductImages(product);
+      const galleryImages = commonImages.slice(0, 3);
+      const imageSrc = galleryImages[0] || '';
+      const qty = Number(product.qty) || 0;
+      const maxQty = Math.max(Number(product.max) || 0, qty);
+      const lowStockThreshold = Math.max(1, Math.ceil(maxQty * 0.2));
+      const soldThisMonth = Number(product.soldThisMonth) || 0;
+      const trendText = product.trend === 'up' ? 'strong rising demand' : 'steady ongoing demand';
+
+      document.title = `${product.name || 'Product'} - Product Detail`;
+      document.getElementById('breadcrumb-sku').textContent = `${product.name || 'Product'} - ${product.sku || 'N/A'}`;
+      document.getElementById('product-name').textContent = product.name || 'Unnamed Product';
+
+      const mainImg = document.getElementById('product-main-img');
+      const thumb1 = document.getElementById('thumb-1');
+      const thumb2 = document.getElementById('thumb-2');
+      const thumb3 = document.getElementById('thumb-3');
+      const thumbImg1 = document.getElementById('thumb-img-1');
+      const thumbImg2 = document.getElementById('thumb-img-2');
+      const thumbImg3 = document.getElementById('thumb-img-3');
+
+      if (mainImg) {
+        mainImg.style.display = imageSrc ? 'block' : 'none';
+        mainImg.src = imageSrc;
+        mainImg.alt = product.name || 'Product image';
+        mainImg.onerror = function() {
+          this.style.display = 'none';
+          const emojiHost = document.getElementById('product-emoji');
+          if (emojiHost) {
+            emojiHost.textContent = product.emoji || '📦';
+          }
+        };
+      }
+
+      [thumb1, thumb2, thumb3].forEach(function(thumb, index) {
+        if (!thumb) return;
+        const src = galleryImages[index] || '';
+        thumb.classList.toggle('active', index === 0 && Boolean(src));
+        thumb.style.display = src ? 'flex' : 'none';
+        thumb.dataset.img = src;
+      });
+
+      [thumbImg1, thumbImg2, thumbImg3].forEach(function(img, index) {
+        if (!img) return;
+        const src = galleryImages[index] || '';
+        img.style.display = src ? 'block' : 'none';
+        img.src = src;
+        img.alt = product.name || 'Product image';
+      });
+
+      document.getElementById('tag-sku').textContent = product.sku || 'N/A';
+      document.getElementById('tag-category').textContent = product.category || 'Uncategorized';
+      document.getElementById('tag-brand').textContent = product.brand || 'Unbranded';
+
+      const tagStatus = document.getElementById('tag-status');
+      const stockStatusBadge = document.getElementById('stock-status-badge');
+      if (qty === 0) {
+        tagStatus.textContent = '✕ Out of Stock';
+        tagStatus.style.background = 'var(--red-light)';
+        tagStatus.style.color = '#7f1d1d';
+        stockStatusBadge.textContent = '● Out of Stock';
+        stockStatusBadge.style.background = 'var(--red-light)';
+        stockStatusBadge.style.color = '#7f1d1d';
+      } else if (qty <= lowStockThreshold) {
+        tagStatus.textContent = '✓ Low Stock';
+        tagStatus.style.background = 'var(--yellow-light)';
+        tagStatus.style.color = '#78350f';
+        stockStatusBadge.textContent = '● Low Stock';
+        stockStatusBadge.style.background = 'var(--yellow-light)';
+        stockStatusBadge.style.color = '#78350f';
+      } else {
+        tagStatus.textContent = '✓ In Stock';
+        tagStatus.style.background = 'var(--green-light)';
+        tagStatus.style.color = '#065f46';
+        stockStatusBadge.textContent = '● In Stock';
+        stockStatusBadge.style.background = 'var(--green-light)';
+        stockStatusBadge.style.color = '#065f46';
+      }
+
+      const generatedDescription = `${product.emoji || '📦'} ${product.name || 'Product'} by ${product.brand || 'Unknown Brand'} belongs to the ${product.category || 'general'} category and is supplied as ${product.unit || 'unit'} units. Current inventory is ${qty}${maxQty ? ' of ' + maxQty : ''}, with ${soldThisMonth} units sold this month, indicating ${trendText}. This listing is synced directly from the retailer catalog for accurate pricing and stock.`;
+      document.getElementById('product-description').textContent = product.description || generatedDescription;
+
+      document.getElementById('spec-supplier').textContent = product.supplier || product.creator || product.brand || 'N/A';
+      document.getElementById('spec-category').textContent = product.subcategory || product.category || 'N/A';
+      document.getElementById('spec-sku').textContent = product.sku || 'N/A';
+      document.getElementById('spec-brand').textContent = product.brand || 'N/A';
+      document.getElementById('spec-unit').textContent = product.unit || 'N/A';
+
+      const numericPrice = Number(product.priceUSD);
+      document.getElementById('spec-price').textContent = Number.isFinite(numericPrice)
+        ? `$${numericPrice.toLocaleString()}`
+        : '$0';
+
+      document.getElementById('stock-total').textContent = qty;
+
+      const storeTemplates = resolveStoreAvailability(product, lowStockThreshold);
+
+      let storeListHTML = '';
+      storeTemplates.forEach(function(store) {
+        let statusClass = store.status === 'Out of Stock' ? 's-out' : (store.status === 'Low Stock' ? 's-low' : 's-in');
+        let statusText = store.status || 'In Stock';
+
+        storeListHTML += `
+          <div class="store-row">
+            <div>
+              <div class="store-name">${store.storeName || store.name}</div>
+              <span class="store-status ${statusClass}">${statusText}</span>
+            </div>
+            <div class="store-qty">${store.qty}</div>
+          </div>
+        `;
+      });
+
+      document.getElementById('store-list').innerHTML = storeListHTML;
+  renderStockTrendChart(product, qty);
+
+        selectedProductForReserve = product;
+        selectedStoreAvailability = storeTemplates;
+
+      renderRecentFeedback(product);
+      renderRatingDistribution(product);
+    }
+
+    function getCommonProductFeedback(product) {
+      return Array.isArray(product && product.feedback)
+        ? product.feedback.slice().sort(function(a, b) {
+            return new Date(b && b.date ? b.date : 0) - new Date(a && a.date ? a.date : 0);
+          })
+        : [];
+    }
+
+    function renderRecentFeedback(product) {
+      const host = document.getElementById('recent-feedback-list');
+      if (!host) return;
+
+      const productFeedback = getCommonProductFeedback(product).slice(0, 5);
+
+      if (!productFeedback.length) {
+        host.innerHTML = '<div class="feedback-empty">No feedback yet for ' + product.name + '. Submit one from the Feedback page.</div>';
+        return;
+      }
+
+      host.innerHTML = productFeedback.map(function(item) {
+        const safeRating = Math.max(1, Math.min(5, Number(item.rating) || 4));
+        const stars = '⭐'.repeat(safeRating);
+        const dateLabel = item.date ? new Date(item.date).toLocaleDateString() : 'Recent';
+        const typeLabel = item.type || 'General';
+        const comment = item.comment || 'No comment';
+
+        return '' +
+          '<div class="feedback-item">' +
+            '<div class="feedback-top">' +
+              '<div class="feedback-meta">' + dateLabel + '</div>' +
+              '<div class="feedback-stars">' + stars + '</div>' +
+            '</div>' +
+            '<div class="feedback-type">' + typeLabel + '</div>' +
+            '<div class="feedback-text">' + comment + '</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    function renderRatingDistribution(product) {
+      const feedback = getCommonProductFeedback(product);
+      const fallbackBreakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      const providedBreakdown = product && product.ratingBreakdown && typeof product.ratingBreakdown === 'object'
+        ? {
+            1: Number(product.ratingBreakdown[1]) || 0,
+            2: Number(product.ratingBreakdown[2]) || 0,
+            3: Number(product.ratingBreakdown[3]) || 0,
+            4: Number(product.ratingBreakdown[4]) || 0,
+            5: Number(product.ratingBreakdown[5]) || 0
+          }
+        : null;
+
+      const breakdown = providedBreakdown || feedback.reduce(function(acc, entry) {
+        const safeRating = Math.max(1, Math.min(5, Number(entry && entry.rating) || 0));
+        if (safeRating) {
+          acc[safeRating] += 1;
+        }
+        return acc;
+      }, fallbackBreakdown);
+
+      const total = breakdown[1] + breakdown[2] + breakdown[3] + breakdown[4] + breakdown[5];
+      const weighted = (breakdown[1] * 1) + (breakdown[2] * 2) + (breakdown[3] * 3) + (breakdown[4] * 4) + (breakdown[5] * 5);
+      const summary = {
+        total: total,
+        avg: total ? (weighted / total) : 0,
+        breakdown: breakdown
+      };
+
+      [1, 2, 3, 4, 5].forEach(function(star) {
+        const pct = summary.total ? Math.round((summary.breakdown[star] / summary.total) * 100) : 0;
+        const fill = document.getElementById('rating-fill-' + star);
+        const pctEl = document.getElementById('rating-pct-' + star);
+        if (fill) fill.style.width = pct + '%';
+        if (pctEl) pctEl.textContent = pct + '%';
+      });
+
+      const avgEl = document.getElementById('rating-avg');
+      const totalEl = document.getElementById('rating-total');
+      if (avgEl) avgEl.textContent = Number(summary.avg || 0).toFixed(1);
+      if (totalEl) totalEl.textContent = Number(summary.total || 0).toLocaleString();
+    }
+
+    function openReserveModal() {
+      const modal = document.getElementById('reserveModal');
+      const storeSelect = document.getElementById('reserveStoreSelect');
+      const qtyInput = document.getElementById('reserveQtyInput');
+      const paymentSelect = document.getElementById('reservePaymentSelect');
+      const availabilityText = document.getElementById('reserveAvailabilityText');
+      const productMeta = document.getElementById('reserveProductMeta');
+
+      if (!selectedProductForReserve || !modal || !storeSelect || !qtyInput || !paymentSelect || !availabilityText) {
+        alert('Unable to open reserve checkout.');
+        return;
+      }
+
+      productMeta.textContent = (selectedProductForReserve.name || 'Product') + ' · ' + (selectedProductForReserve.sku || 'N/A');
+      storeSelect.innerHTML = selectedStoreAvailability.map(function(store) {
+        return '<option value="' + store.storeId + '">' + store.storeName + ' (' + store.qty + ' units)</option>';
+      }).join('');
+
+      qtyInput.value = '1';
+      paymentSelect.value = '';
+
+      const updateAvailabilityText = function() {
+        const selected = selectedStoreAvailability.find(function(store) {
+          return store.storeId === storeSelect.value;
+        }) || selectedStoreAvailability[0] || { qty: 0, storeName: 'Store' };
+        availabilityText.textContent = selected.storeName + ' availability: ' + selected.qty + ' units';
+      };
+
+      storeSelect.onchange = updateAvailabilityText;
+      updateAvailabilityText();
+
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeReserveModal() {
+      const modal = document.getElementById('reserveModal');
+      if (!modal) return;
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    async function submitReserveRequest() {
+      const storeSelect = document.getElementById('reserveStoreSelect');
+      const qtyInput = document.getElementById('reserveQtyInput');
+      const paymentSelect = document.getElementById('reservePaymentSelect');
+
+      if (!selectedProductForReserve || !storeSelect || !qtyInput || !paymentSelect) {
+        alert('Reserve details are unavailable.');
+        return;
+      }
+
+      const quantity = Math.max(1, Number(qtyInput.value) || 1);
+      const selectedStore = selectedStoreAvailability.find(function(store) {
+        return store.storeId === storeSelect.value;
+      }) || selectedStoreAvailability[0];
+      const paymentMethod = String(paymentSelect.value || '').trim();
+
+      if (!selectedStore) {
+        alert('No store availability found for this product.');
+        return;
+      }
+
+      if (quantity > Number(selectedStore.qty || 0)) {
+        alert('Requested quantity exceeds available stock in selected store.');
+        return;
+      }
+
+      if (!paymentMethod) {
+        alert('Please select a payment method.');
+        return;
+      }
+
+      try {
+        const created = await window.ImsApi.createReservationRequest({
+          sku: selectedProductForReserve.sku || '',
+          qty: quantity,
+          storeId: selectedStore.storeId || '',
+          store: selectedStore.storeName || '',
+          paymentMethod: paymentMethod
+        });
+
+        const requestId = created && created.request ? created.request.requestId : '';
+        const query = new URLSearchParams({
+          requestId: requestId,
+          fromReserve: '1'
+        });
+        closeReserveModal();
+        window.location.href = 'orders.html?' + query.toString();
+      } catch (error) {
+        alert(window.IMS_HTTP.getErrorMessage(error));
+      }
+    }
+
+    // Function to add product to reservations
+    function reserveProduct() {
+      openReserveModal();
+    }
+
+    // Load product details when DOM is ready
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        await loadProductDetails();
+      } catch (error) {
+        alert(window.IMS_HTTP.getErrorMessage(error));
+      }
+
+      const reserveModal = document.getElementById('reserveModal');
+      const reserveCancelBtn = document.getElementById('reserveCancelBtn');
+      const reservePlaceBtn = document.getElementById('reservePlaceBtn');
+
+      if (reserveCancelBtn) {
+        reserveCancelBtn.addEventListener('click', closeReserveModal);
+      }
+      if (reservePlaceBtn) {
+        reservePlaceBtn.addEventListener('click', submitReserveRequest);
+      }
+      if (reserveModal) {
+        reserveModal.addEventListener('click', function(event) {
+          if (event.target === reserveModal) {
+            closeReserveModal();
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockOverflow - Restock Alerts</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+      --border: #e8e9f0;
+      --text-primary: #111827;
+      --text-muted: #6b7280;
+      --accent: #2563eb;
+      --cyan: #00bcd4;
+      --purple: #7c3aed;
+      --green-light: #dcfce7;
+      --red-light: #fee2e2;
+      --yellow-light: #fef3c7;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; border-right: 1px solid var(--border); }
+    .sidebar-logo { padding: 16px 24px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; min-height: 66px; }
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; color: #808080; font-size: 13.5px; cursor: pointer; border-left: 3px solid transparent; }
+    .nav-item.active { background: #e0ebff; color: #2563eb; border-left-color: var(--accent); }
+    .nav-group { font-size: 10px; font-weight: 600; letter-spacing: 1px; color: #999; padding: 16px 24px 6px; text-transform: uppercase; }
+    .main-wrap { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .header { height: 60px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 10; }
+    .breadcrumb { font-size: 12px; color: var(--text-muted); }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .page-content { padding: 24px 28px; flex: 1; }
+    .page-title { font-size: 24px; font-weight: 800; color: #111827; }
+    .page-sub { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+    .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+    .stat-value { font-size: 28px; font-weight: 800; margin-top: 8px; }
+    .stat-note { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+    .body-grid { display: grid; grid-template-columns: 340px 1fr; gap: 20px; margin-top: 20px; align-items: start; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+    .card-title { font-size: 16px; font-weight: 800; color: #111827; margin-bottom: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .04em; }
+    .form-input { width: 100%; border: 1px solid #d1d5db; border-radius: 10px; padding: 11px 12px; font-size: 13px; color: #111827; background: #fff; }
+    .product-chip { display: none; align-items: center; gap: 12px; border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: #f8fafc; margin-top: 12px; }
+    .chip-icon { width: 44px; height: 44px; border-radius: 12px; background: #eef2ff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .chip-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .chip-name { font-size: 14px; font-weight: 700; color: #111827; }
+    .chip-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .chip-tag { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 999px; background: #fff; border: 1px solid var(--border); font-size: 11px; color: #4b5563; font-weight: 700; }
+    .qty-stepper { display: flex; align-items: center; gap: 10px; }
+    .qty-step-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border); background: #fff; font-size: 18px; cursor: pointer; }
+    .qty-step-val { flex: 1; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; text-align: center; font-weight: 800; background: #f8fafc; }
+    .priority-group { display: flex; gap: 10px; }
+    .priority-btn { flex: 1; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; background: #fff; color: var(--text-muted); font-size: 13px; font-weight: 700; cursor: pointer; }
+    .priority-btn.active.high { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+    .priority-btn.active.medium { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+    .priority-btn.active.low { background: #dcfce7; border-color: #86efac; color: #166534; }
+    .set-alert-btn { width: 100%; border: none; border-radius: 12px; padding: 13px; background: var(--accent); color: #fff; font-size: 14px; font-weight: 800; cursor: pointer; }
+    .table-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn { border: 1px solid var(--border); border-radius: 999px; background: #fff; padding: 7px 12px; font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+    .tab-btn.active { background: #e0ebff; border-color: #c7d2fe; color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    .alert-product-media { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .alert-product-media img { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; background: #f1f5f9; }
+    .badge { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 5px 9px; font-size: 11px; font-weight: 800; background: #eef2ff; color: #3730a3; }
+    .badge-notified { background: #dbeafe; color: #1d4ed8; }
+    .badge-high { background: #fee2e2; color: #991b1b; }
+    .badge-medium { background: #fef3c7; color: #92400e; }
+    .badge-low { background: #dcfce7; color: #166534; }
+    .row-actions { display: flex; gap: 8px; }
+    .btn-sm { border: 1px solid var(--border); background: #fff; border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .restocked-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .restock-card { border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: #fff; }
+    .restock-icon { width: 52px; height: 52px; border-radius: 12px; background: #eef2ff; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px; }
+    .restock-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .restock-name { font-size: 13px; font-weight: 800; color: #111827; }
+    .restock-units { font-size: 12px; color: #166534; margin-top: 5px; font-weight: 700; }
+    .restock-time { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+    .empty-state { color: var(--text-muted); font-size: 12px; padding: 12px 0; }
+    @media (max-width: 1100px) {
+      .body-grid { grid-template-columns: 1fr; }
+      .restocked-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .restocked-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-custom-restock="true">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow" /></div>
+    <nav style="flex:1;padding:12px 0;">
+      <div class="nav-group">Main Menu</div>
+      <div class="nav-item">Dashboard</div>
+      <div class="nav-item">Products</div>
+      <div class="nav-item">Orders</div>
+      <div class="nav-item">Returns</div>
+      <div class="nav-item active">Restock Alerts</div>
+    </nav>
+    <div style="margin-top:auto;padding-top:14px;">
+      <button type="button" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <div class="header">
+      <div class="breadcrumb">Dashboard / Restock Alerts</div>
+      <div class="avatar">C</div>
+    </div>
+
+    <div class="page-content">
+      <div class="page-title">Restock Alerts</div>
+      <div class="page-sub">Track the products you care about and see retailer restocks as they happen.</div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Low Stock Products</div>
+          <div class="stat-value" id="lowStockCount">0</div>
+          <div class="stat-note">Products currently running low</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Out of Stock</div>
+          <div class="stat-value" id="outOfStockCount">0</div>
+          <div class="stat-note">Products waiting for retailer restock</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Alerts</div>
+          <div class="stat-value" id="activeAlertCount">0</div>
+          <div class="stat-note">Saved customer watch alerts</div>
+        </div>
+      </div>
+
+      <div class="body-grid">
+        <div class="card">
+          <div class="card-title">Create or Update Alert</div>
+          <div class="form-group">
+            <label class="form-label">Product</label>
+            <select class="form-input" id="productselector">
+              <option value="">Select a product...</option>
+            </select>
+            <div class="product-chip" id="selectedProductChip">
+              <div class="chip-icon" id="chipEmoji"></div>
+              <div>
+                <div class="chip-name" id="chipName"></div>
+                <div class="chip-tags">
+                  <span class="chip-tag" id="chipSKU"></span>
+                  <span class="chip-tag" id="stockTag"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Desired Quantity</label>
+            <div class="qty-stepper">
+              <button class="qty-step-btn" type="button" onclick="decreaseQty()">-</button>
+              <div class="qty-step-val" id="qtyValue">10</div>
+              <button class="qty-step-btn" type="button" onclick="increaseQty()">+</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <div class="priority-group">
+              <button class="priority-btn active high" type="button">High</button>
+              <button class="priority-btn" type="button">Medium</button>
+              <button class="priority-btn" type="button">Low</button>
+            </div>
+          </div>
+
+          <button class="set-alert-btn" type="button">Save Restock Alert</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;">
+              <div class="card-title" style="margin-bottom:0;">Active Alerts</div>
+              <div class="table-tabs">
+                <button class="tab-btn active" type="button">All</button>
+                <button class="tab-btn" type="button">Notified</button>
+                <button class="tab-btn" type="button">Fulfilled</button>
+                <button class="tab-btn" type="button">Cancelled</button>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>SKU</th>
+                  <th>Current Qty</th>
+                  <th>Stock Level</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="alertsTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Recently Restocked</div>
+            <div class="restocked-grid" id="restockedGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script src="app-flow.js"></script>
+  <script>
+    let selectedProduct = null;
+    let currentQty = 10;
+    let allAlerts = [];
+    let allProducts = [];
+    let editingAlertId = '';
+    let activePriority = 'High';
+    let activeStatusTab = 'All';
+
+    function getAlertsState() {
+      return window.CommerceData && typeof window.CommerceData.getAlerts === 'function'
+        ? window.CommerceData.getAlerts()
+        : [];
+    }
+
+    function persistAlerts(alerts) {
+      if (window.CommerceData && typeof window.CommerceData.getAppState === 'function' && typeof window.CommerceData.saveAppState === 'function') {
+        const state = window.CommerceData.getAppState();
+        state.alerts = alerts;
+        window.CommerceData.saveAppState(state);
+      }
+    }
+
+    function resolveProductImage(product) {
+      return String(product && (product.productImg || (Array.isArray(product.images) && product.images[0])) || '').trim();
+    }
+
+    function resolveFallback(product) {
+      return String(product && product.emoji || 'PKG').trim();
+    }
+
+    function formatRestockTime(value) {
+      if (!value) return 'Awaiting restock';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    function getStockState(product, requestedQty) {
+      const qty = Math.max(0, Number(product && product.qty) || 0);
+      const max = Math.max(1, Number(product && product.max) || Math.max(qty, requestedQty, 1));
+      if (qty === 0) {
+        return { label: 'Out of Stock', background: 'var(--red-light)', color: '#7f1d1d' };
+      }
+      if (qty < requestedQty || qty < max * 0.25) {
+        return {
+          label: qty < max * 0.1 ? 'Critical' : 'Low Stock',
+          background: 'var(--yellow-light)',
+          color: '#92400e'
+        };
+      }
+      return { label: 'In Stock', background: 'var(--green-light)', color: '#065f46' };
+    }
+
+    function resolveAlertView(alert) {
+      const product = allProducts.find(function(entry) {
+        return entry && entry.sku === alert.productSku;
+      }) || null;
+      const qty = Math.max(0, Number(product && product.qty) || 0);
+      const baselineQty = Math.max(0, Number(alert && alert.baselineQty) || 0);
+      const restockedAt = product && product.restockedAt ? product.restockedAt : '';
+      const restockTime = restockedAt ? new Date(restockedAt).getTime() : 0;
+      const alertTime = alert && alert.date ? new Date(alert.date).getTime() : 0;
+      const fulfilled = qty >= alert.qty && (restockTime >= alertTime || qty > baselineQty);
+      return {
+        alert: alert,
+        product: product,
+        qty: qty,
+        stockState: getStockState(product || {}, alert.qty),
+        status: fulfilled ? 'Fulfilled' : 'Notified'
+      };
+    }
+
+    function syncPriorityButtons() {
+      document.querySelectorAll('.priority-btn').forEach(function(button) {
+        const label = button.textContent.trim().toLowerCase();
+        button.classList.remove('active', 'high', 'medium', 'low');
+        if (label === activePriority.toLowerCase()) {
+          button.classList.add('active');
+          if (label === 'high' || label === 'medium' || label === 'low') {
+            button.classList.add(label);
+          }
+        }
+      });
+    }
+
+    function syncTabs() {
+      document.querySelectorAll('.tab-btn').forEach(function(button) {
+        button.classList.toggle('active', button.textContent.trim() === activeStatusTab);
+      });
+    }
+
+    function updateSelectedProductChip(product) {
+      const chip = document.getElementById('selectedProductChip');
+      if (!product) {
+        chip.style.display = 'none';
+        return;
+      }
+
+      const stockState = getStockState(product, currentQty);
+      document.getElementById('chipEmoji').innerHTML =
+        '<img src="' + resolveProductImage(product) + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.textContent=\'' + resolveFallback(product) + '\';" />';
+      document.getElementById('chipName').textContent = product.name;
+      document.getElementById('chipSKU').textContent = product.sku;
+      document.getElementById('stockTag').textContent = stockState.label;
+      document.getElementById('stockTag').style.background = stockState.background;
+      document.getElementById('stockTag').style.color = stockState.color;
+      chip.style.display = 'flex';
+    }
+
+    function initializeProductSelector(products) {
+      const selector = document.getElementById('productselector');
+      selector.innerHTML = '<option value="">Select a product...</option>';
+      products.forEach(function(product) {
+        const option = document.createElement('option');
+        option.value = product.sku;
+        option.textContent = product.name + ' ($' + Number(product.priceUSD || product.price || 0).toFixed(2) + ')';
+        selector.appendChild(option);
+      });
+      selector.onchange = function(event) {
+        const sku = event.target.value;
+        selectedProduct = products.find(function(product) {
+          return product.sku === sku;
+        }) || null;
+        editingAlertId = '';
+        updateSelectedProductChip(selectedProduct);
+      };
+    }
+
+    function increaseQty() {
+      currentQty += 1;
+      document.getElementById('qtyValue').textContent = currentQty;
+      updateSelectedProductChip(selectedProduct);
+    }
+
+    function decreaseQty() {
+      currentQty = Math.max(1, currentQty - 1);
+      document.getElementById('qtyValue').textContent = currentQty;
+      updateSelectedProductChip(selectedProduct);
+    }
+
+    function updateStats(products) {
+      const lowStock = products.filter(function(product) {
+        return Number(product.qty || 0) > 0 && Number(product.qty || 0) < Math.max(1, Number(product.max || 0) * 0.25);
+      }).length;
+      const outOfStock = products.filter(function(product) {
+        return Number(product.qty || 0) === 0;
+      }).length;
+      document.getElementById('lowStockCount').textContent = lowStock;
+      document.getElementById('outOfStockCount').textContent = outOfStock;
+      document.getElementById('activeAlertCount').textContent = allAlerts.length;
+    }
+
+    function renderAlertsTable() {
+      const tbody = document.getElementById('alertsTableBody');
+      const rows = allAlerts
+        .map(resolveAlertView)
+        .filter(function(entry) {
+          return activeStatusTab === 'All' || entry.status === activeStatusTab;
+        });
+
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No alerts match this view.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(function(entry) {
+        const alert = entry.alert;
+        const product = entry.product || {};
+        const priority = String(alert.priority || 'Medium').toLowerCase();
+        return (
+          '<tr>' +
+            '<td><div class="alert-product-media"><img src="' + resolveProductImage(product) + '" alt="' + (alert.product || product.name || 'Product') + '" loading="lazy" onerror="this.style.display=\'none\';this.insertAdjacentText(\'afterend\',\'' + resolveFallback(product || alert) + '\');" />' + (alert.product || product.name || 'Product') + '</div></td>' +
+            '<td><span class="badge" style="background:var(--bg);color:var(--text-muted);border:1px solid var(--border);">' + (alert.productSku || '-') + '</span></td>' +
+            '<td>' + entry.qty + ' / ' + alert.qty + ' requested</td>' +
+            '<td><span class="badge" style="background:' + entry.stockState.background + ';color:' + entry.stockState.color + ';">' + entry.stockState.label + '</span></td>' +
+            '<td><span class="badge badge-' + priority + '">' + alert.priority + '</span></td>' +
+            '<td><span class="badge ' + (entry.status === 'Fulfilled' ? '' : 'badge-notified') + '">' + entry.status + '</span></td>' +
+            '<td><div class="row-actions"><button class="btn-sm" type="button" onclick="editAlert(\'' + alert.id + '\')">Edit</button><button class="btn-sm" type="button" onclick="removeAlert(\'' + alert.id + '\')">Remove</button></div></td>' +
+          '</tr>'
+        );
+      }).join('');
+    }
+
+    function renderRestockedItems() {
+      const grid = document.getElementById('restockedGrid');
+      const items = allProducts
+        .filter(function(product) {
+          return product && product.restockedAt && Number(product.qty || 0) > 0;
+        })
+        .sort(function(left, right) {
+          return new Date(right.restockedAt).getTime() - new Date(left.restockedAt).getTime();
+        })
+        .slice(0, 3);
+
+      if (!items.length) {
+        grid.innerHTML = '<div class="empty-state">No recent retailer restocks yet.</div>';
+        return;
+      }
+
+      grid.innerHTML = items.map(function(product) {
+        return (
+          '<div class="restock-card">' +
+            '<div class="restock-icon"><img src="' + resolveProductImage(product) + '" alt="' + product.name + '" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.textContent=\'' + resolveFallback(product) + '\';" /></div>' +
+            '<div class="restock-name">' + product.name + '</div>' +
+            '<div class="restock-units">' + Math.max(0, Number(product.qty || 0)) + ' units now available</div>' +
+            '<div class="restock-time">Restocked ' + formatRestockTime(product.restockedAt) + '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function editAlert(id) {
+      const alert = allAlerts.find(function(entry) {
+        return entry.id === id;
+      });
+      if (!alert) {
+        return;
+      }
+
+      editingAlertId = alert.id;
+      currentQty = Math.max(1, Number(alert.qty) || 1);
+      activePriority = String(alert.priority || 'Medium');
+      document.getElementById('qtyValue').textContent = currentQty;
+      document.getElementById('productselector').value = alert.productSku;
+      selectedProduct = allProducts.find(function(product) {
+        return product.sku === alert.productSku;
+      }) || null;
+      syncPriorityButtons();
+      updateSelectedProductChip(selectedProduct);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function removeAlert(id) {
+      allAlerts = allAlerts.filter(function(entry) {
+        return entry.id !== id;
+      });
+      persistAlerts(allAlerts);
+      renderAlertsTable();
+      updateStats(allProducts);
+    }
+
+    async function handleRestockAlertSubmit() {
+      if (!selectedProduct) {
+        throw new Error('Select a product first');
+      }
+
+      const alert = {
+        id: editingAlertId || ('alert-' + Date.now()),
+        productSku: selectedProduct.sku,
+        product: selectedProduct.name,
+        qty: currentQty,
+        priority: activePriority,
+        status: 'Notified',
+        date: new Date().toISOString(),
+        baselineQty: Math.max(0, Number(selectedProduct.qty) || 0),
+        lastKnownQty: Math.max(0, Number(selectedProduct.qty) || 0),
+        productImg: resolveProductImage(selectedProduct),
+        emoji: resolveFallback(selectedProduct),
+        restockedAt: selectedProduct.restockedAt || '',
+        storeInventory: Array.isArray(selectedProduct.storeInventory) ? selectedProduct.storeInventory : []
+      };
+
+      allAlerts = allAlerts.filter(function(entry) {
+        return entry.id !== alert.id && entry.productSku !== alert.productSku;
+      });
+      allAlerts.unshift(alert);
+      persistAlerts(allAlerts);
+      editingAlertId = '';
+      renderAlertsTable();
+      updateStats(allProducts);
+    }
+
+    function wirePriorityButtons() {
+      document.querySelectorAll('.priority-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+          activePriority = button.textContent.trim();
+          syncPriorityButtons();
+        });
+      });
+      syncPriorityButtons();
+    }
+
+    function wireTabs() {
+      document.querySelectorAll('.tab-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+          activeStatusTab = button.textContent.trim();
+          syncTabs();
+          renderAlertsTable();
+        });
+      });
+      syncTabs();
+    }
+
+    async function refreshRestockPage() {
+      try {
+        allProducts = await window.ImsApi.getProducts();
+      } catch (_error) {
+        allProducts = [];
+      }
+      allAlerts = getAlertsState();
+      initializeProductSelector(allProducts);
+      renderAlertsTable();
+      renderRestockedItems();
+      updateStats(allProducts);
+    }
+
+    window.increaseQty = increaseQty;
+    window.decreaseQty = decreaseQty;
+    window.editAlert = editAlert;
+    window.removeAlert = removeAlert;
+    window.handleRestockAlertSubmit = handleRestockAlertSubmit;
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      wirePriorityButtons();
+      wireTabs();
+      await refreshRestockPage();
+      selectedProduct = allProducts.find(function(product) {
+        return Number(product.qty || 0) === 0 || Number(product.qty || 0) < Math.max(1, Number(product.max || 0) * 0.25);
+      }) || allProducts[0] || null;
+      if (selectedProduct) {
+        document.getElementById('productselector').value = selectedProduct.sku;
+      }
+      document.getElementById('qtyValue').textContent = currentQty;
+      updateSelectedProductChip(selectedProduct);
+    });
+  </script>
+</body>
+</html>

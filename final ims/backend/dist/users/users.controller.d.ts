@@ -1,0 +1,101 @@
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+export declare class UsersController {
+    private readonly usersService;
+    constructor(usersService: UsersService);
+    login(loginData: {
+        email: string;
+        password: string;
+    }): {
+        store?: string;
+        storeId?: string;
+        status: string;
+        id: string;
+        name: string;
+        createdAt?: string;
+        updatedAt?: string;
+        email: string;
+        role: string;
+        currentStoreId?: string;
+        accessibleStoreIds?: string[];
+        profileId?: string;
+        profile?: Record<string, unknown>;
+    };
+    create(createUserDto: CreateUserDto): {
+        store?: string;
+        storeId?: string;
+        status: string;
+        id: string;
+        name: string;
+        createdAt?: string;
+        updatedAt?: string;
+        email: string;
+        role: string;
+        currentStoreId?: string;
+        accessibleStoreIds?: string[];
+        profileId?: string;
+        profile?: Record<string, unknown>;
+    };
+    findAll(role?: string, email?: string): {
+        store?: string;
+        storeId?: string;
+        status: string;
+        id: string;
+        name: string;
+        createdAt?: string;
+        updatedAt?: string;
+        email: string;
+        role: string;
+        currentStoreId?: string;
+        accessibleStoreIds?: string[];
+        profileId?: string;
+        profile?: Record<string, unknown>;
+    }[];
+    findOne(id: string): {
+        store?: string;
+        storeId?: string;
+        status: string;
+        id: string;
+        name: string;
+        createdAt?: string;
+        updatedAt?: string;
+        email: string;
+        role: string;
+        currentStoreId?: string;
+        accessibleStoreIds?: string[];
+        profileId?: string;
+        profile?: Record<string, unknown>;
+    };
+    update(id: string, updateUserDto: UpdateUserDto): {
+        store?: string;
+        storeId?: string;
+        status: string;
+        id: string;
+        name: string;
+        createdAt?: string;
+        updatedAt?: string;
+        email: string;
+        role: string;
+        currentStoreId?: string;
+        accessibleStoreIds?: string[];
+        profileId?: string;
+        profile?: Record<string, unknown>;
+    };
+    updateProfile(id: string, profile: Record<string, unknown>): {
+        store?: string;
+        storeId?: string;
+        status: string;
+        id: string;
+        name: string;
+        createdAt?: string;
+        updatedAt?: string;
+        email: string;
+        role: string;
+        currentStoreId?: string;
+        accessibleStoreIds?: string[];
+        profileId?: string;
+        profile?: Record<string, unknown>;
+    };
+    remove(id: string): boolean;
+}

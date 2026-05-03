@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Settings - Admin - Stock Overflow</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <style>
+    .settings-section { background:#fff; border:1px solid var(--border-color); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; }
+    .settings-section h2 { font-size:1rem; font-weight:700; color:var(--text-main); margin-bottom:1.25rem; }
+    .settings-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .settings-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; }
+    .form-hint { font-size:0.75rem; color:var(--text-muted); margin-top:4px; }
+    .toggle-row { display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid #f0f4f8; }
+    .toggle-row:last-child { border-bottom:none; }
+    .toggle-label { font-weight:500; font-size:0.9rem; }
+    .toggle-desc { font-size:0.78rem; color:var(--text-muted); margin-top:2px; }
+    .data-btns { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:0.5rem; }
+    .data-btn { display:flex; align-items:center; gap:0.5rem; padding:0.75rem 1rem; border:1px solid var(--border-color); border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:500; font-size:0.875rem; transition:background 0.15s; }
+    .data-btn:hover { background:#e2e8f0; }
+    .save-bar { position:sticky; bottom:0; background:#fff; border-top:1px solid var(--border-color); padding:1rem 2rem; display:flex; justify-content:flex-end; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon"><svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/></svg></div>
+        Stock Overflow
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Dashboard</a>
+      <a href="stores.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Store Selection</a>
+      <a href="users.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>Users</a>
+      <a href="roles.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Roles &amp; Permissions</a>
+      <a href="multistore.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>Multi-Store Setup</a>
+      <a href="reports.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Reports</a>
+      <a href="settings.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-wrapper">
+    <header class="topbar">
+      <div class="search-bar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><input type="text" placeholder="Search..."></div>
+      <div class="topbar-right">
+        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></button>
+        <div class="user-profile"><div class="user-avatar" id="navAvatar">AD</div><div class="user-info"><span class="user-name" id="navName">Admin User</span><span class="user-role">Administrator</span></div></div>
+      </div>
+    </header>
+
+    <div class="content-area" id="settingsContent">
+      <div class="page-header">
+        <h1 class="page-title">System Settings</h1>
+        <p class="page-subtitle">Configure system preferences and manage application settings</p>
+      </div>
+
+      <!-- General Settings -->
+      <div class="settings-section">
+        <h2>General Settings</h2>
+        <div class="form-group">
+          <label class="form-label">System Name</label>
+          <input type="text" class="form-control" id="sysName" value="Stock Overflow">
+        </div>
+        <div class="settings-row-3">
+          <div class="form-group">
+            <label class="form-label">Currency</label>
+            <select class="form-control" id="sysCurrency">
+              <option>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option><option>INR (₹)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Time Zone</label>
+            <select class="form-control" id="sysTz">
+              <option>UTC</option><option>US/Eastern</option><option>US/Pacific</option><option>Asia/Kolkata</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Language</label>
+            <select class="form-control" id="sysLang">
+              <option>English</option><option>Spanish</option><option>French</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Settings -->
+      <div class="settings-section">
+        <h2>Inventory Settings</h2>
+        <div class="settings-row">
+          <div class="form-group">
+            <label class="form-label">Low Stock Threshold</label>
+            <input type="number" class="form-control" id="lowStockThresh" value="20">
+            <p class="form-hint">Alert when stock falls below this number</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Auto Reorder Level</label>
+            <input type="number" class="form-control" id="autoReorder" value="10">
+            <p class="form-hint">Automatically reorder when stock reaches this level</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Default Product Category</label>
+          <select class="form-control" id="defCategory" style="max-width:340px;">
+            <option>General</option><option>Electronics</option><option>Clothing &amp; Fashion</option><option>Food &amp; Beverage</option><option>Tools</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Notification Settings -->
+      <div class="settings-section">
+        <h2>Notification Settings</h2>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Email Notifications</div><div class="toggle-desc">Receive email updates about system activities</div></div>
+          <label class="switch"><input type="checkbox" id="notifEmail" checked><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Low Stock Alerts</div><div class="toggle-desc">Get notified when products are running low</div></div>
+          <label class="switch"><input type="checkbox" id="notifLowStock" checked><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Order Notifications</div><div class="toggle-desc">Receive alerts for new orders and updates</div></div>
+          <label class="switch"><input type="checkbox" id="notifOrders" checked><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <!-- Security Settings -->
+      <div class="settings-section">
+        <h2>Security Settings</h2>
+        <div class="form-group">
+          <label class="form-label">Password Policy</label>
+          <select class="form-control" id="passPolicy">
+            <option>Strong (Min 10 characters, mixed case + special)</option>
+            <option>Medium (Min 8 characters, mixed case)</option>
+            <option>Basic (Min 6 characters)</option>
+          </select>
+        </div>
+        <div class="toggle-row" style="border-bottom:none;padding-bottom:0;">
+          <div><div class="toggle-label">Two-Factor Authentication</div><div class="toggle-desc">Add an extra layer of security to user accounts</div></div>
+          <label class="switch"><input type="checkbox" id="twoFactor"><span class="slider"></span></label>
+        </div>
+        <div class="form-group" style="margin-top:1rem;">
+          <label class="form-label">Session Timeout (minutes)</label>
+          <input type="number" class="form-control" id="sessionTimeout" value="30" style="max-width:200px;">
+          <p class="form-hint">Automatically log out users after this period of inactivity</p>
+        </div>
+      </div>
+
+      <!-- Data Management -->
+      <div class="settings-section">
+        <h2>Data Management</h2>
+        <div class="data-btns">
+          <button class="data-btn" onclick="exportData()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Data</button>
+          <button class="data-btn" onclick="alert('Import feature coming soon')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3" transform="rotate(180 12 12)"/></svg>Import Data</button>
+          <button class="data-btn" onclick="alert('Database backup initiated!')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Backup Database</button>
+        </div>
+        <p class="form-hint" style="margin-top:0.75rem;">Manage your data with export, import, and backup operations</p>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="settings-section" style="border-color: #fee2e2; background: #fff5f5;">
+        <h2 style="color: #dc2626;">Danger Zone</h2>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 600; font-size: 0.95rem; color: #b91c1c;">Reset All Data</div>
+            <p style="font-size: 0.85rem; color: #7f1d1d; margin-top: 4px;">Permanently delete all saved data and restore a clean project state.</p>
+          </div>
+          <button class="btn" onclick="DB.resetDB()" style="background: #dc2626; color: #fff; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer;">Reset Database</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Bar -->
+    <div class="save-bar">
+      <button class="btn btn-primary" onclick="saveSettings()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Changes
+      </button>
+    </div>
+  </main>
+
+  <script src="../js/mockData.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if(document.getElementById('logoutBtn'))
+        document.getElementById('logoutBtn').addEventListener('click', () => { DB.logout(); window.location.href='../index.html'; });
+
+      // Load saved settings
+      const saved = JSON.parse(localStorage.getItem('adminSettings')||'{}');
+      if(saved.sysName) document.getElementById('sysName').value = saved.sysName;
+      if(saved.currency) document.getElementById('sysCurrency').value = saved.currency;
+      if(saved.tz) document.getElementById('sysTz').value = saved.tz;
+      if(saved.lang) document.getElementById('sysLang').value = saved.lang;
+      if(saved.lowStock !== undefined) document.getElementById('lowStockThresh').value = saved.lowStock;
+      if(saved.reorder !== undefined) document.getElementById('autoReorder').value = saved.reorder;
+      if(saved.defCat) document.getElementById('defCategory').value = saved.defCat;
+      if(saved.notifEmail !== undefined) document.getElementById('notifEmail').checked = saved.notifEmail;
+      if(saved.notifLowStock !== undefined) document.getElementById('notifLowStock').checked = saved.notifLowStock;
+      if(saved.notifOrders !== undefined) document.getElementById('notifOrders').checked = saved.notifOrders;
+      if(saved.passPolicy) document.getElementById('passPolicy').value = saved.passPolicy;
+      if(saved.twoFactor !== undefined) document.getElementById('twoFactor').checked = saved.twoFactor;
+      if(saved.sessionTimeout !== undefined) document.getElementById('sessionTimeout').value = saved.sessionTimeout;
+    });
+
+    function saveSettings() {
+      const data = {
+        sysName: document.getElementById('sysName').value,
+        currency: document.getElementById('sysCurrency').value,
+        tz: document.getElementById('sysTz').value,
+        lang: document.getElementById('sysLang').value,
+        lowStock: document.getElementById('lowStockThresh').value,
+        reorder: document.getElementById('autoReorder').value,
+        defCat: document.getElementById('defCategory').value,
+        notifEmail: document.getElementById('notifEmail').checked,
+        notifLowStock: document.getElementById('notifLowStock').checked,
+        notifOrders: document.getElementById('notifOrders').checked,
+        passPolicy: document.getElementById('passPolicy').value,
+        twoFactor: document.getElementById('twoFactor').checked,
+        sessionTimeout: document.getElementById('sessionTimeout').value,
+      };
+      localStorage.setItem('adminSettings', JSON.stringify(data));
+      alert('Settings saved successfully!');
+    }
+
+    function exportData() {
+      const allData = { users: JSON.parse(localStorage.getItem('so_users')||'[]'), settings: JSON.parse(localStorage.getItem('adminSettings')||'{}') };
+      const blob = new Blob([JSON.stringify(allData, null, 2)], { type:'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = 'stock_overflow_data.json'; a.click();
+    }
+  </script>
+</body>
+</html>

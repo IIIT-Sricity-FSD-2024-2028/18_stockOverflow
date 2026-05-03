@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockOverflow – Customers</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<style>
+
+/* ═══════════════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════════════ */
+:root{
+  --bg:#f5f6fa;
+  --card:#ffffff;
+  --primary:#2e6bc5;
+  --primary-light:#eef3fc;
+  --primary-dark:#092c4c;
+  --success:#22c55e;
+  --success-light:#dcfce7;
+  --success-dark:#15803d;
+  --danger:#ef4444;
+  --danger-light:#fee2e2;
+  --danger-dark:#b91c1c;
+  --warning:#f59e0b;
+  --warning-light:#fef3c7;
+  --warning-dark:#92400e;
+  --info:#3b82f6;
+  --info-light:#dbeafe;
+  --purple:#8b5cf6;
+  --purple-light:#ede9fe;
+  --orange:#f97316;
+  --orange-light:#ffedd5;
+  --text-primary:#212b36;
+  --text-secondary:#646b72;
+  --text-muted:#a6aaaf;
+  --border:#e6eaed;
+  --shadow-card:0 1px 3px rgba(0,0,0,.08);
+  --radius-card:8px;
+  --sidebar-w:252px;
+  --topbar-h:65px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);display:flex;min-height:100vh;font-size:14px}
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════ */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;border-right:1px solid var(--border);
+  font-family:'Nunito Sans',sans-serif;
+}
+.sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sidebar-logo img { height: 30px; width: auto; display: block; }
+.sb-logo-icon{width:34px;height:34px;background:#4e7fd9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon svg{width:18px;height:18px}
+.sb-logo-text{font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;color:#092c4c;letter-spacing:-.2px}
+.sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+.sb-group{display:flex;flex-direction:column;gap:6px}
+.sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+.sb-divider{height:1px;background:var(--border);margin:4px 0}
+.sb-menus{display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+.sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+.sb-item.active{background:#fff6ee;color:#4e7fd9}
+.sb-item.active .sb-icon svg{stroke:#4e7fd9}
+.sb-item.active .sb-item-label{color:#4e7fd9}
+.sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+.sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-end-icon svg{width:10px;height:10px}
+.sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-dot-badge svg{width:10px;height:10px}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN SHELL
+═══════════════════════════════════════════════════════ */
+.main{margin-left:var(--sidebar-w);flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* ═══════════════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════════════ */
+.topbar{height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.tb-breadcrumb{font-size:12.5px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif}
+.tb-breadcrumb a{color:var(--text-secondary);text-decoration:none}
+.tb-breadcrumb a:hover{color:var(--primary)}
+.tb-breadcrumb .sep{margin:0 5px;opacity:.4}
+.tb-breadcrumb .current{color:var(--text-primary);font-weight:700}
+.topbar-search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 12px;width:220px}
+.topbar-search svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0}
+.topbar-search input{border:none;background:transparent;outline:none;font-size:13px;color:var(--text-primary);font-family:'Nunito Sans',sans-serif;width:100%}
+.topbar-search input::placeholder{color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-date{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;color:var(--text-secondary);cursor:pointer;font-family:'Nunito Sans',sans-serif;font-weight:600;white-space:nowrap;background:#fff;transition:background .13s}
+.tb-date:hover{background:var(--bg)}
+.tb-date svg{width:14px;height:14px}
+.tb-icon-btn{width:36px;height:36px;border-radius:6px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .13s}
+.tb-icon-btn:hover{background:var(--bg)}
+.tb-icon-btn svg{width:16px;height:16px;color:var(--text-secondary)}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.tb-avatar{width:34px;height:34px;border-radius:50%;background:#5b67ca;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Nunito Sans',sans-serif}
+
+/* ═══════════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════════ */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE WRAP
+═══════════════════════════════════════════════════════ */
+.page-wrap{padding:24px 28px 40px;flex:1;overflow:auto}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════════════════════ */
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.page-head-left .page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;color:var(--text-primary);line-height:1.35}
+.page-head-left .page-subtitle{font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--text-secondary);font-weight:600;margin-top:3px}
+.page-actions{display:flex;align-items:center;gap:8px}
+
+/* ═══════════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:5px;border:none;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .14s;white-space:nowrap;line-height:1}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+.btn-primary{background:#2e6bc5;color:#fff}
+.btn-primary:hover{background:#2460b0}
+.btn-dark{background:#092c4c;color:#fff}
+.btn-dark:hover{background:#0b3660}
+.btn-outline{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--bg);color:var(--text-primary)}
+.btn-danger{background:#ef4444;color:#fff}
+.btn-danger:hover{background:#dc2626}
+.btn-icon{width:34px;height:34px;padding:0;border-radius:5px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .13s;flex-shrink:0}
+.btn-icon:hover{background:var(--bg)}
+.btn-icon svg{width:16px;height:16px;color:var(--text-secondary)}
+
+/* ═══════════════════════════════════════════════════════
+   METRIC CARDS — 4 column
+═══════════════════════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.metric-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);
+  box-shadow:var(--shadow-card);padding:18px 20px;
+  display:flex;align-items:flex-start;gap:14px;
+  cursor:pointer;transition:box-shadow .18s,transform .18s;
+  animation:fadeUp .3s ease both;
+}
+.metric-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-2px)}
+.metric-card:nth-child(1){animation-delay:.04s}
+.metric-card:nth-child(2){animation-delay:.09s}
+.metric-card:nth-child(3){animation-delay:.14s}
+.metric-card:nth-child(4){animation-delay:.19s}
+.metric-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.metric-icon svg{width:20px;height:20px}
+.mi-blue{background:var(--primary-light)}.mi-blue svg{color:var(--primary)}
+.mi-green{background:var(--success-light)}.mi-green svg{color:var(--success)}
+.mi-orange{background:var(--orange-light)}.mi-orange svg{color:var(--orange)}
+.mi-purple{background:var(--purple-light)}.mi-purple svg{color:var(--purple)}
+.metric-body{flex:1;min-width:0}
+.metric-label{font-family:'Nunito Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--text-secondary);margin-bottom:5px}
+.metric-value{font-family:'Nunito Sans',sans-serif;font-size:22px;font-weight:700;color:var(--text-primary);letter-spacing:-.5px;line-height:1}
+.metric-footer{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
+.metric-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-family:'Nunito Sans',sans-serif;font-size:11px;font-weight:700}
+.metric-badge svg{width:9px;height:9px}
+.badge-up{background:var(--success-light);color:var(--success-dark)}
+.badge-down{background:var(--danger-light);color:var(--danger-dark)}
+.badge-neutral{background:#f1f5f9;color:#475569}
+.metric-sub{font-family:'Nunito Sans',sans-serif;font-size:11.5px;color:var(--text-muted)}
+
+/* ═══════════════════════════════════════════════════════
+   TABLE CARD
+═══════════════════════════════════════════════════════ */
+.table-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);
+  box-shadow:var(--shadow-card);overflow:hidden;
+  animation:fadeUp .3s ease .25s both;
+}
+
+/* TABLE TOOLBAR */
+.table-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--border);gap:14px;flex-wrap:wrap;
+}
+.toolbar-left{display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap}
+.toolbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+/* Search */
+.tbl-search{
+  display:flex;align-items:center;gap:8px;
+  border:1px solid var(--border);border-radius:5px;
+  padding:5px 10px;background:#fff;width:210px;
+}
+.tbl-search svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0}
+.tbl-search input{
+  border:none;outline:none;font-family:'Nunito Sans',sans-serif;
+  font-size:13.5px;color:var(--text-primary);width:100%;background:transparent;
+}
+.tbl-search input::placeholder{color:var(--text-muted);font-weight:400}
+
+/* Filter / Sort dropdowns */
+.tbl-filter{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 11px;border:1px solid var(--border);border-radius:5px;
+  background:#fff;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  color:var(--text-secondary);cursor:pointer;transition:background .13s;white-space:nowrap;
+}
+.tbl-filter:hover{background:var(--bg)}
+.tbl-filter svg{width:13px;height:13px;color:var(--text-muted)}
+.tbl-filter.active-filter{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.tbl-filter.active-filter svg{color:var(--primary)}
+
+/* Status filter pills */
+.status-filter-row{
+  display:flex;align-items:center;gap:6px;
+  padding:10px 20px;border-bottom:1px solid var(--border);
+  overflow-x:auto;flex-wrap:nowrap;
+}
+.sf-pill{
+  padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);
+  background:#fff;font-family:'Nunito Sans',sans-serif;font-size:12.5px;font-weight:700;
+  color:var(--text-secondary);cursor:pointer;transition:all .13s;white-space:nowrap;
+}
+.sf-pill:hover{background:var(--bg)}
+.sf-pill.active{background:#2e6bc5;border-color:#2e6bc5;color:#fff}
+.sf-pill .pill-count{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(255,255,255,.25);font-size:10px;margin-left:4px;font-weight:700;
+}
+.sf-pill:not(.active) .pill-count{background:#f0f2f4;color:var(--text-secondary)}
+
+/* ═══════════════════════════════════════════════════════
+   DATA TABLE
+═══════════════════════════════════════════════════════ */
+.tbl-wrap{overflow-x:auto}
+table.cust-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif}
+table.cust-table thead tr{background:#f8f9fb}
+table.cust-table th{
+  padding:10px 16px;text-align:left;
+  font-size:12px;font-weight:700;color:var(--text-secondary);
+  border-bottom:1px solid var(--border);white-space:nowrap;
+  letter-spacing:.03em;text-transform:uppercase;
+}
+table.cust-table th.th-check{width:48px;padding:10px 14px 10px 20px}
+table.cust-table th.th-sort{cursor:pointer;user-select:none}
+table.cust-table th.th-sort:hover{color:var(--text-primary)}
+.sort-caret{display:inline-flex;flex-direction:column;gap:1px;vertical-align:middle;margin-left:4px;opacity:.5}
+.sort-caret svg{width:8px;height:8px}
+table.cust-table td{
+  padding:13px 16px;border-bottom:1px solid #f0f2f4;
+  vertical-align:middle;font-size:13.5px;
+}
+table.cust-table td:first-child{padding-left:20px}
+table.cust-table tbody tr:last-child td{border-bottom:none}
+table.cust-table tbody tr{transition:background .12s;cursor:pointer}
+table.cust-table tbody tr:hover td{background:#fafbfc}
+table.cust-table tbody tr.selected td{background:#f0f6ff}
+
+/* Checkbox */
+.cust-checkbox{
+  width:16px;height:16px;border:1.5px solid var(--border);border-radius:4px;
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  display:block;position:relative;background:#fff;transition:all .13s;flex-shrink:0;
+}
+.cust-checkbox:checked{background:#2e6bc5;border-color:#2e6bc5}
+.cust-checkbox:checked::after{
+  content:'';position:absolute;left:4px;top:1.5px;
+  width:6px;height:9px;border-right:2px solid #fff;border-bottom:2px solid #fff;
+  transform:rotate(45deg);
+}
+
+/* Customer cell */
+.cust-cell{display:flex;align-items:center;gap:11px}
+.cust-avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;
+  flex-shrink:0;letter-spacing:.3px;
+}
+.cust-avatar img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.cust-name{font-family:'Nunito Sans',sans-serif;font-size:13.5px;font-weight:700;color:var(--text-primary)}
+.cust-email{font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* Status pills */
+.status-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;
+  font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;
+}
+.status-pill::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sp-active{background:var(--success-light);color:var(--success-dark)}
+.sp-active::before{background:var(--success)}
+.sp-inactive{background:#f1f5f9;color:#475569}
+.sp-inactive::before{background:#94a3b8}
+.sp-vip{background:var(--purple-light);color:#6d28d9}
+.sp-vip::before{background:var(--purple)}
+.sp-new{background:var(--primary-light);color:var(--primary)}
+.sp-new::before{background:var(--primary)}
+.sp-blocked{background:var(--danger-light);color:var(--danger-dark)}
+.sp-blocked::before{background:var(--danger)}
+
+/* Table text cells */
+.td-text{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-primary)}
+.td-muted{font-family:'Nunito Sans',sans-serif;font-size:12.5px;color:var(--text-secondary);font-weight:600}
+.td-money{font-family:'Nunito Sans',sans-serif;font-size:13.5px;font-weight:700;color:var(--text-primary)}
+.td-orders{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:6px;
+  background:var(--primary-light);color:var(--primary);
+  font-family:'Nunito Sans',sans-serif;font-size:12.5px;font-weight:700;
+}
+
+/* Rating stars */
+.rating{display:flex;align-items:center;gap:2px}
+.rating svg{width:13px;height:13px}
+.star-filled{color:#f59e0b}
+.star-empty{color:#e6eaed}
+
+/* Action buttons */
+.action-cell{display:flex;align-items:center;gap:5px}
+.act-btn{
+  width:30px;height:30px;border-radius:5px;border:1px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .13s;
+}
+.act-btn:hover{background:var(--bg)}
+.act-btn svg{width:14px;height:14px;color:var(--text-secondary)}
+.act-btn.view-btn:hover{background:var(--primary-light);border-color:#c3d9f5}
+.act-btn.view-btn:hover svg{color:var(--primary)}
+.act-btn.edit-btn:hover{background:var(--success-light);border-color:#86efac}
+.act-btn.edit-btn:hover svg{color:var(--success)}
+.act-btn.del-btn:hover{background:var(--danger-light);border-color:#fca5a5}
+.act-btn.del-btn:hover svg{color:var(--danger)}
+
+/* ═══════════════════════════════════════════════════════
+   TABLE FOOTER / PAGINATION
+═══════════════════════════════════════════════════════ */
+.table-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 20px;border-top:1px solid var(--border);
+  background:#fff;flex-wrap:wrap;gap:10px;
+}
+.tf-left{display:flex;align-items:center;gap:10px;font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--text-secondary)}
+.tf-rpp{display:flex;align-items:center;gap:6px}
+.rpp-select{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 10px;border:1px solid var(--border);border-radius:5px;
+  background:#fff;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  color:var(--text-primary);cursor:pointer;
+}
+.rpp-select svg{width:11px;height:11px;color:var(--text-muted)}
+.tf-pagination{display:flex;align-items:center;gap:6px}
+.pg-btn{
+  min-width:32px;height:32px;padding:0 6px;
+  border-radius:6px;border:1px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  color:var(--text-secondary);transition:all .13s;
+}
+.pg-btn:hover:not(.active):not(.pg-dots){background:var(--bg)}
+.pg-btn.active{background:#2e6bc5;border-color:#2e6bc5;color:#fff}
+.pg-btn.pg-arrow{color:var(--text-muted)}
+.pg-btn.pg-arrow:hover{color:var(--text-primary)}
+.pg-btn svg{width:13px;height:13px}
+.pg-dots{border:none;background:transparent;cursor:default;font-size:14px;color:var(--text-muted)}
+
+/* ═══════════════════════════════════════════════════════
+   BULK ACTION BAR
+═══════════════════════════════════════════════════════ */
+.bulk-bar{
+  display:none;align-items:center;gap:12px;
+  padding:10px 20px;background:#eef3fc;border-bottom:1px solid #c3d9f5;
+}
+.bulk-bar.show{display:flex}
+.bulk-bar-text{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:var(--primary)}
+.bulk-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.bulk-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:5px;border:none;
+  font-family:'Nunito Sans',sans-serif;font-size:12.5px;font-weight:700;
+  cursor:pointer;transition:all .13s;
+}
+.bulk-btn svg{width:13px;height:13px}
+.bulk-btn-export{background:#fff;color:var(--primary);border:1px solid #c3d9f5}
+.bulk-btn-export:hover{background:var(--primary-light)}
+.bulk-btn-delete{background:#fff;color:var(--danger);border:1px solid #fca5a5}
+.bulk-btn-delete:hover{background:var(--danger-light)}
+.bulk-btn-close{background:transparent;color:var(--text-muted);border:1px solid transparent;padding:6px 8px}
+.bulk-btn-close:hover{color:var(--text-primary)}
+
+/* ═══════════════════════════════════════════════════════
+   CUSTOMER DETAIL DRAWER
+═══════════════════════════════════════════════════════ */
+.drawer-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:200;
+  backdrop-filter:blur(2px);
+}
+.drawer-overlay.open{display:block}
+.drawer{
+  position:fixed;top:0;right:-500px;bottom:0;width:460px;
+  background:#fff;z-index:201;
+  box-shadow:-8px 0 32px rgba(0,0,0,.12);
+  display:flex;flex-direction:column;
+  transition:right .28s cubic-bezier(.4,0,.2,1);
+  font-family:'Nunito Sans',sans-serif;
+}
+.drawer.open{right:0}
+.drawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.drawer-title{font-size:16px;font-weight:700;color:var(--primary-dark)}
+.drawer-close{
+  width:32px;height:32px;border-radius:6px;border:1px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .13s;
+}
+.drawer-close:hover{background:var(--bg)}
+.drawer-close svg{width:14px;height:14px;color:var(--text-secondary)}
+.drawer-body{flex:1;overflow-y:auto;padding:22px}
+
+/* Drawer profile */
+.drawer-profile{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+.drawer-avatar{
+  width:64px;height:64px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.drawer-profile-name{font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.drawer-profile-email{font-size:13px;color:var(--text-muted);margin-bottom:6px}
+
+/* Drawer stats */
+.drawer-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.ds-item{
+  background:var(--bg);border-radius:7px;padding:12px 10px;text-align:center;
+  border:1px solid var(--border);
+}
+.ds-val{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:3px}
+.ds-lbl{font-size:11px;color:var(--text-muted)}
+
+/* Drawer info grid */
+.drawer-section-title{font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;margin-top:20px}
+.drawer-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.di-item{}
+.di-label{font-size:11.5px;color:var(--text-muted);font-weight:600;margin-bottom:3px}
+.di-value{font-size:13.5px;font-weight:700;color:var(--text-primary)}
+.di-value.mono{font-family:'DM Sans',monospace;font-size:12.5px}
+
+/* Drawer recent orders */
+.drawer-order-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid #f0f2f4;
+}
+.drawer-order-item:last-child{border-bottom:none}
+.doi-num{font-size:13px;font-weight:700;color:var(--primary);flex:1}
+.doi-amount{font-size:13px;font-weight:700;color:var(--text-primary)}
+.doi-date{font-size:12px;color:var(--text-muted);margin-left:8px}
+
+/* Drawer footer */
+.drawer-footer{
+  padding:16px 22px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;flex-shrink:0;background:#fff;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ADD CUSTOMER MODAL
+═══════════════════════════════════════════════════════ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.3);z-index:300;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(2px);
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:#fff;border-radius:10px;width:520px;max-width:95vw;
+  box-shadow:0 20px 60px rgba(0,0,0,.18);
+  animation:modalIn .22s cubic-bezier(.4,0,.2,1) both;
+  max-height:90vh;display:flex;flex-direction:column;overflow:hidden;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);flex-shrink:0}
+.modal-title{font-family:'Nunito Sans',sans-serif;font-size:16px;font-weight:700;color:var(--primary-dark)}
+.modal-close{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .13s}
+.modal-close:hover{background:var(--bg)}
+.modal-close svg{width:14px;height:14px;color:var(--text-secondary)}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0;background:#fff}
+
+/* Modal form fields */
+.field-row{display:grid;gap:14px;margin-bottom:14px}
+.field-row.col-1{grid-template-columns:1fr}
+.field-row.col-2{grid-template-columns:1fr 1fr}
+.field-row:last-child{margin-bottom:0}
+.field{display:flex;flex-direction:column;gap:5px}
+.field-label{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text-primary)}
+.field-label span{color:#ef4444;margin-left:2px}
+.field-input{
+  height:40px;border:1.5px solid var(--border);border-radius:5px;
+  padding:0 12px;font-family:'Nunito Sans',sans-serif;font-size:13.5px;
+  color:var(--text-primary);outline:none;transition:border-color .15s,box-shadow .15s;background:#fff;width:100%;
+}
+.field-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(46,107,197,.1)}
+.field-input::placeholder{color:var(--text-muted);font-weight:400}
+.field-select{height:40px;border:1.5px solid var(--border);border-radius:5px;padding:0 12px;font-family:'Nunito Sans',sans-serif;font-size:13.5px;color:var(--text-primary);outline:none;transition:border-color .15s,box-shadow .15s;background:#fff;width:100%;cursor:pointer;appearance:none}
+.field-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(46,107,197,.1)}
+.select-wrap{position:relative}
+.select-wrap::after{content:'';position:absolute;right:12px;top:50%;transform:translateY(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--text-muted);pointer-events:none}
+
+/* ═══════════════════════════════════════════════════════
+   TOAST NOTIFICATION
+═══════════════════════════════════════════════════════ */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:#092c4c;color:#fff;border-radius:8px;
+  padding:13px 18px;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  display:none;align-items:center;gap:10px;
+  box-shadow:0 4px 24px rgba(0,0,0,.2);
+  animation:fadeUp .25s ease;
+  max-width:340px;
+}
+.toast.show{display:flex}
+.toast-icon{width:20px;height:20px;flex-shrink:0}
+
+/* ═══════════════════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════════════════ */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:56px 20px;text-align:center;
+}
+.empty-state svg{width:56px;height:56px;color:#d1d5db;margin-bottom:16px}
+.empty-state-title{font-family:'Nunito Sans',sans-serif;font-size:15px;font-weight:700;color:var(--text-secondary);margin-bottom:6px}
+.empty-state-sub{font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--text-muted)}
+
+/* ═══════════════════════════════════════════════════════
+   DROPDOWN MENU
+═══════════════════════════════════════════════════════ */
+.dropdown{position:relative;display:inline-block}
+.dropdown-menu{
+  display:none;position:absolute;top:calc(100% + 4px);right:0;
+  min-width:180px;background:#fff;border:1px solid var(--border);
+  border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:100;
+  padding:5px 0;
+}
+.dropdown-menu.open{display:block;animation:fadeUp .15s ease}
+.dropdown-item{
+  display:flex;align-items:center;gap:9px;padding:9px 14px;
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-primary);
+  cursor:pointer;transition:background .12s;
+}
+.dropdown-item:hover{background:var(--bg)}
+.dropdown-item svg{width:14px;height:14px;color:var(--text-secondary)}
+.dropdown-item.danger{color:var(--danger)}
+.dropdown-item.danger svg{color:var(--danger)}
+.dropdown-sep{height:1px;background:var(--border);margin:4px 0}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <!-- MAIN -->
+    <div class="sb-group">
+      <div class="sb-group-label">Main</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retialer_Dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Retailer Dashboard</span>
+          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- INVENTORY -->
+    <div class="sb-group">
+      <div class="sb-group-label">Inventory</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Product_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5L14.5 5v6L8 14.5 1.5 11V5L8 1.5z"/><path d="M1.5 5L8 8.5 14.5 5M8 8.5V14.5"/></svg></span>
+          <span class="sb-item-label">Products</span>
+        </a>
+        <a class="sb-item" href="Add_New_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="8" y1="4.5" x2="8" y2="11.5"/><line x1="4.5" y1="8" x2="11.5" y2="8"/></svg></span>
+          <span class="sb-item-label">Add Product</span>
+        </a>
+        <a class="sb-item" href="Edit_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l3 3-8.5 8.5H1.5V10.5l9-8z"/><line x1="8.5" y1="4.5" x2="11.5" y2="7.5"/></svg></span>
+          <span class="sb-item-label">Edit Product</span>
+        </a>
+        <a class="sb-item" href="Inventory_Overview.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+          <span class="sb-item-label">Inventory Overview</span>
+        </a>
+        <a class="sb-item" href="Low_Stocks.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/><polyline points="10.5,4 13.5,4 13.5,7"/></svg></span>
+          <span class="sb-item-label">Low Stocks</span>
+        </a>
+        <a class="sb-item" href="Multi_warehouse_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/><line x1="1" y1="7" x2="15" y2="7"/></svg></span>
+          <span class="sb-item-label">Multi Store View</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- STOCK -->
+    <div class="sb-group">
+      <div class="sb-group-label">Stock</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="stock_adjustment.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-item-label">Stock Adjustment</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PEOPLES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Peoples</div>
+      <div class="sb-menus">
+        <a class="sb-item active" href="Customer_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Customers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="billers.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-item-label">Billers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="supplier-list.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-item-label">Suppliers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PURCHASES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Purchases</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Reorder_Recommendations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
+          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+        </a>
+        <a class="sb-item" href="Create_Purchase_Order.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-item-label">Purchase Order</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="Returns_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
+          <span class="sb-item-label">Purchase Return</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SETTINGS -->
+    <div class="sb-group">
+      <div class="sb-group-label">Settings</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="logout()">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════
+   MAIN
+═══════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="tb-breadcrumb">
+        <a href="Retialer_Dashboard.html">Home</a><span class="sep">/</span>
+        <span class="current">Customers</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="tb-avatar">RS</div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-wrap">
+
+    <!-- PAGE HEADER -->
+    <div class="page-head">
+      <div class="page-head-left">
+        <div class="page-title">Customers</div>
+        <div class="page-subtitle">People / Customers</div>
+      </div>
+      <div class="page-actions">
+        <div class="btn-icon" title="Export PDF" onclick="exportAction('pdf')">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="5.5" y1="9" x2="10.5" y2="9"/><line x1="5.5" y1="11.5" x2="8.5" y2="11.5"/></svg>
+        </div>
+        <div class="btn-icon" title="Export Excel" onclick="exportAction('excel')">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="10" y1="9" x2="6" y2="13"/></svg>
+        </div>
+        <div class="btn-icon" title="Refresh" onclick="location.reload()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13.5 8a5.5 5.5 0 11-1.1-3.3"/><polyline points="13.5,2 13.5,5 10.5,5"/></svg>
+        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
+          Add Customer
+        </button>
+        <button class="btn btn-dark" onclick="openImport()">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10.5v1.5a1 1 0 001 1h8a1 1 0 001-1V10.5"/><line x1="7" y1="1" x2="7" y2="9"/><polyline points="4,6.5 7,9.5 10,6.5"/></svg>
+          Import
+        </button>
+      </div>
+    </div>
+
+    <!-- METRIC CARDS -->
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-icon mi-blue">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="7" r="3.5"/><path d="M3 18c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg>
+        </div>
+        <div class="metric-body">
+          <div class="metric-label">Total Customers</div>
+          <div class="metric-value" id="m-total">—</div>
+          <div class="metric-footer">
+            <span class="metric-badge badge-up">
+              <svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1,6 4.5,2.5 8,6"/></svg>+12
+            </span>
+            <span class="metric-sub">this month</span>
+          </div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon mi-green">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="7" r="3.5"/><path d="M3 18c0-3.87 3.13-7 7-7s7 3.13 7 7"/><polyline points="13,4 14.5,5.5 17,3"/></svg>
+        </div>
+        <div class="metric-body">
+          <div class="metric-label">Active Customers</div>
+          <div class="metric-value" id="m-active">—</div>
+          <div class="metric-footer">
+            <span class="metric-badge badge-up">
+              <svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1,6 4.5,2.5 8,6"/></svg>+5.2%
+            </span>
+            <span class="metric-sub">vs last month</span>
+          </div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon mi-purple">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2l1.8 5.6H18l-4.9 3.6 1.8 5.7-4.9-3.6-4.9 3.6 1.8-5.7L2 7.6h6.2L10 2z"/></svg>
+        </div>
+        <div class="metric-body">
+          <div class="metric-label">VIP Customers</div>
+          <div class="metric-value" id="m-vip">—</div>
+          <div class="metric-footer">
+            <span class="metric-badge badge-neutral">Top spenders</span>
+          </div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon mi-orange">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="12"/><line x1="7" y1="10" x2="13" y2="10"/></svg>
+        </div>
+        <div class="metric-body">
+          <div class="metric-label">New This Month</div>
+          <div class="metric-value" id="m-new">—</div>
+          <div class="metric-footer">
+            <span class="metric-badge badge-up">
+              <svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="1,6 4.5,2.5 8,6"/></svg>+3
+            </span>
+            <span class="metric-sub">vs last month</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="table-card">
+
+      <!-- Bulk action bar -->
+      <div class="bulk-bar" id="bulkBar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#2e6bc5" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5.5" x2="8" y2="10.5"/><line x1="5.5" y1="8" x2="10.5" y2="8"/></svg>
+        <span class="bulk-bar-text"><span id="selectedCount">0</span> customers selected</span>
+        <div class="bulk-actions">
+          <button class="bulk-btn bulk-btn-export" onclick="exportAction('csv')">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9.5v1.5a1 1 0 001 1h7a1 1 0 001-1V9.5"/><line x1="6.5" y1="1" x2="6.5" y2="8"/><polyline points="4,6 6.5,8.5 9,6"/></svg>
+            Export Selected
+          </button>
+          <button class="bulk-btn bulk-btn-delete" onclick="bulkDelete()">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="1,3 12,3"/><path d="M3.5 3V2a1 1 0 011-1h4a1 1 0 011 1v1M4.5 3v8.5M8.5 3v8.5M2 3l.7 8a1 1 0 001 .9h5.6a1 1 0 001-.9L11 3"/></svg>
+            Delete
+          </button>
+          <button class="bulk-btn bulk-btn-close" onclick="clearSelection()">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="2" y1="2" x2="11" y2="11"/><line x1="11" y1="2" x2="2" y2="11"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table toolbar -->
+      <div class="table-toolbar">
+        <div class="toolbar-left">
+          <div class="tbl-search">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4"/><line x1="9" y1="9" x2="13" y2="13"/></svg>
+            <input type="text" placeholder="Search customers…" id="searchInput" oninput="handleSearch()"/>
+          </div>
+          <div class="tbl-filter" id="sortBtn" onclick="toggleSort()">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="2" y1="3" x2="5" y2="3"/><line x1="2" y1="7" x2="8" y2="7"/><line x1="2" y1="11" x2="12" y2="11"/><polyline points="11,1 13,3 11,5"/></svg>
+            Sort: Name
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,3.5 5,6.5 8,3.5"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status filter pills -->
+      <div class="status-filter-row">
+        <div class="sf-pill active" onclick="setFilter('all',this)">All <span class="pill-count" id="pill-all">—</span></div>
+        <div class="sf-pill" onclick="setFilter('active',this)">Active <span class="pill-count" id="pill-active">—</span></div>
+        <div class="sf-pill" onclick="setFilter('vip',this)">VIP <span class="pill-count" id="pill-vip">—</span></div>
+        <div class="sf-pill" onclick="setFilter('new',this)">New <span class="pill-count" id="pill-new">—</span></div>
+        <div class="sf-pill" onclick="setFilter('inactive',this)">Inactive <span class="pill-count" id="pill-inactive">—</span></div>
+        <div class="sf-pill" onclick="setFilter('blocked',this)">Blocked <span class="pill-count" id="pill-blocked">—</span></div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="tbl-wrap" id="tableWrap">
+        <table class="cust-table" id="custTable">
+          <thead>
+            <tr>
+              <th class="th-check">
+                <input type="checkbox" class="cust-checkbox" id="selectAllCb" onchange="toggleSelectAll(this)"/>
+              </th>
+              <th class="th-sort" onclick="sortBy('name')">
+                Customer
+                <span class="sort-caret">
+                  <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,4 4,1 7,4"/></svg>
+                  <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,1 4,4 7,1"/></svg>
+                </span>
+              </th>
+              <th>Phone</th>
+              <th class="th-sort" onclick="sortBy('city')">
+                City
+                <span class="sort-caret">
+                  <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,4 4,1 7,4"/></svg>
+                  <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,1 4,4 7,1"/></svg>
+                </span>
+              </th>
+              <th class="th-sort" onclick="sortBy('orders')">
+                Orders
+                <span class="sort-caret">
+                  <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,4 4,1 7,4"/></svg>
+                  <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,1 4,4 7,1"/></svg>
+                </span>
+              </th>
+              <th class="th-sort" onclick="sortBy('spent')">
+                Total Spent
+                <span class="sort-caret">
+                  <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,4 4,1 7,4"/></svg>
+                  <svg viewBox="0 0 8 5" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,1 4,4 7,1"/></svg>
+                </span>
+              </th>
+              <th>Status</th>
+              <th>Created</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="custTbody"></tbody>
+        </table>
+        <div id="emptyState" class="empty-state" style="display:none">
+          <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="28" cy="20" r="10"/><path d="M8 48c0-11.05 8.95-20 20-20s20 8.95 20 20"/></svg>
+          <div class="empty-state-title">No customers found</div>
+          <div class="empty-state-sub">Try adjusting your search or filter criteria.</div>
+        </div>
+      </div>
+
+      <!-- TABLE FOOTER -->
+      <div class="table-footer">
+        <div class="tf-left">
+          <div class="tf-rpp">
+            Row per page
+            <div class="rpp-select" onclick="cycleRPP()">
+              <span id="rppLabel">10</span>
+              <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,4 5.5,7.5 9,4"/></svg>
+            </div>
+          </div>
+          <span id="tfInfo" style="color:var(--text-muted);font-size:12.5px"></span>
+        </div>
+        <div class="tf-pagination" id="pagination"></div>
+      </div>
+    </div>
+
+  </div><!-- /page-wrap -->
+</div><!-- /main -->
+
+<!-- ═══════════════════════════════════════════
+   CUSTOMER DETAIL DRAWER
+═══════════════════════════════════════════ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="drawer-title">Customer Details</div>
+    <div class="drawer-close" onclick="closeDrawer()">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg>
+    </div>
+  </div>
+  <div class="drawer-body" id="drawerBody"><!-- JS rendered --></div>
+  <div class="drawer-footer">
+    <button class="btn btn-primary" onclick="closeDrawer();openEditModal(currentDrawerCustomer)">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 1.5l3 3-8.5 8.5H1.5V9.5l8-8z"/></svg>
+      Edit Customer
+    </button>
+    <button class="btn btn-outline" onclick="closeDrawer()">Close</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+   ADD / EDIT CUSTOMER MODAL
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Add New Customer</div>
+      <div class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="field-row col-2">
+        <div class="field">
+          <label class="field-label">First Name <span>*</span></label>
+          <input class="field-input" id="f-fname" type="text" placeholder="e.g. John"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Last Name <span>*</span></label>
+          <input class="field-input" id="f-lname" type="text" placeholder="e.g. Smith"/>
+        </div>
+      </div>
+      <div class="field-row col-1">
+        <div class="field">
+          <label class="field-label">Email Address <span>*</span></label>
+          <input class="field-input" id="f-email" type="email" placeholder="john@example.com"/>
+        </div>
+      </div>
+      <div class="field-row col-2">
+        <div class="field">
+          <label class="field-label">Phone Number</label>
+          <input class="field-input" id="f-phone" type="text" placeholder="+1 555 000 0000"/>
+        </div>
+        <div class="field">
+          <label class="field-label">City</label>
+          <input class="field-input" id="f-city" type="text" placeholder="e.g. New York"/>
+        </div>
+      </div>
+      <div class="field-row col-2">
+        <div class="field">
+          <label class="field-label">Country</label>
+          <input class="field-input" id="f-country" type="text" placeholder="e.g. United States"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Status</label>
+          <div class="select-wrap">
+            <select class="field-select" id="f-status">
+              <option value="active">Active</option>
+              <option value="new">New</option>
+              <option value="vip">VIP</option>
+              <option value="inactive">Inactive</option>
+              <option value="blocked">Blocked</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field-row col-1">
+        <div class="field">
+          <label class="field-label">Notes</label>
+          <input class="field-input" id="f-notes" type="text" placeholder="Internal notes (optional)"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modalSaveBtn" onclick="saveCustomer()">Add Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" viewBox="0 0 20 20" fill="none" stroke="#22c55e" stroke-width="2" id="toastIcon"><circle cx="10" cy="10" r="8.5"/><polyline points="6.5,10 9,12.5 13.5,7"/></svg>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script src="api-config.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════ */
+const AVATAR_COLORS = [
+  '#2e6bc5','#8b5cf6','#22c55e','#f59e0b','#ef4444',
+  '#f97316','#06b6d4','#ec4899','#14b8a6','#6366f1',
+];
+
+const CUSTOMERS = [
+  { id:1,  fname:'James',   lname:'Kirwin',   email:'james.kirwin@email.com',   phone:'+1 555 012 3456', city:'New York',      country:'USA',        orders:24, spent:4820,  status:'vip',      created:'Jan 12, 2024', rating:5, notes:'' },
+  { id:2,  fname:'Francis', lname:'Chang',    email:'francis.chang@email.com',  phone:'+1 555 023 4567', city:'Los Angeles',   country:'USA',        orders:18, spent:3150,  status:'active',   created:'Feb 03, 2024', rating:4, notes:'' },
+  { id:3,  fname:'Antonio', lname:'Engle',    email:'antonio.engle@email.com',  phone:'+44 7700 900 001',city:'London',        country:'UK',         orders:9,  spent:1480,  status:'active',   created:'Mar 18, 2024', rating:4, notes:'' },
+  { id:4,  fname:'Leo',     lname:'Kelly',    email:'leo.kelly@email.com',      phone:'+1 555 034 5678', city:'Chicago',       country:'USA',        orders:31, spent:6920,  status:'vip',      created:'Dec 05, 2023', rating:5, notes:'High-value repeat buyer' },
+  { id:5,  fname:'Annette', lname:'Walker',   email:'annette.walker@email.com', phone:'+61 400 123 456', city:'Sydney',        country:'Australia',  orders:5,  spent:640,   status:'new',      created:'Jan 20, 2025', rating:3, notes:'' },
+  { id:6,  fname:'John',    lname:'Weaver',   email:'john.weaver@email.com',    phone:'+1 555 045 6789', city:'Houston',       country:'USA',        orders:12, spent:2240,  status:'active',   created:'Jun 14, 2024', rating:4, notes:'' },
+  { id:7,  fname:'Gary',    lname:'Hennessy', email:'gary.hennessy@email.com',  phone:'+353 87 000 0001',city:'Dublin',        country:'Ireland',    orders:7,  spent:980,   status:'inactive', created:'Sep 01, 2024', rating:3, notes:'Last purchase 3 months ago' },
+  { id:8,  fname:'Eleanor', lname:'Panek',    email:'eleanor.panek@email.com',  phone:'+1 555 056 7890', city:'Phoenix',       country:'USA',        orders:22, spent:4120,  status:'vip',      created:'Jan 08, 2024', rating:5, notes:'Prefers email communication' },
+  { id:9,  fname:'William', lname:'Levy',     email:'william.levy@email.com',   phone:'+33 6 00 00 00 01',city:'Paris',        country:'France',     orders:3,  spent:290,   status:'new',      created:'Dec 28, 2024', rating:3, notes:'' },
+  { id:10, fname:'Charlotte',lname:'Klotz',   email:'charlotte.klotz@email.com',phone:'+49 160 000 0001',city:'Berlin',        country:'Germany',    orders:16, spent:3380,  status:'active',   created:'Apr 22, 2024', rating:4, notes:'' },
+  { id:11, fname:'Maria',   lname:'Santos',   email:'maria.santos@email.com',   phone:'+55 11 91234 5678',city:'São Paulo',    country:'Brazil',     orders:8,  spent:1240,  status:'active',   created:'May 10, 2024', rating:4, notes:'' },
+  { id:12, fname:'David',   lname:'Kim',      email:'david.kim@email.com',      phone:'+82 10 1234 5678',city:'Seoul',         country:'South Korea',orders:41, spent:8350,  status:'vip',      created:'Nov 14, 2023', rating:5, notes:'Top spender — priority support' },
+  { id:13, fname:'Sophie',  lname:'Martin',   email:'sophie.martin@email.com',  phone:'+33 6 00 00 00 02',city:'Lyon',         country:'France',     orders:2,  spent:180,   status:'new',      created:'Jan 15, 2025', rating:2, notes:'' },
+  { id:14, fname:'Raj',     lname:'Patel',    email:'raj.patel@email.com',      phone:'+91 98765 43210', city:'Mumbai',        country:'India',      orders:14, spent:2680,  status:'active',   created:'Jul 30, 2024', rating:4, notes:'' },
+  { id:15, fname:'Claire',  lname:'Dubois',   email:'claire.dubois@email.com',  phone:'+32 470 00 00 01',city:'Brussels',      country:'Belgium',    orders:0,  spent:0,     status:'blocked',  created:'Oct 05, 2024', rating:1, notes:'Fraudulent activity detected' },
+  { id:16, fname:'Marcus',  lname:'Thompson', email:'marcus.t@email.com',       phone:'+1 555 067 8901', city:'Dallas',        country:'USA',        orders:19, spent:3760,  status:'active',   created:'Mar 07, 2024', rating:4, notes:'' },
+  { id:17, fname:'Yuki',    lname:'Tanaka',   email:'yuki.tanaka@email.com',    phone:'+81 90 1234 5678',city:'Tokyo',         country:'Japan',      orders:27, spent:5640,  status:'vip',      created:'Feb 19, 2024', rating:5, notes:'Bulk buyer — seasonal orders' },
+  { id:18, fname:'Isabella',lname:'Romano',   email:'i.romano@email.com',       phone:'+39 320 000 0001',city:'Milan',         country:'Italy',      orders:6,  spent:870,   status:'inactive', created:'Aug 12, 2024', rating:3, notes:'' },
+];
+CUSTOMERS.splice(0, CUSTOMERS.length);
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+let currentFilter = 'all';
+let currentSearch = '';
+let currentSort   = { key:'name', asc:true };
+let currentPage   = 1;
+let rowsPerPage   = 10;
+let selectedIds   = new Set();
+let editingId     = null;
+let currentDrawerCustomer = null;
+let RPP_OPTIONS   = [5, 10, 20, 50];
+let rppIndex      = 1;
+
+/* ═══════════════════════════════════════════════════
+   FILTER + RENDER
+═══════════════════════════════════════════════════ */
+function getFiltered() {
+  let data = [...CUSTOMERS];
+  if (currentFilter !== 'all') data = data.filter(c => c.status === currentFilter);
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    data = data.filter(c =>
+      `${c.fname} ${c.lname}`.toLowerCase().includes(q) ||
+      c.email.toLowerCase().includes(q) ||
+      c.city.toLowerCase().includes(q) ||
+      c.phone.includes(q)
+    );
+  }
+  // Sort
+  data.sort((a, b) => {
+    let va, vb;
+    if (currentSort.key === 'name')   { va = `${a.fname}${a.lname}`.toLowerCase(); vb = `${b.fname}${b.lname}`.toLowerCase(); }
+    else if (currentSort.key === 'city')   { va = a.city.toLowerCase(); vb = b.city.toLowerCase(); }
+    else if (currentSort.key === 'orders') { va = a.orders; vb = b.orders; }
+    else if (currentSort.key === 'spent')  { va = a.spent;  vb = b.spent;  }
+    else { va = 0; vb = 0; }
+    return currentSort.asc ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+  });
+  return data;
+}
+
+function renderTable() {
+  const filtered = getFiltered();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const slice = filtered.slice((currentPage-1)*rowsPerPage, currentPage*rowsPerPage);
+
+  const tbody = document.getElementById('custTbody');
+  const empty = document.getElementById('emptyState');
+  if (!slice.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'flex';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = slice.map(c => renderRow(c)).join('');
+    // Re-attach checkboxes state
+    slice.forEach(c => {
+      const cb = document.getElementById('cb-' + c.id);
+      if (cb) cb.checked = selectedIds.has(c.id);
+      const tr = document.getElementById('tr-' + c.id);
+      if (tr) tr.classList.toggle('selected', selectedIds.has(c.id));
+    });
+  }
+
+  // Pagination
+  renderPagination(totalPages, filtered.length);
+  // Info
+  const start = (currentPage-1)*rowsPerPage + 1;
+  const end   = Math.min(currentPage*rowsPerPage, filtered.length);
+  document.getElementById('tfInfo').textContent = filtered.length ? `Showing ${start}–${end} of ${filtered.length}` : '';
+  // Master checkbox
+  const masterCb = document.getElementById('selectAllCb');
+  if (masterCb) {
+    const pageIds = slice.map(c => c.id);
+    masterCb.checked = pageIds.length > 0 && pageIds.every(id => selectedIds.has(id));
+    masterCb.indeterminate = pageIds.some(id => selectedIds.has(id)) && !masterCb.checked;
+  }
+}
+
+function renderRow(c) {
+  const initials = c.fname[0] + c.lname[0];
+  const color = AVATAR_COLORS[(c.id - 1) % AVATAR_COLORS.length];
+  const statusMap = {
+    active:   ['sp-active','Active'],
+    vip:      ['sp-vip','VIP'],
+    new:      ['sp-new','New'],
+    inactive: ['sp-inactive','Inactive'],
+    blocked:  ['sp-blocked','Blocked'],
+  };
+  const [spClass, spLabel] = statusMap[c.status] || ['sp-inactive','Unknown'];
+
+  return `
+  <tr id="tr-${c.id}" onclick="openDrawer(${c.id})">
+    <td onclick="event.stopPropagation()">
+      <input type="checkbox" class="cust-checkbox" id="cb-${c.id}" onchange="toggleSelect(${c.id},this)"/>
+    </td>
+    <td>
+      <div class="cust-cell">
+        <div class="cust-avatar" style="background:${color}">${initials}</div>
+        <div>
+          <div class="cust-name">${c.fname} ${c.lname}</div>
+          <div class="cust-email">${c.email}</div>
+        </div>
+      </div>
+    </td>
+    <td class="td-muted">${c.phone}</td>
+    <td>
+      <div class="td-text">${c.city}</div>
+      <div class="td-muted" style="font-size:11.5px;margin-top:1px">${c.country}</div>
+    </td>
+    <td>
+      <span class="td-orders">${c.orders}</span>
+    </td>
+    <td class="td-money">$${c.spent.toLocaleString()}</td>
+    <td><span class="status-pill ${spClass}">${spLabel}</span></td>
+    <td class="td-muted" style="font-size:12px">${c.created}</td>
+    <td onclick="event.stopPropagation()">
+      <div class="action-cell">
+        <div class="act-btn view-btn" title="View" onclick="openDrawer(${c.id})">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 7s2.5-4.5 6-4.5S13 7 13 7s-2.5 4.5-6 4.5S1 7 1 7z"/><circle cx="7" cy="7" r="2"/></svg>
+        </div>
+        <div class="act-btn edit-btn" title="Edit" onclick="openEditModal(${c.id})">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9.5 1.5l3 3-8.5 8.5H1.5V9.5l8-8z"/><line x1="7.5" y1="3.5" x2="10.5" y2="6.5"/></svg>
+        </div>
+        <div class="act-btn del-btn" title="Delete" onclick="deleteCustomer(${c.id})">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="1,3.5 13,3.5"/><path d="M4.5 3.5V2.5a1 1 0 011-1h3a1 1 0 011 1v1M5 3.5V11M9 3.5V11M2.5 3.5l.7 8.5a1 1 0 001 .9h5.6a1 1 0 001-.9l.7-8.5"/></svg>
+        </div>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderPagination(totalPages, total) {
+  const pag = document.getElementById('pagination');
+  if (totalPages <= 1) { pag.innerHTML = ''; return; }
+
+  let html = `<div class="pg-btn pg-arrow" onclick="goPage(${currentPage-1})"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,2 4,6.5 8,11"/></svg></div>`;
+
+  const pages = [];
+  pages.push(1);
+  if (currentPage > 3) pages.push('…');
+  for (let p = Math.max(2, currentPage-1); p <= Math.min(totalPages-1, currentPage+1); p++) pages.push(p);
+  if (currentPage < totalPages - 2) pages.push('…');
+  if (totalPages > 1) pages.push(totalPages);
+
+  pages.forEach(p => {
+    if (p === '…') html += `<div class="pg-btn pg-dots">…</div>`;
+    else html += `<div class="pg-btn${p === currentPage ? ' active' : ''}" onclick="goPage(${p})">${p}</div>`;
+  });
+
+  html += `<div class="pg-btn pg-arrow" onclick="goPage(${currentPage+1})"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="5,2 9,6.5 5,11"/></svg></div>`;
+  pag.innerHTML = html;
+}
+
+function goPage(p) {
+  const totalPages = Math.ceil(getFiltered().length / rowsPerPage);
+  if (p < 1 || p > totalPages) return;
+  currentPage = p;
+  renderTable();
+}
+
+/* ═══════════════════════════════════════════════════
+   METRIC PILLS
+═══════════════════════════════════════════════════ */
+function updateMetrics() {
+  const counts = { all:0, active:0, vip:0, new:0, inactive:0, blocked:0 };
+  CUSTOMERS.forEach(c => { counts.all++; counts[c.status]++; });
+
+  animCount('m-total',  counts.all);
+  animCount('m-active', counts.active);
+  animCount('m-vip',    counts.vip);
+  animCount('m-new',    counts.new);
+
+  document.getElementById('pill-all').textContent     = counts.all;
+  document.getElementById('pill-active').textContent  = counts.active;
+  document.getElementById('pill-vip').textContent     = counts.vip;
+  document.getElementById('pill-new').textContent     = counts.new;
+  document.getElementById('pill-inactive').textContent= counts.inactive;
+  document.getElementById('pill-blocked').textContent = counts.blocked;
+}
+
+function animCount(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let v = 0, step = target / 35;
+  const t = setInterval(() => {
+    v = Math.min(v + step, target);
+    el.textContent = Math.round(v);
+    if (v >= target) clearInterval(t);
+  }, 16);
+}
+
+/* ═══════════════════════════════════════════════════
+   FILTER / SEARCH / SORT
+═══════════════════════════════════════════════════ */
+function setFilter(status, el) {
+  currentFilter = status;
+  currentPage = 1;
+  document.querySelectorAll('.sf-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
+
+function handleSearch() {
+  currentSearch = document.getElementById('searchInput').value.trim();
+  currentPage = 1;
+  renderTable();
+}
+
+function sortBy(key) {
+  if (currentSort.key === key) currentSort.asc = !currentSort.asc;
+  else { currentSort.key = key; currentSort.asc = true; }
+  renderTable();
+}
+
+function toggleSort() {
+  const keys = ['name','city','orders','spent'];
+  const idx = keys.indexOf(currentSort.key);
+  currentSort.key = keys[(idx+1) % keys.length];
+  currentSort.asc = true;
+  const labels = {name:'Name',city:'City',orders:'Orders',spent:'Spent'};
+  document.getElementById('sortBtn').innerHTML = `
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="2" y1="3" x2="5" y2="3"/><line x1="2" y1="7" x2="8" y2="7"/><line x1="2" y1="11" x2="12" y2="11"/><polyline points="11,1 13,3 11,5"/></svg>
+    Sort: ${labels[currentSort.key]}
+    <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,3.5 5,6.5 8,3.5"/></svg>`;
+  renderTable();
+}
+
+/* ═══════════════════════════════════════════════════
+   SELECTION
+═══════════════════════════════════════════════════ */
+function toggleSelect(id, cb) {
+  if (cb.checked) selectedIds.add(id);
+  else selectedIds.delete(id);
+  const tr = document.getElementById('tr-' + id);
+  if (tr) tr.classList.toggle('selected', cb.checked);
+  updateBulkBar();
+  // Update master cb
+  const filtered = getFiltered();
+  const slice = filtered.slice((currentPage-1)*rowsPerPage, currentPage*rowsPerPage);
+  const masterCb = document.getElementById('selectAllCb');
+  if (masterCb) {
+    const pageIds = slice.map(c => c.id);
+    masterCb.checked = pageIds.every(id => selectedIds.has(id));
+    masterCb.indeterminate = pageIds.some(id => selectedIds.has(id)) && !masterCb.checked;
+  }
+}
+
+function toggleSelectAll(masterCb) {
+  const filtered = getFiltered();
+  const slice = filtered.slice((currentPage-1)*rowsPerPage, currentPage*rowsPerPage);
+  slice.forEach(c => {
+    if (masterCb.checked) selectedIds.add(c.id);
+    else selectedIds.delete(c.id);
+    const tr = document.getElementById('tr-' + c.id);
+    if (tr) tr.classList.toggle('selected', masterCb.checked);
+    const cb = document.getElementById('cb-' + c.id);
+    if (cb) cb.checked = masterCb.checked;
+  });
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  const cnt = document.getElementById('selectedCount');
+  if (selectedIds.size > 0) {
+    bar.classList.add('show');
+    cnt.textContent = selectedIds.size;
+  } else {
+    bar.classList.remove('show');
+  }
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  document.querySelectorAll('.cust-checkbox').forEach(cb => { cb.checked = false; cb.indeterminate = false; });
+  document.querySelectorAll('tr.selected').forEach(tr => tr.classList.remove('selected'));
+  updateBulkBar();
+}
+
+function bulkDelete() {
+  if (!confirm(`Delete ${selectedIds.size} selected customer(s)?`)) return;
+  selectedIds.forEach(id => {
+    const idx = CUSTOMERS.findIndex(c => c.id === id);
+    if (idx !== -1) CUSTOMERS.splice(idx, 1);
+  });
+  selectedIds.clear();
+  updateBulkBar();
+  updateMetrics();
+  renderTable();
+  showToast('Customers deleted successfully.', 'success');
+}
+
+/* ═══════════════════════════════════════════════════
+   ROWS PER PAGE
+═══════════════════════════════════════════════════ */
+function cycleRPP() {
+  rppIndex = (rppIndex + 1) % RPP_OPTIONS.length;
+  rowsPerPage = RPP_OPTIONS[rppIndex];
+  document.getElementById('rppLabel').textContent = rowsPerPage;
+  currentPage = 1;
+  renderTable();
+}
+
+/* ═══════════════════════════════════════════════════
+   CUSTOMER DRAWER
+═══════════════════════════════════════════════════ */
+function openDrawer(id) {
+  const c = CUSTOMERS.find(x => x.id === id);
+  if (!c) return;
+  currentDrawerCustomer = id;
+  const color = AVATAR_COLORS[(c.id-1) % AVATAR_COLORS.length];
+  const initials = c.fname[0] + c.lname[0];
+  const statusMap = { active:['sp-active','Active'], vip:['sp-vip','VIP'], new:['sp-new','New'], inactive:['sp-inactive','Inactive'], blocked:['sp-blocked','Blocked'] };
+  const [spClass, spLabel] = statusMap[c.status] || ['sp-inactive','Unknown'];
+
+  // Star rating
+  const stars = Array.from({length:5}, (_,i) =>
+    `<svg viewBox="0 0 14 14" fill="${i<c.rating?'#f59e0b':'#e6eaed'}" stroke="none"><path d="M7 1l1.5 3.5H13l-3.5 2.7 1.3 4L7 9.1l-3.8 2.1 1.3-4L1 4.5h4.5L7 1z"/></svg>`
+  ).join('');
+
+  const recentOrders = [
+    { num:'#ORD-0081', amount: Math.round(c.spent * 0.22), date: 'Jan 22, 2025' },
+    { num:'#ORD-0074', amount: Math.round(c.spent * 0.18), date: 'Dec 14, 2024' },
+    { num:'#ORD-0068', amount: Math.round(c.spent * 0.14), date: 'Nov 30, 2024' },
+  ];
+
+  document.getElementById('drawerBody').innerHTML = `
+    <div class="drawer-profile">
+      <div class="drawer-avatar" style="background:${color}">${initials}</div>
+      <div>
+        <div class="drawer-profile-name">${c.fname} ${c.lname}</div>
+        <div class="drawer-profile-email">${c.email}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="status-pill ${spClass}">${spLabel}</span>
+          <div style="display:flex;align-items:center;gap:2px">${stars}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-stats">
+      <div class="ds-item">
+        <div class="ds-val">${c.orders}</div>
+        <div class="ds-lbl">Orders</div>
+      </div>
+      <div class="ds-item">
+        <div class="ds-val">$${c.spent.toLocaleString()}</div>
+        <div class="ds-lbl">Total Spent</div>
+      </div>
+      <div class="ds-item">
+        <div class="ds-val">$${c.orders ? Math.round(c.spent / c.orders).toLocaleString() : 0}</div>
+        <div class="ds-lbl">Avg. Order</div>
+      </div>
+    </div>
+
+    <div class="drawer-section-title">Contact Information</div>
+    <div class="drawer-info-grid">
+      <div class="di-item"><div class="di-label">Phone</div><div class="di-value mono">${c.phone}</div></div>
+      <div class="di-item"><div class="di-label">City</div><div class="di-value">${c.city}</div></div>
+      <div class="di-item"><div class="di-label">Country</div><div class="di-value">${c.country}</div></div>
+      <div class="di-item"><div class="di-label">Customer Since</div><div class="di-value">${c.created}</div></div>
+    </div>
+
+    ${c.notes ? `
+    <div class="drawer-section-title">Internal Notes</div>
+    <div style="background:#fef9ee;border:1px solid #fde68a;border-radius:6px;padding:10px 12px;font-family:'Nunito Sans',sans-serif;font-size:13px;color:#92400e;">${c.notes}</div>` : ''}
+
+    <div class="drawer-section-title">Recent Orders</div>
+    <div>
+      ${recentOrders.map(o => `
+      <div class="drawer-order-item">
+        <span class="doi-num">${o.num}</span>
+        <span class="doi-amount">$${o.amount.toLocaleString()}</span>
+        <span class="doi-date">${o.date}</span>
+      </div>`).join('')}
+    </div>
+  `;
+
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════════════════
+   ADD / EDIT MODAL
+═══════════════════════════════════════════════════ */
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Customer';
+  document.getElementById('modalSaveBtn').textContent = 'Add Customer';
+  ['fname','lname','email','phone','city','country','notes'].forEach(f => document.getElementById('f-'+f).value = '');
+  document.getElementById('f-status').value = 'active';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('f-fname').focus(), 120);
+}
+
+function openEditModal(idOrEvent) {
+  const id = typeof idOrEvent === 'number' ? idOrEvent : currentDrawerCustomer;
+  const c = CUSTOMERS.find(x => x.id === id);
+  if (!c) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Customer';
+  document.getElementById('modalSaveBtn').textContent = 'Save Changes';
+  document.getElementById('f-fname').value = c.fname;
+  document.getElementById('f-lname').value = c.lname;
+  document.getElementById('f-email').value = c.email;
+  document.getElementById('f-phone').value = c.phone;
+  document.getElementById('f-city').value  = c.city;
+  document.getElementById('f-country').value = c.country;
+  document.getElementById('f-status').value = c.status;
+  document.getElementById('f-notes').value  = c.notes || '';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('f-fname').focus(), 120);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function saveCustomer() {
+  const fname   = document.getElementById('f-fname').value.trim();
+  const lname   = document.getElementById('f-lname').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  if (!fname || !lname || !email) {
+    showToast('Please fill in all required fields.', 'error');
+    return;
+  }
+  if (editingId) {
+    const c = CUSTOMERS.find(x => x.id === editingId);
+    if (c) {
+      c.fname   = fname; c.lname = lname; c.email = email;
+      c.phone   = document.getElementById('f-phone').value.trim();
+      c.city    = document.getElementById('f-city').value.trim();
+      c.country = document.getElementById('f-country').value.trim();
+      c.status  = document.getElementById('f-status').value;
+      c.notes   = document.getElementById('f-notes').value.trim();
+    }
+    showToast('Customer updated successfully.', 'success');
+  } else {
+    const newId = (CUSTOMERS.length ? Math.max(...CUSTOMERS.map(c => c.id)) : 0) + 1;
+    CUSTOMERS.unshift({
+      id: newId, fname, lname, email,
+      phone:   document.getElementById('f-phone').value.trim(),
+      city:    document.getElementById('f-city').value.trim(),
+      country: document.getElementById('f-country').value.trim(),
+      orders: 0, spent: 0,
+      status:  document.getElementById('f-status').value,
+      created: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+      rating: 3, notes: document.getElementById('f-notes').value.trim(),
+    });
+    showToast('Customer added successfully.', 'success');
+  }
+  closeModal();
+  updateMetrics();
+  renderTable();
+}
+
+function deleteCustomer(id) {
+  const c = CUSTOMERS.find(x => x.id === id);
+  if (!c || !confirm(`Delete customer "${c.fname} ${c.lname}"?`)) return;
+  CUSTOMERS.splice(CUSTOMERS.findIndex(x => x.id === id), 1);
+  selectedIds.delete(id);
+  updateBulkBar();
+  updateMetrics();
+  renderTable();
+  showToast('Customer deleted.', 'success');
+}
+
+/* ═══════════════════════════════════════════════════
+   MISC ACTIONS
+═══════════════════════════════════════════════════ */
+function openFilterMenu(type) {
+  const el = document.getElementById('filterCity');
+  el.classList.toggle('active-filter');
+  showToast('Advanced filters coming soon.', 'info');
+}
+
+function openImport() {
+  showToast('Import feature — upload CSV to add customers in bulk.', 'info');
+}
+
+function exportAction(type) {
+  showToast(`Exporting as ${type.toUpperCase()}…`, 'success');
+}
+
+function toggleView() {
+  showToast('Grid view coming soon.', 'info');
+}
+
+function setSbActive(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+function showToast(msg, type='success') {
+  const toast = document.getElementById('toast');
+  const icon  = document.getElementById('toastIcon');
+  document.getElementById('toastMsg').textContent = msg;
+  if (type === 'success') {
+    icon.innerHTML = `<circle cx="10" cy="10" r="8.5"/><polyline points="6.5,10 9,12.5 13.5,7"/>`;
+    icon.style.stroke = '#22c55e';
+  } else if (type === 'error') {
+    icon.innerHTML = `<circle cx="10" cy="10" r="8.5"/><line x1="7" y1="7" x2="13" y2="13"/><line x1="13" y1="7" x2="7" y2="13"/>`;
+    icon.style.stroke = '#ef4444';
+  } else {
+    icon.innerHTML = `<circle cx="10" cy="10" r="8.5"/><line x1="10" y1="7" x2="10" y2="11"/><circle cx="10" cy="13.5" r=".8" fill="currentColor" stroke="none"/>`;
+    icon.style.stroke = '#3b82f6';
+  }
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════════════════
+   KEYBOARD
+═══════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeDrawer(); }
+  if ((e.key === 'n' || e.key === 'N') && !document.getElementById('modalOverlay').classList.contains('open')) {
+    if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') openAddModal();
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   CLOSE MODAL ON OVERLAY CLICK
+═══════════════════════════════════════════════════ */
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+updateMetrics();
+renderTable();
+</script>
+<script>
+function syncCustomers(nextCustomers) {
+  CUSTOMERS.splice(0, CUSTOMERS.length);
+  nextCustomers.forEach(function (customer) {
+    CUSTOMERS.push(customer);
+  });
+}
+
+async function loadCustomers() {
+  try {
+    const data = await window.RetailerApi.getCustomers();
+    syncCustomers(data);
+    updateMetrics();
+    renderTable();
+  } catch (error) {
+    console.error('Error loading customers:', error);
+    updateMetrics();
+    renderTable();
+    window.RetailerUi.showToast(
+      'Using saved customer list: ' + window.RetailerUi.getErrorMessage(error),
+      'info',
+    );
+  }
+}
+
+bulkDelete = async function () {
+  const ids = Array.from(selectedIds);
+  if (!ids.length) {
+    return;
+  }
+
+  if (!confirm(`Delete ${ids.length} selected customer(s)?`)) {
+    return;
+  }
+
+  try {
+    await Promise.all(
+      ids.map(function (id) {
+        return window.RetailerApi.deleteCustomer(id);
+      }),
+    );
+    selectedIds.clear();
+    updateBulkBar();
+    await loadCustomers();
+    showToast('Customers deleted successfully.', 'success');
+  } catch (error) {
+    showToast(
+      'Could not delete customers: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+saveCustomer = async function () {
+  const payload = {
+    fname: document.getElementById('f-fname').value.trim(),
+    lname: document.getElementById('f-lname').value.trim(),
+    email: document.getElementById('f-email').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
+    city: document.getElementById('f-city').value.trim(),
+    country: document.getElementById('f-country').value.trim(),
+    status: document.getElementById('f-status').value,
+    notes: document.getElementById('f-notes').value.trim(),
+  };
+
+  if (!payload.fname || !payload.lname || !payload.email) {
+    showToast('Please fill in all required fields.', 'error');
+    return;
+  }
+
+  try {
+    if (editingId) {
+      await window.RetailerApi.updateCustomer(editingId, payload);
+      showToast('Customer updated successfully.', 'success');
+    } else {
+      await window.RetailerApi.createCustomer(payload);
+      showToast('Customer added successfully.', 'success');
+    }
+
+    closeModal();
+    await loadCustomers();
+  } catch (error) {
+    showToast(
+      'Could not save customer: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+deleteCustomer = async function (id) {
+  const customer = CUSTOMERS.find(function (entry) {
+    return entry.id === id;
+  });
+
+  if (!customer || !confirm(`Delete customer "${customer.fname} ${customer.lname}"?`)) {
+    return;
+  }
+
+  try {
+    await window.RetailerApi.deleteCustomer(id);
+    selectedIds.delete(id);
+    updateBulkBar();
+    await loadCustomers();
+    showToast('Customer deleted.', 'success');
+  } catch (error) {
+    showToast(
+      'Could not delete customer: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+document.addEventListener('DOMContentLoaded', loadCustomers);
+</script>
+</body>
+</html>
