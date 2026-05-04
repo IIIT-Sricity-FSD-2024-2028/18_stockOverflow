@@ -1,0 +1,2835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockOverflow – Add Product</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════════════ */
+:root{
+  --bg:#f5f6fa;
+  --card:#ffffff;
+  --primary:#2e6bc5;
+  --primary-light:#eef3fc;
+  --primary-dark:#092c4c;
+  --success:#22c55e;
+  --success-light:#dcfce7;
+  --danger:#ef4444;
+  --danger-light:#fee2e2;
+  --warning:#f59e0b;
+  --warning-light:#fef3c7;
+  --text-primary:#212b36;
+  --text-secondary:#646b72;
+  --text-muted:#a6aaaf;
+  --border:#e6eaed;
+  --border-focus:#2e6bc5;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.06);
+  --shadow-card:0 1px 3px rgba(0,0,0,.08);
+  --radius-card:8px;
+  --radius-input:5px;
+  --sidebar-w:252px;
+  --topbar-h:65px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text-primary);
+  display:flex;
+  min-height:100vh;
+  font-size:14px;
+}
+
+/* ════════════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════════════ */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;border-right:1px solid var(--border);
+  font-family:'Nunito Sans',sans-serif;
+}
+.sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sidebar-logo img { height: 30px; width: auto; display: block; }
+.sb-logo-icon{width:34px;height:34px;background:#4e7fd9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon svg{width:18px;height:18px}
+.sb-logo-text{font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;color:#092c4c;letter-spacing:-.2px}
+.sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+.sb-group{display:flex;flex-direction:column;gap:6px}
+.sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+.sb-divider{height:1px;background:var(--border);margin:4px 0}
+.sb-menus{display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+.sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+.sb-item.active{background:#fff6ee;color:#4e7fd9}
+.sb-item.active .sb-icon svg{stroke:#4e7fd9}
+.sb-item.active .sb-item-label{color:#4e7fd9}
+.sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+.sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-end-icon svg{width:10px;height:10px}
+.sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-dot-badge svg{width:10px;height:10px}
+
+/* ════════════════════════════════════════════
+   MAIN SHELL
+════════════════════════════════════════════ */
+.main{margin-left:var(--sidebar-w);flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* ════════════════════════════════════════════
+   TOPBAR
+════════════════════════════════════════════ */
+.topbar{
+  height:var(--topbar-h);
+  background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  position:sticky;top:0;z-index:50;flex-shrink:0;
+}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.tb-breadcrumb{font-size:12.5px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif}
+.tb-breadcrumb a{color:var(--text-secondary);text-decoration:none}
+.tb-breadcrumb a:hover{color:var(--primary)}
+.tb-breadcrumb .sep{margin:0 5px;opacity:.4}
+.tb-breadcrumb .current{color:var(--text-primary);font-weight:700}
+.topbar-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:6px;padding:7px 12px;width:220px;
+}
+.topbar-search svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0}
+.topbar-search input{
+  border:none;background:transparent;outline:none;
+  font-size:13px;color:var(--text-primary);font-family:'Nunito Sans',sans-serif;width:100%;
+}
+.topbar-search input::placeholder{color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-date{
+  display:flex;align-items:center;gap:6px;padding:6px 12px;
+  border:1px solid var(--border);border-radius:6px;
+  font-size:12.5px;color:var(--text-secondary);cursor:pointer;
+  font-family:'Nunito Sans',sans-serif;font-weight:600;
+  white-space:nowrap;background:#fff;transition:background .13s;
+}
+.tb-date:hover{background:var(--bg)}
+.tb-date svg{width:14px;height:14px}
+.tb-icon-btn{
+  width:36px;height:36px;border-radius:6px;
+  border:1px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:background .13s;
+}
+.tb-icon-btn:hover{background:var(--bg)}
+.tb-icon-btn svg{width:16px;height:16px;color:var(--text-secondary)}
+.notif-dot{
+  position:absolute;top:7px;right:7px;
+  width:6px;height:6px;background:#ef4444;
+  border-radius:50%;border:2px solid #fff;
+}
+.tb-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:#5b67ca;color:#fff;
+  font-weight:700;font-size:12px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:'Nunito Sans',sans-serif;
+}
+
+/* ════════════════════════════════════════════
+   PAGE CONTENT
+════════════════════════════════════════════ */
+.page-wrap{padding:24px 28px 48px;flex:1}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.page-head-left{}
+.page-title{
+  font-family:'Nunito Sans',sans-serif;
+  font-size:18px;font-weight:700;color:var(--text-primary);
+  line-height:1.35;
+}
+.page-subtitle{
+  font-family:'Nunito Sans',sans-serif;
+  font-size:13px;color:var(--text-secondary);font-weight:600;
+  margin-top:3px;
+}
+.page-head-actions{display:flex;align-items:center;gap:8px}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:5px;border:none;
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .14s;white-space:nowrap;line-height:1;
+}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+.btn-primary{background:#2e6bc5;color:#fff}
+.btn-primary:hover{background:#2460b0}
+.btn-dark{background:#092c4c;color:#fff}
+.btn-dark:hover{background:#0b3660}
+.btn-outline{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--bg);color:var(--text-primary)}
+.btn-danger-outline{background:#fff;color:#ef4444;border:1px solid #fca5a5}
+.btn-danger-outline:hover{background:#fee2e2}
+
+/* ════════════════════════════════════════════
+   STEPPER
+════════════════════════════════════════════ */
+.stepper-wrap{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius-card);
+  box-shadow:var(--shadow-card);
+  padding:20px 28px;
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:0;
+}
+.step-item{
+  display:flex;align-items:center;flex:1;
+  position:relative;
+}
+.step-item:last-child{flex:none}
+.step-connector{
+  flex:1;height:2px;background:#e6eaed;
+  margin:0 4px;transition:background .3s;
+}
+.step-connector.done{background:#2e6bc5}
+.step-circle{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  border:2px solid #e6eaed;background:#fff;color:#a6aaaf;
+  flex-shrink:0;transition:all .25s;position:relative;z-index:1;
+  cursor:pointer;
+}
+.step-circle.active{
+  border-color:#2e6bc5;background:#2e6bc5;color:#fff;
+  box-shadow:0 0 0 4px rgba(46,107,197,.15);
+}
+.step-circle.done{
+  border-color:#2e6bc5;background:#2e6bc5;color:#fff;
+}
+.step-label-wrap{
+  position:absolute;top:42px;left:50%;transform:translateX(-50%);
+  text-align:center;white-space:nowrap;
+}
+.step-label{
+  font-family:'Nunito Sans',sans-serif;font-size:11.5px;font-weight:700;
+  color:#a6aaaf;transition:color .25s;
+}
+.step-circle.active ~ .step-label-wrap .step-label,
+.step-item.active .step-label{color:#2e6bc5}
+.step-item.done .step-label{color:#2e6bc5}
+.step-sub{
+  font-family:'Nunito Sans',sans-serif;font-size:10px;
+  color:#c4c9cd;margin-top:1px;
+}
+
+/* ════════════════════════════════════════════
+   FORM STEPS
+════════════════════════════════════════════ */
+.form-step{display:none}
+.form-step.active{display:block;animation:fadeUp .22s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════════════════════════════════════════════
+   GRID LAYOUT
+════════════════════════════════════════════ */
+.content-grid{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+.content-grid-wide{display:grid;grid-template-columns:1fr;gap:18px}
+
+/* ════════════════════════════════════════════
+   CARD
+════════════════════════════════════════════ */
+.card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius-card);
+  box-shadow:var(--shadow-card);
+  overflow:hidden;margin-bottom:16px;
+}
+.card:last-child{margin-bottom:0}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid #f0f2f4;
+}
+.card-title{
+  font-family:'Nunito Sans',sans-serif;font-size:14px;
+  font-weight:700;color:#092c4c;
+  display:flex;align-items:center;gap:8px;
+}
+.card-title-icon{
+  width:26px;height:26px;border-radius:6px;
+  background:var(--primary-light);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.card-title-icon svg{width:13px;height:13px;color:var(--primary)}
+.card-body{padding:20px}
+.card-body.dense{padding:16px 20px}
+
+/* ════════════════════════════════════════════
+   FORM FIELDS
+════════════════════════════════════════════ */
+.field-row{display:grid;gap:16px;margin-bottom:16px}
+.field-row:last-child{margin-bottom:0}
+.field-row.col-1{grid-template-columns:1fr}
+.field-row.col-2{grid-template-columns:1fr 1fr}
+.field-row.col-3{grid-template-columns:1fr 1fr 1fr}
+.field-row.col-4{grid-template-columns:1fr 1fr 1fr 1fr}
+
+.field{display:flex;flex-direction:column;gap:6px}
+.field-label{
+  font-family:'Nunito Sans',sans-serif;font-size:13px;
+  font-weight:700;color:var(--text-primary);
+}
+.field-label .req{color:#ef4444;margin-left:2px}
+.field-hint{font-family:'Nunito Sans',sans-serif;font-size:11px;color:var(--text-muted);margin-top:3px}
+
+.input,.textarea,.select{
+  font-family:'Nunito Sans',sans-serif;font-size:13.5px;
+  color:var(--text-primary);background:#fff;
+  border:1px solid var(--border);border-radius:var(--radius-input);
+  outline:none;transition:border-color .15s,box-shadow .15s;
+  width:100%;
+}
+.input{height:40px;padding:0 12px}
+.textarea{padding:10px 12px;resize:vertical;line-height:1.55;min-height:96px}
+.select{height:40px;padding:0 32px 0 12px;appearance:none;-webkit-appearance:none;cursor:pointer;background-image:none}
+
+.input:focus,.textarea:focus,.select:focus{
+  border-color:var(--border-focus);
+  box-shadow:0 0 0 3px rgba(46,107,197,.1);
+}
+.input::placeholder,.textarea::placeholder{color:var(--text-muted);font-weight:400}
+.input.error,.select.error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+.field-error{font-family:'Nunito Sans',sans-serif;font-size:11px;color:#ef4444;margin-top:3px;display:none}
+.field-error.show{display:block}
+
+.select-wrap{position:relative}
+.select-wrap::after{
+  content:'';position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid var(--text-secondary);pointer-events:none;
+}
+
+/* Prefix / Suffix inputs */
+.input-addon{display:flex;border:1px solid var(--border);border-radius:var(--radius-input);overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.input-addon:focus-within{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(46,107,197,.1)}
+.addon-prefix,.addon-suffix{
+  display:flex;align-items:center;justify-content:center;
+  padding:0 12px;background:#f5f6fa;
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  color:var(--text-secondary);flex-shrink:0;
+  border-right:1px solid var(--border);white-space:nowrap;
+}
+.addon-suffix{border-right:none;border-left:1px solid var(--border)}
+.input-addon .input{border:none;border-radius:0;box-shadow:none;flex:1;height:38px}
+.input-addon .input:focus{box-shadow:none;border-color:transparent}
+
+/* ════════════════════════════════════════════
+   RICH TEXT TOOLBAR (Description)
+════════════════════════════════════════════ */
+.rich-toolbar{
+  display:flex;align-items:center;gap:2px;flex-wrap:wrap;
+  padding:6px 10px;border:1px solid var(--border);
+  border-radius:var(--radius-input) var(--radius-input) 0 0;
+  background:#f9fafb;border-bottom:none;
+}
+.rt-btn{
+  width:28px;height:28px;border-radius:4px;border:none;
+  background:transparent;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .13s;color:var(--text-secondary);
+  font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;
+}
+.rt-btn:hover{background:#e6eaed}
+.rt-btn.active{background:#dbeafe;color:#2e6bc5}
+.rt-btn svg{width:13px;height:13px}
+.rt-sep{width:1px;height:18px;background:var(--border);margin:0 3px}
+.rich-textarea{
+  border-radius:0 0 var(--radius-input) var(--radius-input);
+  border:1px solid var(--border);
+  border-top:none;
+}
+.rich-textarea:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(46,107,197,.1)}
+
+/* ════════════════════════════════════════════
+   TAG INPUT
+════════════════════════════════════════════ */
+.tags-field{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  border:1px solid var(--border);border-radius:var(--radius-input);
+  padding:6px 10px;min-height:40px;background:#fff;cursor:text;
+  transition:border-color .15s,box-shadow .15s;
+}
+.tags-field:focus-within{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(46,107,197,.1)}
+.tag-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:#eef3fc;color:#2e6bc5;
+  font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;
+  padding:3px 9px;border-radius:20px;
+}
+.tag-chip-del{
+  cursor:pointer;display:flex;align-items:center;
+  color:#2e6bc5;opacity:.6;line-height:1;
+}
+.tag-chip-del:hover{opacity:1}
+.tag-chip-del svg{width:9px;height:9px}
+.tag-input{
+  border:none;outline:none;
+  font-family:'Nunito Sans',sans-serif;font-size:13px;
+  color:var(--text-primary);flex:1;min-width:90px;background:transparent;
+}
+.tag-input::placeholder{color:var(--text-muted)}
+
+/* ════════════════════════════════════════════
+   IMAGE UPLOAD
+════════════════════════════════════════════ */
+.upload-zone{
+  border:2px dashed #d1d5db;border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 16px;gap:10px;cursor:pointer;
+  transition:border-color .2s,background .2s;
+  background:#fafafa;position:relative;min-height:170px;
+  text-align:center;
+}
+.upload-zone.drag-over{border-color:var(--primary);background:#f0f5ff}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.upload-icon{
+  width:54px;height:54px;border-radius:50%;background:#eef3fc;
+  display:flex;align-items:center;justify-content:center;
+}
+.upload-icon svg{width:22px;height:22px;color:var(--primary)}
+.upload-title{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary)}
+.upload-sub{font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-muted);margin-top:-4px}
+.upload-browse-btn{
+  padding:6px 16px;border:1.5px solid var(--primary);border-radius:5px;
+  background:#fff;color:var(--primary);
+  font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .14s;
+}
+.upload-browse-btn:hover{background:var(--primary-light)}
+
+/* Image preview strip */
+.img-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.img-thumb{
+  width:70px;height:70px;border-radius:6px;
+  border:2px solid transparent;overflow:hidden;
+  background:#f5f6fa;position:relative;cursor:pointer;
+  flex-shrink:0;transition:border-color .15s;
+}
+.img-thumb img{width:100%;height:100%;object-fit:cover}
+.img-thumb.main-thumb{border-color:var(--primary)}
+.img-thumb-del{
+  position:absolute;top:3px;right:3px;width:18px;height:18px;
+  border-radius:50%;background:rgba(239,68,68,.88);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;opacity:0;transition:opacity .15s;
+}
+.img-thumb:hover .img-thumb-del{opacity:1}
+.img-thumb-del svg{width:10px;height:10px;stroke:#fff;stroke-width:2.5}
+.main-badge{
+  position:absolute;bottom:3px;left:3px;
+  background:rgba(46,107,197,.88);color:#fff;
+  font-size:9px;font-weight:700;font-family:'Nunito Sans',sans-serif;
+  padding:2px 5px;border-radius:3px;
+}
+
+/* Main image preview */
+.main-img-box{
+  width:100%;aspect-ratio:4/3;max-height:200px;
+  border-radius:8px;border:1px solid var(--border);
+  background:#f5f6fa;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;position:relative;
+}
+.main-img-box img{width:100%;height:100%;object-fit:contain;padding:10px}
+.main-img-placeholder{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:#c4c9cd;
+}
+.main-img-placeholder svg{width:38px;height:38px}
+.main-img-placeholder span{font-family:'Nunito Sans',sans-serif;font-size:12px}
+
+/* ════════════════════════════════════════════
+   TOGGLE / STATUS
+════════════════════════════════════════════ */
+.toggle-group{display:flex;gap:6px;flex-wrap:wrap}
+.toggle-pill{
+  padding:6px 14px;border-radius:20px;
+  border:1.5px solid var(--border);background:#fff;
+  font-family:'Nunito Sans',sans-serif;font-size:12.5px;font-weight:700;
+  color:var(--text-secondary);cursor:pointer;transition:all .14s;
+}
+.toggle-pill:hover{background:var(--bg)}
+.toggle-pill.sel-green{background:#dcfce7;border-color:#86efac;color:#15803d}
+.toggle-pill.sel-amber{background:#fef3c7;border-color:#fcd34d;color:#92400e}
+.toggle-pill.sel-slate{background:#f1f5f9;border-color:#cbd5e1;color:#475569}
+
+/* ════════════════════════════════════════════
+   SWITCH
+════════════════════════════════════════════ */
+.switch-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 0;border-bottom:1px solid #f0f2f4;
+}
+.switch-row:last-child{border-bottom:none;padding-bottom:0}
+.switch-row:first-child{padding-top:0}
+.switch-label{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text-primary)}
+.switch-sub{font-family:'Nunito Sans',sans-serif;font-size:11.5px;color:var(--text-muted);margin-top:2px}
+.switch{position:relative;width:36px;height:20px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch-track{
+  position:absolute;inset:0;border-radius:20px;
+  background:#d1d5db;cursor:pointer;transition:background .2s;
+}
+.switch input:checked+.switch-track{background:var(--primary)}
+.switch-thumb{
+  position:absolute;left:2px;top:2px;
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);
+  transition:left .2s;pointer-events:none;
+}
+.switch input:checked~.switch-thumb{left:18px}
+
+/* ════════════════════════════════════════════
+   VARIANT TABLE
+════════════════════════════════════════════ */
+.variant-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:13px}
+.variant-table th{
+  padding:8px 12px;text-align:left;font-size:11.5px;font-weight:700;
+  color:var(--text-secondary);background:#f5f6fa;
+  border-bottom:1px solid var(--border);
+}
+.variant-table td{
+  padding:9px 12px;border-bottom:1px solid #f0f2f4;
+  vertical-align:middle;
+}
+.variant-table tr:last-child td{border-bottom:none}
+.variant-table tr:hover td{background:#fafafa}
+.v-color-swatch{
+  width:20px;height:20px;border-radius:50%;border:2px solid #fff;
+  box-shadow:0 0 0 1px var(--border);display:inline-block;vertical-align:middle;
+}
+.v-input{
+  width:100%;border:1px solid var(--border);border-radius:4px;
+  padding:5px 8px;font-family:'Nunito Sans',sans-serif;font-size:12.5px;
+  outline:none;background:#fff;color:var(--text-primary);
+}
+.v-input:focus{border-color:var(--primary)}
+.v-del-btn{
+  width:26px;height:26px;border-radius:4px;border:1px solid #fca5a5;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .13s;
+}
+.v-del-btn:hover{background:#fee2e2}
+.v-del-btn svg{width:12px;height:12px;stroke:#ef4444}
+.add-variant-row{
+  display:flex;align-items:center;gap:8px;padding:10px 0 0;
+}
+.add-variant-btn{
+  display:flex;align-items:center;gap:5px;padding:6px 12px;
+  border:1.5px dashed #2e6bc5;border-radius:5px;background:var(--primary-light);
+  color:var(--primary);font-family:'Nunito Sans',sans-serif;
+  font-size:12.5px;font-weight:700;cursor:pointer;transition:background .14s;
+}
+.add-variant-btn:hover{background:#d9e8f8}
+.add-variant-btn svg{width:13px;height:13px}
+
+/* ════════════════════════════════════════════
+   SEO PREVIEW
+════════════════════════════════════════════ */
+.seo-preview{
+  border:1px solid var(--border);border-radius:6px;
+  padding:14px;background:#f9fafb;margin-top:10px;
+}
+.seo-url{font-size:12px;color:#1a7f37;font-family:'Nunito Sans',sans-serif;word-break:break-all;margin-bottom:4px}
+.seo-title{font-size:16px;color:#1a0dab;font-weight:600;font-family:'Nunito Sans',sans-serif;margin-bottom:3px;cursor:pointer}
+.seo-title:hover{text-decoration:underline}
+.seo-desc{font-size:13px;color:#4d5156;font-family:'Nunito Sans',sans-serif;line-height:1.5}
+.seo-char-count{font-family:'Nunito Sans',sans-serif;font-size:11px;color:var(--text-muted);text-align:right;margin-top:4px}
+
+/* ════════════════════════════════════════════
+   BOTTOM NAV BAR
+════════════════════════════════════════════ */
+.bottom-nav{
+  background:#fff;border-top:1px solid var(--border);
+  padding:14px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;bottom:0;z-index:40;
+}
+.bottom-nav-left{display:flex;align-items:center;gap:8px}
+.bottom-nav-right{display:flex;align-items:center;gap:8px}
+.step-indicator{font-family:'Nunito Sans',sans-serif;font-size:12.5px;color:var(--text-muted);font-weight:600}
+.step-indicator strong{color:var(--text-primary)}
+
+/* ════════════════════════════════════════════
+   ALERT / TOAST
+════════════════════════════════════════════ */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  background:#092c4c;color:#fff;border-radius:8px;
+  padding:14px 20px;font-family:'Nunito Sans',sans-serif;
+  font-size:13px;font-weight:700;
+  display:none;align-items:center;gap:10px;
+  box-shadow:0 4px 20px rgba(0,0,0,.18);
+  animation:fadeUp .25s ease;
+}
+.toast.show{display:flex}
+.toast-icon{width:20px;height:20px;flex-shrink:0}
+
+/* ════════════════════════════════════════════
+   SCROLLBAR
+════════════════════════════════════════════ */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px}
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+  SIDEBAR
+══════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <!-- MAIN -->
+    <div class="sb-group">
+      <div class="sb-group-label">Main</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retialer_Dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Retailer Dashboard</span>
+          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- INVENTORY -->
+    <div class="sb-group">
+      <div class="sb-group-label">Inventory</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Product_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5L14.5 5v6L8 14.5 1.5 11V5L8 1.5z"/><path d="M1.5 5L8 8.5 14.5 5M8 8.5V14.5"/></svg></span>
+          <span class="sb-item-label">Products</span>
+        </a>
+        <a class="sb-item active" href="Add_New_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="8" y1="4.5" x2="8" y2="11.5"/><line x1="4.5" y1="8" x2="11.5" y2="8"/></svg></span>
+          <span class="sb-item-label">Add Product</span>
+        </a>
+        <a class="sb-item" href="Edit_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l3 3-8.5 8.5H1.5V10.5l9-8z"/><line x1="8.5" y1="4.5" x2="11.5" y2="7.5"/></svg></span>
+          <span class="sb-item-label">Edit Product</span>
+        </a>
+        <a class="sb-item" href="Inventory_Overview.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+          <span class="sb-item-label">Inventory Overview</span>
+        </a>
+        <a class="sb-item" href="Low_Stocks.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/><polyline points="10.5,4 13.5,4 13.5,7"/></svg></span>
+          <span class="sb-item-label">Low Stocks</span>
+        </a>
+        <a class="sb-item" href="Multi_warehouse_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/><line x1="1" y1="7" x2="15" y2="7"/></svg></span>
+          <span class="sb-item-label">Multi Store View</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- STOCK -->
+    <div class="sb-group">
+      <div class="sb-group-label">Stock</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="stock_adjustment.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-item-label">Stock Adjustment</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PEOPLES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Peoples</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Customer_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Customers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="billers.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-item-label">Billers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="supplier-list.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-item-label">Suppliers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PURCHASES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Purchases</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Reorder_Recommendations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
+          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+        </a>
+        <a class="sb-item" href="Create_Purchase_Order.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-item-label">Purchase Order</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="Returns_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
+          <span class="sb-item-label">Purchase Return</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SETTINGS -->
+    <div class="sb-group">
+      <div class="sb-group-label">Settings</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="logout()">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- ══════════════════════════════════════
+  MAIN
+══════════════════════════════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="tb-breadcrumb">
+        <a href="Retialer_Dashboard.html">Home</a><span class="sep">/</span>
+        <a href="product-list.html">Products</a><span class="sep">/</span>
+        <span class="current">Add Product</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button" style="border:none;">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-wrap">
+
+    <!-- PAGE HEADER -->
+    <div class="page-head">
+      <div class="page-head-left">
+        <div class="page-title">Add New Product</div>
+        <div class="page-subtitle">Products / Add Product</div>
+      </div> 
+    </div>
+
+    <!-- ── STEPPER ─────────────────────────────────── -->
+    <div class="stepper-wrap" id="stepperWrap">
+      <!-- Rendered by JS -->
+    </div>
+
+    <!-- ══════════════════════════════════════
+      STEP 1 — PRODUCT INFO
+    ══════════════════════════════════════ -->
+    <div class="form-step active" id="step-1">
+      <div class="content-grid">
+
+        <!-- LEFT -->
+        <div>
+
+          <!-- General Info -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="11" height="11" rx="1.5"/><line x1="4" y1="4.5" x2="9" y2="4.5"/><line x1="4" y1="6.5" x2="9" y2="6.5"/><line x1="4" y1="8.5" x2="7" y2="8.5"/></svg>
+                </div>
+                General Information
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="field-row col-1">
+                <div class="field">
+                  <label class="field-label">Product Name <span class="req">*</span></label>
+                  <input class="input" id="f-name" type="text" placeholder="Enter product name e.g. Nike Air Max 270"/>
+                  <div class="field-error" id="e-name">Product name is required</div>
+                </div>
+              </div>
+              <div class="field-row col-2">
+                <div class="field">
+                  <label class="field-label">Category <span class="req">*</span></label>
+                  <div class="select-wrap">
+                    <select class="select" id="f-category">
+                      <option value="">Select category</option>
+                      <option>Computers</option>
+                      <option>Electronics</option>
+                      <option>Furniture</option>
+                      <option>Shoe</option>
+                      <option>Bags</option>
+                      <option>Fashion</option>
+                      <option>Appliances</option>
+                      <option>Phone</option>
+                      <option>Sports</option>
+                      <option>Beauty</option>
+                      <option>Food &amp; Beverages</option>
+                    </select>
+                  </div>
+                  <div class="field-error" id="e-category">Please select a category</div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Sub Category</label>
+                  <div class="select-wrap">
+                    <select class="select" id="f-sub-category">
+                      <option value="">Select sub-category</option>
+                      <option>Laptops</option>
+                      <option>Desktops</option>
+                      <option>Tablets</option>
+                      <option>Accessories</option>
+                      <option>Monitors</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="field-row col-2">
+                <div class="field">
+                  <label class="field-label">Brand <span class="req">*</span></label>
+                  <div class="select-wrap">
+                    <select class="select" id="f-brand">
+                      <option value="">Select brand</option>
+                      <option>Apple</option>
+                      <option>Samsung</option>
+                      <option>Lenovo</option>
+                      <option>Sony</option>
+                      <option>Nike</option>
+                      <option>Adidas</option>
+                      <option>Amazon</option>
+                      <option>Dyson</option>
+                      <option>Dior</option>
+                      <option>The North Face</option>
+                      <option>Beats</option>
+                      <option>Arlime</option>
+                      <option>Modern Wave</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div class="field-error" id="e-brand">Please select a brand</div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Unit of Measure <span class="req">*</span></label>
+                  <div class="select-wrap">
+                    <select class="select" id="f-unit">
+                      <option value="">Select unit</option>
+                      <option value="Pc" selected>Piece (Pc)</option>
+                      <option value="Box">Box</option>
+                      <option value="Kg">Kilogram (Kg)</option>
+                      <option value="Ltr">Litre (Ltr)</option>
+                      <option value="Set">Set</option>
+                      <option value="Pair">Pair</option>
+                      <option value="Meter">Meter</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="field-row col-1">
+                <div class="field">
+                  <label class="field-label">Description</label>
+                  <!-- Rich text toolbar -->
+                  <div class="rich-toolbar">
+                    <button type="button" class="rt-btn" onclick="fmtText('bold')" title="Bold"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2h4.5a2 2 0 010 4H3V2zM3 6h5a2 2 0 010 4H3V6z"/></svg></button>
+                    <button type="button" class="rt-btn" onclick="fmtText('italic')" title="Italic"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><line x1="7.5" y1="2" x2="5.5" y2="11"/><line x1="5" y1="2" x2="8" y2="2"/><line x1="4" y1="11" x2="7" y2="11"/></svg></button>
+                    <button type="button" class="rt-btn" onclick="fmtText('underline')" title="Underline"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v4a3.5 3.5 0 007 0V2"/><line x1="1.5" y1="11" x2="11.5" y2="11"/></svg></button>
+                    <div class="rt-sep"></div>
+                    <button type="button" class="rt-btn" onclick="fmtText('insertUnorderedList')" title="Bullet list"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="2" cy="4" r="1" fill="currentColor" stroke="none"/><line x1="5" y1="4" x2="12" y2="4"/><circle cx="2" cy="7" r="1" fill="currentColor" stroke="none"/><line x1="5" y1="7" x2="12" y2="7"/><circle cx="2" cy="10" r="1" fill="currentColor" stroke="none"/><line x1="5" y1="10" x2="12" y2="10"/></svg></button>
+                    <button type="button" class="rt-btn" onclick="fmtText('insertOrderedList')" title="Numbered list"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="2" y2="5"/><line x1="6" y1="4" x2="12" y2="4"/><text x="1.5" y="9" font-size="4" fill="currentColor" stroke="none" font-family="sans-serif">1.</text><line x1="6" y1="7" x2="12" y2="7"/><line x1="6" y1="10" x2="12" y2="10"/></svg></button>
+                    <div class="rt-sep"></div>
+                    <button type="button" class="rt-btn" onclick="fmtText('justifyLeft')" title="Align left"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="3" x2="11" y2="3"/><line x1="2" y1="6" x2="8" y2="6"/><line x1="2" y1="9" x2="11" y2="9"/></svg></button>
+                    <button type="button" class="rt-btn" onclick="fmtText('justifyCenter')" title="Align center"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="3" x2="11" y2="3"/><line x1="3.5" y1="6" x2="9.5" y2="6"/><line x1="2" y1="9" x2="11" y2="9"/></svg></button>
+                  </div>
+                  <div class="textarea rich-textarea"
+                    id="f-desc"
+                    contenteditable="true"
+                    style="min-height:100px;outline:none;padding:10px 12px;font-family:'Nunito Sans',sans-serif;font-size:13.5px;line-height:1.6;color:var(--text-primary)"
+                    data-placeholder="Write a detailed product description…"
+                    oninput="updateDescPlaceholder(this)"
+                    onfocus="updateDescPlaceholder(this)"
+                    onblur="updateDescPlaceholder(this)"
+                  ></div>
+                  <div class="field-hint">Good descriptions improve discoverability and conversions.</div>
+                </div>
+              </div>
+              <div class="field-row col-1">
+                <div class="field">
+                  <label class="field-label">Tags</label>
+                  <div class="tags-field" id="tagsField" onclick="document.getElementById('tagInput').focus()">
+                    <input class="tag-input" id="tagInput" type="text" placeholder="Add tags and press Enter…" onkeydown="handleTag(event)"/>
+                  </div>
+                  <div class="field-hint">Tags help customers find your product. Press Enter or comma to add.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pricing -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6.5" cy="6.5" r="5.5"/><line x1="6.5" y1="3.5" x2="6.5" y2="5"/><path d="M5 5.5h2a1 1 0 110 2H5.5a1 1 0 100 2H8"/><line x1="6.5" y1="9.5" x2="6.5" y2="9"/></svg>
+                </div>
+                Pricing
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="field-row col-3">
+                <div class="field">
+                  <label class="field-label">Selling Price <span class="req">*</span></label>
+                  <div class="input-addon">
+                    <span class="addon-prefix">$</span>
+                    <input class="input" id="f-price" type="number" min="0" step="0.01" placeholder="0.00"/>
+                  </div>
+                  <div class="field-error" id="e-price">Please enter a valid price</div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Cost Price</label>
+                  <div class="input-addon">
+                    <span class="addon-prefix">$</span>
+                    <input class="input" id="f-cost" type="number" min="0" step="0.01" placeholder="0.00"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Profit Margin</label>
+                  <div class="input-addon">
+                    <input class="input" id="f-margin" type="text" placeholder="—" readonly style="background:#f9fafb;color:var(--text-secondary)"/>
+                    <span class="addon-suffix">%</span>
+                  </div>
+                  <div class="field-hint">Auto-calculated</div>
+                </div>
+              </div>
+              <div class="field-row col-3">
+                <div class="field">
+                  <label class="field-label">Discount Type</label>
+                  <div class="select-wrap">
+                    <select class="select" id="f-disc-type" onchange="updateDiscountLabel()">
+                      <option value="none">No Discount</option>
+                      <option value="percent">Percentage (%)</option>
+                      <option value="fixed">Fixed Amount ($)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field-label" id="disc-label">Discount Value</label>
+                  <div class="input-addon" id="disc-addon">
+                    <span class="addon-prefix" id="disc-prefix">—</span>
+                    <input class="input" id="f-discount" type="number" min="0" placeholder="0" disabled style="background:#f9fafb"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Final Price</label>
+                  <div class="input-addon">
+                    <span class="addon-prefix">$</span>
+                    <input class="input" id="f-final" type="text" placeholder="—" readonly style="background:#f9fafb;color:var(--text-secondary)"/>
+                  </div>
+                  <div class="field-hint">After discount</div>
+                </div>
+              </div>
+              <div class="field-row col-2">
+                <div class="field">
+                  <label class="field-label">Tax Rate</label>
+                  <div class="input-addon">
+                    <input class="input" id="f-tax" type="number" min="0" max="100" placeholder="0"/>
+                    <span class="addon-suffix">%</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Tax Type</label>
+                  <div class="select-wrap">
+                    <select class="select" id="f-tax-type">
+                      <option>Inclusive</option>
+                      <option>Exclusive</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /LEFT -->
+
+        <!-- RIGHT -->
+        <div>
+
+          <!-- Product Images -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="11" height="9" rx="1.5"/><circle cx="4.5" cy="5" r="1"/><path d="M1 9l3-3 2.5 2.5 2-2 3.5 3.5"/></svg>
+                </div>
+                Product Images
+              </div>
+            </div>
+            <div class="card-body dense">
+              <!-- Main preview -->
+              <div class="main-img-box" id="mainImgBox">
+                <div class="main-img-placeholder" id="mainImgPlaceholder">
+                  <svg viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="5" width="34" height="28" rx="2.5"/><circle cx="12" cy="15" r="4"/><path d="M2 27l9-9 6 6 5-5 14 13"/></svg>
+                  <span>No image selected</span>
+                </div>
+                <img id="mainImgEl" src="" alt="" style="display:none;width:100%;height:100%;object-fit:contain;padding:10px"/>
+              </div>
+              <!-- Upload zone -->
+              <div class="upload-zone" id="uploadZone">
+                <input type="file" id="imgInput" accept="image/*" multiple onchange="handleImgUpload(event)"/>
+                <div class="upload-icon">
+                  <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 17s0-2 2-2h10s2 0 2 2"/><line x1="11" y1="4" x2="11" y2="14"/><polyline points="7,8 11,4 15,8"/></svg>
+                </div>
+                <div class="upload-title">Drag &amp; drop to upload</div>
+                <div class="upload-sub">PNG, JPG, WEBP — max 5 MB</div>
+                <span class="upload-browse-btn" onclick="document.getElementById('imgInput').click()">Browse Files</span>
+              </div>
+              <!-- Thumbnail strip -->
+              <div class="img-strip" id="imgStrip"></div>
+            </div>
+          </div>
+
+          <!-- Supplier -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="5.5" width="11" height="7" rx="1"/><path d="M3.5 5.5V4a3 3 0 016 0v1.5"/><circle cx="6.5" cy="9" r="1.2"/></svg>
+                </div>
+                Supplier
+              </div>
+            </div>
+            <div class="card-body dense">
+              <div class="field" style="margin-bottom:12px">
+                <label class="field-label">Supplier Name</label>
+                <div class="select-wrap">
+                  <select class="select" id="f-supplier">
+                    <option value="">Select supplier</option>
+                    <option>TechDistrib Co.</option>
+                    <option>Global Imports Ltd.</option>
+                    <option>Prime Wholesale</option>
+                    <option>FastSupply Inc.</option>
+                    <option>DirectSource LLC</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label">Supplier SKU / Part No.</label>
+                <input class="input" id="f-supplier-sku" type="text" placeholder="e.g. SUP-12345"/>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /RIGHT -->
+      </div><!-- /content-grid -->
+    </div><!-- /step-1 -->
+
+    <!-- ══════════════════════════════════════
+      STEP 2 — INVENTORY & STOCK
+    ══════════════════════════════════════ -->
+    <div class="form-step" id="step-2">
+      <div class="content-grid">
+
+        <!-- LEFT -->
+        <div>
+
+          <!-- Stock Info -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.5 1L12.5 4.5v4L6.5 12 .5 8.5v-4L6.5 1z"/><path d="M.5 4.5L6.5 8l6-3.5M6.5 8v4"/></svg>
+                </div>
+                Stock Information
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="field-row col-2">
+                <div class="field">
+                  <label class="field-label">SKU (Auto-generated)</label>
+                  <div class="input-addon">
+                    <span class="addon-prefix" style="font-size:11px;padding:0 8px">SKU</span>
+                    <input class="input" id="f-sku" type="text" value="" readonly style="background:#f9fafb;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif;font-weight:700"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Barcode / UPC</label>
+                  <input class="input" id="f-barcode" type="text" placeholder="e.g. 012345678901"/>
+                </div>
+              </div>
+              <div class="field-row col-3">
+                <div class="field">
+                  <label class="field-label">Opening Stock <span class="req">*</span></label>
+                  <input class="input" id="f-qty" type="number" min="0" value="0" placeholder="0"/>
+                  <div class="field-error" id="e-qty">Stock quantity is required</div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Minimum Stock Alert</label>
+                  <input class="input" id="f-min-stock" type="number" min="0" value="10" placeholder="10"/>
+                  <div class="field-hint">Alert when stock falls below this</div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Maximum Stock</label>
+                  <input class="input" id="f-max-stock" type="number" min="0" placeholder="500"/>
+                </div>
+              </div>
+              <div class="field-row col-2">
+                <div class="field">
+                  <label class="field-label">Warehouse Location</label>
+                  <div class="select-wrap">
+                    <select class="select" id="f-warehouse">
+                      <option value="">Select warehouse</option>
+                      <option>Main Warehouse – A1</option>
+                      <option>Main Warehouse – A2</option>
+                      <option>Main Warehouse – B1</option>
+                      <option>East Wing – C3</option>
+                      <option>West Wing – D1</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Bin / Shelf Number</label>
+                  <input class="input" id="f-bin" type="text" placeholder="e.g. BIN-07-C"/>
+                </div>
+              </div>
+              <div class="field-row col-2">
+                <div class="field">
+                  <label class="field-label">Reorder Point</label>
+                  <input class="input" id="f-reorder" type="number" min="0" placeholder="20"/>
+                  <div class="field-hint">Trigger purchase order when reached</div>
+                </div>
+                <div class="field">
+                  <label class="field-label">Reorder Quantity</label>
+                  <input class="input" id="f-reorder-qty" type="number" min="0" placeholder="50"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Variants -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="3" cy="6.5" r="2"/><circle cx="10" cy="3" r="2"/><circle cx="10" cy="10" r="2"/><line x1="5" y1="6.5" x2="8" y2="3.5"/><line x1="5" y1="6.5" x2="8" y2="9.5"/></svg>
+                </div>
+                Product Variants
+              </div>
+              <div class="switch-row" style="border:none;padding:0">
+                <label class="switch" style="margin:0">
+                  <input type="checkbox" id="sw-variants" onchange="toggleVariants(this)"/>
+                  <div class="switch-track"></div>
+                  <div class="switch-thumb"></div>
+                </label>
+              </div>
+            </div>
+            <div class="card-body" id="variantsBody">
+              <div style="text-align:center;padding:20px 0;color:var(--text-muted);font-family:'Nunito Sans',sans-serif;font-size:13px" id="variantEmpty">
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 8px;display:block;opacity:.4"><circle cx="10" cy="18" r="5"/><circle cx="26" cy="10" r="5"/><circle cx="26" cy="26" r="5"/><line x1="15" y1="18" x2="21" y2="12"/><line x1="15" y1="18" x2="21" y2="24"/></svg>
+                Enable variants to define product options like color, size, or style.
+              </div>
+              <div id="variantsTable" style="display:none">
+                <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+                  <div class="field" style="flex:1;min-width:120px">
+                    <label class="field-label" style="font-size:12px">Attribute</label>
+                    <div class="select-wrap">
+                      <select class="select" id="v-attr-select">
+                        <option>Color</option>
+                        <option>Size</option>
+                        <option>Style</option>
+                        <option>Material</option>
+                        <option>Storage</option>
+                        <option>RAM</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:flex-end;padding-bottom:0">
+                    <button class="btn btn-primary" style="height:40px;padding:0 14px" onclick="addVariantRow()">
+                      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
+                      Add Option
+                    </button>
+                  </div>
+                </div>
+                <div class="card" style="border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:0">
+                  <table class="variant-table" id="variantTbody-wrap">
+                    <thead>
+                      <tr>
+                        <th>Color</th>
+                        <th>Option Value</th>
+                        <th>SKU Suffix</th>
+                        <th>Stock</th>
+                        <th>Price Adj.</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="variantTbody">
+                      <!-- rows added by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /LEFT -->
+
+        <!-- RIGHT -->
+        <div>
+          <!-- Expiry & Batch -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="11" height="10" rx="1"/><line x1="4" y1="1" x2="4" y2="3"/><line x1="9" y1="1" x2="9" y2="3"/><line x1="1" y1="5" x2="12" y2="5"/></svg>
+                </div>
+                Expiry &amp; Batch
+              </div>
+            </div>
+            <div class="card-body dense">
+              <div class="switch-row" style="margin-bottom:10px">
+                <div>
+                  <div class="switch-label">Track Expiry Date</div>
+                  <div class="switch-sub">For perishable items</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="sw-expiry" onchange="toggleExpiry(this)"/>
+                  <div class="switch-track"></div>
+                  <div class="switch-thumb"></div>
+                </label>
+              </div>
+              <div id="expiryFields" style="display:none">
+                <div class="field" style="margin-bottom:12px">
+                  <label class="field-label" style="font-size:12px">Expiry Date</label>
+                  <input class="input" id="f-expiry" type="date"/>
+                </div>
+                <div class="field">
+                  <label class="field-label" style="font-size:12px">Batch Number</label>
+                  <input class="input" id="f-batch" type="text" placeholder="e.g. BATCH-2025-01"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shipping -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 4h8v6H1V4z"/><path d="M9 5.5l2.5 1V10H9V5.5z"/><circle cx="3.5" cy="10.5" r="1"/><circle cx="10" cy="10.5" r="1"/></svg>
+                </div>
+                Shipping
+              </div>
+            </div>
+            <div class="card-body dense">
+              <div class="field" style="margin-bottom:12px">
+                <label class="field-label" style="font-size:12px">Weight (kg)</label>
+                <div class="input-addon">
+                  <input class="input" id="f-weight" type="number" min="0" step="0.01" placeholder="0.00"/>
+                  <span class="addon-suffix">kg</span>
+                </div>
+              </div>
+              <div class="field-row col-3" style="margin-bottom:12px">
+                <div class="field">
+                  <label class="field-label" style="font-size:12px">L (cm)</label>
+                  <input class="input" id="f-len" type="number" min="0" placeholder="0"/>
+                </div>
+                <div class="field">
+                  <label class="field-label" style="font-size:12px">W (cm)</label>
+                  <input class="input" id="f-wid" type="number" min="0" placeholder="0"/>
+                </div>
+                <div class="field">
+                  <label class="field-label" style="font-size:12px">H (cm)</label>
+                  <input class="input" id="f-ht" type="number" min="0" placeholder="0"/>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label" style="font-size:12px">Shipping Class</label>
+                <div class="select-wrap">
+                  <select class="select" id="f-ship-class">
+                    <option>Standard</option>
+                    <option>Express</option>
+                    <option>Overnight</option>
+                    <option>Free Shipping</option>
+                    <option>Local Pickup Only</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Fields -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="11" height="11" rx="1.5"/><line x1="4" y1="6.5" x2="9" y2="6.5"/><line x1="6.5" y1="4" x2="6.5" y2="9"/></svg>
+                </div>
+                Custom Attributes
+              </div>
+              <button class="btn btn-outline" style="padding:5px 10px;font-size:12px" onclick="addCustomField()">
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
+                Add
+              </button>
+            </div>
+            <div class="card-body dense" id="customFieldsBody">
+              <div id="customFieldsEmpty" style="text-align:center;padding:16px 0;color:var(--text-muted);font-family:'Nunito Sans',sans-serif;font-size:12.5px">
+                No custom attributes yet. Click Add to create one.
+              </div>
+              <div id="customFieldsList"></div>
+            </div>
+          </div>
+
+        </div><!-- /RIGHT -->
+      </div>
+    </div><!-- /step-2 -->
+
+    <!-- ══════════════════════════════════════
+      STEP 3 — REVIEW & PUBLISH
+    ══════════════════════════════════════ -->
+    <div class="form-step" id="step-3">
+      <div class="content-grid" style="display:flex;align-items:center;justify-content:center;min-height:500px;padding:40px 20px">
+        <!-- RIGHT -->
+        <div>
+          <!-- Review Summary -->
+          <div class="card" id="reviewCard">
+            <div class="card-head">
+              <div class="card-title">
+                <div class="card-title-icon">
+                  <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M11 8.5l-4.5 3-4.5-3V3l4.5-2 4.5 2v5.5z"/><polyline points="4,6.5 6,8.5 9,5"/></svg>
+                </div>
+                Review Summary
+              </div>
+            </div>
+            <div class="card-body dense" id="summaryBody">
+              <div style="font-family:'Nunito Sans',sans-serif;font-size:12.5px;color:var(--text-secondary)">
+                Fill in at least Step 1 to see the summary.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /step-3 -->
+
+  </div><!-- /page-wrap -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="bottom-nav-left">
+      <button class="btn btn-outline" id="btnPrev" onclick="prevStep()" style="display:none">
+        <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="8,2 4,6.5 8,11"/></svg>
+        Previous
+      </button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="step-indicator">Step <strong id="stepNow">1</strong> of <strong>3</strong></span>
+      <!-- dot indicators -->
+      <div style="display:flex;gap:6px;margin-left:4px">
+        <div class="step-dot active" id="dot-1" style="width:8px;height:8px;border-radius:50%;background:#2e6bc5;transition:background .2s"></div>
+        <div class="step-dot" id="dot-2" style="width:8px;height:8px;border-radius:50%;background:#d1d5db;transition:background .2s"></div>
+        <div class="step-dot" id="dot-3" style="width:8px;height:8px;border-radius:50%;background:#d1d5db;transition:background .2s"></div>
+      </div>
+    </div>
+    <div class="bottom-nav-right">
+      <button class="btn btn-outline" onclick="saveDraft()">Save Draft</button>
+      <button class="btn btn-primary" id="btnNext" onclick="nextStep()">
+        Continue
+        <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="5,2 9,6.5 5,11"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" viewBox="0 0 20 20" fill="none" stroke="#22c55e" stroke-width="2"><circle cx="10" cy="10" r="8.5"/><polyline points="6.5,10 9,12.5 13.5,7"/></svg>
+  <span id="toastMsg">Product added successfully!</span>
+</div>
+
+<!-- MODAL: Add Variant -->
+<div id="variantModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:10px;padding:26px;width:380px;box-shadow:0 8px 40px rgba(0,0,0,.16);animation:fadeUp .2s ease">
+    <div style="font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:16px;color:#092c4c;margin-bottom:18px">Add Variant Option</div>
+    <div class="field" style="margin-bottom:12px">
+      <label class="field-label" style="font-size:12.5px">Value / Name</label>
+      <input class="input" id="v-name-input" type="text" placeholder="e.g. Space Black"/>
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label class="field-label" style="font-size:12.5px">Color (optional)</label>
+      <input class="input" id="v-color-input" type="color" value="#5b67ca" style="height:40px;padding:4px 10px;cursor:pointer"/>
+    </div>
+    <div class="field-row col-2" style="margin-bottom:20px">
+      <div class="field">
+        <label class="field-label" style="font-size:12.5px">Stock</label>
+        <input class="input" id="v-stock-input" type="number" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label class="field-label" style="font-size:12.5px">Price Adj. ($)</label>
+        <input class="input" id="v-price-input" type="number" step="0.01" value="0" placeholder="0.00"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeVariantModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmVariant()">Add Option</button>
+    </div>
+  </div>
+</div>
+
+<script src="api-config.js"></script>
+<script src="common-products.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let currentStep = 1;
+const totalSteps = 3;
+let selectedStatus = 'active';
+let selectedPublish = 'published';
+let images = []; // {src, name}
+let mainImgIdx = 0;
+let variants = [];
+let customFields = [];
+let tags = [];
+let relatedProducts = [];
+let editorMode = 'create';
+let editingProductId = '';
+let currentProductRecord = null;
+const DEFAULT_CREATOR_NAME = 'Retail Manager';
+const DEFAULT_CREATOR_IMG = 'https://www.figma.com/api/mcp/asset/70e2ee73-c607-4c1f-9c9a-0cbe445512f4';
+const DEFAULT_PRODUCT_EMOJI = '📦';
+
+const STEPS = [
+  { label: 'Product Info',    sub: 'Basic details' },
+  { label: 'Inventory',       sub: 'Stock & variants' },
+  { label: 'Review & Publish',   sub: 'Finalize' },
+];
+
+let SAMPLE_PRODUCTS = [
+  'Lenovo IdeaPad 3','Beats Pro','Nike Jordan','Apple Series 5 Watch',
+  'Amazon Echo Dot','Sanford Chair Sofa','Red Premium Satchel','iPhone 14 Pro',
+  'Gaming Chair','Borealis Backpack','Sony WH-1000XM6','MacBook Air M4',
+];
+let skuSourceProducts = [];
+let skuRefreshPromise = null;
+
+function getEditorProductId() {
+  var params = new URLSearchParams(window.location.search);
+  return (params.get('id') || '').trim();
+}
+
+function isEditRoute() {
+  return /Edit_Product\.html$/i.test(window.location.pathname || '');
+}
+
+function isEditMode() {
+  return editorMode === 'edit';
+}
+
+function getFieldValue(id) {
+  var field = document.getElementById(id);
+  return field ? String(field.value || '').trim() : '';
+}
+
+function setFieldValue(id, value) {
+  var field = document.getElementById(id);
+  if (field) {
+    field.value = value == null ? '' : String(value);
+  }
+}
+
+function ensureSelectOption(select, value) {
+  if (!select || !value) {
+    return;
+  }
+
+  var normalizedValue = String(value);
+  var hasOption = Array.from(select.options).some(function (option) {
+    return option.value === normalizedValue || option.text === normalizedValue;
+  });
+
+  if (!hasOption) {
+    var option = document.createElement('option');
+    option.value = normalizedValue;
+    option.textContent = normalizedValue;
+    select.appendChild(option);
+  }
+}
+
+function setSelectValue(id, value) {
+  var select = document.getElementById(id);
+  if (!select) {
+    return;
+  }
+
+  var normalizedValue = value == null ? '' : String(value);
+  ensureSelectOption(select, normalizedValue);
+
+  var matched = Array.from(select.options).find(function (option) {
+    return option.value === normalizedValue || option.text === normalizedValue;
+  });
+
+  select.value = matched ? matched.value : '';
+}
+
+function parseOptionalNumber(rawValue, decimals) {
+  var value = String(rawValue == null ? '' : rawValue).trim();
+  if (!value) {
+    return undefined;
+  }
+
+  var parsed = Number(value);
+  if (Number.isNaN(parsed)) {
+    return undefined;
+  }
+
+  if (typeof decimals === 'number') {
+    return Number(parsed.toFixed(decimals));
+  }
+
+  return parsed;
+}
+
+function parseOptionalInteger(rawValue) {
+  var value = String(rawValue == null ? '' : rawValue).trim();
+  if (!value) {
+    return undefined;
+  }
+
+  var parsed = parseInt(value, 10);
+  return Number.isNaN(parsed) ? undefined : parsed;
+}
+
+function normalizeProductStatus(value) {
+  var normalized = String(value || '').trim().toLowerCase();
+  return ['active', 'inactive', 'draft'].includes(normalized)
+    ? normalized
+    : 'active';
+}
+
+function normalizeProductVisibility(value) {
+  var normalized = String(value || '').trim().toLowerCase();
+
+  if (normalized === 'publish-now') {
+    return 'published';
+  }
+
+  return ['published', 'hidden', 'scheduled'].includes(normalized)
+    ? normalized
+    : 'published';
+}
+
+function formatProductStateLabel(value) {
+  var normalized = String(value || '').trim().toLowerCase();
+
+  if (!normalized) {
+    return '—';
+  }
+
+  return normalized
+    .split('-')
+    .map(function (part) {
+      return part ? part.charAt(0).toUpperCase() + part.slice(1) : '';
+    })
+    .join(' ');
+}
+
+function syncSelectedProductState(product) {
+  selectedStatus = normalizeProductStatus(product && product.status);
+  selectedPublish = normalizeProductVisibility(product && product.visibility);
+}
+
+function normalizeStringArray(values) {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+
+  return values
+    .map(function (value) {
+      return String(value || '').trim();
+    })
+    .filter(Boolean);
+}
+
+function normalizeObjectArray(values) {
+  return Array.isArray(values)
+    ? values.filter(function (value) {
+        return value && typeof value === 'object';
+      }).map(function (value) {
+        return Object.assign({}, value);
+      })
+    : [];
+}
+
+function escapeHtmlAttr(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function setDescriptionValue(htmlValue, textValue) {
+  var descEl = document.getElementById('f-desc');
+  if (!descEl) {
+    return;
+  }
+
+  if (htmlValue) {
+    descEl.innerHTML = htmlValue;
+  } else {
+    descEl.textContent = textValue || '';
+  }
+
+  updateDescPlaceholder(descEl);
+}
+
+function buildImageState(product) {
+  var seen = {};
+  var productImages = [];
+
+  normalizeStringArray(product && product.images).forEach(function (src) {
+    if (!seen[src]) {
+      seen[src] = true;
+      productImages.push({ src: src, name: 'Image ' + (productImages.length + 1) });
+    }
+  });
+
+  var mainProductImg = product && product.productImg ? String(product.productImg).trim() : '';
+  if (mainProductImg && !seen[mainProductImg]) {
+    seen[mainProductImg] = true;
+    productImages.unshift({ src: mainProductImg, name: 'Main Image' });
+  }
+
+  return productImages;
+}
+
+function applyEditorChrome() {
+  document.title = isEditMode() ? 'StockOverflow – Edit Product' : 'StockOverflow – Add Product';
+
+  var breadcrumbCurrent = document.querySelector('.tb-breadcrumb .current');
+  if (breadcrumbCurrent) {
+    breadcrumbCurrent.textContent = isEditMode() ? 'Edit Product' : 'Add Product';
+  }
+
+  var pageTitle = document.querySelector('.page-title');
+  if (pageTitle) {
+    pageTitle.textContent = isEditMode() ? 'Edit Product' : 'Add New Product';
+  }
+
+  var pageSubtitle = document.querySelector('.page-subtitle');
+  if (pageSubtitle) {
+    pageSubtitle.textContent = isEditMode()
+      ? 'Products / Edit Product'
+      : 'Products / Add Product';
+  }
+
+  var addNav = document.querySelector('.sb-item[href="Add_New_Product.html"]');
+  var editNav = document.querySelector('.sb-item[href="Edit_Product.html"]');
+  if (addNav && editNav) {
+    addNav.classList.toggle('active', !isEditMode());
+    editNav.classList.toggle('active', isEditMode());
+  }
+}
+
+function rememberSavedProduct(product) {
+  if (!product || !product.sku) {
+    return;
+  }
+
+  currentProductRecord = Object.assign({}, currentProductRecord || {}, product);
+  editingProductId = product.id || editingProductId;
+  syncSelectedProductState(currentProductRecord);
+  rememberCreatedProduct(currentProductRecord);
+}
+
+function sanitizeVariant(variant) {
+  return {
+    attr: String((variant && variant.attr) || 'Color'),
+    name: String((variant && variant.name) || '').trim(),
+    color: String((variant && variant.color) || '#5b67ca'),
+    stock: parseOptionalInteger(variant && variant.stock) || 0,
+    price: parseOptionalNumber(variant && variant.price, 2) || 0,
+    sku_suffix: String((variant && variant.sku_suffix) || '').trim(),
+  };
+}
+
+function buildProductPayload() {
+  var price = parseOptionalNumber(getFieldValue('f-price'), 2);
+  var qty = parseOptionalInteger(getFieldValue('f-qty'));
+  var minStock = parseOptionalInteger(getFieldValue('f-min-stock'));
+  var maxStock = parseOptionalInteger(getFieldValue('f-max-stock'));
+  var descEl = document.getElementById('f-desc');
+  var descriptionText = descEl ? descEl.innerText.trim() : '';
+  var descriptionHtml = descEl ? descEl.innerHTML.trim() : '';
+  var mainImage = images.length ? images[mainImgIdx].src : '';
+  var maxValue = maxStock;
+
+  if (maxValue == null || maxValue <= 0) {
+    maxValue = Math.max(qty || 0, minStock || 0, 100);
+  }
+
+  return {
+    sku: isEditMode() ? getFieldValue('f-sku') : getFieldValue('f-sku') || resolveNextSku(),
+    name: getFieldValue('f-name'),
+    category: getFieldValue('f-category'),
+    subCategory: getFieldValue('f-sub-category'),
+    brand: getFieldValue('f-brand'),
+    price: price,
+    cost: parseOptionalNumber(getFieldValue('f-cost'), 2) || 0,
+    discountType: getFieldValue('f-disc-type') || 'none',
+    discountValue: parseOptionalNumber(getFieldValue('f-discount'), 2) || 0,
+    finalPrice: parseOptionalNumber(getFieldValue('f-final'), 2) || price || 0,
+    taxRate: parseOptionalNumber(getFieldValue('f-tax'), 2) || 0,
+    taxType: getFieldValue('f-tax-type') || 'Inclusive',
+    unit: getFieldValue('f-unit') || 'Pc',
+    qty: qty || 0,
+    min: minStock || 0,
+    max: maxValue,
+    description: descriptionText,
+    descriptionHtml: descriptionHtml,
+    tags: normalizeStringArray(tags),
+    supplier: getFieldValue('f-supplier'),
+    supplierSku: getFieldValue('f-supplier-sku'),
+    barcode: getFieldValue('f-barcode'),
+    warehouse: getFieldValue('f-warehouse'),
+    bin: getFieldValue('f-bin'),
+    reorderPoint: parseOptionalInteger(getFieldValue('f-reorder')) || 0,
+    reorderQty: parseOptionalInteger(getFieldValue('f-reorder-qty')) || 0,
+    hasVariants: !!document.getElementById('sw-variants').checked,
+    variants: variants
+      .map(sanitizeVariant)
+      .filter(function (variant) {
+        return variant.name;
+      }),
+    hasExpiry: !!document.getElementById('sw-expiry').checked,
+    expiryDate: getFieldValue('f-expiry'),
+    batchNumber: getFieldValue('f-batch'),
+    weightKg: parseOptionalNumber(getFieldValue('f-weight'), 2) || 0,
+    lengthCm: parseOptionalNumber(getFieldValue('f-len'), 2) || 0,
+    widthCm: parseOptionalNumber(getFieldValue('f-wid'), 2) || 0,
+    heightCm: parseOptionalNumber(getFieldValue('f-ht'), 2) || 0,
+    shippingClass: getFieldValue('f-ship-class') || 'Standard',
+    customFields: normalizeObjectArray(customFields).map(function (field) {
+      return {
+        key: String(field.key || '').trim(),
+        val: String((field.val != null ? field.val : field.value) || '').trim(),
+      };
+    }).filter(function (field) {
+      return field.key || field.val;
+    }),
+    creator:
+      (currentProductRecord && currentProductRecord.creator) || DEFAULT_CREATOR_NAME,
+    creatorImg:
+      (currentProductRecord && currentProductRecord.creatorImg) || DEFAULT_CREATOR_IMG,
+    productImg: mainImage,
+    images: images.map(function (image) {
+      return image.src;
+    }).filter(Boolean),
+    emoji:
+      (currentProductRecord && currentProductRecord.emoji) || DEFAULT_PRODUCT_EMOJI,
+    soldThisMonth:
+      (currentProductRecord && Number(currentProductRecord.soldThisMonth)) || 0,
+    trend: (currentProductRecord && currentProductRecord.trend) || 'up',
+    status: normalizeProductStatus(
+      (currentProductRecord && currentProductRecord.status) || selectedStatus,
+    ),
+    visibility: normalizeProductVisibility(
+      (currentProductRecord && currentProductRecord.visibility) || selectedPublish,
+    ),
+  };
+}
+
+function populateProductForm(product) {
+  if (!product) {
+    return;
+  }
+
+  currentProductRecord = Object.assign({}, product);
+  editingProductId = product.id || editingProductId;
+  syncSelectedProductState(product);
+
+  setFieldValue('f-name', product.name);
+  setSelectValue('f-category', product.category);
+  setSelectValue('f-sub-category', product.subCategory);
+  setSelectValue('f-brand', product.brand);
+  setSelectValue('f-unit', product.unit || 'Pc');
+  setDescriptionValue(product.descriptionHtml, product.description);
+
+  tags = normalizeStringArray(product.tags);
+  renderTags();
+
+  setFieldValue('f-price', product.price);
+  setFieldValue('f-cost', product.cost);
+  setSelectValue('f-disc-type', product.discountType || 'none');
+  updateDiscountLabel();
+  setFieldValue('f-discount', product.discountValue);
+  setFieldValue('f-tax', product.taxRate);
+  setSelectValue('f-tax-type', product.taxType || 'Inclusive');
+
+  setSelectValue('f-supplier', product.supplier);
+  setFieldValue('f-supplier-sku', product.supplierSku);
+  applySkuFieldValue(product.sku || resolveNextSku());
+  setFieldValue('f-barcode', product.barcode);
+  setFieldValue('f-qty', product.qty);
+  setFieldValue('f-min-stock', product.min);
+  setFieldValue('f-max-stock', product.max);
+  setSelectValue('f-warehouse', product.warehouse);
+  setFieldValue('f-bin', product.bin);
+  setFieldValue('f-reorder', product.reorderPoint);
+  setFieldValue('f-reorder-qty', product.reorderQty);
+
+  images = buildImageState(product);
+  mainImgIdx = 0;
+  if (product.productImg) {
+    var mainIndex = images.findIndex(function (image) {
+      return image.src === product.productImg;
+    });
+    mainImgIdx = mainIndex >= 0 ? mainIndex : 0;
+  }
+  renderImages();
+
+  variants = normalizeObjectArray(product.variants).map(sanitizeVariant);
+  var variantsEnabled = !!product.hasVariants || variants.length > 0;
+  document.getElementById('sw-variants').checked = variantsEnabled;
+  toggleVariants(document.getElementById('sw-variants'));
+  renderVariants();
+
+  document.getElementById('sw-expiry').checked =
+    !!product.hasExpiry || !!product.expiryDate || !!product.batchNumber;
+  toggleExpiry(document.getElementById('sw-expiry'));
+  setFieldValue('f-expiry', product.expiryDate);
+  setFieldValue('f-batch', product.batchNumber);
+
+  setFieldValue('f-weight', product.weightKg);
+  setFieldValue('f-len', product.lengthCm);
+  setFieldValue('f-wid', product.widthCm);
+  setFieldValue('f-ht', product.heightCm);
+  setSelectValue('f-ship-class', product.shippingClass || 'Standard');
+
+  customFields = normalizeObjectArray(product.customFields).map(function (field) {
+    return {
+      key: String(field.key || '').trim(),
+      val: String((field.val != null ? field.val : field.value) || '').trim(),
+    };
+  });
+  renderCustomFields();
+
+  recalc();
+  if (currentStep === totalSteps) {
+    buildSummary();
+  }
+}
+
+async function loadProductForEditing() {
+  if (!editingProductId) {
+    return;
+  }
+
+  var product = await window.RetailerApi.getProduct(editingProductId);
+  rememberSavedProduct(product);
+  populateProductForm(product);
+}
+
+async function initializeProductEditor() {
+  editingProductId = getEditorProductId();
+  editorMode = editingProductId || isEditRoute() ? 'edit' : 'create';
+  applyEditorChrome();
+
+  SAMPLE_PRODUCTS = (window.RetailerProductsData && Array.isArray(window.RetailerProductsData.sampleProductNames))
+    ? window.RetailerProductsData.sampleProductNames.slice()
+    : SAMPLE_PRODUCTS;
+
+  if (isEditMode()) {
+    if (!editingProductId) {
+      showToastMsg('No product was selected for editing. Redirecting…', true);
+      setTimeout(function () {
+        window.location.href = 'Product_List.html';
+      }, 1200);
+      return;
+    }
+
+    try {
+      await loadProductForEditing();
+    } catch (error) {
+      console.error('Error loading product for edit:', error);
+      showToastMsg('Unable to load product details. Redirecting…', true);
+      setTimeout(function () {
+        window.location.href = 'Product_List.html';
+      }, 1500);
+      return;
+    }
+  } else {
+    applySkuFieldValue(resolveNextSku());
+    refreshAutoSku();
+  }
+
+  renderStepper();
+  updateDots();
+  updateDescPlaceholder(document.getElementById('f-desc'));
+  recalc();
+}
+
+function getSharedProducts() {
+  if (window.RetailerProductsData && typeof window.RetailerProductsData.getMasterProducts === 'function') {
+    return window.RetailerProductsData.getMasterProducts();
+  }
+  if (window.RetailerProductsData && Array.isArray(window.RetailerProductsData.masterProducts)) {
+    return window.RetailerProductsData.masterProducts.map(function (product) {
+      return Object.assign({}, product);
+    });
+  }
+  return [];
+}
+
+function cloneProductList(products) {
+  return Array.isArray(products)
+    ? products.map(function (product) {
+        return Object.assign({}, product);
+      })
+    : [];
+}
+
+function setSkuSourceProducts(products) {
+  skuSourceProducts = cloneProductList(products);
+  return skuSourceProducts;
+}
+
+function getSkuNumber(value) {
+  var match = /^PT(\d+)$/i.exec(String(value || '').trim());
+  return match ? parseInt(match[1], 10) : 0;
+}
+
+function buildNextSku(products) {
+  var maxSkuNum = 0;
+  products.forEach(function (product) {
+    var parsed = getSkuNumber(product && product.sku);
+    if (parsed > maxSkuNum) {
+      maxSkuNum = parsed;
+    }
+  });
+
+  return 'PT' + String(maxSkuNum + 1).padStart(3, '0');
+}
+
+function applySkuFieldValue(sku) {
+  var skuInput = document.getElementById('f-sku');
+  if (skuInput) {
+    skuInput.value = sku;
+  }
+  return sku;
+}
+
+function resolveNextSku(productsOverride) {
+  var hasProductsOverride = Array.isArray(productsOverride);
+  var sourceProducts = hasProductsOverride
+    ? productsOverride
+    : (skuSourceProducts.length ? skuSourceProducts : getSharedProducts());
+
+  if (!hasProductsOverride && !sourceProducts.length && window.RetailerProductsData && typeof window.RetailerProductsData.generateNextSku === 'function') {
+    return window.RetailerProductsData.generateNextSku();
+  }
+
+  return buildNextSku(sourceProducts);
+}
+
+async function refreshAutoSku(forceRefresh) {
+  if (!forceRefresh && skuRefreshPromise) {
+    return skuRefreshPromise;
+  }
+
+  if (!window.RetailerApi || typeof window.RetailerApi.getProducts !== 'function') {
+    return Promise.resolve(applySkuFieldValue(resolveNextSku(setSkuSourceProducts(getSharedProducts()))));
+  }
+
+  skuRefreshPromise = window.RetailerApi.getProducts()
+    .then(function (products) {
+      var freshProducts = setSkuSourceProducts(products);
+      return applySkuFieldValue(resolveNextSku(freshProducts));
+    })
+    .catch(function (error) {
+      console.warn('Failed to refresh auto SKU from API:', error);
+      var fallbackProducts = skuSourceProducts.length ? skuSourceProducts : setSkuSourceProducts(getSharedProducts());
+      return applySkuFieldValue(resolveNextSku(fallbackProducts));
+    })
+    .finally(function () {
+      skuRefreshPromise = null;
+    });
+
+  return skuRefreshPromise;
+}
+
+function rememberCreatedProduct(product) {
+  if (!product || !product.sku) {
+    return;
+  }
+
+  var nextProducts = skuSourceProducts.filter(function (entry) {
+    return entry && entry.sku !== product.sku;
+  });
+  nextProducts.unshift(Object.assign({}, product));
+  setSkuSourceProducts(nextProducts);
+
+  if (window.RetailerProductsData && typeof window.RetailerProductsData.upsertProduct === 'function') {
+    window.RetailerProductsData.upsertProduct(product);
+  }
+}
+
+setSkuSourceProducts(getSharedProducts());
+
+/* ═══════════════════════════════════════════
+   STEPPER
+═══════════════════════════════════════════ */
+function renderStepper() {
+  const wrap = document.getElementById('stepperWrap');
+  wrap.innerHTML = '';
+  STEPS.forEach((s, i) => {
+    const n = i + 1;
+    const isDone = n < currentStep;
+    const isActive = n === currentStep;
+
+    const item = document.createElement('div');
+    item.className = 'step-item' + (isDone?' done':'') + (isActive?' active':'');
+    item.style.cssText = 'display:flex;align-items:center;flex:1;position:relative';
+
+    // connector before (not for first)
+    if (i > 0) {
+      const conn = document.createElement('div');
+      conn.className = 'step-connector' + (isDone||isActive?' done':'');
+      conn.style.cssText = 'flex:1;height:2px;background:'+(isDone?'#2e6bc5':'#e6eaed')+';transition:background .3s';
+      wrap.appendChild(conn);
+    }
+
+    const circle = document.createElement('div');
+    circle.className = 'step-circle' + (isDone||isActive?' active':'') + (isDone?' done':'');
+    circle.onclick = () => { if(isDone) goStep(n); };
+    circle.style.cssText = 'cursor:'+(isDone?'pointer':'default');
+
+    if (isDone) {
+      circle.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2.2"><polyline points="2.5,7 5.5,10 11.5,4"/></svg>`;
+    } else {
+      circle.textContent = n;
+    }
+
+    const labelWrap = document.createElement('div');
+    labelWrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;margin-top:8px;text-align:center';
+
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-family:"Nunito Sans",sans-serif;font-size:12px;font-weight:700;color:'+(isActive?'#2e6bc5':isDone?'#2e6bc5':'#a6aaaf')+';white-space:nowrap;margin-top:6px';
+    lbl.textContent = s.label;
+
+    const sub = document.createElement('div');
+    sub.style.cssText = 'font-family:"Nunito Sans",sans-serif;font-size:10px;color:#c4c9cd;margin-top:1px;white-space:nowrap';
+    sub.textContent = s.sub;
+
+    const colWrap = document.createElement('div');
+    colWrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;flex-shrink:0;position:relative';
+    colWrap.appendChild(circle);
+    colWrap.appendChild(lbl);
+    colWrap.appendChild(sub);
+
+    wrap.appendChild(colWrap);
+  });
+}
+
+function updateDots() {
+  for (let i = 1; i <= 3; i++) {
+    const d = document.getElementById('dot-' + i);
+    d.style.background = i === currentStep ? '#2e6bc5' : i < currentStep ? '#2e6bc5' : '#d1d5db';
+    d.style.width = i === currentStep ? '22px' : '8px';
+    d.style.borderRadius = '20px';
+  }
+  document.getElementById('stepNow').textContent = currentStep;
+  document.getElementById('btnPrev').style.display = currentStep > 1 ? 'flex' : 'none';
+  const btnNext = document.getElementById('btnNext');
+  if (currentStep === totalSteps) {
+    btnNext.innerHTML = `<svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="2,6.5 10,6.5"/><polyline points="7,3.5 10,6.5 7,9.5"/></svg> ${isEditMode() ? 'Update Product' : 'Publish Product'}`;
+  } else {
+    btnNext.innerHTML = `Continue <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="5,2 9,6.5 5,11"/></svg>`;
+  }
+}
+
+function goStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  renderStepper();
+  updateDots();
+  if (currentStep === 3) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validateStep1() {
+  let ok = true;
+  const checks = [
+    { id:'f-name',     err:'e-name' },
+    { id:'f-category', err:'e-category' },
+    { id:'f-brand',    err:'e-brand' },
+  ];
+  checks.forEach(c => {
+    const el = document.getElementById(c.id);
+    const er = document.getElementById(c.err);
+    if (!el.value.trim()) {
+      el.classList.add('error');
+      er.classList.add('show');
+      ok = false;
+    } else {
+      el.classList.remove('error');
+      er.classList.remove('show');
+    }
+  });
+
+  // Price
+  const price = document.getElementById('f-price');
+  const pe = document.getElementById('e-price');
+  if (!price.value || parseFloat(price.value) < 0) {
+    price.parentElement.style.borderColor = '#ef4444';
+    pe.classList.add('show');
+    ok = false;
+  } else {
+    price.parentElement.style.borderColor = '';
+    pe.classList.remove('show');
+  }
+  return ok;
+}
+
+function nextStep() {
+  if (currentStep === 1 && !validateStep1()) {
+    showToastMsg('Please fill in all required fields.', true);
+    return;
+  }
+  if (currentStep === totalSteps) {
+    publishProduct();
+    return;
+  }
+  goStep(currentStep + 1);
+}
+
+function prevStep() {
+  if (currentStep > 1) goStep(currentStep - 1);
+}
+
+/* ═══════════════════════════════════════════
+   PRICING CALCULATIONS
+═══════════════════════════════════════════ */
+function recalc() {
+  const price = parseFloat(document.getElementById('f-price').value) || 0;
+  const cost  = parseFloat(document.getElementById('f-cost').value)  || 0;
+  const discType = document.getElementById('f-disc-type').value;
+  const discVal  = parseFloat(document.getElementById('f-discount').value) || 0;
+
+  // Margin
+  const marginEl = document.getElementById('f-margin');
+  if (price > 0 && cost > 0) {
+    marginEl.value = (((price - cost) / price) * 100).toFixed(1);
+  } else {
+    marginEl.value = '';
+  }
+
+  // Final price
+  let final = price;
+  if (discType === 'percent') final = price - (price * discVal / 100);
+  if (discType === 'fixed')   final = price - discVal;
+  final = Math.max(0, final);
+  document.getElementById('f-final').value = price ? final.toFixed(2) : '';
+}
+
+document.getElementById('f-price').addEventListener('input', recalc);
+document.getElementById('f-cost').addEventListener('input', recalc);
+document.getElementById('f-discount').addEventListener('input', recalc);
+
+function updateDiscountLabel() {
+  const type = document.getElementById('f-disc-type').value;
+  const prefix = document.getElementById('disc-prefix');
+  const input  = document.getElementById('f-discount');
+  if (type === 'none') {
+    prefix.textContent = '—';
+    input.disabled = true;
+    input.style.background = '#f9fafb';
+    input.value = '';
+  } else {
+    prefix.textContent = type === 'percent' ? '%' : '$';
+    input.disabled = false;
+    input.style.background = '#fff';
+  }
+  recalc();
+}
+
+/* ═══════════════════════════════════════════
+   TAGS
+═══════════════════════════════════════════ */
+function handleTag(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().replace(',','');
+    if (val && !tags.includes(val)) {
+      tags.push(val);
+      renderTags();
+    }
+    e.target.value = '';
+  }
+}
+
+function renderTags() {
+  const field = document.getElementById('tagsField');
+  const input = document.getElementById('tagInput');
+  // remove old chips
+  field.querySelectorAll('.tag-chip').forEach(c => c.remove());
+  tags.forEach((t,i) => {
+    const chip = document.createElement('div');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${t}<span class="tag-chip-del" onclick="removeTag(${i})"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg></span>`;
+    field.insertBefore(chip, input);
+  });
+}
+
+function removeTag(i) {
+  tags.splice(i, 1);
+  renderTags();
+}
+
+/* ═══════════════════════════════════════════
+   IMAGE UPLOAD
+═══════════════════════════════════════════ */
+const MAX_PRODUCT_IMAGE_EDGE = 1600;
+const MAX_PRODUCT_IMAGE_BYTES = 700 * 1024;
+const PRODUCT_IMAGE_QUALITIES = [0.86, 0.78, 0.7, 0.62];
+
+function estimateDataUrlBytes(dataUrl) {
+  const base64 = String(dataUrl || '').split(',')[1] || '';
+  return Math.ceil(base64.length * 3 / 4);
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = event => resolve(event.target.result);
+    reader.onerror = () => reject(new Error('Could not read image file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImageFromSrc(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Could not load image preview.'));
+    image.src = src;
+  });
+}
+
+function getScaledImageSize(width, height, maxEdge) {
+  const largestEdge = Math.max(width || 0, height || 0);
+  if (!largestEdge || largestEdge <= maxEdge) {
+    return {
+      width: Math.max(1, Math.round(width || maxEdge)),
+      height: Math.max(1, Math.round(height || maxEdge)),
+    };
+  }
+
+  const scale = maxEdge / largestEdge;
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
+}
+
+async function optimizeImageFile(file) {
+  if (!file || !file.type || !file.type.startsWith('image/')) {
+    return '';
+  }
+
+  if (/svg/i.test(file.type)) {
+    return readFileAsDataUrl(file);
+  }
+
+  const originalSrc = await readFileAsDataUrl(file);
+  const image = await loadImageFromSrc(originalSrc);
+  const size = getScaledImageSize(
+    image.naturalWidth || image.width,
+    image.naturalHeight || image.height,
+    MAX_PRODUCT_IMAGE_EDGE,
+  );
+  const canvas = document.createElement('canvas');
+  canvas.width = size.width;
+  canvas.height = size.height;
+  const context = canvas.getContext('2d');
+
+  if (!context) {
+    return originalSrc;
+  }
+
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, size.width, size.height);
+  context.drawImage(image, 0, 0, size.width, size.height);
+
+  let bestSrc = originalSrc;
+  for (const quality of PRODUCT_IMAGE_QUALITIES) {
+    const candidate = canvas.toDataURL('image/jpeg', quality);
+    bestSrc = candidate;
+    if (estimateDataUrlBytes(candidate) <= MAX_PRODUCT_IMAGE_BYTES) {
+      break;
+    }
+  }
+
+  return estimateDataUrlBytes(bestSrc) < estimateDataUrlBytes(originalSrc)
+    ? bestSrc
+    : originalSrc;
+}
+
+async function appendUploadedImages(fileList) {
+  const files = Array.from(fileList || []).filter(file => file && file.type && file.type.startsWith('image/'));
+  for (const file of files) {
+    try {
+      const src = await optimizeImageFile(file);
+      if (!src) continue;
+      images.push({ src, name: file.name });
+      if (images.length === 1) mainImgIdx = 0;
+    } catch (error) {
+      console.error('Error preparing image upload:', error);
+    }
+  }
+  renderImages();
+}
+
+function handleImgUpload(e) {
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';
+  void appendUploadedImages(files);
+}
+
+function renderImages() {
+  const strip = document.getElementById('imgStrip');
+  strip.innerHTML = '';
+  images.forEach((img, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'img-thumb' + (i===mainImgIdx?' main-thumb':'');
+    thumb.onclick = () => setMainImg(i);
+    thumb.innerHTML = `
+      <img src="${img.src}" alt="${img.name}" style="width:100%;height:100%;object-fit:cover"/>
+      ${i===mainImgIdx?'<div class="main-badge">Main</div>':''}
+      <div class="img-thumb-del" onclick="event.stopPropagation();removeImg(${i})">
+        <svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
+      </div>`;
+    strip.appendChild(thumb);
+  });
+
+  // Main preview
+  if (images.length > 0) {
+    document.getElementById('mainImgPlaceholder').style.display = 'none';
+    document.getElementById('mainImgEl').style.display = 'block';
+    document.getElementById('mainImgEl').src = images[mainImgIdx].src;
+  } else {
+    document.getElementById('mainImgPlaceholder').style.display = 'flex';
+    document.getElementById('mainImgEl').style.display = 'none';
+  }
+}
+
+function setMainImg(i) {
+  mainImgIdx = i;
+  renderImages();
+}
+
+function removeImg(i) {
+  images.splice(i, 1);
+  if (mainImgIdx >= images.length) mainImgIdx = Math.max(0, images.length - 1);
+  renderImages();
+}
+
+// Drag & drop
+const uz = document.getElementById('uploadZone');
+uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag-over'); });
+uz.addEventListener('dragleave', () => uz.classList.remove('drag-over'));
+uz.addEventListener('drop', e => {
+  e.preventDefault();
+  uz.classList.remove('drag-over');
+  void appendUploadedImages(Array.from((e.dataTransfer && e.dataTransfer.files) || []));
+});
+
+/* ═══════════════════════════════════════════
+   STATUS TOGGLE
+═══════════════════════════════════════════ */
+function pickStatus(btn, color) {
+  document.querySelectorAll('.toggle-group .toggle-pill').forEach(p => p.className = 'toggle-pill');
+  btn.className = 'toggle-pill sel-' + color;
+  selectedStatus = normalizeProductStatus(btn.dataset.val);
+}
+
+function pickPublish(btn, color) {
+  btn.closest('.toggle-group').querySelectorAll('.toggle-pill').forEach(p => p.className = 'toggle-pill');
+  btn.className = 'toggle-pill sel-' + color;
+  selectedPublish = normalizeProductVisibility(btn.dataset.val);
+  var scheduleField = document.getElementById('scheduleField');
+  if (scheduleField) {
+    scheduleField.style.display = selectedPublish === 'scheduled' ? 'block' : 'none';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   VARIANTS
+═══════════════════════════════════════════ */
+function toggleVariants(sw) {
+  document.getElementById('variantEmpty').style.display = sw.checked ? 'none' : 'block';
+  document.getElementById('variantsTable').style.display = sw.checked ? 'block' : 'none';
+}
+
+function addVariantRow() {
+  document.getElementById('variantModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('v-name-input').focus(), 60);
+}
+
+function closeVariantModal() {
+  document.getElementById('variantModal').style.display = 'none';
+  document.getElementById('v-name-input').value = '';
+  document.getElementById('v-stock-input').value = '0';
+  document.getElementById('v-price-input').value = '0';
+}
+
+function confirmVariant() {
+  const name  = document.getElementById('v-name-input').value.trim();
+  const color = document.getElementById('v-color-input').value;
+  const stock = document.getElementById('v-stock-input').value || 0;
+  const price = document.getElementById('v-price-input').value || 0;
+  const attr  = document.getElementById('v-attr-select').value;
+  if (!name) { document.getElementById('v-name-input').focus(); return; }
+
+  const sku_suffix = name.toUpperCase().replace(/\s+/g, '-').slice(0,6);
+  variants.push({ attr, name, color, stock, price, sku_suffix });
+  renderVariants();
+  closeVariantModal();
+}
+
+function renderVariants() {
+  const tbody = document.getElementById('variantTbody');
+  tbody.innerHTML = variants.map((v, i) => `
+    <tr>
+      <td><input type="color" value="${v.color}" style="width:24px;height:24px;border:none;background:none;cursor:pointer;padding:0;border-radius:50%;outline:none" title="${v.attr}" onchange="variants[${i}].color=this.value"/></td>
+      <td>
+        <input class="v-input" type="text" value="${v.name}" onchange="variants[${i}].name=this.value"/>
+      </td>
+      <td>
+        <input class="v-input" type="text" value="${v.sku_suffix}" style="width:80px" onchange="variants[${i}].sku_suffix=this.value"/>
+      </td>
+      <td>
+        <input class="v-input" type="number" value="${v.stock}" style="width:70px" min="0" onchange="variants[${i}].stock=this.value"/>
+      </td>
+      <td>
+        <div class="input-addon" style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
+          <span style="background:#f5f6fa;padding:0 6px;font-size:12px;font-family:'Nunito Sans',sans-serif;color:var(--text-secondary);display:flex;align-items:center;border-right:1px solid var(--border)">$</span>
+          <input class="v-input" type="number" step="0.01" value="${v.price}" style="border:none;width:70px" onchange="variants[${i}].price=this.value"/>
+        </div>
+      </td>
+      <td>
+        <div class="v-del-btn" onclick="removeVariant(${i})">
+          <svg viewBox="0 0 12 12" fill="none" stroke-width="1.4"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function removeVariant(i) {
+  variants.splice(i, 1);
+  renderVariants();
+}
+
+/* ═══════════════════════════════════════════
+   EXPIRY & CUSTOM FIELDS
+═══════════════════════════════════════════ */
+function toggleExpiry(sw) {
+  document.getElementById('expiryFields').style.display = sw.checked ? 'block' : 'none';
+}
+
+function renderCustomFields() {
+  var list = document.getElementById('customFieldsList');
+  var empty = document.getElementById('customFieldsEmpty');
+
+  if (!list || !empty) {
+    return;
+  }
+
+  list.innerHTML = '';
+  var activeFields = normalizeObjectArray(customFields);
+
+  if (!activeFields.length) {
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  customFields = activeFields.map(function (field) {
+    return {
+      key: String(field.key || '').trim(),
+      val: String((field.val != null ? field.val : field.value) || '').trim(),
+    };
+  });
+
+  customFields.forEach(function (field, idx) {
+    var row = document.createElement('div');
+    row.className = 'field-row col-2';
+    row.style.marginBottom = '10px';
+    row.innerHTML = `
+      <div class="field">
+        <label class="field-label" style="font-size:12px">Attribute Name</label>
+        <input class="input" value="${escapeHtmlAttr(field.key)}" placeholder="e.g. Material" onchange="customFields[${idx}].key=this.value"/>
+      </div>
+      <div class="field" style="position:relative">
+        <label class="field-label" style="font-size:12px">Value</label>
+        <div style="display:flex;gap:6px">
+          <input class="input" value="${escapeHtmlAttr(field.val)}" placeholder="e.g. Aluminum" onchange="customFields[${idx}].val=this.value" style="flex:1"/>
+          <div class="v-del-btn" onclick="removeCustomField(${idx})" style="flex-shrink:0;margin-top:0">
+            <svg viewBox="0 0 12 12" fill="none" stroke-width="1.4"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
+          </div>
+        </div>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+function addCustomField() {
+  customFields.push({ key: '', val: '' });
+  renderCustomFields();
+}
+
+function removeCustomField(idx) {
+  customFields.splice(idx, 1);
+  renderCustomFields();
+}
+
+/* ═══════════════════════════════════════════
+   SEO PREVIEW
+═══════════════════════════════════════════ */
+function updateSeoPreview() {
+  var titleInput = document.getElementById('f-seo-title');
+  var descInput = document.getElementById('f-seo-desc');
+  var slugInput = document.getElementById('f-slug');
+  var titlePreview = document.getElementById('seo-prev-title');
+  var descPreview = document.getElementById('seo-prev-desc');
+  var slugPreview = document.getElementById('seo-slug-span');
+  var titleCount = document.getElementById('seo-title-count');
+  var descCount = document.getElementById('seo-desc-count');
+
+  if (
+    !titleInput ||
+    !descInput ||
+    !slugInput ||
+    !titlePreview ||
+    !descPreview ||
+    !slugPreview ||
+    !titleCount ||
+    !descCount
+  ) {
+    return;
+  }
+
+  const title = titleInput.value;
+  const desc  = descInput.value;
+  const slug  = slugInput.value;
+
+  titlePreview.textContent = title || 'Your Product Title';
+  descPreview.textContent  = desc  || 'Your meta description will appear here. Keep it under 160 characters for best results.';
+  slugPreview.textContent  = slug  || 'your-product-slug';
+
+  titleCount.textContent = title.length + ' / 70 chars';
+  descCount.textContent  = desc.length  + ' / 160 chars';
+}
+
+/* Auto-fill SEO from product name */
+document.getElementById('f-name').addEventListener('input', function() {
+  const name = this.value;
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const slugField = document.getElementById('f-slug');
+  if (slugField) {
+    slugField.value = slug;
+  }
+
+  const seoTitle = document.getElementById('f-seo-title');
+  if (seoTitle && !seoTitle.dataset.edited) seoTitle.value = name;
+  updateSeoPreview();
+});
+var seoTitleField = document.getElementById('f-seo-title');
+if (seoTitleField) {
+  seoTitleField.addEventListener('input', function() {
+    this.dataset.edited = 'true';
+    updateSeoPreview();
+  });
+}
+
+var seoSlugField = document.getElementById('f-slug');
+if (seoSlugField) {
+  seoSlugField.addEventListener('input', function() {
+    this.dataset.edited = 'true';
+    updateSeoPreview();
+  });
+}
+
+/* ═══════════════════════════════════════════
+   RELATED PRODUCTS
+═══════════════════════════════════════════ */
+function searchRelated(input) {
+  const q = input.value.toLowerCase();
+  const box = document.getElementById('relatedSuggestions');
+  if (!q) { box.style.display = 'none'; return; }
+  const matches = SAMPLE_PRODUCTS.filter(p => p.toLowerCase().includes(q) && !relatedProducts.includes(p));
+  if (!matches.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = matches.map(p => `
+    <div onclick="addRelated('${p}')" style="padding:9px 14px;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--text-primary);transition:background .13s"
+      onmouseover="this.style.background='#f5f6fa'" onmouseout="this.style.background=''">${p}</div>
+  `).join('');
+}
+
+function addRelated(name) {
+  if (relatedProducts.includes(name)) return;
+  relatedProducts.push(name);
+  document.getElementById('relatedSuggestions').style.display = 'none';
+  document.getElementById('relatedInput').value = '';
+  const field = document.getElementById('relatedField');
+  const input = document.getElementById('relatedInput');
+  const chip = document.createElement('div');
+  chip.className = 'tag-chip';
+  chip.id = 'rp-' + name.replace(/\s/g,'-');
+  chip.innerHTML = `${name}<span class="tag-chip-del" onclick="removeRelated('${name}')"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg></span>`;
+  field.insertBefore(chip, input);
+}
+
+function removeRelated(name) {
+  relatedProducts = relatedProducts.filter(p => p !== name);
+  const chip = document.getElementById('rp-' + name.replace(/\s/g,'-'));
+  if (chip) chip.remove();
+}
+
+/* ═══════════════════════════════════════════
+   REVIEW SUMMARY
+═══════════════════════════════════════════ */
+function buildSummary() {
+  const name = document.getElementById('f-name').value || '—';
+  const cat  = document.getElementById('f-category').value || '—';
+  const brand= document.getElementById('f-brand').value || '—';
+  const price= document.getElementById('f-price').value;
+  const qty  = document.getElementById('f-qty').value;
+  const items = [
+    ['Product Name', name],
+    ['Category',     cat],
+    ['Brand',        brand],
+    ['Selling Price','$' + (price||'—')],
+    ['Opening Stock', qty + ' units'],
+    ['Images',       images.length + ' uploaded'],
+    ['Variants',     variants.length + ' option(s)'],
+    ['Status',       formatProductStateLabel(selectedStatus)],
+    ['Tags',         tags.length ? tags.join(', ') : '—'],
+  ];
+  document.getElementById('summaryBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px">
+      ${items.map(([k,v]) => `
+        <div>
+          <div style="font-family:'Nunito Sans',sans-serif;font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">${k}</div>
+          <div style="font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:var(--text-primary)">${v}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PUBLISH
+═══════════════════════════════════════════ */
+async function publishProduct() {
+  if (!isEditMode()) {
+    var nextSku = await refreshAutoSku(true);
+    if (nextSku) {
+      applySkuFieldValue(nextSku);
+    }
+  }
+
+  var payload = buildProductPayload();
+  if (
+    !payload.name ||
+    !payload.category ||
+    !payload.brand ||
+    typeof payload.price !== 'number' ||
+    Number.isNaN(payload.price) ||
+    payload.price < 0
+  ) {
+    showToastMsg('Please complete the required fields before publishing.', true);
+    return;
+  }
+
+  try {
+    var persistedProduct = isEditMode()
+      ? await window.RetailerApi.updateProduct(editingProductId, payload)
+      : await window.RetailerApi.createProduct(payload);
+
+    rememberSavedProduct(persistedProduct);
+
+    if (isEditMode()) {
+      populateProductForm(persistedProduct);
+      showToastMsg('Product updated successfully! Redirecting…');
+    } else {
+      applySkuFieldValue(resolveNextSku());
+      showToastMsg('Product added successfully! Redirecting…');
+    }
+
+    setTimeout(function () {
+      window.location.href = 'Product_List.html';
+    }, 1500);
+  } catch (error) {
+    console.error('Error saving product:', error);
+    showToastMsg(error.message || 'Error saving product', true);
+  }
+}
+function saveDraft() {
+  showToastMsg('Product saved as draft.');
+}
+
+function showToastMsg(msg, isError) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.querySelector('.toast-icon').innerHTML = isError
+    ? `<svg viewBox="0 0 20 20" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="10" cy="10" r="8.5"/><line x1="7" y1="7" x2="13" y2="13"/><line x1="13" y1="7" x2="7" y2="13"/></svg>`
+    : `<svg viewBox="0 0 20 20" fill="none" stroke="#22c55e" stroke-width="2"><circle cx="10" cy="10" r="8.5"/><polyline points="6.5,10 9,12.5 13.5,7"/></svg>`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════════
+   RICH TEXT
+═══════════════════════════════════════════ */
+function fmtText(cmd) {
+  document.getElementById('f-desc').focus();
+  document.execCommand(cmd, false, null);
+}
+
+function updateDescPlaceholder(el) {
+  el.dataset.empty = el.innerHTML.trim() === '' ? 'true' : 'false';
+}
+
+/* Placeholder via CSS */
+const descStyle = document.createElement('style');
+descStyle.textContent = `
+  #f-desc:empty::before{
+    content:attr(data-placeholder);
+    color:#a6aaaf;pointer-events:none;display:block;
+  }
+`;
+document.head.appendChild(descStyle);
+
+/* ═══════════════════════════════════════════
+   SIDEBAR ACTIVE
+═══════════════════════════════════════════ */
+function setSbActive(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+(async function () {
+  await initializeProductEditor();
+})();
+</script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      const topAvatar = document.getElementById('topbarAvatar');
+      if (topAvatar) topAvatar.textContent = initials;
+      const popAvatar = document.getElementById('profilePopoverAvatar');
+      if (popAvatar) popAvatar.textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
+</body>
+</html>
+

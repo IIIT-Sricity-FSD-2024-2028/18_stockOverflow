@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow - My Orders</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --sidebar-bg: #ffffff; --card-bg: #ffffff;
+      --border: #e8e9f0; --text-primary: #000000; --text-muted: #6b7280;
+      --accent: #2563eb; --accent-light: #eef2ff;
+      --green: #10b981; --green-light: #d1fae5;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
+    .sidebar { width: 262px; min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; }
+    .sidebar-logo { padding: 16px 24px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; min-height: 66px; }
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; color: #808080; font-size: 13.5px; cursor: pointer; border-left: 3px solid transparent; }
+    .nav-item:hover { background: #f0f0f0; color: #000; }
+    .nav-item.active { background: #e0ebff; color: #2563eb; border-left-color: var(--accent); }
+    .nav-group { font-size: 10px; font-weight: 600; letter-spacing: 1px; color: #999; padding: 16px 24px 6px; text-transform: uppercase; }
+    .main-wrap { margin-left: 262px; flex: 1; display: flex; flex-direction: column; }
+    .header { height: 48px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 10; }
+    .page-title-h { font-size: 18px; font-weight: 700; }
+    .page-sub { font-size: 12px; color: var(--text-muted); }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .search-bar { display: flex; align-items: center; gap: 6px; border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; background: var(--bg); font-size: 13px; color: var(--text-muted); width: 220px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .page-content { padding: 28px; flex: 1; }
+    .orders-header { margin-bottom: 24px; }
+    .orders-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .orders-sub { font-size: 13.5px; color: var(--text-muted); }
+    .orders-search-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+    .orders-search { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 16px; background: var(--card-bg); flex: 1; max-width: 500px; }
+    .orders-search input { border: none; background: none; outline: none; font-size: 14px; width: 100%; }
+    .order-list { display: flex; flex-direction: column; gap: 16px; }
+    .order-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; display: flex; align-items: center; gap: 20px; transition: box-shadow .2s; }
+    .order-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+    .order-img { width: 80px; height: 80px; border-radius: 10px; background: linear-gradient(135deg, #f0f0ff, #e0e0ff); display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; overflow: hidden; }
+    .order-img img { width: 100%; height: 100%; object-fit: cover; }
+    .order-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+    .order-meta { flex: 1; }
+    .order-delivery { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--green); font-weight: 600; margin-bottom: 6px; }
+    .order-delivery.pending { color: #1d4ed8; }
+    .order-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .order-price { font-size: 14px; color: var(--accent); font-weight: 700; }
+    .order-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; align-items: flex-end; }
+    .order-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; white-space: nowrap; transition: opacity .15s; }
+    .btn-review { background: var(--accent-light); color: var(--accent); }
+    .btn-review:hover { opacity: .85; }
+    .btn-return { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-return:hover { border-color: var(--accent); color: var(--accent); }
+    .order-btn[disabled] { opacity: .55; cursor: not-allowed; }
+    .order-hint { font-size: 11px; color: var(--text-muted); text-align: right; max-width: 180px; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
+    <nav style="flex:1;padding:12px 0;">
+      <div class="nav-group">Main Menu</div>
+      <div class="nav-item">Dashboard</div>
+      <div class="nav-item">Products</div>
+      <div class="nav-item active">My Orders</div>
+      <div class="nav-item">Returns</div>
+      <div class="nav-item">Restock Alerts</div>
+    </nav>
+    <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
+      <button type="button" class="sidebar-logout-btn" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="header">
+      <div>
+        <div class="page-title-h">Orders</div>
+        <div class="page-sub">products you ordered</div>
+      </div>
+      <div class="header-right">
+        <div class="search-bar">Search</div>
+        <div class="avatar">AK</div>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="orders-header">
+        <div class="orders-title">My Orders</div>
+        <div class="orders-sub">Track, review and return your purchased items</div>
+        <div class="orders-search-row">
+          <div class="orders-search">
+            <span>Search</span>
+            <input type="text" placeholder="Search your orders..." />
+          </div>
+        </div>
+      </div>
+
+      <div class="order-list" id="orderList"></div>
+    </div>
+  </div>
+
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script src="app-flow.js"></script>
+  <script>
+    let ordersAutoRefreshTimer = null;
+
+    function getParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    async function markPendingReserveNotified(requestId) {
+      if (!requestId) return;
+      await window.ImsApi.updateReservationRequest(requestId, {
+        confirmationShownAt: new Date().toISOString()
+      });
+    }
+
+    async function findPendingReserveRequest(requestId) {
+      if (!requestId) return null;
+      try {
+        return await window.ImsApi.getReservationRequest(requestId);
+      } catch (_error) {
+        return null;
+      }
+    }
+
+    async function buildPendingOrders() {
+      let pending = [];
+      try {
+        pending = await window.ImsApi.getReservationRequests('pending');
+      } catch (_error) {
+        pending = [];
+      }
+
+      const products = await window.ImsApi.getProducts();
+
+      return pending.map(function(entry) {
+        const product = products.find(function(item) { return item && item.sku === entry.sku; }) || null;
+        const qty = Math.max(1, Number(entry.qty) || 1);
+        const unitPrice = Number(product && product.priceUSD) || 0;
+        return {
+          isPending: true,
+          requestId: entry.requestId,
+          sku: entry.sku || '',
+          name: entry.productName || (product && product.name) || 'Reserved Product',
+          productImg: (product && product.productImg) || '',
+          emoji: (product && product.emoji) || '⏳',
+          totalQty: qty,
+          totalSpent: unitPrice * qty,
+          lastOrderedAt: entry.createdAt || new Date().toISOString(),
+          store: entry.store || 'Store'
+        };
+      });
+    }
+
+    async function renderOrders() {
+      const list = document.getElementById('orderList');
+      let purchasedProducts = [];
+      try {
+        purchasedProducts = await window.ImsApi.getPurchasedProducts();
+      } catch (_error) {
+        purchasedProducts = [];
+      }
+      const pendingOrders = await buildPendingOrders();
+
+      // Filter out products that were purchased more than 30 days ago
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const recentPurchasedProducts = purchasedProducts.filter(function(order) {
+        const orderDate = new Date(order.lastOrderedAt);
+        return orderDate >= thirtyDaysAgo;
+      });
+
+      const orders = pendingOrders.concat(recentPurchasedProducts.map(function(order) {
+        return Object.assign({ isPending: false }, order);
+      }));
+
+      if (!orders.length) {
+        list.innerHTML = '<p style="padding:20px;color:#999;">No orders yet. Place an order from POS to see it here.</p>';
+        return;
+      }
+
+      list.innerHTML = orders.map(function(order) {
+        const deliveryDate = new Date(order.lastOrderedAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+        const statusText = order.isPending
+          ? ('Pending confirmation · ' + (order.store || 'Store'))
+          : ('Delivered on ' + deliveryDate);
+        const actionOrderId = order.orderId || order.lastOrderId || '';
+        return `
+          <div class="order-card" data-order-name="${(order.name || '').toLowerCase()} ${(order.sku || '').toLowerCase()}">
+            <div class="order-img">
+              <img src="${order.productImg || ''}" alt="${order.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+              <div class="order-fallback" style="display:flex;">${order.emoji || '📦'}</div>
+            </div>
+            <div class="order-meta">
+              <div class="order-delivery ${order.isPending ? 'pending' : ''}">${statusText}</div>
+              <div class="order-name">${order.name}</div>
+              <div class="order-price">$${Number(order.totalSpent || 0).toLocaleString()} · Qty ${order.totalQty} · ${order.sku}</div>
+            </div>
+            <div class="order-actions">
+              <button class="order-btn btn-review" data-sku="${order.sku}" data-order-id="${actionOrderId}" ${order.isPending ? 'disabled' : ''}>Write a Review</button>
+              <button class="order-btn btn-return" data-sku="${order.sku}" data-order-id="${actionOrderId}" ${order.isPending ? 'disabled' : ''}>Return</button>
+              ${order.isPending ? '<div class="order-hint">Actions unlock after order confirmation.</div>' : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function wireOrderSearch() {
+      const input = document.querySelector('.orders-search input');
+      if (!input) return;
+      input.addEventListener('input', function() {
+        const query = input.value.trim().toLowerCase();
+        document.querySelectorAll('.order-card').forEach(function(card) {
+          const hay = card.getAttribute('data-order-name') || '';
+          card.style.display = !query || hay.includes(query) ? '' : 'none';
+        });
+      });
+    }
+
+    function startOrdersAutoRefresh() {
+      if (ordersAutoRefreshTimer) {
+        clearInterval(ordersAutoRefreshTimer);
+      }
+
+      ordersAutoRefreshTimer = setInterval(async function() {
+        const input = document.querySelector('.orders-search input');
+        const currentQuery = input ? input.value : '';
+
+        const watchedRequestId = getParam('requestId') || '';
+        const reserveFlow = getParam('fromReserve') === '1';
+        if (reserveFlow && watchedRequestId) {
+          const request = await findPendingReserveRequest(watchedRequestId);
+          if (request && request.status === 'completed' && !request.confirmationShownAt) {
+            await markPendingReserveNotified(watchedRequestId);
+            const confirmationQuery = new URLSearchParams({
+              orderId: request.orderId || ''
+            });
+            window.location.href = 'sale-confirmation.html?' + confirmationQuery.toString();
+            return;
+          }
+        }
+
+        await renderOrders();
+        if (input) {
+          input.value = currentQuery;
+          input.dispatchEvent(new Event('input'));
+        }
+      }, 2000);
+
+      window.addEventListener('beforeunload', function() {
+        if (ordersAutoRefreshTimer) {
+          clearInterval(ordersAutoRefreshTimer);
+          ordersAutoRefreshTimer = null;
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      await renderOrders();
+      wireOrderSearch();
+      startOrdersAutoRefresh();
+    });
+  </script>
+</body>
+</html>

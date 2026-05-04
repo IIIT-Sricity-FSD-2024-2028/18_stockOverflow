@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockOverflow – Product List</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<style>
+
+:root {
+  --bg: #f5f6fa;
+  --card: #ffffff;
+  --sidebar: #1a1d2e;
+  --primary: #5b67ca;
+  --primary-light: #eef0fd;
+  --success: #22c55e;
+  --success-light: #dcfce7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  --text-primary: #1a1d2e;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 16px rgba(0,0,0,.07);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);display:flex;min-height:100vh;font-size:14px}
+/* SIDEBAR — Figma Exact */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;border-right:1px solid var(--border);
+  font-family:'Nunito Sans',sans-serif;
+}
+.sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sidebar-logo img { height: 30px; width: auto; display: block; }
+.sb-logo-icon{width:34px;height:34px;background:#4e7fd9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon svg{width:18px;height:18px}
+.sb-logo-text{font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;color:#092c4c;letter-spacing:-.2px}
+.sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+.sb-group{display:flex;flex-direction:column;gap:6px}
+.sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+.sb-divider{height:1px;background:var(--border);margin:4px 0}
+.sb-menus{display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+.sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+.sb-item.active{background:#fff6ee;color:#4e7fd9}
+.sb-item.active .sb-icon svg{stroke:#4e7fd9}
+.sb-item.active .sb-item-label{color:#4e7fd9}
+.sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+.sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-end-icon svg{width:10px;height:10px}
+.sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-dot-badge svg{width:10px;height:10px}
+/* MAIN */
+.main{margin-left:252px;flex:1;min-width:0}
+/* TOPBAR */
+.topbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:58px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.breadcrumb{font-size:12.5px;color:var(--text-secondary)}
+.breadcrumb span{color:var(--text-primary);font-weight:600}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;width:210px}
+.search-bar svg{width:13px;height:13px;color:var(--text-muted);flex-shrink:0}
+.search-bar input{border:none;background:transparent;outline:none;font-size:13px;color:var(--text-primary);font-family:inherit;width:100%}
+.search-bar input::placeholder{color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-icon-btn{width:35px;height:35px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .15s}
+.topbar-icon-btn:hover{background:var(--bg)}
+.topbar-icon-btn svg{width:15px;height:15px;color:var(--text-secondary)}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--danger);border-radius:50%;border:2px solid var(--card)}
+.topbar-avatar{width:33px;height:33px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.date-badge{display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);cursor:pointer;background:var(--card);transition:background .15s;white-space:nowrap}
+.date-badge:hover{background:var(--bg)}
+.date-badge svg{width:13px;height:13px}
+/* CONTENT */
+.content{padding:22px 26px 40px;max-width:1180px}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.page-title{font-size:21px;font-weight:700;letter-spacing:-.4px}
+.page-subtitle{font-size:12.5px;color:var(--text-secondary);margin-top:3px}
+/* NOTIFICATION */
+.notification-bar{display:flex;align-items:center;gap:10px;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:18px;font-size:12.5px;color:#92400e}
+.notification-bar svg{width:13px;height:13px;flex-shrink:0;color:var(--warning)}
+.close-btn{margin-left:auto;cursor:pointer;opacity:.5;transition:opacity .15s}
+.close-btn:hover{opacity:1}
+/* SECTION LABEL */
+.section-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow-sm);transition:box-shadow .2s,transform .2s;cursor:pointer}
+.metric-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.metric-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.metric-icon svg{width:18px;height:18px}
+.metric-icon.blue{background:var(--primary-light)}.metric-icon.blue svg{color:var(--primary)}
+.metric-icon.red{background:var(--danger-light)}.metric-icon.red svg{color:var(--danger)}
+.metric-icon.green{background:var(--success-light)}.metric-icon.green svg{color:var(--success)}
+.metric-icon.orange{background:var(--warning-light)}.metric-icon.orange svg{color:var(--warning)}
+.metric-info{flex:1;min-width:0}
+.metric-label{font-size:12px;color:var(--text-secondary);font-weight:500;margin-bottom:5px}
+.metric-value-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.metric-value{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.badge{display:inline-flex;align-items:center;gap:2px;padding:2px 7px;border-radius:20px;font-size:10.5px;font-weight:600}
+.badge.up{background:var(--success-light);color:#15803d}
+.badge.down{background:var(--danger-light);color:#b91c1c}
+.badge.neutral{background:var(--border-light);color:var(--text-secondary)}
+.badge svg{width:9px;height:9px}
+/* FIN CARDS */
+.fin-cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.fin-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);transition:box-shadow .2s,transform .2s;cursor:pointer}
+.fin-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.fin-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.fin-card-val{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.fin-card-label{font-size:12px;color:var(--text-secondary);margin-top:2px;font-weight:500}
+.fin-card-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fin-card-icon svg{width:15px;height:15px}
+.fin-card-divider{border:none;border-top:1px solid var(--border-light);margin:0 0 9px}
+.fin-card-footer{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--text-secondary)}
+.fin-card-footer a{color:var(--primary);font-weight:600;cursor:pointer;text-decoration:none}
+/* LAYOUT */
+.two-col{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:14px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.two-col-eq{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.three-col-last{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
+.panel-header{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border-light);gap:9px}
+.panel-icon{width:28px;height:28px;border-radius:7px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.panel-icon svg{width:13px;height:13px;color:var(--primary)}
+.panel-title{font-size:14px;font-weight:700;flex:1;letter-spacing:-.2px}
+.panel-link{font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;white-space:nowrap}
+.panel-link:hover{text-decoration:underline}
+.filter-tabs{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.filter-tab{padding:4px 9px;font-size:11.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-right:1px solid var(--border)}
+.filter-tab:last-child{border-right:none}
+.filter-tab:hover{background:var(--bg)}
+.filter-tab.active{background:var(--primary);color:#fff}
+.panel-select{display:flex;align-items:center;gap:5px;padding:5px 9px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11.5px;color:var(--text-secondary);cursor:pointer;background:var(--card);transition:background .15s;white-space:nowrap}
+.panel-select:hover{background:var(--bg)}
+.panel-select svg{width:11px;height:11px}
+/* CHART */
+.chart-area{padding:14px 18px 18px}
+.chart-legend{display:flex;gap:18px;margin-bottom:14px}
+.legend-item{display:flex;align-items:center;gap:8px}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-val{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.legend-lbl{font-size:11px;color:var(--text-secondary)}
+/* PRODUCT LISTS */
+.product-item{display:flex;align-items:center;gap:11px;padding:11px 18px;border-bottom:1px solid var(--border-light);transition:background .15s;cursor:pointer}
+.product-item:last-child{border-bottom:none}
+.product-item:hover{background:var(--bg)}
+.product-avatar{width:42px;height:42px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--border)}
+.product-info{flex:1;min-width:0}
+.product-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-meta{font-size:11.5px;color:var(--text-secondary);margin-top:2px;display:flex;align-items:center;gap:5px}
+.meta-dot{width:3px;height:3px;background:var(--text-muted);border-radius:50%}
+.stock-info{text-align:right;flex-shrink:0}
+.stock-status{font-size:11px;font-weight:600}
+.stock-status.low{color:var(--danger)}
+.stock-status.critical{color:var(--warning)}
+.stock-qty{font-size:13px;font-weight:700;margin-top:2px}
+/* TRANS TABLE */
+.trans-tabs{display:flex;border-bottom:1px solid var(--border-light);padding:0 18px;overflow-x:auto}
+.trans-tab{padding:9px 12px;font-size:12.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;margin-bottom:-1px}
+.trans-tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.trans-tab:hover:not(.active){color:var(--text-primary)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;padding:9px 15px;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;background:var(--border-light);border-bottom:1px solid var(--border)}
+td{padding:12px 15px;border-bottom:1px solid var(--border-light);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(91,103,202,.03)}
+.cust-cell{display:flex;align-items:center;gap:9px}
+.avatar-sm{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:#fff;flex-shrink:0}
+.cust-name{font-weight:600;font-size:12.5px}
+.cust-id{font-size:11px;color:var(--text-muted)}
+.status-pill{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.status-pill.completed{background:var(--success-light);color:#15803d}
+.status-pill.pending{background:var(--warning-light);color:#92400e}
+.status-pill.cancelled{background:var(--danger-light);color:#b91c1c}
+.status-pill.processing{background:var(--info-light);color:#1d4ed8}
+/* RECENT SALES */
+.sale-item{display:flex;align-items:center;gap:11px;padding:11px 18px;border-bottom:1px solid var(--border-light);transition:background .15s;cursor:pointer}
+.sale-item:last-child{border-bottom:none}
+.sale-item:hover{background:var(--bg)}
+.sale-info{flex:1;min-width:0}
+.sale-name{font-size:13px;font-weight:600}
+.sale-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px;display:flex;align-items:center;gap:5px}
+.sale-right{text-align:right;flex-shrink:0}
+.sale-date{font-size:11px;color:var(--text-muted);margin-bottom:4px}
+/* OVERALL */
+.overall-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 18px;border-bottom:1px solid var(--border-light)}
+.overall-stat{text-align:center;padding:12px 6px;background:var(--bg);border-radius:var(--radius-sm);transition:background .15s;cursor:pointer}
+.overall-stat:hover{background:var(--primary-light)}
+.overall-stat-icon{width:34px;height:34px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;margin:0 auto 7px;box-shadow:var(--shadow-sm)}
+.overall-stat-icon svg{width:15px;height:15px;color:var(--primary)}
+.overall-stat-val{font-size:17px;font-weight:700}
+.overall-stat-lbl{font-size:11px;color:var(--text-secondary);margin-top:2px}
+/* DONUT */
+.donut-wrap{position:relative;flex-shrink:0}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.donut-center-val{font-size:16px;font-weight:700}
+.donut-center-lbl{font-size:10px;color:var(--text-muted)}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:11px}
+.donut-legend-item{display:flex;align-items:center;gap:8px}
+.donut-legend-line{width:3px;height:30px;border-radius:3px;flex-shrink:0}
+.donut-legend-val{font-size:15px;font-weight:700}
+.donut-legend-lbl{font-size:11px;color:var(--text-secondary)}
+/* TOP CUST */
+.top-cust-item{display:flex;align-items:center;gap:11px;padding:11px 18px;border-bottom:1px solid var(--border-light);transition:background .15s;cursor:pointer}
+.top-cust-item:last-child{border-bottom:none}
+.top-cust-item:hover{background:var(--bg)}
+.top-cust-info{flex:1;min-width:0}
+.top-cust-name{font-size:13px;font-weight:600}
+.top-cust-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px;display:flex;align-items:center;gap:5px}
+.top-cust-amount{font-size:14px;font-weight:700;flex-shrink:0}
+/* HEATMAP */
+.heatmap-wrap{padding:10px 18px 14px}
+.heatmap-header{display:flex;gap:3px;margin-bottom:3px;padding-left:46px}
+.heatmap-day-lbl{flex:1;text-align:center;font-size:10px;color:var(--text-muted);font-weight:500}
+.heatmap-grid{display:flex;gap:5px}
+.heatmap-time-col{display:flex;flex-direction:column;gap:3px;width:40px;flex-shrink:0}
+.heatmap-time-lbl{height:22px;display:flex;align-items:center;font-size:9.5px;color:var(--text-muted);font-weight:500}
+.heatmap-cells{display:flex;flex:1;gap:3px}
+.heatmap-col{display:flex;flex-direction:column;flex:1;gap:3px}
+.heatmap-cell{height:22px;border-radius:3px;transition:transform .15s;cursor:pointer}
+.heatmap-cell:hover{transform:scale(1.12)}
+.h0{background:#f3f4f6}.h1{background:#dbeafe}.h2{background:#93c5fd}.h3{background:#3b82f6}.h4{background:#1d4ed8}
+.heatmap-tooltip{display:none;position:fixed;background:var(--text-primary);color:#fff;font-size:11px;padding:4px 8px;border-radius:5px;pointer-events:none;z-index:999}
+/* CUST CHART ROW */
+.cust-chart-row{display:flex;align-items:center;gap:14px;padding:14px 18px}
+/* REV EXP */
+.rev-exp-header{padding:14px 18px 0}
+.rev-exp-stats{display:flex;gap:18px;margin-bottom:10px}
+.rev-stat-val{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.rev-stat-lbl{font-size:11px;color:var(--text-secondary);margin-top:1px}
+.rev-stat-badge{display:flex;align-items:center;gap:6px;margin-top:2px}
+/* ANIMATIONS */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.metric-card,.fin-card,.panel{animation:fadeInUp .32s ease both}
+.cards-grid .metric-card:nth-child(1){animation-delay:.04s}
+.cards-grid .metric-card:nth-child(2){animation-delay:.09s}
+.cards-grid .metric-card:nth-child(3){animation-delay:.14s}
+.cards-grid .metric-card:nth-child(4){animation-delay:.19s}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+
+/* ─── PRODUCT LIST PAGE STYLES ─────────────────────── */
+.pl-content{padding:24px 28px 40px;max-width:1200px}
+.pl-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.pl-page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;line-height:27px;color:#212b36}
+.pl-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#646b72;margin-top:2px}
+
+/* Toolbar buttons */
+.pl-toolbar{display:flex;align-items:center;gap:8px}
+.pl-icon-btn{width:34px;height:34px;border:1px solid #e6eaed;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s}
+.pl-icon-btn:hover{background:#f5f6fa}
+.pl-icon-btn img{width:20px;height:20px;object-fit:contain}
+.pl-btn-primary{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#2e6bc5;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap}
+.pl-btn-primary:hover{background:#2460b0}
+.pl-btn-primary svg{width:13px;height:13px}
+.pl-btn-secondary{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#092c4c;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap}
+.pl-btn-secondary:hover{background:#0a3660}
+.pl-btn-secondary svg{width:13px;height:13px}
+
+/* Table card */
+.pl-table-card{background:#fff;border:1px solid #e6eaed;border-radius:5px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden}
+
+/* Table toolbar */
+.pl-table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #e6eaed;gap:16px}
+.pl-search{display:flex;align-items:center;gap:8px;border:1px solid #e6eaed;border-radius:5px;padding:4px 8px;width:200px;background:#fff}
+.pl-search svg{width:14px;height:14px;color:#a6aaaf;flex-shrink:0}
+.pl-search input{border:none;outline:none;font-family:'Nunito Sans',sans-serif;font-size:14px;color:#212b36;background:transparent;width:100%}
+.pl-search input::placeholder{color:#a6aaaf;font-weight:700}
+.pl-filter-group{display:flex;align-items:center;gap:8px}
+.pl-filter-btn{display:flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid #e6eaed;border-radius:5px;background:#fff;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#212b36;transition:background .14s}
+.pl-filter-btn:hover{background:#f5f6fa}
+.pl-filter-btn svg{width:14px;height:14px;color:#646b72}
+
+/* Table proper */
+.pl-table-wrap{overflow-x:auto}
+table.pl-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:14px}
+table.pl-table thead tr{background:#f2f2f2}
+table.pl-table th{padding:6px 20px;text-align:left;font-size:14px;font-weight:600;color:#212b36;white-space:nowrap;border-bottom:1px solid #e6eaed;height:33px}
+table.pl-table th.th-check{width:60px;padding:6px 20px}
+table.pl-table th.th-sku{width:79px}
+table.pl-table th .sort-icon{display:inline-flex;align-items:center;gap:4px}
+table.pl-table th .sort-icon svg{width:10px;height:10px;color:#646b72;vertical-align:middle}
+table.pl-table td{padding:8px 20px;border-bottom:1px solid #e6eaed;vertical-align:middle;height:56px;background:#fff}
+table.pl-table td:first-child{width:60px}
+table.pl-table tbody tr:last-child td{border-bottom:none}
+table.pl-table tbody tr:hover td{background:#fafafa}
+
+/* Checkbox */
+.pl-checkbox{width:16px;height:16px;border:1px solid #e6eaed;border-radius:5px;background:#fff;appearance:none;-webkit-appearance:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pl-checkbox:checked{background:#2e6bc5;border-color:#2e6bc5}
+.pl-checkbox:checked::after{content:"";display:block;width:9px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+
+/* SKU text */
+.sku-text{font-weight:700;color:#646b72;font-size:14px}
+
+/* Product cell */
+.prod-cell{display:flex;align-items:center;gap:8px}
+.prod-img-wrap{width:30px;height:30px;border-radius:5px;background:#f2f2f2;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.prod-img-wrap img{width:20px;height:20px;object-fit:contain}
+.prod-name{font-weight:700;color:#212b36;font-size:14px;white-space:nowrap}
+
+/* Category / Brand / Price / Unit / Qty */
+.cell-text{font-weight:700;color:#646b72;font-size:14px}
+
+/* Creator cell */
+.creator-cell{display:flex;align-items:center;gap:8px}
+.creator-img{width:30px;height:30px;border-radius:5px;object-fit:cover;flex-shrink:0}
+.creator-name{font-weight:700;color:#212b36;font-size:14px;white-space:nowrap}
+
+/* Action buttons */
+.action-cell{display:flex;align-items:center;gap:4px}
+.act-btn{width:30px;height:30px;border:1px solid #e6eaed;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s;flex-shrink:0}
+.act-btn:hover{background:#f5f6fa}
+.act-btn.view{background:#f9fafb}
+.act-btn svg{width:14px;height:14px;color:#646b72}
+.act-btn.del svg{color:#ef4444}
+.act-btn.del:hover{background:#fee2e2;border-color:#fca5a5}
+.act-btn.edit:hover{background:#eef0fd}
+
+/* Table footer / pagination */
+.pl-table-footer{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:#fff;border-top:1px solid #e6eaed}
+.pl-rows-per-page{display:flex;align-items:center;gap:8px;font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#646b72}
+.pl-rpp-select{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #e5e7eb;border-radius:5px;cursor:pointer;background:#fff}
+.pl-rpp-select span{font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;color:#212b36}
+.pl-rpp-select svg{width:12px;height:12px;color:#646b72}
+.pl-pagination{display:flex;align-items:center;gap:15px}
+.pl-page-nav{width:16px;height:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#646b72}
+.pl-page-nav:hover{color:#212b36}
+.pl-page-nav svg{width:14px;height:14px}
+.pl-pages{display:flex;align-items:center;gap:8px}
+.pl-page-btn{width:24px;height:24px;border-radius:20px;border:1px solid #e6eaed;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Archivo',sans-serif;font-size:12px;font-weight:700;color:#646b72;transition:all .14s}
+.pl-page-btn:hover{background:#f5f6fa}
+.pl-page-btn.active{background:#3db0f8;border-color:#3db0f8;color:#fff}
+.pl-page-dots{font-size:12px;color:#646b72;display:flex;align-items:center}
+
+/* Product details modal */
+.pl-modal-overlay{position:fixed;inset:0;background:rgba(9,44,76,.42);display:none;align-items:center;justify-content:center;padding:20px;z-index:1200}
+.pl-modal-overlay.open{display:flex}
+.pl-modal{width:min(960px,100%);max-height:calc(100vh - 40px);overflow:auto;background:#fff;border-radius:18px;box-shadow:0 20px 50px rgba(15,23,42,.22)}
+.pl-modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 24px 18px;border-bottom:1px solid #e6eaed}
+.pl-modal-title{font-family:'Nunito Sans',sans-serif;font-size:20px;font-weight:800;color:#092c4c}
+.pl-modal-subtitle{font-family:'Nunito Sans',sans-serif;font-size:13px;color:#646b72;margin-top:4px}
+.pl-modal-close{width:36px;height:36px;border:1px solid #e6eaed;border-radius:999px;background:#fff;color:#646b72;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s,color .14s}
+.pl-modal-close:hover{background:#f5f6fa;color:#212b36}
+.pl-modal-close svg{width:14px;height:14px}
+.pl-modal-body{padding:22px 24px 26px;display:grid;grid-template-columns:280px 1fr;gap:24px}
+.pl-modal-media{display:flex;flex-direction:column;gap:14px}
+.pl-modal-main-media{aspect-ratio:4/3;border:1px solid #e6eaed;border-radius:16px;background:linear-gradient(180deg,#f8fafc,#eef2ff);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.pl-modal-main-media img{width:100%;height:100%;object-fit:contain;padding:18px}
+.pl-modal-emoji{font-size:72px}
+.pl-modal-gallery{display:flex;flex-wrap:wrap;gap:10px}
+.pl-modal-thumb{width:56px;height:56px;border-radius:12px;border:1px solid #e6eaed;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pl-modal-thumb img{width:100%;height:100%;object-fit:cover}
+.pl-modal-meta-badges{display:flex;flex-wrap:wrap;gap:8px}
+.pl-modal-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eef2ff;color:#2e6bc5;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:800}
+.pl-modal-content{display:flex;flex-direction:column;gap:18px}
+.pl-modal-section{border:1px solid #e6eaed;border-radius:16px;padding:16px 18px;background:#fff}
+.pl-modal-section-title{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#64748b;margin-bottom:12px}
+.pl-modal-copy{font-family:'Nunito Sans',sans-serif;font-size:14px;line-height:1.65;color:#334155}
+.pl-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pl-detail-card{border:1px solid #eef2f7;border-radius:14px;background:#f8fafc;padding:12px 14px}
+.pl-detail-label{font-family:'Nunito Sans',sans-serif;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:5px}
+.pl-detail-value{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#1e293b;line-height:1.45;word-break:break-word}
+.pl-chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.pl-chip{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f1f5f9;color:#334155;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:800}
+.pl-list{display:grid;gap:10px}
+.pl-list-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #eef2f7}
+.pl-list-item:last-child{border-bottom:none;padding-bottom:0}
+.pl-list-name{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:800;color:#1e293b}
+.pl-list-sub{font-family:'Nunito Sans',sans-serif;font-size:12px;color:#64748b;margin-top:3px}
+.pl-empty-note{font-family:'Nunito Sans',sans-serif;font-size:13px;color:#94a3b8}
+@media (max-width: 860px){
+  .pl-modal-body{grid-template-columns:1fr}
+  .pl-detail-grid{grid-template-columns:1fr}
+}
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR — Figma Exact -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <!-- MAIN -->
+    <div class="sb-group">
+      <div class="sb-group-label">Main</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retialer_Dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Retailer Dashboard</span>
+          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- INVENTORY -->
+    <div class="sb-group">
+      <div class="sb-group-label">Inventory</div>
+      <div class="sb-menus">
+        <a class="sb-item active" href="Product_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5L14.5 5v6L8 14.5 1.5 11V5L8 1.5z"/><path d="M1.5 5L8 8.5 14.5 5M8 8.5V14.5"/></svg></span>
+          <span class="sb-item-label">Products</span>
+        </a>
+        <a class="sb-item" href="Add_New_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="8" y1="4.5" x2="8" y2="11.5"/><line x1="4.5" y1="8" x2="11.5" y2="8"/></svg></span>
+          <span class="sb-item-label">Add Product</span>
+        </a>
+        <a class="sb-item" href="Edit_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l3 3-8.5 8.5H1.5V10.5l9-8z"/><line x1="8.5" y1="4.5" x2="11.5" y2="7.5"/></svg></span>
+          <span class="sb-item-label">Edit Product</span>
+        </a>
+        <a class="sb-item" href="Inventory_Overview.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+          <span class="sb-item-label">Inventory Overview</span>
+        </a>
+        <a class="sb-item" href="Low_Stocks.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/><polyline points="10.5,4 13.5,4 13.5,7"/></svg></span>
+          <span class="sb-item-label">Low Stocks</span>
+        </a>
+        <a class="sb-item" href="Multi_warehouse_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/><line x1="1" y1="7" x2="15" y2="7"/></svg></span>
+          <span class="sb-item-label">Multi Store View</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- STOCK -->
+    <div class="sb-group">
+      <div class="sb-group-label">Stock</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="stock_adjustment.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-item-label">Stock Adjustment</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PEOPLES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Peoples</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Customer_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Customers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="billers.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-item-label">Billers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="supplier-list.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-item-label">Suppliers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PURCHASES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Purchases</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Reorder_Recommendations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
+          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+        </a>
+        <a class="sb-item" href="Create_Purchase_Order.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-item-label">Purchase Order</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="Returns_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
+          <span class="sb-item-label">Purchase Return</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SETTINGS -->
+    <div class="sb-group">
+      <div class="sb-group-label">Settings</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="logout()">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">Home / <span>Retailer Dashboard</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+<!-- PRODUCT LIST MAIN -->
+<div class="main">
+  <div class="pl-content">
+
+    <!-- PAGE HEADER -->
+    <div class="pl-page-header">
+      <div>
+        <div class="pl-page-title">Products</div>
+        <div class="pl-breadcrumb">Products</div>
+      </div>
+      <div class="pl-toolbar">
+        <!-- Add Product -->
+        <button class="pl-btn-primary" onclick="window.location.href='Add_New_Product.html'">
+          <svg viewBox="0 0 13 13" fill="none" stroke="#fff" stroke-width="1.5">
+            <circle cx="6.5" cy="6.5" r="5.5"/>
+            <line x1="6.5" y1="4" x2="6.5" y2="9"/>
+            <line x1="4" y1="6.5" x2="9" y2="6.5"/>
+          </svg>
+          Add Product
+        </button>
+      </div>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="pl-table-card">
+
+      <!-- Table Toolbar -->
+      <div class="pl-table-toolbar">
+        <div class="pl-search">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="6" cy="6" r="4.5"/>
+            <line x1="9.5" y1="9.5" x2="13" y2="13"/>
+          </svg>
+          <input type="text" placeholder="Search" id="searchInput" oninput="filterTable()"/>
+        </div>
+        <div class="pl-filter-group">
+          <div class="pl-filter-btn" onclick="toggleFilter('category')">
+            Category
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,5 7,9 11,5"/></svg>
+          </div>
+          <div class="pl-filter-btn" onclick="toggleFilter('brand')">
+            Brand
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3,5 7,9 11,5"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="pl-table-wrap">
+        <table class="pl-table" id="productTable">
+          <thead>
+            <tr>
+              <th class="th-check">
+                <input type="checkbox" class="pl-checkbox" id="selectAll" onchange="toggleAll(this)"/>
+              </th>
+              <th class="th-sku">
+                <span class="sort-icon">
+                  SKU
+                  <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <polyline points="2,3.5 5,1 8,3.5"/>
+                    <polyline points="2,6.5 5,9 8,6.5"/>
+                  </svg>
+                </span>
+              </th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Brand</th>
+              <th>Price</th>
+              <th>Unit</th>
+              <th>Qty</th>
+              <th>Created By</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="productTableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer / Pagination -->
+      <div class="pl-table-footer">
+        <div class="pl-rows-per-page">
+          Row Per Page
+          <div class="pl-rpp-select">
+            <span id="rppVal">10</span>
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,4 6,8 10,4"/></svg>
+          </div>
+          Entries
+        </div>
+        <div class="pl-pagination" id="paginationContainer">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <div class="pl-modal-overlay" id="productDetailsModal" onclick="closeProductDetails()">
+      <div class="pl-modal" role="dialog" aria-modal="true" aria-labelledby="productDetailsTitle" onclick="event.stopPropagation()">
+        <div class="pl-modal-header">
+          <div>
+            <div class="pl-modal-title" id="productDetailsTitle">Product Details</div>
+            <div class="pl-modal-subtitle" id="productDetailsSubtitle">Full product overview</div>
+          </div>
+          <button type="button" class="pl-modal-close" onclick="closeProductDetails()" aria-label="Close product details">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7">
+              <line x1="3" y1="3" x2="11" y2="11"/>
+              <line x1="11" y1="3" x2="3" y2="11"/>
+            </svg>
+          </button>
+        </div>
+        <div class="pl-modal-body" id="productDetailsBody"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal" id="profileModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:24px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="margin:0;font-size:20px;font-weight:600">Retailer Profile</h2>
+      <button onclick="closeProfileModal()" style="background:none;border:none;font-size:24px;cursor:pointer">&times;</button>
+    </div>
+    <div id="profileContent">Loading...</div>
+  </div>
+</div>
+
+<script src="api-config.js"></script>
+<script src="common-products.js"></script>
+<script>
+// AUTH GUARD
+const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+if (!session || session.role !== 'retailer') {
+  window.location.href = '../index.html';
+}
+
+'use strict';
+let products = [];
+let filteredProducts = [];
+let currentPage = 1;
+let rowsPerPage = 10;
+let currentCategory = '';
+let currentBrand = '';
+
+function getProductFilterValues(key) {
+  return Array.from(
+    new Set(
+      products
+        .map(function (product) {
+          return String(product[key] || '').trim();
+        })
+        .filter(Boolean),
+    ),
+  ).sort(function (a, b) {
+    return a.localeCompare(b);
+  });
+}
+
+function updateStats() {
+  const buttons = document.querySelectorAll('.pl-filter-btn');
+  if (buttons[0]) {
+    buttons[0].childNodes[0].textContent = currentCategory
+      ? 'Category: ' + currentCategory
+      : 'Category';
+  }
+  if (buttons[1]) {
+    buttons[1].childNodes[0].textContent = currentBrand
+      ? 'Brand: ' + currentBrand
+      : 'Brand';
+  }
+
+  const rowsLabel = document.getElementById('rppVal');
+  if (rowsLabel) {
+    rowsLabel.textContent = rowsPerPage;
+  }
+}
+
+function cycleRowsPerPage() {
+  const options = [10, 20, 50];
+  const currentIndex = options.indexOf(rowsPerPage);
+  rowsPerPage = options[(currentIndex + 1 + options.length) % options.length];
+
+  if (typeof applyProductFilters === 'function') {
+    applyProductFilters(false);
+  }
+
+  updateStats();
+}
+
+function toggleAll(cb) {
+  document.querySelectorAll('.row-check').forEach(function (checkbox) {
+    checkbox.checked = cb.checked;
+  });
+}
+
+function setSbActive(el) {
+  document.querySelectorAll('.sb-item').forEach(function (item) {
+    item.classList.remove('active');
+  });
+  el.classList.add('active');
+}
+
+var rowsPerPageControl = document.querySelector('.pl-rpp-select');
+if (rowsPerPageControl) {
+  rowsPerPageControl.addEventListener('click', cycleRowsPerPage);
+}
+
+// PROFILE FUNCTIONS
+function loadProfile() {
+  if (!session) return;
+  fetch(`http://localhost:3001/api/users/${session.id}`)
+    .then(response => response.json())
+    .then(user => {
+      // Set avatar
+      const nameParts = user.name.split(' ');
+      const initials = (nameParts[0][0] + (nameParts[1] ? nameParts[1][0] : '')).toUpperCase();
+      document.getElementById('avatar').textContent = initials;
+    })
+    .catch(error => console.error('Error loading profile:', error));
+}
+
+function showProfileModal() {
+  document.getElementById('profileModal').style.display = 'flex';
+  if (!session) return;
+  fetch(`http://localhost:3001/api/users/${session.id}`)
+    .then(response => response.json())
+    .then(user => {
+      const profile = user.profile || {};
+      document.getElementById('profileContent').innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div style="width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center">${document.getElementById('avatar').textContent}</div>
+            <div>
+              <div style="font-size:18px;font-weight:600">${user.name}</div>
+              <div style="color:#666">${user.email}</div>
+              <div style="color:#666">${user.role} • ${user.store}</div>
+            </div>
+          </div>
+          ${profile.businessName ? `
+          <div>
+            <h3 style="margin:0 0 8px 0;font-size:16px;font-weight:600">Business Information</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">
+              <div><strong>Name:</strong> ${profile.businessName}</div>
+              <div><strong>Email:</strong> ${profile.businessEmail || 'N/A'}</div>
+              <div><strong>Phone:</strong> ${profile.businessPhone || 'N/A'}</div>
+              <div><strong>Tax ID:</strong> ${profile.taxId || 'N/A'}</div>
+              <div style="grid-column:span 2"><strong>Address:</strong> ${profile.address || 'N/A'}</div>
+              <div style="grid-column:span 2"><strong>Website:</strong> ${profile.website || 'N/A'}</div>
+            </div>
+          </div>
+          ` : '<div>No business profile set up yet.</div>'}
+          <button onclick="logout()" style="margin-top:16px;padding:8px 16px;background:#ef4444;color:#fff;border:none;border-radius:6px;cursor:pointer;">Logout</button>
+        </div>
+      `;
+    })
+    .catch(error => {
+      document.getElementById('profileContent').innerHTML = 'Error loading profile.';
+      console.error('Error loading profile:', error);
+    });
+}
+
+function closeProfileModal() {
+  document.getElementById('profileModal').style.display = 'none';
+}
+
+function logout() {
+  localStorage.removeItem('so_session');
+  window.location.href = '../index.html';
+}
+
+// Load profile on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', loadProfile);
+</script>
+<script>
+function escapeProductHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatDetailValue(value, formatter) {
+  if (value == null || value === '') {
+    return '—';
+  }
+  return formatter ? formatter(value) : escapeProductHtml(value);
+}
+
+function formatMoneyValue(value) {
+  var num = Number(value);
+  return Number.isNaN(num) ? '—' : '$' + num.toFixed(2);
+}
+
+function formatNumberValue(value, suffix) {
+  var num = Number(value);
+  if (Number.isNaN(num)) {
+    return '—';
+  }
+  return suffix ? num + ' ' + suffix : String(num);
+}
+
+function formatDateValue(value) {
+  if (!value) {
+    return '—';
+  }
+
+  var date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return escapeProductHtml(value);
+  }
+
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
+function collectProductImages(product) {
+  var seen = {};
+  var items = [];
+
+  function pushImage(src) {
+    var value = String(src || '').trim();
+    if (!value || seen[value]) {
+      return;
+    }
+    seen[value] = true;
+    items.push(value);
+  }
+
+  if (Array.isArray(product.images)) {
+    product.images.forEach(pushImage);
+  }
+
+  pushImage(product.productImg);
+  return items;
+}
+
+function buildChipMarkup(items) {
+  if (!Array.isArray(items) || !items.length) {
+    return '<div class="pl-empty-note">No details added yet.</div>';
+  }
+
+  return '<div class="pl-chip-row">' + items.map(function (item) {
+    return '<span class="pl-chip">' + escapeProductHtml(item) + '</span>';
+  }).join('') + '</div>';
+}
+
+function buildDetailCard(label, value) {
+  return `
+    <div class="pl-detail-card">
+      <div class="pl-detail-label">${escapeProductHtml(label)}</div>
+      <div class="pl-detail-value">${value}</div>
+    </div>
+  `;
+}
+
+function buildVariantMarkup(variants) {
+  if (!Array.isArray(variants) || !variants.length) {
+    return '<div class="pl-empty-note">No variants configured.</div>';
+  }
+
+  return '<div class="pl-list">' + variants.map(function (variant) {
+    var name = variant && variant.name ? variant.name : 'Unnamed option';
+    var attr = variant && variant.attr ? variant.attr : 'Variant';
+    var stock = formatNumberValue(variant && variant.stock, 'units');
+    var price = Number(variant && variant.price);
+    var subtitle = attr + (variant && variant.sku_suffix ? ' • ' + variant.sku_suffix : '');
+    var priceLabel = Number.isNaN(price) || price === 0 ? 'No price adj.' : (price > 0 ? '+' : '') + formatMoneyValue(price);
+
+    return `
+      <div class="pl-list-item">
+        <div>
+          <div class="pl-list-name">${escapeProductHtml(name)}</div>
+          <div class="pl-list-sub">${escapeProductHtml(subtitle)}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="pl-list-name">${escapeProductHtml(stock)}</div>
+          <div class="pl-list-sub">${escapeProductHtml(priceLabel)}</div>
+        </div>
+      </div>
+    `;
+  }).join('') + '</div>';
+}
+
+function buildCustomFieldMarkup(customFields) {
+  if (!Array.isArray(customFields) || !customFields.length) {
+    return '<div class="pl-empty-note">No custom attributes added.</div>';
+  }
+
+  return '<div class="pl-detail-grid">' + customFields.map(function (field) {
+    var key = field && field.key ? field.key : 'Attribute';
+    var val = field && (field.val != null ? field.val : field.value);
+    return buildDetailCard(key, escapeProductHtml(val || '—'));
+  }).join('') + '</div>';
+}
+
+function buildFeedbackMarkup(product) {
+  var feedback = Array.isArray(product && product.feedback)
+    ? product.feedback.slice().sort(function (left, right) {
+        return new Date(right.date || 0).getTime() - new Date(left.date || 0).getTime();
+      })
+    : [];
+  var count = Number(product && product.ratingCount);
+  if (!Number.isFinite(count) || count < 0) {
+    count = feedback.length;
+  }
+  var avg = Number(product && product.ratingAvg);
+  if (!Number.isFinite(avg) || avg < 0) {
+    avg = 0;
+  }
+
+  var summary = '<div class="pl-detail-grid">' +
+    buildDetailCard('Average Rating', escapeProductHtml(count ? avg.toFixed(1) + ' / 5' : 'No ratings')) +
+    buildDetailCard('Review Count', escapeProductHtml(formatNumberValue(count, 'reviews'))) +
+  '</div>';
+
+  if (!feedback.length) {
+    return summary + '<div class="pl-empty-note" style="margin-top:12px;">No customer feedback submitted yet.</div>';
+  }
+
+  return summary + '<div class="pl-list" style="margin-top:12px;">' + feedback.slice(0, 4).map(function (entry) {
+    var customer = entry && entry.customer ? entry.customer : 'Recent Buyer';
+    var rating = Math.max(1, Math.min(5, Number(entry && entry.rating) || 0));
+    var comment = entry && entry.comment ? entry.comment : 'No comment provided.';
+    var subtitle = 'Rating: ' + rating + '/5' + (entry && entry.date ? ' - ' + formatDateValue(entry.date) : '');
+
+    return (
+      '<div class="pl-list-item">' +
+        '<div>' +
+          '<div class="pl-list-name">' + escapeProductHtml(customer) + '</div>' +
+          '<div class="pl-list-sub">' + escapeProductHtml(subtitle) + '</div>' +
+        '</div>' +
+        '<div style="max-width:320px;text-align:right;color:#475569;font-size:12px;line-height:1.45;">' +
+          escapeProductHtml(comment) +
+        '</div>' +
+      '</div>'
+    );
+  }).join('') + '</div>';
+}
+
+function openProductDetails(productId) {
+  var id = decodeURIComponent(productId || '');
+  var product = products.find(function (entry) {
+    return String(entry.id) === id;
+  });
+
+  if (!product) {
+    window.RetailerUi.showToast('Product details are unavailable right now.', 'error');
+    return;
+  }
+
+  var modal = document.getElementById('productDetailsModal');
+  var subtitle = document.getElementById('productDetailsSubtitle');
+  var body = document.getElementById('productDetailsBody');
+  var images = collectProductImages(product);
+  var mainImage = images[0];
+  var tags = Array.isArray(product.tags) ? product.tags : [];
+  var inventoryDetails = [
+    buildDetailCard('SKU', escapeProductHtml(product.sku || '—')),
+    buildDetailCard('Barcode', escapeProductHtml(product.barcode || '—')),
+    buildDetailCard('Unit', escapeProductHtml(product.unit || '—')),
+    buildDetailCard('Stock Qty', escapeProductHtml(formatNumberValue(product.qty, 'units'))),
+    buildDetailCard('Min Stock', escapeProductHtml(formatNumberValue(product.min, 'units'))),
+    buildDetailCard('Max Stock', escapeProductHtml(formatNumberValue(product.max, 'units'))),
+    buildDetailCard('Warehouse', escapeProductHtml(product.warehouse || '—')),
+    buildDetailCard('Bin / Shelf', escapeProductHtml(product.bin || '—')),
+    buildDetailCard('Reorder Point', escapeProductHtml(formatNumberValue(product.reorderPoint, 'units'))),
+    buildDetailCard('Reorder Qty', escapeProductHtml(formatNumberValue(product.reorderQty, 'units'))),
+  ].join('');
+  var pricingDetails = [
+    buildDetailCard('Selling Price', escapeProductHtml(formatMoneyValue(product.price))),
+    buildDetailCard('Cost Price', escapeProductHtml(formatMoneyValue(product.cost))),
+    buildDetailCard('Final Price', escapeProductHtml(formatMoneyValue(product.finalPrice || product.price))),
+    buildDetailCard('Discount', escapeProductHtml(product.discountType && product.discountType !== 'none'
+      ? (product.discountType === 'percent'
+          ? String(product.discountValue || 0) + '%'
+          : formatMoneyValue(product.discountValue || 0))
+      : 'No discount')),
+    buildDetailCard('Tax Rate', escapeProductHtml(product.taxRate != null && product.taxRate !== '' ? String(product.taxRate) + '%' : '—')),
+    buildDetailCard('Tax Type', escapeProductHtml(product.taxType || '—')),
+  ].join('');
+  var shippingDetails = [
+    buildDetailCard('Weight', escapeProductHtml(product.weightKg ? product.weightKg + ' kg' : '—')),
+    buildDetailCard('Dimensions', escapeProductHtml(
+      product.lengthCm || product.widthCm || product.heightCm
+        ? [product.lengthCm || 0, product.widthCm || 0, product.heightCm || 0].join(' × ') + ' cm'
+        : '—'
+    )),
+    buildDetailCard('Shipping Class', escapeProductHtml(product.shippingClass || '—')),
+    buildDetailCard('Expiry Date', escapeProductHtml(product.expiryDate || '—')),
+    buildDetailCard('Batch Number', escapeProductHtml(product.batchNumber || '—')),
+    buildDetailCard('Has Variants', escapeProductHtml(product.hasVariants ? 'Yes' : 'No')),
+  ].join('');
+
+  subtitle.textContent = [
+    product.category || 'Uncategorized',
+    product.brand || 'No brand',
+    product.subCategory || '',
+  ].filter(Boolean).join(' • ');
+
+  body.innerHTML = `
+    <div class="pl-modal-media">
+      <div class="pl-modal-main-media">
+        ${mainImage
+          ? `<img src="${escapeProductHtml(mainImage)}" alt="${escapeProductHtml(product.name)}" onerror="this.style.display='none';this.parentNode.innerHTML='<div class=&quot;pl-modal-emoji&quot;>${escapeProductHtml(product.emoji || '📦')}</div>'"/>`
+          : `<div class="pl-modal-emoji">${escapeProductHtml(product.emoji || '📦')}</div>`}
+      </div>
+      ${images.length > 1
+        ? `<div class="pl-modal-gallery">${images.map(function (src) {
+            return `<div class="pl-modal-thumb"><img src="${escapeProductHtml(src)}" alt="${escapeProductHtml(product.name)}"/></div>`;
+          }).join('')}</div>`
+        : ''}
+      <div class="pl-modal-meta-badges">
+        <span class="pl-modal-badge">${escapeProductHtml(product.status || 'active')}</span>
+        <span class="pl-modal-badge">${escapeProductHtml(product.visibility || 'published')}</span>
+        <span class="pl-modal-badge">${escapeProductHtml(formatNumberValue(images.length, 'image' + (images.length === 1 ? '' : 's')))}</span>
+      </div>
+    </div>
+    <div class="pl-modal-content">
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Overview</div>
+        <div class="pl-detail-grid">
+          ${buildDetailCard('Product Name', escapeProductHtml(product.name || '—'))}
+          ${buildDetailCard('Supplier', escapeProductHtml(product.supplier || '—'))}
+          ${buildDetailCard('Supplier SKU', escapeProductHtml(product.supplierSku || '—'))}
+          ${buildDetailCard('Created By', escapeProductHtml(product.creator || '—'))}
+          ${buildDetailCard('Created At', escapeProductHtml(formatDateValue(product.createdAt)))}
+          ${buildDetailCard('Updated At', escapeProductHtml(formatDateValue(product.updatedAt)))}
+        </div>
+      </div>
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Description</div>
+        <div class="pl-modal-copy">${escapeProductHtml(product.description || 'No description added yet.')}</div>
+      </div>
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Customer Feedback</div>
+        ${buildFeedbackMarkup(product)}
+      </div>
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Tags</div>
+        ${buildChipMarkup(tags)}
+      </div>
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Pricing</div>
+        <div class="pl-detail-grid">${pricingDetails}</div>
+      </div>
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Inventory</div>
+        <div class="pl-detail-grid">${inventoryDetails}</div>
+      </div>
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Shipping & Batch</div>
+        <div class="pl-detail-grid">${shippingDetails}</div>
+      </div>
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Variants</div>
+        ${buildVariantMarkup(product.variants)}
+      </div>
+      <div class="pl-modal-section">
+        <div class="pl-modal-section-title">Custom Attributes</div>
+        ${buildCustomFieldMarkup(product.customFields)}
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProductDetails() {
+  var modal = document.getElementById('productDetailsModal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') {
+    closeProductDetails();
+  }
+});
+
+function applyProductFilters(resetPage) {
+  const shouldResetPage = resetPage !== false;
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  filteredProducts = products.filter(function (product) {
+    const matchesQuery =
+      !query ||
+      (product.name || '').toLowerCase().includes(query) ||
+      (product.sku || product.id || '').toLowerCase().includes(query) ||
+      (product.category || '').toLowerCase().includes(query) ||
+      (product.brand || '').toLowerCase().includes(query);
+    const matchesCategory = !currentCategory || product.category === currentCategory;
+    const matchesBrand = !currentBrand || product.brand === currentBrand;
+    return matchesQuery && matchesCategory && matchesBrand;
+  });
+
+  if (shouldResetPage) {
+    currentPage = 1;
+  }
+
+  renderTable();
+  updateStats();
+}
+
+loadProducts = async function () {
+  try {
+    products = await window.RetailerApi.getProducts();
+    applyProductFilters(true);
+  } catch (error) {
+    console.error('Error loading products:', error);
+    products = [];
+    filteredProducts = [];
+    renderTable();
+    updateStats();
+    window.RetailerUi.showToast(
+      'Could not load products: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+refreshProductsFromShared = function () {
+  loadProducts();
+};
+
+renderTable = function () {
+  const tbody = document.getElementById('productTableBody');
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageData = filteredProducts.slice(start, end);
+
+  if (!filteredProducts.length) {
+    tbody.innerHTML =
+      '<tr><td colspan="10" style="padding:24px;text-align:center;color:#646b72;font-family:\'Nunito Sans\',sans-serif;">No products match the current search and filter selection.</td></tr>';
+    document.getElementById('paginationContainer').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = pageData
+    .map(function (product) {
+      const productImg = product.productImg
+        ? `<img src="${escapeProductHtml(product.productImg)}" alt="${escapeProductHtml(product.name)}" onerror="this.style.display='none'"/>`
+        : `<span style="font-size:18px">${escapeProductHtml(product.emoji || '📦')}</span>`;
+      const creator = escapeProductHtml(product.creator || 'Unknown');
+      const creatorMedia = product.creatorImg
+        ? `<img class="creator-img" src="${escapeProductHtml(product.creatorImg)}" alt="${creator}" onerror="this.style.display='none'"/>`
+        : `<div class="creator-img" style="display:flex;align-items:center;justify-content:center;background:#eef2ff;color:#2e6bc5;font-size:12px;font-weight:800;">${creator.charAt(0) || 'U'}</div>`;
+
+      return `
+        <tr>
+          <td><input type="checkbox" class="pl-checkbox row-check"/></td>
+          <td><span class="sku-text">${escapeProductHtml(product.sku || product.id)}</span></td>
+          <td>
+            <div class="prod-cell">
+              <div class="prod-img-wrap">${productImg}</div>
+              <span class="prod-name">${escapeProductHtml(product.name)}</span>
+            </div>
+          </td>
+          <td><span class="cell-text">${escapeProductHtml(product.category)}</span></td>
+          <td><span class="cell-text">${escapeProductHtml(product.brand)}</span></td>
+          <td><span class="cell-text">$${Number(product.price || 0).toFixed(2)}</span></td>
+          <td><span class="cell-text">${escapeProductHtml(product.unit)}</span></td>
+          <td><span class="cell-text">${Number(product.qty || 0)}</span></td>
+          <td>
+            <div class="creator-cell">
+              ${creatorMedia}
+              <span class="creator-name">${creator}</span>
+            </div>
+          </td>
+          <td>
+            <div class="action-cell">
+              <div class="act-btn view" title="View" onclick="openProductDetails('${encodeURIComponent(product.id)}')">
+                <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+                  <path d="M1 7s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5z"/>
+                  <circle cx="7" cy="7" r="2"/>
+                </svg>
+              </div>
+              <div class="act-btn edit" title="Edit" onclick="window.location.href='Edit_Product.html?id=${encodeURIComponent(product.id)}'">
+                <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+                  <path d="M9.5 1.5l3 3-8 8H1.5V9.5l8-8z"/>
+                  <line x1="7.5" y1="3.5" x2="10.5" y2="6.5"/>
+                </svg>
+              </div>
+              <div class="act-btn del" title="Delete" onclick="deleteProduct('${escapeProductHtml(product.id)}')">
+                <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+                  <polyline points="1,3 13,3"/>
+                  <path d="M4.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M5 3v8.5M9 3v8.5M2.5 3l.7 9a1 1 0 001 .9h5.6a1 1 0 001-.9l.7-9"/>
+                </svg>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    })
+    .join('');
+
+  renderPagination();
+};
+
+renderPagination = function () {
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / rowsPerPage));
+  const container = document.getElementById('paginationContainer');
+  let html = `
+    <div class="pl-page-nav" onclick="goPage(${currentPage - 1})" title="Previous">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,2 4,7 9,12"/></svg>
+    </div>
+    <div class="pl-pages">
+  `;
+
+  const visiblePages = [];
+  for (let page = 1; page <= Math.min(3, totalPages); page += 1) {
+    visiblePages.push(page);
+  }
+
+  visiblePages.forEach(function (page) {
+    html += `<div class="pl-page-btn${currentPage === page ? ' active' : ''}" onclick="goPage(${page})">${page}</div>`;
+  });
+
+  if (totalPages > 4) {
+    html += '<span class="pl-page-dots">...</span>';
+  }
+
+  if (totalPages > 3 && !visiblePages.includes(totalPages)) {
+    html += `<div class="pl-page-btn${currentPage === totalPages ? ' active' : ''}" onclick="goPage(${totalPages})">${totalPages}</div>`;
+  }
+
+  html += `
+    </div>
+    <div class="pl-page-nav" onclick="goPage(${currentPage + 1})" title="Next">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="5,2 10,7 5,12"/></svg>
+    </div>
+  `;
+  container.innerHTML = html;
+};
+
+goPage = function (page) {
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / rowsPerPage));
+  if (page < 1 || page > totalPages) {
+    return;
+  }
+  currentPage = page;
+  renderTable();
+};
+
+filterTable = function () {
+  applyProductFilters(true);
+};
+
+deleteProduct = async function (id) {
+  if (!confirm('Delete product?')) {
+    return;
+  }
+
+  try {
+    await window.RetailerApi.deleteProduct(id);
+    window.RetailerUi.showToast('Product deleted successfully.', 'success');
+    await loadProducts();
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    window.RetailerUi.showToast(
+      'Failed to delete product: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+toggleFilter = function (type) {
+  const key = type === 'category' ? 'category' : 'brand';
+  const currentValue = type === 'category' ? currentCategory : currentBrand;
+  const values = [''].concat(getProductFilterValues(key));
+  const index = Math.max(0, values.indexOf(currentValue));
+  const nextValue = values[(index + 1) % values.length];
+
+  if (type === 'category') {
+    currentCategory = nextValue;
+  } else {
+    currentBrand = nextValue;
+  }
+
+  applyProductFilters(true);
+};
+
+loadProducts();
+</script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('topbarAvatar').textContent = initials;
+      document.getElementById('profilePopoverAvatar').textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
+</body>
+</html>
+

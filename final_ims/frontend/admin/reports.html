@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports & Analytics - Admin - Stock Overflow</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .report-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; margin-bottom:1.5rem; }
+    .report-kpi { background:#fff; border:1px solid var(--border-color); border-radius:10px; padding:1.25rem; }
+    .kpi-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem; }
+    .kpi-icon { width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center; }
+    .kpi-badge { font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:20px; }
+    .badge-green { background:#dcfce7;color:#16a34a; }
+    .badge-red { background:#fee2e2;color:#dc2626; }
+    .kpi-val { font-size:1.6rem;font-weight:700;color:var(--text-main); }
+    .kpi-lbl { font-size:0.8rem;color:var(--text-muted);margin-top:2px; }
+    .charts-row { display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.5rem; }
+    .chart-card { background:#fff;border:1px solid var(--border-color);border-radius:10px;padding:1.25rem; }
+    .chart-card h3 { font-size:1rem;font-weight:600;margin-bottom:1rem; }
+    .filters-bar { display:flex;gap:1rem;align-items:center;background:#fff;border:1px solid var(--border-color);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem; }
+    .filters-bar .form-control { min-width:160px; }
+    .export-btns { display:flex;gap:0.5rem;margin-left:auto; }
+    .exp-btn { display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:6px;border:1px solid var(--border-color);background:#fff;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.15s; }
+    .exp-btn:hover { background:#f1f5f9; }
+    .prod-table { width:100%;border-collapse:collapse;font-size:0.875rem; }
+    .prod-table th { padding:10px 14px;text-align:left;font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border-color); }
+    .prod-table td { padding:12px 14px;border-bottom:1px solid #f0f4f8; }
+    .prod-table tr:last-child td { border-bottom:none; }
+    .rev-green { color:#16a34a;font-weight:700; }
+    .legend-row { display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:0.875rem; }
+    .legend-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon"><svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/></svg></div>
+        Stock Overflow
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Dashboard</a>
+      <a href="stores.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Store Selection</a>
+      <a href="users.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>Users</a>
+      <a href="roles.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Roles &amp; Permissions</a>
+      <a href="multistore.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>Multi-Store Setup</a>
+      <a href="reports.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Reports</a>
+      <a href="settings.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-wrapper">
+    <header class="topbar">
+      <div class="search-bar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><input type="text" placeholder="Search..."></div>
+      <div class="topbar-right">
+        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></button>
+        <div class="user-profile"><div class="user-avatar" id="navAvatar">AD</div><div class="user-info"><span class="user-name" id="navName">Admin User</span><span class="user-role">Administrator</span></div></div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <div class="page-header">
+        <h1 class="page-title">Reports &amp; Analytics</h1>
+        <p class="page-subtitle">View comprehensive analytics and export reports</p>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <select class="form-control" id="dateRange"><option>Last 30 Days</option><option>Last 7 Days</option><option>Last 90 Days</option><option>This Year</option></select>
+        <select class="form-control" id="storeFilter"><option>All Stores</option><option>Downtown Store</option><option>West Side Branch</option><option>East Coast Hub</option></select>
+        <select class="form-control" id="retailerFilter"><option>All Retailers</option><option>Retail Corp Inc.</option><option>Global Merchants LLC</option></select>
+        <div class="export-btns">
+          <button class="exp-btn" onclick="exportCSV()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>CSV</button>
+          <button class="exp-btn" onclick="alert('PDF export coming soon')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="report-kpis">
+        <div class="report-kpi">
+          <div class="kpi-top"><div class="kpi-icon" style="background:#eff6ff;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><span class="kpi-badge badge-green">Live</span></div>
+          <div class="kpi-val" data-kpi="totalSales">—</div><div class="kpi-lbl">Total Revenue</div>
+        </div>
+        <div class="report-kpi">
+          <div class="kpi-top"><div class="kpi-icon" style="background:#f0fdf4;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><span class="kpi-badge badge-green">Live</span></div>
+          <div class="kpi-val" data-kpi="totalOrders">—</div><div class="kpi-lbl">Total Orders</div>
+        </div>
+        <div class="report-kpi">
+          <div class="kpi-top"><div class="kpi-icon" style="background:#fef3c7;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg></div><span class="kpi-badge badge-green">Live</span></div>
+          <div class="kpi-val" data-kpi="productsSold">—</div><div class="kpi-lbl">Products Sold (This Month)</div>
+        </div>
+        <div class="report-kpi">
+          <div class="kpi-top"><div class="kpi-icon" style="background:#fef2f2;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="kpi-badge badge-red">Alert</span></div>
+          <div class="kpi-val" data-kpi="lowStockItems">—</div><div class="kpi-lbl">Low Stock Items</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Monthly Sales Trend</h3>
+          <canvas id="salesChart" height="140"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Inventory Status</h3>
+          <canvas id="inventoryDonut" height="160" style="max-width:180px;margin:0 auto;display:block;"></canvas>
+          <div style="margin-top:1rem;">
+            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#22c55e;"></div>In Stock</div><strong id="legendInStock">—</strong></div>
+            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#f59e0b;"></div>Low Stock</div><strong id="legendLowStock">—</strong></div>
+            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#ef4444;"></div>Out of Stock</div><strong id="legendOutOfStock">—</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Products -->
+      <div class="card" style="padding:0;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-color);"><h3 style="font-size:1rem;font-weight:600;">Top Selling Products</h3></div>
+        <table class="prod-table">
+          <thead><tr><th>Product Name</th><th>Store</th><th>Units Sold</th><th>Revenue</th></tr></thead>
+          <tbody id="topProductsBody">
+            <tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:1.5rem;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/mockData.js"></script>
+  <script src="../js/api-config.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Auth guard
+      const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+      if (!session || session.role !== 'admin') { window.location.href = '../index.html'; }
+
+      if (document.getElementById('logoutBtn'))
+        document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.removeItem('so_session'); window.location.href = '../index.html'; });
+
+      // Populate store filter from live stores
+      try {
+        const stores = await window.IMS_HTTP.request('/stores');
+        const storeFilter = document.getElementById('storeFilter');
+        if (storeFilter && Array.isArray(stores)) {
+          stores.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = s.name;
+            storeFilter.appendChild(opt);
+          });
+        }
+      } catch (e) { /* silent */ }
+
+      // Load report summary from API
+      let summary = null;
+      try {
+        summary = await window.IMS_HTTP.request('/admin/reports/summary');
+      } catch (e) {
+        console.error('Reports API error', e);
+        summary = { totalRevenue: 0, totalOrders: 0, productsSold: 0, lowStockItems: 0, outOfStockItems: 0, inStockItems: 0, topProducts: [], monthlyRevenue: {} };
+      }
+
+      // Update KPI cards
+      const fmt = (n) => Number(n || 0).toLocaleString('en-US');
+      const fmtUSD = (n) => '$' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 0 });
+
+      document.querySelector('[data-kpi="totalSales"]').textContent = fmtUSD(summary.totalRevenue);
+      document.querySelector('[data-kpi="totalOrders"]').textContent = fmt(summary.totalOrders);
+      document.querySelector('[data-kpi="productsSold"]').textContent = fmt(summary.productsSold);
+      document.querySelector('[data-kpi="lowStockItems"]').textContent = fmt(summary.lowStockItems);
+
+      // Update inventory legend
+      const elInStock = document.getElementById('legendInStock');
+      const elLow = document.getElementById('legendLowStock');
+      const elOut = document.getElementById('legendOutOfStock');
+      if (elInStock) elInStock.textContent = fmt(summary.inStockItems);
+      if (elLow) elLow.textContent = fmt(summary.lowStockItems);
+      if (elOut) elOut.textContent = fmt(summary.outOfStockItems);
+
+      // Monthly sales chart from real monthly data
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const currentYear = new Date().getFullYear();
+      const monthlyData = months.map((_, i) => {
+        const key = `${currentYear}-${String(i + 1).padStart(2, '0')}`;
+        return summary.monthlyRevenue && summary.monthlyRevenue[key] ? Number(summary.monthlyRevenue[key]) : 0;
+      });
+      const hasData = monthlyData.some(v => v > 0);
+      // Fallback to illustrative data if no transactions yet
+      const chartData = hasData ? monthlyData : [45000,52000,48000,61000,57000,65000,63000,72000,78000,81000,88000,96000];
+
+      new Chart(document.getElementById('salesChart'), {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'Revenue ($)',
+            data: chartData,
+            borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)',
+            borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#3b82f6', tension: 0.35, fill: true,
+          }],
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#f0f4f8' } } } },
+      });
+
+      // Inventory donut
+      const inStock = Number(summary.inStockItems || 0);
+      const lowStock = Number(summary.lowStockItems || 0);
+      const outOfStock = Number(summary.outOfStockItems || 0);
+      new Chart(document.getElementById('inventoryDonut'), {
+        type: 'doughnut',
+        data: {
+          labels: ['In Stock', 'Low Stock', 'Out of Stock'],
+          datasets: [{ data: [inStock || 1, lowStock, outOfStock], backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'], hoverOffset: 4, borderWidth: 0 }],
+        },
+        options: { responsive: true, cutout: '68%', plugins: { legend: { display: false } } },
+      });
+
+      // Top products table
+      const tbody = document.getElementById('topProductsBody');
+      if (tbody && Array.isArray(summary.topProducts)) {
+        tbody.innerHTML = '';
+        summary.topProducts.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${p.emoji || '📦'} ${p.name || '—'}</td>
+            <td style="color:var(--text-muted);">${p.store || 'All Stores'}</td>
+            <td>${Number(p.unitsSold || 0).toLocaleString()}</td>
+            <td class="rev-green">$${Number(p.revenue || 0).toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+        if (!summary.topProducts.length) {
+          tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:2rem;">No product data available yet.</td></tr>';
+        }
+      }
+
+      function exportCSV() {
+        const rows = [['Product', 'Store', 'Units Sold', 'Revenue']];
+        (summary.topProducts || []).forEach(p => {
+          rows.push([p.name, p.store || 'All Stores', p.unitsSold || 0, p.revenue || 0]);
+        });
+        const csv = rows.map(r => r.join(',')).join('\n');
+        const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        a.download = 'stock_overflow_report.csv'; a.click();
+      }
+      window.exportCSV = exportCSV;
+    });
+  </script>
+</body>
+</html>

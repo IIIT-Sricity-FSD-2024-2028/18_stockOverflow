@@ -1,0 +1,277 @@
+[
+  {
+    "business": {
+      "businessName": "r11",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "r11@gmail.com",
+      "retailerCode": "RET-765",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "r11"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r11-1",
+        "code": "R11",
+        "contactPerson": "r11",
+        "type": "Retail Store",
+        "status": "active"
+      },
+      {
+        "name": "r11-2",
+        "code": "R11-2",
+        "contactPerson": "r11",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "d5b9b17a-3287-4be4-9164-e9173a49033d",
+    "status": "completed",
+    "createdAt": "2026-05-04T03:36:36.780Z",
+    "updatedAt": "2026-05-04T03:36:36.780Z"
+  },
+  {
+    "business": {
+      "businessName": "r10",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "r10@gmail.com",
+      "retailerCode": "RET-005",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "r10"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r10-1",
+        "code": "R10-1",
+        "contactPerson": "r10",
+        "type": "Retail Store",
+        "status": "active"
+      },
+      {
+        "name": "r10-2",
+        "code": "R10-2",
+        "contactPerson": "r10",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "eea40a42-2284-47e8-89ef-c4d837017996",
+    "status": "completed",
+    "createdAt": "2026-05-04T00:47:03.019Z",
+    "updatedAt": "2026-05-04T00:47:03.019Z"
+  },
+  {
+    "business": {
+      "businessName": "r8",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "r8@gmail.com",
+      "retailerCode": "RET-680",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "r8"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r8-o",
+        "code": "R8-O",
+        "contactPerson": "r8",
+        "type": "Retail Store",
+        "status": "active"
+      },
+      {
+        "name": "r8-s",
+        "code": "R8-S",
+        "contactPerson": "r8",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "5dcb8503-df17-4058-ae6f-bff73aae9e34",
+    "status": "completed",
+    "createdAt": "2026-05-04T00:09:32.692Z",
+    "updatedAt": "2026-05-04T00:09:32.692Z"
+  },
+  {
+    "business": {
+      "businessName": "r7",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "r7@gmail.com",
+      "retailerCode": "RET-567",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "r7"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r7-1",
+        "code": "R7-1",
+        "contactPerson": "r7",
+        "type": "Retail Store",
+        "status": "active"
+      },
+      {
+        "name": "r7-s",
+        "code": "R7-S",
+        "contactPerson": "r7",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "c212d790-8f65-43f7-b42b-bdccce777cea",
+    "status": "completed",
+    "createdAt": "2026-05-03T23:04:33.584Z",
+    "updatedAt": "2026-05-03T23:04:33.584Z"
+  },
+  {
+    "business": {
+      "businessName": "r2",
+      "businessType": "Partnership",
+      "businessEmail": "r2@gmail.com",
+      "retailerCode": "RET-923",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "r2"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r2-1",
+        "code": "R2-1",
+        "contactPerson": "r2",
+        "type": "Retail Store",
+        "status": "active"
+      },
+      {
+        "name": "r2-2",
+        "code": "R2-2",
+        "contactPerson": "r2",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "590d6bb2-e7b9-4fd7-8477-ed6787f928b8",
+    "status": "completed",
+    "createdAt": "2026-05-03T22:15:17.938Z",
+    "updatedAt": "2026-05-03T22:15:17.938Z"
+  },
+  {
+    "business": {
+      "businessName": "r1",
+      "businessType": "Partnership",
+      "businessEmail": "r1@gmail.com",
+      "retailerCode": "RET-127",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "r1"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r1",
+        "code": "R1",
+        "contactPerson": "rperson1",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "5148fe43-0e98-46ec-a05b-f76acc5a748e",
+    "status": "completed",
+    "createdAt": "2026-05-03T21:23:56.142Z",
+    "updatedAt": "2026-05-03T21:23:56.142Z"
+  },
+  {
+    "business": {
+      "businessName": "Hello world",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "abhirajaaayush@gmail.com",
+      "retailerCode": "RET-468",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "ABHIRAJ AAAYUSH",
+      "directEmail": "abhirajaaayush@gmail.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "usmar store",
+        "code": "USMAR-STORE",
+        "contactPerson": "ABHIRAJ AAAYUSH",
+        "type": "Retail Store",
+        "status": "active"
+      },
+      {
+        "name": "hello",
+        "code": "HELLO",
+        "contactPerson": "hhhh",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "2c4635b5-039d-4191-9137-988fb38c02f5",
+    "status": "completed",
+    "createdAt": "2026-05-03T14:53:30.477Z",
+    "updatedAt": "2026-05-03T14:53:30.477Z"
+  },
+  {
+    "business": {
+      "businessName": "Abhiraj Aayush",
+      "businessEmail": "retailer@stockoverflow.com",
+      "retailerCode": "RET-031",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "open world",
+      "directEmail": "retailer@stockoverflow.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "hello",
+        "code": "HELLO",
+        "contactPerson": "hello",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "4be7ecb5-c37b-42a9-8db2-209901e86ba9",
+    "status": "completed",
+    "createdAt": "2026-05-03T14:24:53.044Z",
+    "updatedAt": "2026-05-03T14:24:53.044Z"
+  }
+]

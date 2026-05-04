@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Stock Overflow</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-form-side">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+          </svg>
+        </div>
+        Stock Overflow
+      </a>
+
+      <div class="auth-header">
+        <h1>Create an Account</h1>
+        <p>Join Stock Overflow and start managing your inventory efficiently.</p>
+      </div>
+
+      <form id="registerForm" novalidate>
+        <div class="form-group" style="padding: 0; width: 100%;">
+          <label class="form-label" for="name">Full Name</label>
+          <div class="input-icon-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <input type="text" class="form-control" id="name" placeholder="John Doe" required minlength="4">
+          </div>
+          <div class="invalid-feedback">Name must be at least 4 letters.</div>
+        </div>
+
+        <div class="form-group" style="padding: 0; width: 100%;">
+          <label class="form-label" for="email">Email</label>
+          <div class="input-icon-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <input type="email" class="form-control" id="email" placeholder="youremail@sample.com" required>
+          </div>
+          <div class="invalid-feedback">Please enter a valid email address.</div>
+        </div>
+
+        <div class="form-group" style="padding: 0; width: 100%;">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-icon-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" class="form-control" id="password" placeholder="••••••••" required minlength="8">
+            <button type="button" class="password-toggle-btn" data-target="password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+          <div class="invalid-feedback">Password must be at least 8 characters.</div>
+        </div>
+
+        <div class="form-group" style="padding: 0; width: 100%;">
+          <label class="form-label" for="confirmPassword">Confirm Password</label>
+          <div class="input-icon-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" class="form-control" id="confirmPassword" placeholder="••••••••" required minlength="8">
+            <button type="button" class="password-toggle-btn" data-target="confirmPassword">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+          <div class="invalid-feedback">Passwords must match.</div>
+        </div>
+        
+        <div class="form-group" style="padding: 0; width: 100%;">
+          <label class="form-label" for="role">Role</label>
+          <div class="input-icon-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9m3 4H5m4 4h10M5 7h2m0 4h2m-2 4h2"></path></svg>
+            <select class="form-control" id="role" required>
+              <option value="" disabled selected>Select your role</option>
+              <option value="retailer">Retailer</option>
+              <option value="supplier">Supplier</option>
+              <option value="biller">Biller</option>
+              <option value="consumer">Customer</option>
+              <option value="admin">Admin (Testing)</option>
+            </select>
+          </div>
+          <div class="invalid-feedback">Please select a role.</div>
+        </div>
+
+        <div style="padding: 0; width: 100%;">
+          <button type="submit" class="btn btn-primary btn-block" style="background-color: var(--success-color); margin-top: 1rem;">Create Account</button>
+        </div>
+
+        <div class="auth-footer" style="margin-top: 2rem;">
+          Already have an account? <a href="login.html" style="color: var(--primary-color); font-weight: 600;">Log In</a>
+        </div>
+
+      </form>
+
+      <div class="copyright" style="margin-top: auto; padding-top: 2rem;">
+        © 2026 Stock Overflow
+      </div>
+    </div>
+    <div class="auth-image-side">
+      <img src="../assets/warehouse-empl.jpeg" alt="Stock Overflow Warehouse" class="hero-dashboard-img">
+    </div>
+  </div>
+
+  <script src="../js/auth.js"></script>
+</body>
+</html>

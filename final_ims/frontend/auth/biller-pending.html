@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biller Account Pending - StockOverflow</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f6fa;
+      --primary: #5b67ca;
+      --text: #1a1d2e;
+      --card: #ffffff;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+    }
+    .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    p {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .btn.secondary {
+      background: #ffffff;
+      color: var(--primary);
+      border: 1px solid #d8dcff;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">⏳</div>
+    <h1>Account Pending Approval</h1>
+    <p>Your biller account has been created successfully. Our administrators are currently reviewing your request. You will be able to access the POS module once approved.</p>
+    <div class="actions">
+      <a href="login.html" class="btn" onclick="localStorage.removeItem('so_session')">Go to Login</a>
+      <a href="../index.html" class="btn secondary">Back to Home</a>
+    </div>
+  </div>
+</body>
+</html>

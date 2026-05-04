@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow — Transactions</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f2f3f7;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+      --border: #e7e8ed;
+      --text-primary: #1f2937;
+      --text-muted: #6b7280;
+      --accent: #1d4ed8;
+      --accent-light: #e8efff;
+      --success: #0ea5a4;
+      --danger: #ef4444;
+      --orange: #f59e0b;
+      --dark-blue: #0f2f57;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      display: flex;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar {
+      width: 92px;
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 20;
+      padding: 10px 8px;
+    }
+    .sidebar-logo { width: 100%; display: flex; justify-content: center; padding: 6px 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+    .sidebar-logo img { width: 62px; height: auto; display: block; }
+
+    .main-wrap {
+      margin-left: 92px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 16px;
+      padding-bottom: 20px;
+    }
+
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .header h1 { font-size: 28px; font-weight: 700; color: var(--dark-blue); }
+    .header-actions { display: flex; gap: 10px; }
+    .sync-btn { background: var(--success); color: white; border: none; border-radius: 8px; padding: 10px 16px; font-weight: 600; cursor: pointer; }
+    .sync-btn:hover { background: #0d9b97; }
+    .back-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 16px; font-weight: 600; cursor: pointer; }
+    .back-btn:hover { background: #1e40af; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-value { font-size: 32px; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    .transactions-container {
+      display: grid;
+      gap: 12px;
+    }
+    .transaction-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+    }
+    .trans-header { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .trans-id { background: var(--accent-light); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+    .trans-date { font-size: 12px; color: var(--text-muted); }
+    .trans-customer { font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+    .trans-items { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .trans-total { font-size: 18px; font-weight: 700; color: var(--dark-blue); margin-bottom: 8px; }
+    .trans-actions { display: flex; gap: 8px; flex-direction: column; }
+    .trans-btn {
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .trans-btn:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+    .trans-btn-danger { background: #fee2e2; color: var(--danger); border-color: var(--danger); }
+    .trans-btn-danger:hover { background: #fecaca; }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    .edit-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .edit-modal.show { display: flex; }
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-header { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+    .modal-items { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .modal-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+    }
+    .modal-item-name { font-weight: 600; }
+    .modal-item-qty { display: flex; gap: 8px; align-items: center; }
+    .qty-input { width: 60px; border: 1px solid var(--border); border-radius: 4px; padding: 6px; text-align: center; }
+    .modal-actions { display: flex; gap: 8px; }
+    .modal-btn {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .modal-btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .modal-btn-primary:hover { background: #1e40af; }
+    .modal-btn-secondary { background: #f9fafb; color: var(--text-primary); }
+    .modal-btn-secondary:hover { background: #f3f4f6; }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      background: #111827;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 1000;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .sidebar-logout-wrap { width: 100%; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
+    .sidebar-logout-btn { width: 100%; border: 1px solid #fecaca; background: #fff1f2; color: #b91c1c; border-radius: 8px; padding: 8px 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"/></div>
+    <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
+      <button type="button" class="sidebar-logout-btn" onclick="localStorage.removeItem('so_session');window.location.href='../index.html'">Logout</button>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <div class="header">
+      <h1>Transactions</h1>
+      <div class="header-actions">
+        <button class="sync-btn" id="syncBtn">Sync Inventory</button>
+        <button class="back-btn" id="backBtn">Back to POS</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="totalOrders">0</div>
+        <div class="stat-label">Orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalRevenue">₹0</div>
+        <div class="stat-label">Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalItems">0</div>
+        <div class="stat-label">Items Sold</div>
+      </div>
+    </div>
+
+    <div id="transactionsContainer" class="transactions-container"></div>
+    <div id="emptyState" class="empty-state" style="display:none;">
+      <div class="empty-state-icon">📭</div>
+      <p>No transactions yet</p>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="edit-modal">
+    <div class="modal-content">
+      <div class="modal-header">Update Retailer Inventory</div>
+      <div class="modal-items" id="modalItems"></div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-primary" id="confirmBtn">Confirm & Update</button>
+        <button class="modal-btn modal-btn-secondary" id="cancelBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script src="transaction-app.js"></script>
+
+</body>
+</html>

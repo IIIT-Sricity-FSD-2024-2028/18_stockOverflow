@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Stock Overflow</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+    .metrics-grid-wide { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+    .metric-card { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem 1.5rem; }
+    .metric-card .metric-value { font-size: 2rem; font-weight: 700; color: var(--text-main); margin: 0.5rem 0 0.25rem; }
+    .metric-trend { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .metric-trend.up { color: var(--success-color); }
+    .metric-trend.down { color: var(--danger-color); }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+    .activity-item { display: flex; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
+    .activity-item:last-child { border-bottom: none; margin-bottom: 0; }
+    .activity-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/></svg>
+        </div>
+        Stock Overflow
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Dashboard
+      </a>
+      <a href="stores.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        Store Selection
+      </a>
+      <a href="users.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Users
+      </a>
+      <a href="roles.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        Roles &amp; Permissions
+      </a>
+      <a href="multistore.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        Multi-Store Setup
+      </a>
+      <a href="reports.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        Reports
+      </a>
+      <a href="settings.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-wrapper">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="var(--text-light)"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" placeholder="Search...">
+      </div>
+      <div class="topbar-right">
+        <div class="user-profile">
+          <div class="user-avatar" id="navAvatar">SA</div>
+          <div class="user-info">
+            <span class="user-name" id="navName">Super Admin</span>
+            <span class="user-role" id="navRole">Administrator</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <div class="page-header">
+        <h1 class="page-title">Admin Dashboard</h1>
+        <p class="page-subtitle">Real-time overview of your inventory ecosystem.</p>
+      </div>
+
+      <!-- Row 1: User / Role Metrics -->
+      <div class="metrics-grid">
+        <div class="card metric-card">
+          <span class="text-muted">Total Retailers</span>
+          <div class="metric-value" id="totalRetailers">—</div>
+          <div class="metric-trend up">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline></svg>
+            Active Retailers
+          </div>
+        </div>
+        <div class="card metric-card">
+          <span class="text-muted">Total Suppliers</span>
+          <div class="metric-value" id="totalSuppliers">—</div>
+          <div class="metric-trend up">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline></svg>
+            Supply Chain
+          </div>
+        </div>
+        <div class="card metric-card">
+          <span class="text-muted">Total Consumers</span>
+          <div class="metric-value" id="totalConsumers">—</div>
+          <div class="metric-trend up">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline></svg>
+            Registered Buyers
+          </div>
+        </div>
+        <div class="card metric-card" style="border-color: #fecaca; background: #fef2f2;">
+          <span class="text-muted">Low Stock Alerts</span>
+          <div class="metric-value" id="lowStockAlerts" style="color: var(--danger-color);">—</div>
+          <div class="metric-trend down">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline></svg>
+            Needs Attention
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: System-wide Metrics -->
+      <div class="metrics-grid-wide">
+        <div class="card metric-card">
+          <span class="text-muted">Total Stores</span>
+          <div class="metric-value" id="totalStores">—</div>
+          <div class="metric-trend" style="color:var(--text-muted);">Active locations</div>
+        </div>
+        <div class="card metric-card">
+          <span class="text-muted">Total Products</span>
+          <div class="metric-value" id="totalProducts">—</div>
+          <div class="metric-trend" style="color:var(--text-muted);">In catalog</div>
+        </div>
+        <div class="card metric-card">
+          <span class="text-muted">Total Transactions</span>
+          <div class="metric-value" id="totalTransactions">—</div>
+          <div class="metric-trend up">All time</div>
+        </div>
+        <div class="card metric-card" style="border-color: #bbf7d0; background: #f0fdf4;">
+          <span class="text-muted">Total Revenue</span>
+          <div class="metric-value" id="totalRevenue" style="color: var(--success-color); font-size: 1.5rem;">—</div>
+          <div class="metric-trend up">All transactions</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; font-size: 1.125rem;">Users by Role</h3>
+          <div style="position: relative; height: 280px; width: 100%;">
+            <canvas id="inventoryChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; font-size: 1.125rem;">Monthly Revenue Trend</h3>
+          <div style="position: relative; height: 280px; width: 100%;">
+            <canvas id="salesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Layout -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+        <div class="card">
+          <h3 style="margin-bottom: 1.5rem; font-size: 1.125rem;">Recent Transactions</h3>
+          <ul class="activity-list" id="recentActivity" style="list-style: none; padding: 0;">
+            <li style="color: var(--text-muted); font-size: 0.875rem;">Loading...</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom: 1.5rem; font-size: 1.125rem;">Quick Actions</h3>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <button onclick="openAddStoreModal()" class="btn btn-primary" style="justify-content: flex-start; gap: 0.5rem; border-radius: 0.5rem; padding: 1rem; width: 100%; cursor: pointer; border: none; font-family: inherit;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add Store
+            </button>
+            <a href="users.html" class="btn" style="background-color: var(--success-color); color: #fff; justify-content: flex-start; gap: 0.5rem; border-radius: 0.5rem; padding: 1rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+              Manage Users
+            </a>
+            <a href="roles.html" class="btn" style="background-color: var(--warning-color); color: #fff; justify-content: flex-start; gap: 0.5rem; border-radius: 0.5rem; padding: 1rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              Manage Roles
+            </a>
+            <a href="reports.html" class="btn" style="background-color: #6366f1; color: #fff; justify-content: flex-start; gap: 0.5rem; border-radius: 0.5rem; padding: 1rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              View Reports
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add Store Modal -->
+  <div class="modal-overlay" id="addStoreModal" style="z-index: 1000;">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2 class="modal-title">Add New Store</h2>
+        <button class="btn-icon" onclick="closeAddStoreModal()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <form id="addStoreForm">
+        <div class="form-group">
+          <label class="form-label">Store Name</label>
+          <input type="text" class="form-control" id="s_name" required placeholder="e.g., Uptown Retail">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location (City, State)</label>
+          <input type="text" class="form-control" id="s_location" required placeholder="e.g., Mumbai, MH">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Manager Name</label>
+          <input type="text" class="form-control" id="s_manager" required placeholder="e.g., Jane Doe">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-light" onclick="closeAddStoreModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Store</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Load Scripts -->
+  <script src="../js/api-config.js"></script>
+  <script src="../js/admin-api.js"></script>
+  <script src="../js/mockData.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    // AUTH GUARD
+    const _sess = JSON.parse(localStorage.getItem('so_session') || 'null');
+    if (!_sess || _sess.role !== 'admin') {
+      window.location.href = '../index.html';
+    }
+
+    let _rolesChart = null;
+    let _salesChart = null;
+
+    function renderCharts(stats) {
+      const rd = stats && stats.roleDistribution;
+
+      // Role distribution doughnut
+      const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
+      if (_rolesChart) _rolesChart.destroy();
+      _rolesChart = new Chart(inventoryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Retailers', 'Suppliers', 'Consumers', 'Billers', 'Admins'],
+          datasets: [{
+            data: rd
+              ? [rd.retailers, rd.suppliers, rd.consumers, rd.billers, rd.admins]
+              : [0, 0, 0, 0, 0],
+            backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444'],
+            borderWidth: 0,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } },
+        },
+      });
+
+      // Monthly revenue line chart — use real data from transactions if available
+      const salesCtx = document.getElementById('salesChart').getContext('2d');
+      if (_salesChart) _salesChart.destroy();
+      _salesChart = new Chart(salesCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [{
+            label: 'Revenue ($)',
+            data: stats && stats._monthlyData
+              ? stats._monthlyData
+              : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16,185,129,0.08)',
+            tension: 0.4,
+            borderWidth: 2,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#10B981',
+            pointRadius: 4,
+            fill: true,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
+            x: { grid: { display: false } },
+          },
+        },
+      });
+    }
+
+    // Called by admin.js once stats are loaded
+    window._adminChartReady = function(stats) {
+      renderCharts(stats || {});
+
+      // Load recent activity from transactions
+      window.IMS_HTTP.request('/transactions?limit=5').then(function(txns) {
+        const arr = Array.isArray(txns) ? txns.slice(0, 5) : [];
+        const list = document.getElementById('recentActivity');
+        if (!list) return;
+        if (!arr.length) {
+          list.innerHTML = '<li style="color:var(--text-muted);font-size:0.875rem;">No recent transactions.</li>';
+          return;
+        }
+        list.innerHTML = arr.map(t => {
+          const ts = t.timestamp ? new Date(t.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+          return `<li class="activity-item">
+            <div class="activity-icon" style="background:#d1fae5;color:var(--success-color);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="display:flex;justify-content:space-between;">
+                <span style="font-weight:600;">${t.customer || 'Customer'}</span>
+                <span style="font-size:0.8rem;color:var(--text-light);">${ts}</span>
+              </div>
+              <div style="font-size:0.875rem;color:var(--text-muted);margin-top:0.2rem;">
+                Order #${t.orderId || '—'} · $${Number(t.finalTotal || 0).toFixed(2)} · ${t.store || ''}
+              </div>
+            </div>
+          </li>`;
+        }).join('');
+      }).catch(function() {
+        // Silently fail — keep loading message or show empty
+      });
+    };
+
+    // If stats already loaded before _adminChartReady was wired
+    if (window._adminDashStats !== undefined) {
+      renderCharts(window._adminDashStats || {});
+    }
+
+    // Store Modal Functions
+    function openAddStoreModal() {
+      document.getElementById('addStoreModal').classList.add('active');
+    }
+    function closeAddStoreModal() {
+      document.getElementById('addStoreModal').classList.remove('active');
+      document.getElementById('addStoreForm').reset();
+    }
+
+    document.getElementById('addStoreForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newStore = {
+        name: document.getElementById('s_name').value,
+        location: document.getElementById('s_location').value,
+        manager: document.getElementById('s_manager').value,
+      };
+      try {
+        await window.AdminApi.createStore(newStore);
+        alert('New store added successfully!');
+        closeAddStoreModal();
+      } catch (error) {
+        alert('Error creating store: ' + (window.IMS_HTTP ? window.IMS_HTTP.getErrorMessage(error) : error.message));
+      }
+    });
+  </script>
+</body>
+</html>

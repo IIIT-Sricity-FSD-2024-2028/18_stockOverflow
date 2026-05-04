@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockOverflow – Purchase Order</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f5f6fa;
+  --card: #ffffff;
+  --primary: #2e6bc5;
+  --primary-dark: #2460b0;
+  --primary-light: #eef3fc;
+  --success: #22c55e;
+  --success-light: #dcfce7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --text-primary: #212b36;
+  --text-secondary: #646b72;
+  --text-muted: #9ca3af;
+  --border: #e6eaed;
+  --border-light: #f0f1f3;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 16px rgba(0,0,0,.07);
+  --radius: 8px;
+  --radius-sm: 5px;
+  --sidebar-w: 252px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);display:flex;min-height:100vh;font-size:14px}
+
+/* ── SIDEBAR ──────────────────────────────────────── */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;border-right:1px solid var(--border);
+  font-family:'Nunito Sans',sans-serif;
+}
+.sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sidebar-logo img { height: 30px; width: auto; display: block; }
+.sb-logo-icon{width:34px;height:34px;background:#4e7fd9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon svg{width:18px;height:18px}
+.sb-logo-text{font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;color:#092c4c;letter-spacing:-.2px}
+.sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+.sb-group{display:flex;flex-direction:column;gap:6px}
+.sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+.sb-divider{height:1px;background:var(--border);margin:4px 0}
+.sb-menus{display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+.sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+.sb-item.active{background:#fff6ee;color:#4e7fd9}
+.sb-item.active .sb-icon svg{stroke:#4e7fd9}
+.sb-item.active .sb-item-label{color:#4e7fd9}
+.sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+.sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-end-icon svg{width:10px;height:10px}
+.sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-dot-badge svg{width:10px;height:10px}
+
+/* ── MAIN ─────────────────────────────────────────── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* ── TOPBAR ───────────────────────────────────────── */
+.topbar{
+  height:58px;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px;position:sticky;top:0;z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.breadcrumb{font-size:12.5px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif}
+.breadcrumb a{color:var(--text-secondary);text-decoration:none}
+.breadcrumb .sep{margin:0 8px;opacity:.5}
+.breadcrumb .cur{color:var(--text-primary);font-weight:600}
+.search-bar{
+  display:flex;align-items:center;gap:8px;background:var(--bg);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;width:210px;
+}
+.search-bar svg{width:13px;height:13px;color:var(--text-muted);flex-shrink:0}
+.search-bar input{border:none;background:transparent;outline:none;font-size:13px;color:var(--text-primary);font-family:inherit;width:100%}
+.search-bar input::placeholder{color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-icon-btn{
+  width:35px;height:35px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .15s;position:relative;
+}
+.topbar-icon-btn:hover{background:var(--bg)}
+.topbar-icon-btn svg{width:15px;height:15px;color:var(--text-secondary)}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--danger);border-radius:50%;border:2px solid #fff}
+.topbar-avatar{width:33px;height:33px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Nunito Sans',sans-serif}
+
+/* ── PAGE CONTENT ─────────────────────────────────── */
+.po-content{padding:24px 28px 48px;flex:1;overflow-y:auto}
+
+/* PAGE HEADER */
+.po-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+.po-page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;color:#092c4c;line-height:27px}
+.po-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;color:#646b72;margin-top:3px}
+
+/* LAYOUT */
+.po-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+
+/* ── CARD ─────────────────────────────────────────── */
+.po-card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow-sm);
+  overflow:hidden;margin-bottom:16px;
+}
+.po-card:last-child{margin-bottom:0}
+.po-card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--border-light);
+}
+.po-card-title{font-family:'Nunito Sans',sans-serif;font-size:15px;font-weight:700;color:#092c4c}
+.po-card-subtitle{font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-secondary);margin-top:2px}
+.po-card-body{padding:20px}
+
+/* ── FORM ─────────────────────────────────────────── */
+.po-form-row{display:grid;gap:16px;margin-bottom:16px}
+.po-form-row.col-2{grid-template-columns:1fr 1fr}
+.po-form-row.col-3{grid-template-columns:1fr 1fr 1fr}
+.po-form-row.col-1{grid-template-columns:1fr}
+.po-form-row:last-child{margin-bottom:0}
+
+.po-field{display:flex;flex-direction:column;gap:6px}
+.po-label{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#212b36}
+.po-label .req{color:#ef4444;margin-left:2px}
+
+.po-input,.po-textarea,.po-select{
+  font-family:'Nunito Sans',sans-serif;font-size:13px;color:#212b36;
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;width:100%;
+}
+.po-input{height:40px;padding:0 12px}
+.po-textarea{padding:10px 12px;resize:vertical;min-height:90px;line-height:1.5}
+.po-select{height:40px;padding:0 32px 0 12px;appearance:none;cursor:pointer}
+.po-input:focus,.po-textarea:focus,.po-select:focus{
+  border-color:#2e6bc5;box-shadow:0 0 0 3px rgba(46,107,197,.08)
+}
+.po-input::placeholder,.po-textarea::placeholder{color:#a6aaaf;font-weight:400}
+
+.po-select-wrap{position:relative}
+.po-select-wrap::after{
+  content:'';position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;pointer-events:none;
+  background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23646b72" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>') center/contain no-repeat;
+}
+
+/* ── ADD PRODUCT AREA ─────────────────────────────── */
+.add-product-zone{
+  border:2px dashed var(--border);border-radius:var(--radius);
+  padding:28px 20px;text-align:center;
+  transition:border-color .15s,background .15s;cursor:pointer;
+  margin-top:20px;
+}
+.add-product-zone:hover{border-color:var(--primary);background:var(--primary-light)}
+.apz-icon{font-size:32px;margin-bottom:8px;line-height:1}
+.apz-title{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#092c4c;margin-bottom:3px}
+.apz-sub{font-size:12px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif}
+.apz-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:14px;padding:9px 20px;
+  background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .14s;
+}
+.apz-btn:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(46,107,197,.3)}
+.apz-btn svg{width:14px;height:14px}
+
+/* ── PRODUCTS TABLE ───────────────────────────────── */
+.po-table-wrap{overflow-x:auto}
+table.po-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:13px}
+table.po-table thead tr{background:#f5f6fa}
+table.po-table th{
+  padding:9px 14px;text-align:left;
+  font-size:11px;font-weight:700;color:#646b72;
+  white-space:nowrap;border-bottom:1px solid var(--border);
+  text-transform:uppercase;letter-spacing:.4px;
+}
+table.po-table td{padding:13px 14px;border-bottom:1px solid var(--border-light);vertical-align:middle}
+table.po-table tbody tr:last-child td{border-bottom:none}
+table.po-table tbody tr{transition:background .12s}
+table.po-table tbody tr:hover td{background:#fafbfc}
+
+/* Product cell in table */
+.prod-cell{display:flex;align-items:center;gap:10px}
+.prod-cell-emoji{
+  width:36px;height:36px;border-radius:8px;
+  background:linear-gradient(135deg,#f0f4ff,#e8eeff);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.prod-cell-name{font-weight:700;color:#092c4c;font-size:13px}
+.prod-cell-sku{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+/* Qty input in table */
+.tbl-qty-wrap{display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;width:fit-content}
+.tbl-qty-btn{
+  width:26px;height:30px;border:none;background:#f5f6fa;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:var(--text-secondary);
+  transition:background .12s;flex-shrink:0;
+}
+.tbl-qty-btn:hover{background:#e8eaed;color:var(--primary)}
+.tbl-qty-input{
+  width:44px;height:30px;border:none;border-left:1px solid var(--border);border-right:1px solid var(--border);
+  text-align:center;font-size:13px;font-weight:700;font-family:'Nunito Sans',sans-serif;
+  color:var(--text-primary);outline:none;background:#fff;padding:0;
+}
+.tbl-qty-input::-webkit-outer-spin-button,.tbl-qty-input::-webkit-inner-spin-button{-webkit-appearance:none}
+
+/* Table action buttons */
+.tbl-act{display:flex;align-items:center;gap:6px}
+.tbl-act-btn{
+  width:28px;height:28px;border:1px solid var(--border);
+  border-radius:var(--radius-sm);background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .12s;flex-shrink:0;
+}
+.tbl-act-btn:hover{background:#f5f6fa}
+.tbl-act-btn svg{width:13px;height:13px}
+.tbl-act-btn.del{color:var(--danger)}
+.tbl-act-btn.del:hover{background:var(--danger-light);border-color:#fca5a5}
+
+/* Stock badge inside table */
+.tbl-stock-badge{
+  display:inline-flex;padding:2px 8px;border-radius:20px;
+  font-size:10.5px;font-weight:700;font-family:'Nunito Sans',sans-serif;
+}
+.sb-ok{background:#dcfce7;color:#15803d}
+.sb-low{background:#fef3c7;color:#92400e}
+.sb-out{background:#fee2e2;color:#991b1b}
+
+/* Empty table state */
+.empty-table-state{
+  padding:40px 20px;text-align:center;
+}
+.ets-icon{font-size:40px;opacity:.35;margin-bottom:10px}
+.ets-title{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text-secondary);margin-bottom:4px}
+.ets-sub{font-size:12.5px;color:var(--text-muted);font-family:'Nunito Sans',sans-serif}
+
+/* ── SUMMARY ──────────────────────────────────────── */
+.summary-footer{padding:16px 20px;border-top:1px solid var(--border)}
+.summary-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;border-bottom:1px solid var(--border-light);
+  font-family:'Nunito Sans',sans-serif;font-size:13px;
+}
+.summary-row:last-child{border-bottom:none}
+.summary-label{color:#646b72;font-weight:500}
+.summary-val{color:#212b36;font-weight:700;text-align:right}
+.summary-total{
+  display:flex;align-items:center;justify-content:space-between;
+  margin:0 -20px -16px;padding:14px 20px;
+  background:#f9fafb;border-top:1px solid var(--border);
+  font-family:'Nunito Sans',sans-serif;font-size:15px;font-weight:800;color:#092c4c;
+}
+.summary-total-val{color:var(--primary);font-size:17px}
+
+/* ── ACTION BUTTONS ───────────────────────────────── */
+.po-actions{
+  display:flex;align-items:center;justify-content:flex-end;
+  gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);
+}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;padding:9px 18px;
+  border-radius:var(--radius-sm);border:none;cursor:pointer;
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;
+  transition:all .14s;white-space:nowrap;
+}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+.btn-primary{background:#2e6bc5;color:#fff}
+.btn-primary:hover{background:#2460b0;transform:translateY(-1px);box-shadow:0 4px 12px rgba(46,107,197,.3)}
+.btn-primary:active{transform:none}
+.btn-secondary{background:#092c4c;color:#fff}
+.btn-secondary:hover{background:#0b3660}
+.btn-outline{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--bg);color:var(--text-primary)}
+
+/* ── RIGHT PANEL ──────────────────────────────────── */
+.order-summary-card{position:sticky;top:74px}
+
+/* Summary rows */
+.os-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 0;border-bottom:1px solid var(--border-light);
+  font-family:'Nunito Sans',sans-serif;font-size:13px;
+}
+.os-row:last-child{border-bottom:none;padding-bottom:0;font-weight:700}
+.os-label{color:#646b72;font-weight:500}
+.os-val{color:#212b36;font-weight:700;text-align:right;font-size:12.5px}
+
+/* Badges */
+.badge{display:inline-flex;padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:700;font-family:'Nunito Sans',sans-serif}
+.badge-draft{background:#fef3c7;color:#92400e}
+.badge-pending{background:#dbeafe;color:#1d4ed8}
+.badge-success{background:#dcfce7;color:#15803d}
+
+/* Checklist */
+.po-checklist{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--border-light);margin-top:16px;padding-top:14px}
+.po-checklist-title{font-size:12px;font-weight:700;color:#212b36;font-family:'Nunito Sans',sans-serif;margin-bottom:8px}
+.chk-item{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:13px;font-family:'Nunito Sans',sans-serif}
+.chk-item input{width:16px;height:16px;border-radius:4px;cursor:pointer;accent-color:var(--primary)}
+.chk-item label{cursor:pointer;flex:1;color:#212b36}
+.chk-item.done label{color:#15803d}
+
+/* Selected products preview in summary */
+.sel-prod-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.sel-prod-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--primary-light);border:1px solid #c9d9f5;
+  border-radius:6px;padding:7px 10px;
+}
+.spr-emoji{font-size:16px;flex-shrink:0}
+.spr-name{font-size:12px;font-weight:700;color:#092c4c;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Nunito Sans',sans-serif}
+.spr-qty{font-size:11px;color:var(--primary);font-weight:700;font-family:'Nunito Sans',sans-serif;flex-shrink:0}
+
+/* ── RECENTLY ADDED BANNER ───────────────────────── */
+.added-banner{
+  display:none;
+  background:linear-gradient(135deg,#dcfce7,#d1fae5);
+  border:1px solid #86efac;border-radius:var(--radius);
+  padding:12px 16px;margin-bottom:16px;
+  align-items:center;gap:10px;
+}
+.added-banner.show{display:flex}
+.added-banner-icon{font-size:20px}
+.added-banner-text{flex:1;font-family:'Nunito Sans',sans-serif;font-size:13px;color:#15803d;font-weight:600}
+.added-banner-close{
+  width:22px;height:22px;border:none;background:transparent;
+  cursor:pointer;color:#15803d;font-size:16px;display:flex;align-items:center;justify-content:center;
+  border-radius:4px;transition:background .12s;
+}
+.added-banner-close:hover{background:rgba(21,128,61,.1)}
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:#092c4c;color:#fff;
+  padding:11px 16px;border-radius:var(--radius-sm);
+  font-size:13px;font-family:'Nunito Sans',sans-serif;font-weight:600;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:400;
+  transform:translateY(20px);opacity:0;
+  transition:all .28s cubic-bezier(.34,1.56,.64,1);pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ok{background:#15803d}
+
+/* ── CONFIRM MODAL ───────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:center;z-index:300;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  backdrop-filter:blur(2px);
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:#fff;border-radius:var(--radius);width:400px;max-width:calc(100vw - 40px);
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
+  transform:scale(.95) translateY(8px);transition:transform .2s;overflow:hidden;
+}
+.modal-overlay.open .modal{transform:scale(1) translateY(0)}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Nunito Sans',sans-serif;font-size:15px;font-weight:700;color:#092c4c}
+.modal-x{width:28px;height:28px;border:1px solid var(--border);border-radius:5px;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:background .12s}
+.modal-x:hover{background:var(--danger-light);color:var(--danger)}
+.modal-body{padding:16px 20px;font-size:13px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif;line-height:1.6}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.modal-btn-cancel{padding:8px 16px;border:1px solid var(--border);border-radius:5px;background:#fff;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:var(--text-secondary);transition:background .12s}
+.modal-btn-cancel:hover{background:var(--bg)}
+.modal-btn-danger{padding:8px 16px;border:none;border-radius:5px;background:var(--danger);color:#fff;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .12s}
+.modal-btn-danger:hover{opacity:.88}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* Row fade in animation */
+@keyframes rowFadeIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+.prod-row-anim{animation:rowFadeIn .2s ease both}
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <!-- MAIN -->
+    <div class="sb-group">
+      <div class="sb-group-label">Main</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retialer_Dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Retailer Dashboard</span>
+          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- INVENTORY -->
+    <div class="sb-group">
+      <div class="sb-group-label">Inventory</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Product_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5L14.5 5v6L8 14.5 1.5 11V5L8 1.5z"/><path d="M1.5 5L8 8.5 14.5 5M8 8.5V14.5"/></svg></span>
+          <span class="sb-item-label">Products</span>
+        </a>
+        <a class="sb-item" href="Add_New_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="8" y1="4.5" x2="8" y2="11.5"/><line x1="4.5" y1="8" x2="11.5" y2="8"/></svg></span>
+          <span class="sb-item-label">Add Product</span>
+        </a>
+        <a class="sb-item" href="Edit_Product.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 2.5l3 3-8.5 8.5H1.5V10.5l9-8z"/><line x1="8.5" y1="4.5" x2="11.5" y2="7.5"/></svg></span>
+          <span class="sb-item-label">Edit Product</span>
+        </a>
+        <a class="sb-item" href="Inventory_Overview.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+          <span class="sb-item-label">Inventory Overview</span>
+        </a>
+        <a class="sb-item" href="Low_Stocks.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/><polyline points="10.5,4 13.5,4 13.5,7"/></svg></span>
+          <span class="sb-item-label">Low Stocks</span>
+        </a>
+        <a class="sb-item" href="Multi_warehouse_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/><line x1="1" y1="7" x2="15" y2="7"/></svg></span>
+          <span class="sb-item-label">Multi Store View</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- STOCK -->
+    <div class="sb-group">
+      <div class="sb-group-label">Stock</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="stock_adjustment.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-item-label">Stock Adjustment</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PEOPLES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Peoples</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Customer_List.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Customers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="billers.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-item-label">Billers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="supplier-list.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-item-label">Suppliers</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- PURCHASES -->
+    <div class="sb-group">
+      <div class="sb-group-label">Purchases</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Reorder_Recommendations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
+          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+        </a>
+        <a class="sb-item active" href="Create_Purchase_Order.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-item-label">Purchase Order</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+        <a class="sb-item" href="Returns_Management.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
+          <span class="sb-item-label">Purchase Return</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SETTINGS -->
+    <div class="sb-group">
+      <div class="sb-group-label">Settings</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="logout()">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">
+        <a href="#">Dashboard</a>
+        <span class="sep">/</span>
+        <span class="cur">Purchase Order</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="po-content">
+
+    <!-- PAGE HEADER -->
+    <div class="po-page-header">
+      <div>
+        <h1 class="po-page-title">Purchase Order</h1>
+        <div class="po-breadcrumb">Dashboard › Purchase Order</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <span class="badge badge-draft" style="font-size:12px;padding:5px 12px;align-self:center">Draft</span>
+        <span style="font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--text-secondary);align-self:center;font-weight:600">PO-2026-0094</span>
+      </div>
+    </div>
+
+    <!-- ADDED PRODUCTS BANNER -->
+    <div class="added-banner" id="addedBanner">
+      <div class="added-banner-icon">✅</div>
+      <div class="added-banner-text" id="addedBannerText">Products added successfully to this PO!</div>
+      <button class="added-banner-close" onclick="closeBanner()">✕</button>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="po-grid">
+
+      <!-- LEFT COLUMN -->
+      <div>
+
+        <!-- PO DETAILS CARD -->
+        <div class="po-card">
+          <div class="po-card-header">
+            <div>
+              <div class="po-card-title">Purchase Order Details</div>
+            </div>
+          </div>
+          <div class="po-card-body">
+
+            <!-- Supplier -->
+            <div class="po-form-row col-1">
+              <div class="po-field">
+                <label class="po-label">Supplier Name <span class="req">*</span></label>
+                <div class="po-select-wrap">
+                  <select class="po-select" id="supplierSelect" onchange="onSupplierChange()">
+                    <option value="">Select supplier...</option>
+                    <option value="abc">ABC Suppliers Inc</option>
+                    <option value="global">Global Trade Ltd</option>
+                    <option value="premium">Premium Goods Co</option>
+                    <option value="rapid">Rapid Imports Co</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Expected Delivery & Payment Terms -->
+            <div class="po-form-row col-2">
+              <div class="po-field">
+                <label class="po-label">Expected Delivery Date <span class="req">*</span></label>
+                <input type="date" class="po-input" id="deliveryDate" onchange="onDeliveryChange()"/>
+              </div>
+              <div class="po-field">
+                <label class="po-label">Payment Terms</label>
+                <div class="po-select-wrap">
+                  <select class="po-select" id="paymentTerms">
+                    <option value="net30">Net 30</option>
+                    <option value="net15">Net 15</option>
+                    <option value="net45">Net 45</option>
+                    <option value="net60">Net 60</option>
+                    <option value="cod">Cash on Delivery</option>
+                    <option value="advance">Advance Payment</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shipping Address & Priority -->
+            <div class="po-form-row col-2">
+              <div class="po-field">
+                <label class="po-label">Shipping Address</label>
+                <input type="text" class="po-input" placeholder="Enter shipping address..." id="shippingAddr"/>
+              </div>
+              <div class="po-field">
+                <label class="po-label">Priority</label>
+                <div class="po-select-wrap">
+                  <select class="po-select" id="priority">
+                    <option value="normal">Normal</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="po-form-row col-1">
+              <div class="po-field">
+                <label class="po-label">Notes</label>
+                <textarea class="po-textarea" id="poNotes" placeholder="Add any special instructions or notes for this order..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCTS CARD -->
+        <div class="po-card">
+          <div class="po-card-header">
+            <div>
+              <div class="po-card-title">Products
+                <span id="prodCountBadge" style="display:none;margin-left:8px;background:var(--primary);color:#fff;border-radius:20px;padding:2px 8px;font-size:11px;font-family:'Nunito Sans',sans-serif;font-weight:700;vertical-align:middle"></span>
+              </div>
+              <div class="po-card-subtitle" id="prodSubtitle" style="display:none">Products added to this purchase order</div>
+            </div>
+            <button class="btn btn-primary" onclick="goToProductSelection()" id="addProductsBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Products
+            </button>
+          </div>
+
+          <!-- TABLE (hidden when no products) -->
+          <div id="tableSection" style="display:none">
+            <div class="po-table-wrap">
+              <table class="po-table" id="productsTable">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="productsTableBody"></tbody>
+              </table>
+            </div>
+
+            <!-- Summary Footer -->
+            <div class="summary-footer">
+              <div class="summary-row">
+                <span class="summary-label">Subtotal</span>
+                <span class="summary-val" id="summarySubtotal">₹0</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Tax (GST 5%)</span>
+                <span class="summary-val" id="summaryTax">₹0</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Shipping</span>
+                <span class="summary-val">₹0 <span style="font-size:11px;color:var(--text-muted);font-weight:500">(Free)</span></span>
+              </div>
+              <div class="summary-total">
+                <span>Grand Total</span>
+                <span class="summary-total-val" id="summaryTotal">₹0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- EMPTY / ADD PRODUCTS ZONE (shown when no products) -->
+          <div id="emptyZone">
+            <div class="add-product-zone" onclick="goToProductSelection()">
+              <div class="apz-icon">📦</div>
+              <div class="apz-title">No products added yet</div>
+              <div class="apz-sub">Click below to browse your product catalogue and select items for this purchase order</div>
+              <button class="apz-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Browse & Add Products
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="po-actions">
+          <button class="btn btn-outline" onclick="clearAll()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Cancel
+          </button>
+          <button class="btn btn-outline" onclick="saveDraft()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save as Draft
+          </button>
+          <button class="btn btn-primary" onclick="createPO()" id="createPoBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Create Purchase Order
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Order Summary -->
+      <div class="order-summary-card">
+        <div class="po-card">
+          <div class="po-card-header">
+            <div class="po-card-title">Order Summary</div>
+            <span class="badge badge-draft" id="summaryStatusBadge">Draft</span>
+          </div>
+          <div class="po-card-body">
+            <div class="os-row">
+              <span class="os-label">PO Number</span>
+              <span class="os-val">PO-2026-0094</span>
+            </div>
+            <div class="os-row">
+              <span class="os-label">Supplier</span>
+              <span class="os-val" id="osSup">—</span>
+            </div>
+            <div class="os-row">
+              <span class="os-label">Products</span>
+              <span class="os-val" id="osProdCount">0 added</span>
+            </div>
+            <div class="os-row">
+              <span class="os-label">Total Units</span>
+              <span class="os-val" id="osTotalUnits">0</span>
+            </div>
+            <div class="os-row">
+              <span class="os-label">Estimated Value</span>
+              <span class="os-val" id="osValue" style="color:var(--primary)">₹0</span>
+            </div>
+            <div class="os-row">
+              <span class="os-label">Expected Delivery</span>
+              <span class="os-val" id="osDelivery">—</span>
+            </div>
+            <div class="os-row">
+              <span class="os-label">Payment Terms</span>
+              <span class="os-val" id="osPayment">Net 30</span>
+            </div>
+
+            <!-- Selected products list in summary -->
+            <div id="selProdListWrap" style="display:none;margin-top:14px;border-top:1px solid var(--border-light);padding-top:12px">
+              <div style="font-size:11px;font-weight:700;color:#646b72;font-family:'Nunito Sans',sans-serif;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Selected Products</div>
+              <div class="sel-prod-list" id="selProdList"></div>
+              <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;padding:7px" onclick="goToProductSelection()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit Products
+              </button>
+            </div>
+
+            <!-- Checklist -->
+            <div class="po-checklist">
+              <div class="po-checklist-title">Pre-submission Checklist</div>
+              <div class="chk-item" id="chkSupplier">
+                <input type="checkbox" id="chk1" disabled/>
+                <label for="chk1">Supplier selected</label>
+              </div>
+              <div class="chk-item" id="chkProducts">
+                <input type="checkbox" id="chk2" disabled/>
+                <label for="chk2">At least 1 product added</label>
+              </div>
+              <div class="chk-item" id="chkDelivery">
+                <input type="checkbox" id="chk3" disabled/>
+                <label for="chk3">Delivery date set</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+        <!-- PO HISTORY CARD -->
+        <div class="po-card" style="margin-top:20px" id="poHistoryCard">
+          <div class="po-card-header">
+            <div class="po-card-title">PO History (Selected Supplier)</div>
+          </div>
+          <div class="po-card-body" style="max-height: 400px; overflow-y: auto;">
+            <div id="poHistoryList" style="font-size: 13px; color: var(--text-secondary); text-align: center; padding: 20px;">
+              Select a supplier to view history.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /po-grid -->
+  </div><!-- /po-content -->
+</div><!-- /main -->
+
+<!-- CONFIRM DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal" onclick="closeDeleteModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Remove Product</div>
+      <div class="modal-x" onclick="closeDeleteModal(null)">✕</div>
+    </div>
+    <div class="modal-body" id="deleteModalBody">Remove this product from the purchase order?</div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closeDeleteModal(null)">Cancel</button>
+      <button class="modal-btn-danger" onclick="confirmDelete()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM CREATE MODAL -->
+<div class="modal-overlay" id="createModal" onclick="closeCreateModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Confirm Purchase Order</div>
+      <div class="modal-x" onclick="closeCreateModal(null)">✕</div>
+    </div>
+    <div class="modal-body" id="createModalBody"></div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closeCreateModal(null)">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmCreate()" style="padding:8px 18px">Confirm & Create</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-overlay" id="feedbackModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Leave Feedback</div>
+      <div class="modal-x" onclick="closeFeedbackModal()">✕</div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="feedbackPoId" />
+      <div style="margin-bottom: 12px;">
+        <label style="display:block; margin-bottom:4px; font-weight:700; font-size:12px;">Rating (1-5)</label>
+        <select id="feedbackRating" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;">
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Terrible</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block; margin-bottom:4px; font-weight:700; font-size:12px;">Comment</label>
+        <textarea id="feedbackComment" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; height:80px;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closeFeedbackModal()">Cancel</button>
+      <button class="btn btn-primary" style="padding:8px 18px" onclick="submitFeedback()">Submit Feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<script src="api-config.js"></script>
+<script>
+'use strict';
+
+/* ── STATE ───────────────────────────────────────── */
+let products = [];   // Array of { id, name, emoji, sku, cat, price, qty, stock, stockStatus }
+let deleteTargetId = null;
+
+const SUPPLIER_NAMES = {
+  abc: 'ABC Suppliers Inc',
+  global: 'Global Trade Ltd',
+  premium: 'Premium Goods Co',
+  rapid: 'Rapid Imports Co',
+};
+
+const PAYMENT_NAMES = {
+  net30:'Net 30', net15:'Net 15', net45:'Net 45',
+  net60:'Net 60', cod:'Cash on Delivery', advance:'Advance Payment'
+};
+
+/* ── BOOT ─────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  loadFromStorage();
+  updateDisplay();
+
+  // Set min date for delivery to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('deliveryDate').setAttribute('min', today);
+
+  // Listen for tab focus (in case user navigates back from product page)
+  window.addEventListener('focus', checkForNewProducts);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkForNewProducts();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeDeleteModal(null); closeCreateModal(null); }
+  });
+});
+
+/* ── LOAD FROM LOCALSTORAGE ───────────────────────── */
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem('po_products');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        products = parsed;
+        const ts = localStorage.getItem('po_products_ts');
+        const age = ts ? (Date.now() - parseInt(ts)) : 99999;
+        if (age < 10000) {  // freshly returned from product page
+          showBanner(`${products.length} product${products.length > 1 ? 's' : ''} added successfully from catalogue!`);
+        }
+      }
+    }
+  } catch(e) { products = []; }
+}
+
+function checkForNewProducts() {
+  try {
+    const raw = localStorage.getItem('po_products');
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    const ts = parseInt(localStorage.getItem('po_products_ts') || '0');
+    const age = Date.now() - ts;
+    if (Array.isArray(parsed) && age < 5000) {
+      products = parsed;
+      updateDisplay();
+      showBanner(`${products.length} product${products.length > 1 ? 's' : ''} updated from catalogue!`);
+    }
+  } catch(e) {}
+}
+
+/* ── NAVIGATION ──────────────────────────────────── */
+function goToProductSelection() {
+  const supplierId = document.getElementById('supplierSelect').value;
+  if (!supplierId) {
+    window.RetailerUi.showToast('Select a supplier before adding products.', 'error');
+    return;
+  }
+  // Save current products to storage so the selection page can pre-select them
+  localStorage.setItem('po_products', JSON.stringify(products));
+  localStorage.setItem('po_products_ts', '0'); // mark as not fresh
+  localStorage.setItem('po_supplier_id', supplierId);
+  window.location.href = 'po-products.html?supplierId=' + encodeURIComponent(supplierId);
+}
+
+/* ── UPDATE DISPLAY ──────────────────────────────── */
+function updateDisplay() {
+  renderProductsTable();
+  updateSummaryPanel();
+  updateChecklist();
+}
+
+/* ── RENDER TABLE ─────────────────────────────────── */
+function renderProductsTable() {
+  const tableSection = document.getElementById('tableSection');
+  const emptyZone    = document.getElementById('emptyZone');
+  const tbody        = document.getElementById('productsTableBody');
+  const badge        = document.getElementById('prodCountBadge');
+  const subtitle     = document.getElementById('prodSubtitle');
+
+  if (!products.length) {
+    tableSection.style.display = 'none';
+    emptyZone.style.display = 'block';
+    badge.style.display = 'none';
+    subtitle.style.display = 'none';
+    return;
+  }
+
+  tableSection.style.display = 'block';
+  emptyZone.style.display = 'none';
+  badge.style.display = 'inline';
+  badge.textContent = products.length;
+  subtitle.style.display = 'block';
+
+  tbody.innerHTML = products.map((p, i) => {
+    const total = p.price * p.qty;
+    const stockCls = p.stockStatus === 'ok' ? 'sb-ok' : p.stockStatus === 'low' ? 'sb-low' : 'sb-out';
+    const stockLabel = p.stockStatus === 'ok' ? 'In Stock' : p.stockStatus === 'low' ? 'Low Stock' : 'Out of Stock';
+    const delay = i * 40;
+    return `
+      <tr class="prod-row-anim" style="animation-delay:${delay}ms">
+        <td>
+          <div class="prod-cell">
+            <div class="prod-cell-emoji">${p.emoji}</div>
+            <div>
+              <div class="prod-cell-name">${p.name}</div>
+              <div class="prod-cell-sku">${p.sku}</div>
+            </div>
+          </div>
+        </td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-secondary)">${p.cat}</td>
+        <td><span class="tbl-stock-badge ${stockCls}">${stockLabel}</span></td>
+        <td>
+          <div class="tbl-qty-wrap">
+            <button class="tbl-qty-btn" onclick="changeQty('${p.id}',-1)">−</button>
+            <input class="tbl-qty-input" type="number" value="${p.qty}" min="1" max="999"
+                   onchange="setQty('${p.id}',this.value)" id="qty-${p.id}"/>
+            <button class="tbl-qty-btn" onclick="changeQty('${p.id}',1)">+</button>
+          </div>
+        </td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-weight:600;color:#212b36">₹${p.price.toLocaleString('en-IN')}</td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-weight:800;color:#092c4c">₹${total.toLocaleString('en-IN')}</td>
+        <td>
+          <div class="tbl-act">
+            <button class="tbl-act-btn" title="Edit quantity" onclick="focusQty('${p.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="tbl-act-btn del" title="Remove" onclick="openDeleteModal('${p.id}','${p.name}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* ── QTY MANAGEMENT ───────────────────────────────── */
+function changeQty(id, delta) {
+  const prod = products.find(p => p.id === id);
+  if (!prod) return;
+  prod.qty = Math.max(1, prod.qty + delta);
+  // Update input
+  const inp = document.getElementById(`qty-${id}`);
+  if (inp) inp.value = prod.qty;
+  persistProducts();
+  updateSummaryPanel();
+}
+
+function setQty(id, val) {
+  const prod = products.find(p => p.id === id);
+  if (!prod) return;
+  prod.qty = Math.max(1, Math.min(999, parseInt(val) || 1));
+  persistProducts();
+  updateSummaryPanel();
+}
+
+function focusQty(id) {
+  const inp = document.getElementById(`qty-${id}`);
+  if (inp) { inp.focus(); inp.select(); }
+}
+
+/* ── DELETE ───────────────────────────────────────── */
+function openDeleteModal(id, name) {
+  deleteTargetId = id;
+  document.getElementById('deleteModalBody').textContent = `Remove "${name}" from this purchase order?`;
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeDeleteModal(e) {
+  if (e && e.target !== document.getElementById('deleteModal')) return;
+  document.getElementById('deleteModal').classList.remove('open');
+  deleteTargetId = null;
+}
+function confirmDelete() {
+  if (!deleteTargetId) return;
+  products = products.filter(p => p.id !== deleteTargetId);
+  persistProducts();
+  updateDisplay();
+  closeDeleteModal(null);
+  showToast('Product removed from PO', 'ok');
+}
+
+/* ── SUMMARY PANEL ────────────────────────────────── */
+function updateSummaryPanel() {
+  const subtotal = products.reduce((s,p) => s + p.price * p.qty, 0);
+  const tax = Math.round(subtotal * 0.05);
+  const total = subtotal + tax;
+  const totalUnits = products.reduce((s,p) => s + p.qty, 0);
+
+  document.getElementById('summarySubtotal').textContent = '₹' + subtotal.toLocaleString('en-IN');
+  document.getElementById('summaryTax').textContent = '₹' + tax.toLocaleString('en-IN');
+  document.getElementById('summaryTotal').textContent = '₹' + total.toLocaleString('en-IN');
+
+  // Right panel
+  document.getElementById('osProdCount').textContent = products.length ? `${products.length} added` : '0 added';
+  document.getElementById('osTotalUnits').textContent = totalUnits;
+  document.getElementById('osValue').textContent = total > 0 ? '₹' + total.toLocaleString('en-IN') : '₹0';
+
+  // Products mini-list
+  const wrap = document.getElementById('selProdListWrap');
+  const list = document.getElementById('selProdList');
+  if (products.length) {
+    wrap.style.display = 'block';
+    list.innerHTML = products.map(p => `
+      <div class="sel-prod-row">
+        <span class="spr-emoji">${p.emoji}</span>
+        <span class="spr-name">${p.name}</span>
+        <span class="spr-qty">×${p.qty} &nbsp; ₹${(p.price*p.qty).toLocaleString('en-IN')}</span>
+      </div>
+    `).join('');
+  } else {
+    wrap.style.display = 'none';
+  }
+
+  // Prod count badge in card header
+  const badge = document.getElementById('prodCountBadge');
+  if (products.length) {
+    badge.style.display = 'inline';
+    badge.textContent = products.length;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+/* ── SUPPLIER/DATE CHANGE ─────────────────────────── */
+function onSupplierChange() {
+  const val = document.getElementById('supplierSelect').value;
+  document.getElementById('osSup').textContent = val ? SUPPLIER_NAMES[val] : '—';
+  updateChecklist();
+}
+function onDeliveryChange() {
+  const val = document.getElementById('deliveryDate').value;
+  if (val) {
+    const d = new Date(val);
+    document.getElementById('osDelivery').textContent = d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  } else {
+    document.getElementById('osDelivery').textContent = '—';
+  }
+  const pt = document.getElementById('paymentTerms').value;
+  document.getElementById('osPayment').textContent = PAYMENT_NAMES[pt] || 'Net 30';
+  updateChecklist();
+}
+
+/* ── CHECKLIST ────────────────────────────────────── */
+function updateChecklist() {
+  const hasSup  = !!document.getElementById('supplierSelect').value;
+  const hasProd = products.length > 0;
+  const hasDate = !!document.getElementById('deliveryDate').value;
+
+  setChk('chk1', 'chkSupplier', hasSup);
+  setChk('chk2', 'chkProducts', hasProd);
+  setChk('chk3', 'chkDelivery', hasDate);
+}
+function setChk(inputId, rowId, checked) {
+  const inp = document.getElementById(inputId);
+  const row = document.getElementById(rowId);
+  inp.checked = checked;
+  row.classList.toggle('done', checked);
+}
+
+/* ── SAVE DRAFT ───────────────────────────────────── */
+function saveDraft() {
+  persistProducts();
+  showToast('Draft saved successfully!', 'ok');
+}
+
+/* ── CREATE PO ────────────────────────────────────── */
+function createPO() {
+  const supplier = document.getElementById('supplierSelect').value;
+  if (!supplier) { showToast('Please select a supplier first', ''); return; }
+  if (!products.length) { showToast('Please add at least one product', ''); return; }
+  if (!document.getElementById('deliveryDate').value) { showToast('Please set the expected delivery date', ''); return; }
+
+  const subtotal = products.reduce((s,p) => s + p.price * p.qty, 0);
+  const tax = Math.round(subtotal * 0.05);
+  const total = subtotal + tax;
+  const units = products.reduce((s,p) => s + p.qty, 0);
+
+  document.getElementById('createModalBody').innerHTML = `
+    <div style="background:#f5f6fa;border-radius:6px;padding:14px;margin-bottom:12px;font-family:'Nunito Sans',sans-serif;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+        <span style="color:#646b72">Supplier</span>
+        <span style="font-weight:700;color:#092c4c">${SUPPLIER_NAMES[supplier]}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+        <span style="color:#646b72">Products</span>
+        <span style="font-weight:700;color:#092c4c">${products.length} item${products.length > 1 ? 's' : ''} · ${units} units</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:#646b72">Grand Total</span>
+        <span style="font-weight:800;color:#2e6bc5;font-size:14px">₹${total.toLocaleString('en-IN')}</span>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#646b72;font-family:'Nunito Sans',sans-serif;">
+      This will create PO <strong>PO-2026-0094</strong> and notify the supplier. This action cannot be undone.
+    </div>
+  `;
+  document.getElementById('createModal').classList.add('open');
+}
+function closeCreateModal(e) {
+  if (e && e.target !== document.getElementById('createModal')) return;
+  document.getElementById('createModal').classList.remove('open');
+}
+function confirmCreate() {
+  closeCreateModal(null);
+  document.getElementById('summaryStatusBadge').className = 'badge badge-pending';
+  document.getElementById('summaryStatusBadge').textContent = 'Pending';
+  showToast('🎉 Purchase Order PO-2026-0094 created!', 'ok');
+  localStorage.removeItem('po_products');
+  localStorage.removeItem('po_products_ts');
+}
+
+/* ── CLEAR ALL ────────────────────────────────────── */
+function clearAll() {
+  if (!confirm('Cancel and clear this purchase order?')) return;
+  products = [];
+  document.getElementById('supplierSelect').value = '';
+  document.getElementById('deliveryDate').value = '';
+  document.getElementById('paymentTerms').value = 'net30';
+  document.getElementById('poNotes').value = '';
+  document.getElementById('shippingAddr').value = '';
+  persistProducts();
+  updateDisplay();
+  document.getElementById('osSup').textContent = '—';
+  document.getElementById('osDelivery').textContent = '—';
+  showToast('Order cleared', '');
+}
+
+/* ── BANNER ──────────────────────────────────────── */
+function showBanner(msg) {
+  const b = document.getElementById('addedBanner');
+  document.getElementById('addedBannerText').textContent = msg;
+  b.classList.add('show');
+  setTimeout(() => b.classList.remove('show'), 5000);
+}
+function closeBanner() {
+  document.getElementById('addedBanner').classList.remove('show');
+}
+
+/* ── PERSIST ─────────────────────────────────────── */
+function persistProducts() {
+  localStorage.setItem('po_products', JSON.stringify(products));
+}
+
+/* ── TOAST ───────────────────────────────────────── */
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.className = `toast ${type === 'ok' ? 'toast-ok' : ''}`;
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+<script>
+let suppliers = [];
+let createdPurchaseOrder = null;
+
+function populateSupplierSelect() {
+  const select = document.getElementById('supplierSelect');
+  const currentValue = select.value;
+
+  Object.keys(SUPPLIER_NAMES).forEach(function (key) {
+    delete SUPPLIER_NAMES[key];
+  });
+
+  select.innerHTML = '<option value="">Select supplier...</option>';
+  suppliers.forEach(function (supplier) {
+    const option = document.createElement('option');
+    option.value = String(supplier.id);
+    option.textContent =
+      supplier.companyName ||
+      supplier.company ||
+      supplier.name ||
+      (supplier.business && supplier.business.companyName) ||
+      (supplier.primaryContact && supplier.primaryContact.fullName) ||
+      'Supplier';
+    SUPPLIER_NAMES[option.value] = option.textContent;
+    select.appendChild(option);
+  });
+
+  if (SUPPLIER_NAMES[currentValue]) {
+    select.value = currentValue;
+  }
+}
+
+async function loadSuppliers() {
+  try {
+    const select = document.getElementById('supplierSelect');
+    const [supplierProfiles, supplierUsers] = await Promise.all([
+      window.RetailerApi.getSuppliers().catch(function () { return []; }),
+      window.RetailerApi.request('/api/users', undefined, { role: 'supplier' }).catch(function () { return []; }),
+    ]);
+
+    const mappedProfiles = (supplierProfiles || []).map(function (supplier) {
+      return {
+        id: supplier.id,
+        companyName:
+          supplier.business && supplier.business.companyName
+            ? supplier.business.companyName
+            : supplier.companyName || supplier.company || supplier.name || '',
+        name:
+          supplier.primaryContact && supplier.primaryContact.fullName
+            ? supplier.primaryContact.fullName
+            : supplier.name || '',
+        businessEmail:
+          supplier.business && supplier.business.businessEmail
+            ? supplier.business.businessEmail
+            : supplier.businessEmail || supplier.email || '',
+        products: Array.isArray(supplier.products) ? supplier.products : [],
+      };
+    });
+
+    const profileIds = new Set(mappedProfiles.map(function (supplier) { return String(supplier.id); }));
+    const mappedUsers = (supplierUsers || [])
+      .filter(function (user) { return !profileIds.has(String(user.profileId || user.id)); })
+      .map(function (user) {
+        return {
+          id: user.profileId || user.id,
+          companyName: user.profile && user.profile.businessName ? user.profile.businessName : user.name,
+          name: user.name,
+          businessEmail: user.email,
+          products: [],
+        };
+      });
+
+    suppliers = mappedProfiles.concat(mappedUsers);
+    populateSupplierSelect();
+    const preferredSupplierId = localStorage.getItem('po_supplier_id');
+    if (preferredSupplierId && SUPPLIER_NAMES[preferredSupplierId]) {
+      select.value = preferredSupplierId;
+    }
+    onSupplierChange();
+  } catch (error) {
+    console.error('Error loading suppliers:', error);
+    window.RetailerUi.showToast(
+      'Could not load suppliers: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+}
+
+confirmCreate = async function () {
+  const supplierId = document.getElementById('supplierSelect').value;
+  const deliveryDate = document.getElementById('deliveryDate').value;
+  const paymentTerms = document.getElementById('paymentTerms').value;
+  const notes = document.getElementById('poNotes').value.trim();
+  const shippingAddress = document.getElementById('shippingAddr').value.trim();
+
+  if (!supplierId || !products.length || !deliveryDate) {
+    window.RetailerUi.showToast(
+      'Please complete the supplier, products, and delivery date first.',
+      'error',
+    );
+    return;
+  }
+
+  try {
+    const payload = {
+      supplierId: supplierId,
+      supplierName: SUPPLIER_NAMES[String(supplierId)] || '',
+      items: products.map(function (product) {
+        return {
+          id: product.id,
+          name: product.name,
+          emoji: product.emoji || '📦',
+          sku: product.sku,
+          cat: product.cat,
+          price: Number(product.price) || 0,
+          qty: Number(product.qty) || 1,
+          stock: Number(product.stock) || 0,
+          stockStatus: product.stockStatus || 'ok',
+        };
+      }),
+      deliveryDate: deliveryDate,
+      paymentTerms: PAYMENT_NAMES[paymentTerms] || 'Net 30',
+      notes: notes,
+      shippingAddress: shippingAddress,
+      status: 'Pending',
+    };
+
+    createdPurchaseOrder = await window.RetailerApi.createPurchaseOrder(payload);
+    closeCreateModal(null);
+    document.getElementById('summaryStatusBadge').className = 'badge badge-pending';
+    document.getElementById('summaryStatusBadge').textContent = createdPurchaseOrder.status;
+    document.getElementById('createModalBody').innerHTML = '';
+    window.RetailerUi.showToast(
+      'Purchase order ' + createdPurchaseOrder.id + ' created successfully.',
+      'success',
+    );
+    localStorage.removeItem('po_products');
+    localStorage.removeItem('po_products_ts');
+    localStorage.removeItem('po_supplier_id');
+  } catch (error) {
+    window.RetailerUi.showToast(
+      'Could not create purchase order: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+createPO = function () {
+  const supplier = document.getElementById('supplierSelect').value;
+  if (!supplier) {
+    window.RetailerUi.showToast('Please select a supplier first.', 'error');
+    return;
+  }
+  if (!products.length) {
+    window.RetailerUi.showToast('Please add at least one product.', 'error');
+    return;
+  }
+  if (!document.getElementById('deliveryDate').value) {
+    window.RetailerUi.showToast('Please set the expected delivery date.', 'error');
+    return;
+  }
+
+  const subtotal = products.reduce(function (sum, product) {
+    return sum + product.price * product.qty;
+  }, 0);
+  const tax = Math.round(subtotal * 0.05);
+  const total = subtotal + tax;
+  const units = products.reduce(function (sum, product) {
+    return sum + product.qty;
+  }, 0);
+
+  document.getElementById('createModalBody').innerHTML = `
+    <div style="background:#f5f6fa;border-radius:6px;padding:14px;margin-bottom:12px;font-family:'Nunito Sans',sans-serif;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+        <span style="color:#646b72">Supplier</span>
+        <span style="font-weight:700;color:#092c4c">${SUPPLIER_NAMES[supplier] || 'Selected Supplier'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+        <span style="color:#646b72">Products</span>
+        <span style="font-weight:700;color:#092c4c">${products.length} item${products.length > 1 ? 's' : ''} · ${units} units</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:#646b72">Grand Total</span>
+        <span style="font-weight:800;color:#2e6bc5;font-size:14px">₹${total.toLocaleString('en-IN')}</span>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#646b72;font-family:'Nunito Sans',sans-serif;">
+      This will create a pending purchase order for the selected supplier and save it to the backend.
+    </div>
+  `;
+  document.getElementById('createModal').classList.add('open');
+};
+
+document.addEventListener('DOMContentLoaded', loadSuppliers);
+</script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('topbarAvatar').textContent = initials;
+      document.getElementById('profilePopoverAvatar').textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
+</body>
+</html>
