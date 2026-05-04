@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { json, urlencoded } from 'express';
 import { AppModule } from './app.module';
+import { setupSwagger } from './docs/setup-swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  setupSwagger(app);
   await app.listen(process.env.PORT ?? 3001);
 }
 void bootstrap();

@@ -4,6 +4,7 @@ const core_1 = require("@nestjs/core");
 const common_1 = require("@nestjs/common");
 const express_1 = require("express");
 const app_module_1 = require("./app.module");
+const setup_swagger_1 = require("./docs/setup-swagger");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use((0, express_1.json)({ limit: '25mb' }));
@@ -17,6 +18,7 @@ async function bootstrap() {
         transform: true,
         forbidNonWhitelisted: true,
     }));
+    (0, setup_swagger_1.setupSwagger)(app);
     await app.listen(process.env.PORT ?? 3001);
 }
 void bootstrap();

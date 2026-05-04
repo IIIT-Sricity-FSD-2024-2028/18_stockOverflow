@@ -15,7 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BillersController = void 0;
 const common_1 = require("@nestjs/common");
 const billers_service_1 = require("./billers.service");
+const approve_biller_request_dto_1 = require("./dto/approve-biller-request.dto");
 const create_biller_dto_1 = require("./dto/create-biller.dto");
+const create_biller_request_dto_1 = require("./dto/create-biller-request.dto");
 let BillersController = class BillersController {
     constructor(billersService) {
         this.billersService = billersService;
@@ -62,7 +64,7 @@ __decorate([
     (0, common_1.Post)('requests'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [create_biller_request_dto_1.CreateBillerRequestDto]),
     __metadata("design:returntype", void 0)
 ], BillersController.prototype, "createRequest", null);
 __decorate([
@@ -76,7 +78,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, approve_biller_request_dto_1.ApproveBillerRequestDto]),
     __metadata("design:returntype", void 0)
 ], BillersController.prototype, "approveRequest", null);
 __decorate([

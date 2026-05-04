@@ -6,7 +6,9 @@ import {
 import { JsonCollectionService } from '../common/collection.service';
 import { Biller, BillerRequest } from '../common/database.types';
 import { JsonDbService } from '../common/json-db.service';
+import { ApproveBillerRequestDto } from './dto/approve-biller-request.dto';
 import { CreateBillerDto } from './dto/create-biller.dto';
+import { CreateBillerRequestDto } from './dto/create-biller-request.dto';
 import { UpdateBillerDto } from './dto/update-biller.dto';
 import { UsersService } from '../users/users.service';
 import { StoresService } from '../stores/stores.service';
@@ -103,10 +105,10 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
   }
 
   // Biller request methods
-  createRequest(requestData: any) {
+  createRequest(requestData: CreateBillerRequestDto) {
     const requests = this.getRequests();
     const scope = this.resolveRequestScope(requestData);
-    const newRequest = {
+    const newRequest: BillerRequest = {
       id: Date.now().toString(),
       ...requestData,
       retailerId: scope.retailerId,
@@ -123,7 +125,7 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
     return this.db.getCollection('biller_requests') || [];
   }
 
-  approveRequest(id: string, approvalScope?: Partial<BillerRequest>) {
+  approveRequest(id: string, approvalScope?: ApproveBillerRequestDto) {
     const requests = this.getRequests();
     const requestIndex = requests.findIndex((r) => r.id === id);
     if (requestIndex === -1) {

@@ -10,7 +10,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { BillersService } from './billers.service';
+import { ApproveBillerRequestDto } from './dto/approve-biller-request.dto';
 import { CreateBillerDto } from './dto/create-biller.dto';
+import { CreateBillerRequestDto } from './dto/create-biller-request.dto';
 import { UpdateBillerDto } from './dto/update-biller.dto';
 
 @Controller('billers')
@@ -32,7 +34,7 @@ export class BillersController {
 
   // Biller request endpoints
   @Post('requests')
-  createRequest(@Body() requestData: any) {
+  createRequest(@Body() requestData: CreateBillerRequestDto) {
     return this.billersService.createRequest(requestData);
   }
 
@@ -44,7 +46,7 @@ export class BillersController {
   @Put('requests/:id/approve')
   approveRequest(
     @Param('id') id: string,
-    @Body() approvalScope?: { retailerId?: string; storeId?: string },
+    @Body() approvalScope?: ApproveBillerRequestDto,
   ) {
     return this.billersService.approveRequest(id, approvalScope);
   }
