@@ -1,170 +1,265 @@
 # Stock Overflow – Inventory Management System
 
-This document outlines the **problem statement**, **system actors**, and the **planned functional features** of the **Stock Overflow Inventory Management System**.
+## 1. Project Overview
 
-## Problem Statement
+**Stock Overflow** is a modern **Inventory Lifecycle Management System** designed for retail ecosystems. It provides a centralized platform for managing inventory, coordinating supply chains, and delivering real-time analytics across multiple stakeholders.
 
-Retail stores and small businesses often face significant challenges in managing their inventory efficiently. These challenges can lead to operational inefficiencies, revenue loss, and poor customer satisfaction.
+The system integrates **Retailers, Suppliers, Consumers, Billers (POS), and Administrators** into a unified environment to streamline operations, improve visibility, and enable data-driven decisions.
 
-The major problems include:
+---
 
-- Lack of real-time product stock tracking across multiple stores
-- Manual inventory updates leading to human errors
-- Absence of automated low-stock alerts and reorder management
-- Limited visibility into supplier performance and delivery timelines
-- Difficulty in analyzing sales trends and predicting future demand
-- Poor tracking of product returns and stock adjustments
-- Lack of centralized reporting and monitoring for administrators
+## 2. Problem Statement
 
-Currently, many retail businesses either use manual methods or disconnected systems to manage stock. This leads to inaccurate inventory records, delayed restocking, poor supplier coordination, and inefficient business operations.
+Retail stores and small businesses often face significant challenges in managing inventory efficiently, leading to operational inefficiencies and revenue loss.
 
-## Proposed Solution
+### Key Problems
 
-The **Stock Overflow Inventory Management System** provides a **centralized digital environment** where **Retailers** can manage inventory, **Suppliers** can fulfill orders, **Consumers** can check availability and provide feedback, and **Administrators** can monitor and configure the overall system.
+- Lack of real-time product stock tracking across multiple stores  
+- Manual inventory updates causing human errors  
+- No automated low-stock alerts or reorder workflows  
+- Limited supplier performance visibility  
+- Difficulty analyzing sales trends and forecasting demand  
+- Poor tracking of returns and stock adjustments  
+- No centralized monitoring system  
 
-### Key Platform Features
+These issues result in inaccurate stock data, delayed restocking, weak supplier coordination, and poor customer satisfaction.
 
-- Real-time inventory tracking
-- Multi-store inventory management
-- Supplier performance monitoring
-- Automated low-stock alerts and reorder workflows
-- Product return management
-- Demand forecasting and analytics
-- Centralized system dashboard and reports
-- Consumer product availability checking
-- Product feedback management
+---
 
-The platform integrates **Retailers, Suppliers, Consumers, POS Systems, and Administrators** into a single ecosystem to improve stock visibility, reduce stockouts, and optimize supply chain operations.
+## 3. Proposed Solution
 
-## Identified Actors
+Stock Overflow provides a **centralized digital ecosystem** where:
 
-| Actor | Role Description |
-|-------|------------------|
-| **Retailer** | A store manager or business owner responsible for managing product inventory, monitoring stock levels, handling product returns, and analyzing inventory performance |
-| **Supplier** | An entity responsible for fulfilling purchase orders, delivering products, and maintaining supply chain operations |
-| **Consumer** | A customer who interacts with the system by checking product availability and submitting product feedback |
-| **System Administrator** | Authority responsible for managing system configuration, multi-store setup, user roles, and system-wide analytics |
+- Retailers manage inventory and analytics  
+- Suppliers handle order fulfillment and deliveries  
+- Consumers check availability and give feedback  
+- Billers manage POS transactions  
+- Administrators control system-wide operations  
 
-## Planned Features by Actor
+---
 
-### 4.1 Retailer Features
+## 4. Core Features
 
-#### Inventory Management
+### Inventory & Operations
+- Real-time inventory tracking  
+- Multi-store inventory management  
+- Stock transfers between stores  
+- Inventory transaction tracking  
+- Product return and adjustment management  
 
-- Add and update product inventory
-- Monitor stock levels across stores
-- Track product movement and availability
+### Supply Chain
+- Purchase order management  
+- Supplier performance monitoring  
+- Delivery tracking and status updates  
 
-#### Inventory Analysis
+### Analytics & Intelligence
+- Demand forecasting  
+- Sales and inventory analytics  
+- Smart low-stock alerts  
+- Audit logs and reporting  
 
-- Analyze inventory performance
-- View stock reports and audit logs
-- Identify fast-moving and slow-moving products
+### Customer Interaction
+- Product availability checking  
+- Product feedback and ratings  
 
-#### Product Returns Handling
+### System Management
+- Role-based access control (RBAC)  
+- Multi-store setup and configuration  
+- Centralized dashboards  
 
-- Process returned products
-- Update inventory after returns
-- Track return history
+---
 
-#### Demand Forecasting
+## 5. Technology Stack
 
-- Analyze historical sales data
-- Predict product demand trends
-- Plan restocking based on forecast insights
+### Frontend
+- HTML5, CSS3 (Vanilla, no frameworks)  
+- JavaScript (ES6+)  
+- Custom design system (CSS variables, animations, glassmorphism UI)
 
-#### Multi-Store Inventory Management
+### Backend
+- NestJS (TypeScript)  
+- Modular architecture (Controller, Service, Module, DTO)
 
-- Monitor inventory across multiple store locations
-- Transfer inventory between stores
-- Manage store-specific stock levels
+### Data Persistence
+- JSON-based storage (`backend/data/*.json`)  
+- LocalStorage fallback for frontend mock data  
 
-### 4.2 Supplier Features
+---
 
-#### Order Fulfillment
+## 6. System Architecture
 
-- Receive purchase orders from retailers
-- Confirm order acceptance
-- Provide estimated delivery timelines
+### Backend (`backend/src/`)
 
-#### Delivery Management
+Follows **modular NestJS architecture**:
 
-- Update shipment status
-- Confirm product delivery
+#### Core Modules
+- `users` – Authentication & RBAC  
+- `retailers`, `suppliers`, `customers`, `billers` – Actor modules  
+- `stores`, `warehouses` – Location management  
+- `products` – Catalog, feedback, ratings  
 
-#### Supplier Performance Monitoring
+#### Inventory Lifecycle Modules
+- `inventory`  
+- `transactions`  
+- `stock-adjustments`  
+- `purchase-orders`  
+- `returns`  
+- `reservations`  
 
-- Track order fulfillment efficiency
-- Evaluate supplier delivery performance
-- Monitor supplier reliability and service quality
+These modules handle the **complete lifecycle of stock movement**.
 
-### 4.3 Consumer Features
+---
 
-#### Product Availability Checking
+### Frontend (`frontend/`)
 
-- Check product availability in stores
-- View stock status before visiting a store
+Organized by user roles:
 
-#### Product Feedback
+- `admin/` – Dashboard, users, system setup  
+- `retailer/` – Inventory & analytics tools  
+- `supplier/` – Order and delivery management  
+- `customer/` – Product browsing & feedback  
+- `biller/` – POS and billing system  
+- `auth/` – Login & authentication  
+- `js/` – Core logic (`IMS_HTTP.request`)  
+- `css/` – Design system  
 
-- Submit product reviews and feedback
-- Provide product satisfaction insights to retailers
+---
 
-### 4.4 System Administrator Features
+## 7. Identified Actors
 
-#### System Configuration
+| Actor | Description |
+|------|-------------|
+| **Retailer** | Manages inventory, stores, analytics |
+| **Supplier** | Handles product supply and deliveries |
+| **Consumer** | Checks availability and gives feedback |
+| **Biller (POS)** | Handles billing and sales transactions |
+| **System Administrator** | Controls system configuration and monitoring |
 
-- Configure system settings
-- Manage system parameters such as reorder thresholds and system rules
+---
 
-#### Multi-Store Setup
+## 8. Features by Actor
 
-- Register and manage multiple store locations
-- Configure store-level inventory structures
+### 8.1 Retailer
 
-#### User Role Management
+- Inventory management and tracking  
+- Multi-store management  
+- Inventory analysis and reporting  
+- Product returns handling  
+- Demand forecasting  
 
-- Create and manage user roles
-- Assign system permissions
+---
 
-#### Reporting and Dashboard
+### 8.2 Supplier
 
-- View system-wide inventory reports
-- Monitor retailer and supplier performance
-- Analyze inventory trends across stores
+- Purchase order handling  
+- Delivery updates and confirmations  
+- Supplier performance tracking  
 
-## Key Domain Concepts
+---
 
-- **Inventory Item**
-- **Stock Quantity**
-- **Purchase Order**
-- **Supplier Performance**
-- **Product Return**
-- **Inventory Audit Log**
-- **Multi-Store Inventory**
-- **Demand Forecasting**
-- **Product Feedback**
-- **POS Synchronization**
+### 8.3 Consumer
 
-## Expected Impact
+- Product availability checking  
+- Product feedback and reviews  
 
-The platform is expected to:
+---
 
-- Improve inventory accuracy and stock visibility
-- Reduce stockouts and overstock situations
-- Enhance supply chain coordination between retailers and suppliers
-- Improve customer satisfaction through product availability information
-- Support better decision-making using analytics and forecasting
-- Simplify and automate retail inventory operations
+### 8.4 Biller (POS)
 
-## Future Scope
+- Billing and sales processing  
+- Real-time stock deduction  
+- Integration with inventory system  
 
-Future enhancements may include:
+---
 
-- AI-based demand forecasting and inventory optimization
-- Advanced analytics dashboards
-- Real-time POS and external API integrations
-- Mobile application support
-- Barcode and RFID-based inventory tracking
-- E-commerce platform integration
-- Automated supplier recommendation system
+### 8.5 System Administrator
+
+- User and role management (RBAC)  
+- Multi-store configuration  
+- System settings and rules  
+- Global analytics dashboard  
+
+---
+
+## 9. Key Domain Concepts
+
+- Inventory Item  
+- Stock Quantity  
+- Purchase Order  
+- Inventory Transactions  
+- Supplier Performance  
+- Product Return  
+- Audit Logs  
+- Multi-Store Inventory  
+- Demand Forecasting  
+- Product Feedback  
+- POS Synchronization  
+
+---
+
+## 10. Core System Capabilities
+
+- **Multi-Store Support**: Scoped using `storeId` and `retailerId`  
+- **RBAC**: Fine-grained permissions  
+- **Real-Time Simulation**: Inventory, revenue, and analytics  
+- **Smart Alerts**: Low stock and performance insights  
+- **High-Fidelity UI**: Modern UX with animations and responsiveness  
+
+---
+
+## 11. Implementation Guide
+
+### Frontend Rules
+
+1. Use `IMS_HTTP.request()` for API calls  
+2. No frameworks (React, Angular, etc.)  
+3. Use only Vanilla CSS (no Tailwind)  
+4. Follow existing design system  
+5. Handle backend failures using localStorage mock data  
+
+---
+
+### Backend Rules
+
+1. Follow NestJS structure (Controller, Service, Module, DTO)  
+2. Persist data using JSON files (`fs` module)  
+3. Enforce multi-tenancy (`storeId`, `retailerId`)  
+4. Use DTO validation (`class-validator`)  
+
+---
+
+### Feature Development Workflow
+
+#### Backend
+- Create DTOs  
+- Implement Controller  
+- Build Service logic  
+- Register module  
+
+#### Frontend
+- Add UI (HTML + CSS)  
+- Implement JS logic  
+- Integrate API using `IMS_HTTP.request`  
+
+---
+
+## 12. Expected Impact
+
+- Improved inventory accuracy  
+- Reduced stockouts and overstock  
+- Better supplier coordination  
+- Enhanced customer satisfaction  
+- Data-driven decision-making  
+- Automated retail workflows  
+
+---
+
+## 13. Future Scope
+
+- AI-based demand forecasting  
+- Advanced analytics dashboards  
+- Real-time POS & external API integrations  
+- Mobile application  
+- Barcode/RFID integration  
+- E-commerce integration  
+- Supplier recommendation system  
