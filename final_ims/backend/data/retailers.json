@@ -1,6 +1,64 @@
 [
   {
     "business": {
+      "businessName": "doe",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "doe@gmail.com",
+      "retailerCode": "RET-814",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "doe"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "doeStore",
+        "code": "DOESTORE",
+        "contactPerson": "doe",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
+    "status": "completed",
+    "createdAt": "2026-07-31T06:49:23.823Z",
+    "updatedAt": "2026-07-31T06:49:23.823Z"
+  },
+  {
+    "business": {
+      "businessName": "retailer1",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "retailer1@gmail.com",
+      "retailerCode": "RET-452",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "retailer1"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r1",
+        "code": "R1",
+        "contactPerson": "retailer1",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "9b9513bb-3f6f-447d-9469-704dc3700954",
+    "status": "completed",
+    "createdAt": "2026-07-31T06:46:29.463Z",
+    "updatedAt": "2026-07-31T06:46:29.463Z"
+  },
+  {
+    "business": {
       "businessName": "r11",
       "businessType": "Sole Proprietorship",
       "businessEmail": "r11@gmail.com",

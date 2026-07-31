@@ -404,7 +404,10 @@
         </div><!-- /ratings card -->
 
         <div class="r-card">
-          <div class="r-card-title">🗣 Recent Feedback</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div class="r-card-title" style="margin-bottom:0;">🗣 Recent Feedback</div>
+            <button type="button" id="writeReviewBtn" class="btn-review" style="padding:6px 14px; border-radius:8px; border:none; background:#2563eb; color:#fff; font-weight:600; cursor:pointer; font-size:12.5px;">Write a Review</button>
+          </div>
           <div id="recent-feedback-list" class="feedback-list">
             <div class="feedback-empty">No feedback yet for this product.</div>
           </div>
@@ -454,6 +457,7 @@
   </div>
 
   <script src="../js/api-config.js"></script>
+  <script src="../js/so-toast.js"></script>
   <script src="../js/commerce-api.js"></script>
   <script src="app-flow.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

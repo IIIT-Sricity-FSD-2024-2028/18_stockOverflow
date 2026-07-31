@@ -106,7 +106,7 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
             storeId: this.normalizeText(approvalScope?.storeId, request.storeId),
         });
         const biller = this.upsertApprovedBiller(request, scope);
-        this.ensureBillerUserExists(request);
+        this.ensureBillerUserExists(request, biller);
         request.retailerId = scope.retailerId;
         if (scope.storeId) {
             request.storeId = scope.storeId;
@@ -177,6 +177,14 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
         if (scope.storeId && existingStoreId && existingStoreId !== scope.storeId) {
             throw new common_1.ConflictException('This biller email is already linked to another store.');
         }
+        if (scope.storeId) {
+            const existingStoreBiller = billers.find((b) => b.storeId === scope.storeId &&
+                b.status === 'active' &&
+                this.normalizeEmail(b.email) !== normalizedEmail);
+            if (existingStoreBiller) {
+                throw new common_1.ConflictException(`This store already has an active biller assigned (${existingStoreBiller.name}). Only one biller is allowed per store.`);
+            }
+        }
         const updated = {
             ...existing,
             retailerId: this.normalizeText(existingRetailerId, scope.retailerId),
@@ -191,7 +199,7 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
         this.write(billers);
         return updated;
     }
-    ensureBillerUserExists(request) {
+    ensureBillerUserExists(request, biller) {
         const existingUsers = this.usersService.findAll(undefined, request.email);
         if (!existingUsers.length) {
             this.usersService.create({
@@ -199,13 +207,22 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
                 email: request.email,
                 password: 'temp123',
                 role: 'biller',
-                store: '',
+                store: biller?.storeId || request.storeId || '',
             });
-            return;
         }
-        const existingUser = existingUsers[0];
-        if (String(existingUser.role || '').toLowerCase() !== 'biller') {
-            throw new common_1.ConflictException('A non-biller user already exists with this email address.');
+        const users = this.usersService.findAll(undefined, request.email);
+        if (users.length && biller) {
+            const user = users[0];
+            if (String(user.role || '').toLowerCase() !== 'biller') {
+                throw new common_1.ConflictException('A non-biller user already exists with this email address.');
+            }
+            this.usersService.update(user.id, {
+                profileId: String(biller.id),
+                storeId: biller.storeId,
+                currentStoreId: biller.storeId,
+                accessibleStoreIds: biller.storeId ? [biller.storeId] : [],
+                retailerId: biller.retailerId,
+            });
         }
     }
     resolveRequestScope(payload) {

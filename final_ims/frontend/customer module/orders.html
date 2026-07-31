@@ -101,6 +101,7 @@
   </div>
 
   <script src="../js/api-config.js"></script>
+  <script src="../js/so-toast.js"></script>
   <script src="../js/commerce-api.js"></script>
   <script src="app-flow.js"></script>
   <script>
@@ -167,13 +168,7 @@
       const pendingOrders = await buildPendingOrders();
 
       // Filter out products that were purchased more than 30 days ago
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-      const recentPurchasedProducts = purchasedProducts.filter(function(order) {
-        const orderDate = new Date(order.lastOrderedAt);
-        return orderDate >= thirtyDaysAgo;
-      });
+      const recentPurchasedProducts = purchasedProducts;
 
       const orders = pendingOrders.concat(recentPurchasedProducts.map(function(order) {
         return Object.assign({ isPending: false }, order);

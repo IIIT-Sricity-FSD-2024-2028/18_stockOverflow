@@ -1,5 +1,170 @@
 [
   {
+    "id": "15daae12-b621-452a-98f1-57f2e852b287",
+    "name": "con1",
+    "email": "con1@gmail.com",
+    "password": "passpass",
+    "role": "consumer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-07-31T07:02:27.298Z",
+    "updatedAt": "2026-07-31T07:02:27.298Z"
+  },
+  {
+    "id": "0ee12f70-b453-4a95-801c-ecb667b48616",
+    "name": "sup1",
+    "email": "sup1@gmail.com",
+    "password": "passpass",
+    "role": "supplier",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "270b5b3c-0841-424a-a1f1-38d0834a8b70",
+    "profile": {
+      "businessName": "supply1",
+      "businessEmail": "supply1@gmail.com",
+      "businessPhone": "",
+      "supplierCode": "",
+      "address": "",
+      "website": "",
+      "businessType": "Manufacturer",
+      "currency": "INR",
+      "primaryCategory": "",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "description": "",
+      "state": "",
+      "ownerName": "sup1",
+      "ownerTitle": "",
+      "ownerEmail": "supply1@gmail.com",
+      "profileStatus": "active",
+      "retailers": [],
+      "productCount": 1
+    },
+    "createdAt": "2026-07-31T06:52:43.539Z",
+    "updatedAt": "2026-07-31T06:54:01.742Z"
+  },
+  {
+    "id": "3151a045-260f-44a8-bf4e-e2a7c0d35c14",
+    "name": "bil1",
+    "email": "bil1@gmail.com",
+    "password": "passpass",
+    "role": "biller",
+    "status": "Active",
+    "store": "",
+    "storeId": "DOESTORE",
+    "currentStoreId": "DOESTORE",
+    "accessibleStoreIds": [
+      "DOESTORE"
+    ],
+    "profileId": "7",
+    "profile": {
+      "name": "bil1",
+      "email": "bil1@gmail.com",
+      "retailerId": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9"
+    },
+    "createdAt": "2026-07-31T06:50:51.459Z",
+    "updatedAt": "2026-07-31T06:51:20.514Z"
+  },
+  {
+    "id": "f5882725-cda0-44a5-a139-6bc8dac44353",
+    "name": "doe",
+    "email": "doe@gmail.com",
+    "password": "passpass",
+    "role": "retailer",
+    "status": "Active",
+    "store": "doeStore",
+    "storeId": "DOESTORE",
+    "currentStoreId": "DOESTORE",
+    "accessibleStoreIds": [
+      "DOESTORE"
+    ],
+    "profileId": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
+    "profile": {
+      "businessName": "doe",
+      "businessEmail": "doe@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-814",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "doe",
+      "ownerTitle": "",
+      "ownerEmail": "doe@gmail.com",
+      "profileStatus": "active",
+      "stores": [
+        {
+          "name": "doeStore",
+          "code": "DOESTORE",
+          "contactPerson": "doe",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-07-31T06:48:51.365Z",
+    "updatedAt": "2026-07-31T06:49:23.834Z"
+  },
+  {
+    "id": "b789ac4b-295c-4cc5-b091-6f35f296fdeb",
+    "name": "retailer1",
+    "email": "retailer1@gmail.com",
+    "password": "passpass",
+    "role": "retailer",
+    "status": "Active",
+    "store": "r1",
+    "storeId": "R1",
+    "currentStoreId": "R1",
+    "accessibleStoreIds": [
+      "R1"
+    ],
+    "profileId": "9b9513bb-3f6f-447d-9469-704dc3700954",
+    "profile": {
+      "businessName": "retailer1",
+      "businessEmail": "retailer1@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-452",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "retailer1",
+      "ownerTitle": "",
+      "ownerEmail": "retailer1@gmail.com",
+      "profileStatus": "active",
+      "stores": [
+        {
+          "name": "r1",
+          "code": "R1",
+          "contactPerson": "retailer1",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-07-31T06:45:45.397Z",
+    "updatedAt": "2026-07-31T06:46:29.475Z"
+  },
+  {
     "id": "811471f9-7613-47f4-991b-b945a9fc0e92",
     "name": "retailer11",
     "email": "r11@gmail.com",

@@ -920,6 +920,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
   <span id="toastMsg">Saved!</span>
 </div>
 
+<script src="../js/so-toast.js"></script>
 <script src="api-config.js"></script>
 <script>
 'use strict';
@@ -944,6 +945,7 @@ const PAYMENT_NAMES = {
 document.addEventListener('DOMContentLoaded', () => {
   loadFromStorage();
   updateDisplay();
+  loadPoHistory();
 
   // Set min date for delivery to today
   const today = new Date().toISOString().split('T')[0];
@@ -1168,9 +1170,89 @@ function updateSummaryPanel() {
 
 /* ── SUPPLIER/DATE CHANGE ─────────────────────────── */
 function onSupplierChange() {
-  const val = document.getElementById('supplierSelect').value;
-  document.getElementById('osSup').textContent = val ? SUPPLIER_NAMES[val] : '—';
+  const select = document.getElementById('supplierSelect');
+  const val = select.value;
+  const selectedText = select.options[select.selectedIndex]?.text || val;
+  document.getElementById('osSup').textContent = val ? (SUPPLIER_NAMES[val] || selectedText) : '—';
   updateChecklist();
+  loadPoHistory();
+}
+
+async function loadPoHistory() {
+  const container = document.getElementById('poHistoryList');
+  const title = document.querySelector('#poHistoryCard .po-card-title');
+  if (!container) return;
+
+  const select = document.getElementById('supplierSelect');
+  const supplierId = select ? select.value : '';
+  const selectedName = select && select.selectedIndex > 0 ? select.options[select.selectedIndex].text : '';
+
+  const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+  const retailerId = session.profileId || session.id || '';
+
+  if (title) {
+    title.textContent = supplierId
+      ? `PO History (${selectedName || SUPPLIER_NAMES[supplierId] || supplierId})`
+      : 'PO History (Whole History)';
+  }
+
+  try {
+    container.innerHTML = '<div style="padding:15px;color:var(--text-secondary);text-align:center;">Loading purchase history...</div>';
+    let url = `/api/purchase-orders?retailerId=${encodeURIComponent(retailerId)}`;
+    if (supplierId) {
+      url += `&supplierId=${encodeURIComponent(supplierId)}`;
+    }
+    const pos = window.RetailerApi && typeof window.RetailerApi.request === 'function'
+      ? await window.RetailerApi.request(url)
+      : await fetch('http://localhost:3001' + url).then(r => r.json());
+
+    if (!Array.isArray(pos) || pos.length === 0) {
+      container.innerHTML = `<div style="padding:20px;color:var(--text-secondary);text-align:center;">No purchase history found${supplierId ? ' for this supplier' : ''}.</div>`;
+      return;
+    }
+
+    let html = `
+      <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border); color:var(--text-secondary); font-weight:600;">
+            <th style="padding:8px;">PO ID</th>
+            <th style="padding:8px;">Supplier</th>
+            <th style="padding:8px;">Date</th>
+            <th style="padding:8px;">Items Bought</th>
+            <th style="padding:8px;">Total</th>
+            <th style="padding:8px;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    pos.forEach(po => {
+      const dateStr = po.createdAt ? new Date(po.createdAt).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}) : '-';
+      const itemsStr = Array.isArray(po.items) ? po.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '-';
+      const totalStr = `$${Number(po.total || 0).toLocaleString()}`;
+      let statusColor = '#3b82f6';
+      if (po.status === 'Delivered') statusColor = '#10b981';
+      if (po.status === 'Cancelled') statusColor = '#ef4444';
+      if (po.status === 'Pending') statusColor = '#f59e0b';
+
+      html += `
+        <tr style="border-bottom:1px solid #f1f5f9;">
+          <td style="padding:8px; font-weight:600;">${po.id}</td>
+          <td style="padding:8px;">${po.supplierName || po.supplierId || '-'}</td>
+          <td style="padding:8px; color:var(--text-secondary);">${dateStr}</td>
+          <td style="padding:8px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${itemsStr}">${itemsStr}</td>
+          <td style="padding:8px; font-weight:600;">${totalStr}</td>
+          <td style="padding:8px;"><span style="background:${statusColor}15; color:${statusColor}; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">${po.status || 'Pending'}</span></td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  } catch (error) {
+    console.error('Error loading PO history:', error);
+    container.innerHTML = '<div style="padding:20px;color:#ef4444;text-align:center;">Could not load purchase history.</div>';
+  }
 }
 function onDeliveryChange() {
   const val = document.getElementById('deliveryDate').value;
@@ -1435,6 +1517,7 @@ confirmCreate = async function () {
     localStorage.removeItem('po_products');
     localStorage.removeItem('po_products_ts');
     localStorage.removeItem('po_supplier_id');
+    loadPoHistory();
   } catch (error) {
     window.RetailerUi.showToast(
       'Could not create purchase order: ' + window.RetailerUi.getErrorMessage(error),

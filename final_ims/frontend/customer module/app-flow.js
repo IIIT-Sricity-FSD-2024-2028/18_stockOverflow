@@ -271,6 +271,15 @@
       });
     }
 
+    const writeReviewBtn = document.querySelector('#writeReviewBtn');
+    if (writeReviewBtn) {
+      writeReviewBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const sku = new URLSearchParams(window.location.search).get('sku') || localStorage.getItem('imsSelectedSku');
+        if (sku) localStorage.setItem('imsFeedbackSku', sku);
+        go(sku ? `${FILES.feedback}?sku=${encodeURIComponent(sku)}` : FILES.feedback);
+      });
+    }
   };
 
   const wireConsumerLanding = () => {
@@ -377,24 +386,36 @@
     if (submit) {
       submit.addEventListener('click', async (event) => {
         event.preventDefault();
+        const textarea = document.querySelector('textarea.form-input');
         const comment = textarea?.value?.trim() || 'No comment';
         const activeType = document.querySelector('.type-card.selected .type-name')?.textContent?.trim() || 'General';
-        const rating = document.querySelectorAll('.star.active').length || 4;
-        const feedbackSku = new URLSearchParams(window.location.search).get('sku')
+        const rating = document.querySelectorAll('.star.active').length || 5;
+
+        const feedbackSku = document.querySelector('#selectedProductSku')?.textContent?.trim()
+          || new URLSearchParams(window.location.search).get('sku')
           || localStorage.getItem('imsFeedbackSku')
           || localStorage.getItem('imsSelectedSku')
           || null;
+
         const feedbackProductName = document.querySelector('#selectedProductName')?.textContent?.trim()
           || document.querySelector('.product-result-name')?.textContent?.trim()
           || localStorage.getItem('imsSelectedProduct')
           || 'Product';
 
+        if (!feedbackSku) {
+          if (window.SOToast) window.SOToast.warning('Please select a product to review.');
+          else toast('Please select a product to review');
+          return;
+        }
+
         try {
-          if (window.ImsApi && typeof window.ImsApi.submitFeedback === 'function' && feedbackSku) {
-            const activeSession = readSession();
+          const activeSession = readSession();
+          const customerName = activeSession && activeSession.name ? activeSession.name : 'Verified Customer';
+
+          if (window.ImsApi && typeof window.ImsApi.submitFeedback === 'function') {
             await window.ImsApi.submitFeedback(feedbackSku, {
               productName: feedbackProductName,
-              customer: activeSession && activeSession.name ? activeSession.name : 'Recent Buyer',
+              customer: customerName,
               type: activeType,
               rating,
               comment
@@ -420,10 +441,26 @@
             saveState(state);
           }
 
-          toast('Feedback submitted');
-          window.location.replace(FILES.orders);
+          if (window.SOToast) {
+            window.SOToast.success('Thank you! Your review has been submitted successfully.');
+          } else {
+            toast('Feedback submitted successfully!');
+          }
+
+          if (typeof window.renderRecentFeedbackFromSubmittedFeedback === 'function') {
+            window.renderRecentFeedbackFromSubmittedFeedback(feedbackSku);
+          }
+          if (typeof window.renderRatingDistributionFromSubmittedFeedback === 'function') {
+            window.renderRatingDistributionFromSubmittedFeedback(feedbackSku);
+          }
+
+          if (textarea) textarea.value = '';
+
         } catch (error) {
-          toast(window.IMS_HTTP ? window.IMS_HTTP.getErrorMessage(error) : 'Unable to submit feedback');
+          console.error('Error submitting feedback:', error);
+          const msg = window.IMS_HTTP ? window.IMS_HTTP.getErrorMessage(error) : (error.message || 'Unable to submit feedback');
+          if (window.SOToast) window.SOToast.error(msg);
+          else toast(msg);
         }
       });
     }

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/landing.css">
+  <script src="js/so-toast.js"></script>
   <style>
     /* Modal Styles */
     .modal-overlay {
@@ -773,37 +774,44 @@ function openBillerRequestModal() {
 
 function loadRetailersForModal() {
   const select = document.getElementById('billerRetailer');
-  select.innerHTML = '<option value="">Choose a retailer...</option>';
+  select.innerHTML = '<option value="">Choose a store...</option>';
+
+  const apiBase = window.location && window.location.hostname
+    ? `${window.location.protocol}//${window.location.hostname}:3001`
+    : 'http://localhost:3001';
   
-  // Fetch retailers from backend API
-  fetch('http://localhost:3001/api/stores')
-    .then(response => response.json())
-    .then(stores => {
-      stores.forEach(store => {
-        const option = document.createElement('option');
-        option.value = store.id;
-        option.dataset.retailerId = store.retailerId || '';
-        option.textContent = `${store.name} (${store.location})`;
-        select.appendChild(option);
-      });
-    })
-    .catch(error => {
-      console.error('Error loading retailers:', error);
-      // Fallback to localStorage if API fails
-      try {
-        const users = JSON.parse(localStorage.getItem('so_users') || '[]');
-        const retailers = users.filter(u => u.role === 'retailer' && u.status === 'Active');
-        
-        retailers.forEach(retailer => {
-          const option = document.createElement('option');
-          option.value = retailer.id;
-          option.textContent = `${retailer.name} (${retailer.store || 'Store'})`;
-          select.appendChild(option);
-        });
-      } catch (e) {
-        console.error('Error loading retailers from localStorage:', e);
+  Promise.all([
+    fetch(`${apiBase}/api/stores`).then(r => r.ok ? r.json() : []).catch(() => []),
+    fetch(`${apiBase}/api/billers`).then(r => r.ok ? r.json() : []).catch(() => [])
+  ])
+  .then(([stores, billers]) => {
+    const assignedStoreIds = new Set(
+      billers.filter(b => b.status === 'active' && b.storeId).map(b => String(b.storeId).trim())
+    );
+
+    if (!stores.length) {
+      select.innerHTML = '<option value="">No stores available</option>';
+      return;
+    }
+
+    stores.forEach(store => {
+      const option = document.createElement('option');
+      option.value = store.id;
+      option.dataset.retailerId = store.retailerId || '';
+      const isAssigned = assignedStoreIds.has(String(store.id).trim());
+      
+      if (isAssigned) {
+        option.textContent = `${store.name} (${store.location || store.address || 'Store'}) - [Biller Assigned]`;
+        option.disabled = true;
+      } else {
+        option.textContent = `${store.name} (${store.location || store.address || 'Store'})`;
       }
+      select.appendChild(option);
     });
+  })
+  .catch(error => {
+    console.error('Error loading stores:', error);
+  });
 }
 
 function closeBillerModal(event) {
@@ -827,54 +835,51 @@ function submitBillerRequest() {
     : '';
 
   if (!name || !email || !password || !confirmPassword || !phone || !company || !country || !storeId) {
-    alert('Please fill in all fields');
+    if (window.SOToast) window.SOToast.warning('Please fill in all required fields.');
+    else alert('Please fill in all required fields');
     return;
   }
 
-  // Validate email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    alert('Please enter a valid email');
+    if (window.SOToast) window.SOToast.warning('Please enter a valid email address.');
+    else alert('Please enter a valid email address');
     return;
   }
 
-  // Validate password
   if (password.length < 8) {
-    alert('Password must be at least 8 characters');
+    if (window.SOToast) window.SOToast.warning('Password must be at least 8 characters long.');
+    else alert('Password must be at least 8 characters long');
     return;
   }
 
   if (password !== confirmPassword) {
-    alert('Passwords do not match');
+    if (window.SOToast) window.SOToast.warning('Passwords do not match.');
+    else alert('Passwords do not match');
     return;
   }
 
+  const apiBase = window.location && window.location.hostname
+    ? `${window.location.protocol}//${window.location.hostname}:3001`
+    : 'http://localhost:3001';
+
   // First register the user
-  fetch('http://localhost:3001/api/users', {
+  fetch(`${apiBase}/api/users`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name,
-      email,
-      password,
-      role: 'biller'
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password, role: 'biller' })
   })
   .then(response => {
     if (!response.ok) {
-      throw new Error('User registration failed');
+      return response.json().then(err => { throw new Error(err.message || 'User registration failed'); });
     }
     return response.json();
   })
   .then(user => {
     // Then create biller request
-    return fetch('http://localhost:3001/api/billers/requests', {
+    return fetch(`${apiBase}/api/billers/requests`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
         email,
@@ -886,23 +891,31 @@ function submitBillerRequest() {
       })
     });
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(err => { throw new Error(err.message || 'Biller request failed'); });
+    }
+    return response.json();
+  })
   .then(data => {
-    // Store the email for status checking
     localStorage.setItem('biller_pending_email', email);
-    
-    alert('Your biller account has been created and request submitted! You will be redirected to the validation page.');
+    if (window.SOToast) {
+      window.SOToast.success('Your biller account request has been submitted successfully! Redirecting to validation page...');
+    }
     closeBillerModal();
     document.getElementById('billerRequestForm').reset();
     
-    // Redirect to pending page
     setTimeout(() => {
       window.location.href = 'auth/biller-pending.html';
-    }, 500);
+    }, 1500);
   })
   .catch(error => {
     console.error('Error:', error);
-    alert('Failed to submit request. Please try again.');
+    if (window.SOToast) {
+      window.SOToast.error(error.message || 'Failed to submit biller request. Please try again.');
+    } else {
+      alert('Failed to submit request: ' + error.message);
+    }
   });
 }
 

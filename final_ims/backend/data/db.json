@@ -1,6 +1,176 @@
 {
   "products": [
     {
+      "id": "69ca6283-3e9f-47ac-a56c-84db88309b5e",
+      "retailerId": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
+      "sku": "SP002",
+      "name": "laptop",
+      "category": "General",
+      "subcategory": "General",
+      "subCategory": "General",
+      "brand": "sup1",
+      "priceUSD": 2600,
+      "price": 2600,
+      "discountType": "none",
+      "finalPrice": 2600,
+      "taxType": "Inclusive",
+      "unit": "Pc",
+      "qty": 0,
+      "initialQty": 1,
+      "min": 0,
+      "max": 1,
+      "creator": "Retail Manager",
+      "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20SP002%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20SP002%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20SP002%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 1,
+      "trend": "up",
+      "description": "",
+      "descriptionHtml": "",
+      "supplier": "sup1",
+      "supplierSku": "",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 1,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "DOESTORE",
+          "qty": 0
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "DOESTORE",
+          "qty": 1
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 2600,
+      "status": "active",
+      "visibility": "published",
+      "createdAt": "2026-07-31T07:00:31.965Z",
+      "updatedAt": "2026-07-31T07:03:28.061Z",
+      "restockedAt": "2026-07-31T07:00:31.965Z",
+      "lastStockChangeAt": "2026-07-31T07:00:31.965Z"
+    },
+    {
+      "id": "c2a70b3d-731b-4237-8181-e12b557afa98",
+      "retailerId": "",
+      "sku": "SP002",
+      "name": "laptop",
+      "category": "Computers",
+      "subcategory": "General",
+      "subCategory": "General",
+      "brand": "mitsubishi",
+      "priceUSD": 2000,
+      "price": 2000,
+      "discountType": "none",
+      "finalPrice": 2000,
+      "taxType": "Inclusive",
+      "unit": "Pc",
+      "qty": 0,
+      "initialQty": 0,
+      "min": 0,
+      "max": 1,
+      "creator": "Retail Manager",
+      "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20SP002%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20SP002%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20SP002%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Elaptop%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 0,
+      "trend": "up",
+      "description": "Supplied by sup1",
+      "descriptionHtml": "",
+      "supplier": "sup1",
+      "supplierSku": "",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 1,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 0
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 0
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 0,
+      "status": "active",
+      "visibility": "published",
+      "createdAt": "2026-07-31T06:54:55.234Z",
+      "updatedAt": "2026-07-31T06:54:55.234Z",
+      "restockedAt": "2026-07-31T06:54:55.234Z",
+      "lastStockChangeAt": ""
+    },
+    {
       "id": "2327a9de-d9aa-47ce-97d7-061dcd8f52c2",
       "retailerId": "eea40a42-2284-47e8-89ef-c4d837017996",
       "sku": "SP001",
@@ -33,7 +203,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Es10-p1%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "📦",
-      "soldThisMonth": 1,
+      "soldThisMonth": 0,
       "trend": "up",
       "description": "",
       "descriptionHtml": "",
@@ -93,7 +263,7 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-05-04T00:53:14.855Z",
-      "updatedAt": "2026-05-04T00:56:44.416Z",
+      "updatedAt": "2026-07-31T07:03:28.061Z",
       "restockedAt": "2026-05-04T00:53:14.855Z",
       "lastStockChangeAt": "2026-05-04T00:53:14.855Z"
     },
@@ -222,7 +392,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Es8-p2%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "📦",
-      "soldThisMonth": 1,
+      "soldThisMonth": 0,
       "trend": "up",
       "description": "",
       "descriptionHtml": "",
@@ -282,7 +452,7 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-05-04T00:17:57.861Z",
-      "updatedAt": "2026-05-04T00:55:44.854Z",
+      "updatedAt": "2026-07-31T07:03:28.061Z",
       "restockedAt": "2026-05-04T00:17:57.861Z",
       "lastStockChangeAt": "2026-05-04T00:17:57.861Z"
     },
@@ -411,7 +581,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Es4-1%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "📦",
-      "soldThisMonth": 1,
+      "soldThisMonth": 0,
       "trend": "up",
       "description": "",
       "descriptionHtml": "",
@@ -459,7 +629,7 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-05-03T23:10:07.175Z",
-      "updatedAt": "2026-05-04T00:55:44.854Z",
+      "updatedAt": "2026-07-31T07:03:28.061Z",
       "restockedAt": "2026-05-03T23:10:07.175Z",
       "lastStockChangeAt": "2026-05-03T23:10:07.175Z"
     },
@@ -920,6 +1090,27 @@
   "stores": [],
   "customers": [
     {
+      "id": "15daae12-b621-452a-98f1-57f2e852b287",
+      "retailerId": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
+      "storeId": "DOESTORE",
+      "name": "con1",
+      "fname": "con1",
+      "lname": "",
+      "email": "con1@gmail.com",
+      "phone": "",
+      "city": "",
+      "country": "India",
+      "store": "Downtown Store",
+      "status": "Active",
+      "totalOrders": 1,
+      "totalSpent": 2600,
+      "orders": 1,
+      "spent": 2600,
+      "created": "Jul 31, 2026",
+      "rating": 3,
+      "notes": ""
+    },
+    {
       "id": "51c0c408-14fa-48f6-9c85-10690a23ef81",
       "retailerId": "eea40a42-2284-47e8-89ef-c4d837017996",
       "storeId": "R10-1",
@@ -984,6 +1175,19 @@
     }
   ],
   "billers": [
+    {
+      "id": 7,
+      "retailerId": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
+      "storeId": "DOESTORE",
+      "code": "BI007",
+      "name": "bil1",
+      "company": "bil1",
+      "email": "bil1@gmail.com",
+      "phone": "1234567801",
+      "country": "bil1",
+      "status": "active",
+      "avatar": "#00BCD4"
+    },
     {
       "id": 6,
       "retailerId": "eea40a42-2284-47e8-89ef-c4d837017996",
@@ -1163,11 +1367,55 @@
       "status": "approved",
       "createdAt": "2026-05-04T00:51:17.248Z",
       "approvedAt": "2026-05-04T00:51:56.806Z"
+    },
+    {
+      "id": "1785480651468",
+      "name": "bil1",
+      "email": "bil1@gmail.com",
+      "phone": "1234567801",
+      "company": "bil1",
+      "country": "bil1",
+      "retailerId": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
+      "storeId": "DOESTORE",
+      "status": "approved",
+      "createdAt": "2026-07-31T06:50:51.468Z",
+      "approvedAt": "2026-07-31T06:51:20.517Z"
     }
   ],
   "suppliers": [],
   "warehouses": [],
   "purchaseOrders": [
+    {
+      "id": "PO-2026-0005",
+      "supplierId": "2ed5c61f-63e9-4fda-b32e-ccb816f0b770",
+      "supplierName": "sup1",
+      "retailerId": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
+      "retailerName": "doe",
+      "storeId": "DOESTORE",
+      "items": [
+        {
+          "id": "SP002",
+          "name": "laptop",
+          "emoji": "PKG",
+          "sku": "SP002",
+          "cat": "Computers",
+          "price": 2000,
+          "qty": 1,
+          "stock": 11,
+          "stockStatus": "ok"
+        }
+      ],
+      "deliveryDate": "2026-08-02",
+      "paymentTerms": "Net 30",
+      "notes": "",
+      "shippingAddress": "",
+      "subtotal": 2000,
+      "tax": 100,
+      "total": 2100,
+      "units": 1,
+      "status": "Delivered",
+      "createdAt": "2026-07-31T07:00:10.214Z"
+    },
     {
       "id": "PO-2026-0004",
       "supplierId": "a58228f2-85eb-416d-a975-dc7b2019cd27",
@@ -1296,6 +1544,23 @@
   "reservations": [],
   "reservationRequests": [
     {
+      "requestId": "req-1785481373804-87688",
+      "sku": "SP002",
+      "productName": "laptop",
+      "qty": 1,
+      "customer": "con1",
+      "customerEmail": "con1@gmail.com",
+      "customerId": "15daae12-b621-452a-98f1-57f2e852b287",
+      "storeId": "DOESTORE",
+      "store": "doeStore",
+      "paymentMethod": "Cash",
+      "status": "completed",
+      "createdAt": "2026-07-31T07:02:53.804Z",
+      "orderId": "ORD927604",
+      "completedAt": "2026-07-31T07:03:28.057Z",
+      "completedBy": "biller"
+    },
+    {
       "requestId": "req-1777856106622-85885",
       "sku": "SP001",
       "productName": "s10-p1",
@@ -1390,6 +1655,38 @@
     }
   ],
   "transactions": [
+    {
+      "orderId": "ORD927604",
+      "retailerId": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
+      "timestamp": "2026-07-31T07:03:28.054Z",
+      "customer": "con1",
+      "customerEmail": "con1@gmail.com",
+      "customerId": "15daae12-b621-452a-98f1-57f2e852b287",
+      "store": "doeStore",
+      "storeId": "DOESTORE",
+      "paymentMethod": "💵 Cash",
+      "items": [
+        {
+          "sku": "SP002",
+          "name": "laptop",
+          "quantity": 1,
+          "price": 2600,
+          "total": 2600,
+          "isReserved": true,
+          "requestIds": [
+            "req-1785481373804-87688"
+          ]
+        }
+      ],
+      "subtotal": 2600,
+      "shipping": 0,
+      "tax": 0,
+      "coupon": 0,
+      "discount": 0,
+      "roundoff": 0,
+      "finalTotal": 2600,
+      "status": "Delivered"
+    },
     {
       "orderId": "ORD676449",
       "retailerId": "eea40a42-2284-47e8-89ef-c4d837017996",
@@ -1641,5 +1938,29 @@
       "inventoryProcessedAt": ""
     }
   ],
-  "stockAdjustments": []
+  "stockAdjustments": [],
+  "users": [
+    {
+      "id": "user-admin-1",
+      "name": "Super Admin",
+      "email": "admin@stockoverflow.local",
+      "password": "admin123",
+      "role": "admin",
+      "status": "active",
+      "createdAt": "2026-07-31T06:45:42.353Z",
+      "updatedAt": "2026-07-31T06:45:42.353Z"
+    }
+  ],
+  "roles": [],
+  "systemSettings": [
+    {
+      "reorderThreshold": 10,
+      "lowStockAlertEnabled": true,
+      "autoReorderEnabled": false,
+      "maxOrderQuantity": 100,
+      "currency": "USD",
+      "timezone": "UTC",
+      "updatedAt": "2026-07-31T06:45:42.353Z"
+    }
+  ]
 }

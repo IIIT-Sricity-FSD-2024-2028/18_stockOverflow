@@ -1,6 +1,70 @@
 [
   {
     "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "sup1",
+      "businessType": "Distributor",
+      "businessEmail": "sup1@gmail.com",
+      "state": "Gujarat",
+      "primaryCategory": "Electronics & Technology"
+    },
+    "primaryContact": {
+      "fullName": "sup1",
+      "directEmail": "sup1@gmail.com"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP002",
+        "name": "laptop",
+        "brand": "mitsubishi",
+        "category": "Computers",
+        "unitPrice": 2000,
+        "minOrderQty": 1,
+        "stockAvailable": 10
+      }
+    ],
+    "id": "2ed5c61f-63e9-4fda-b32e-ccb816f0b770",
+    "status": "completed",
+    "profileStatus": "active",
+    "createdAt": "2026-07-31T06:54:11.253Z",
+    "updatedAt": "2026-07-31T07:00:31.969Z"
+  },
+  {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "supply1",
+      "businessType": "Manufacturer",
+      "businessEmail": "supply1@gmail.com"
+    },
+    "primaryContact": {
+      "fullName": "sup1"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP001",
+        "name": "laptop",
+        "brand": "mitshubishi",
+        "category": "Computers",
+        "stockAvailable": 11,
+        "unitPrice": 0
+      }
+    ],
+    "id": "270b5b3c-0841-424a-a1f1-38d0834a8b70",
+    "status": "completed",
+    "profileStatus": "active",
+    "createdAt": "2026-07-31T06:54:01.730Z",
+    "updatedAt": "2026-07-31T06:54:01.730Z"
+  },
+  {
+    "business": {
       "currency": "USD",
       "paymentTerms": "Net 30",
       "sellingType": "Wholesale",

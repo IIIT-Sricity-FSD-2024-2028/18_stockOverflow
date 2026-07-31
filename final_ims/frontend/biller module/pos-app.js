@@ -259,8 +259,8 @@
   function showUnavailabilityPopup(unavailableItems) {
     const message = unavailableItems
       .map((item) => item.name + ': Requested ' + item.requested + ', Available ' + item.available)
-      .join('\n');
-    alert('Insufficient inventory\n\n' + message);
+      .join('; ');
+    showToast('Insufficient inventory: ' + message);
   }
 
   function generateBill(transaction) {

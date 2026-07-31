@@ -89,7 +89,7 @@
     const details = transaction.items
       .map((item) => item.name + ' x ' + item.quantity + ' = ' + formatInr(item.total))
       .join('\n');
-    alert('Order: ' + transaction.orderId + '\nCustomer: ' + transaction.customer + '\n\n' + details + '\n\nTotal: ' + formatInr(transaction.finalTotal));
+    showToast('Order ' + transaction.orderId + ' (' + transaction.customer + ') - Total: ' + formatInr(transaction.finalTotal));
   };
 
   window.editTransactionInventory = function (index) {

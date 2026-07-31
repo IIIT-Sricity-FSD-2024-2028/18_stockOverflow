@@ -139,7 +139,7 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
       storeId: this.normalizeText(approvalScope?.storeId, request.storeId),
     });
     const biller = this.upsertApprovedBiller(request, scope);
-    this.ensureBillerUserExists(request);
+    this.ensureBillerUserExists(request, biller);
 
     request.retailerId = scope.retailerId;
     if (scope.storeId) {
@@ -245,6 +245,20 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
       );
     }
 
+    if (scope.storeId) {
+      const existingStoreBiller = billers.find(
+        (b) =>
+          b.storeId === scope.storeId &&
+          b.status === 'active' &&
+          this.normalizeEmail(b.email) !== normalizedEmail,
+      );
+      if (existingStoreBiller) {
+        throw new ConflictException(
+          `This store already has an active biller assigned (${existingStoreBiller.name}). Only one biller is allowed per store.`,
+        );
+      }
+    }
+
     const updated: Biller = {
       ...existing,
       retailerId: this.normalizeText(existingRetailerId, scope.retailerId),
@@ -261,7 +275,7 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
     return updated;
   }
 
-  private ensureBillerUserExists(request: BillerRequest) {
+  private ensureBillerUserExists(request: BillerRequest, biller?: Biller) {
     const existingUsers = this.usersService.findAll(undefined, request.email);
 
     if (!existingUsers.length) {
@@ -270,16 +284,25 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
         email: request.email,
         password: 'temp123',
         role: 'biller',
-        store: '',
+        store: biller?.storeId || request.storeId || '',
       });
-      return;
     }
 
-    const existingUser = existingUsers[0];
-    if (String(existingUser.role || '').toLowerCase() !== 'biller') {
-      throw new ConflictException(
-        'A non-biller user already exists with this email address.',
-      );
+    const users = this.usersService.findAll(undefined, request.email);
+    if (users.length && biller) {
+      const user = users[0];
+      if (String(user.role || '').toLowerCase() !== 'biller') {
+        throw new ConflictException(
+          'A non-biller user already exists with this email address.',
+        );
+      }
+      this.usersService.update(user.id, {
+        profileId: String(biller.id),
+        storeId: biller.storeId,
+        currentStoreId: biller.storeId,
+        accessibleStoreIds: biller.storeId ? [biller.storeId] : [],
+        retailerId: biller.retailerId,
+      } as any);
     }
   }
 
