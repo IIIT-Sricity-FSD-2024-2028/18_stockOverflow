@@ -25,6 +25,12 @@ export declare class RetailerStoreDto {
     type?: string;
     notes?: string;
     status?: 'active' | 'inactive';
+    validationStatus?: 'pending' | 'approved' | 'rejected';
+    assignedEmployeeId?: string;
+    assignedAt?: string;
+    validatedBy?: string;
+    validatedAt?: string;
+    rejectionReason?: string;
 }
 export declare class RetailerSupplierDto {
     supplierId?: string;
@@ -54,6 +60,12 @@ export declare class CreateRetailerSetupDto {
     business: RetailerBusinessInfoDto;
     primaryContact: RetailerPrimaryContactDto;
     profileStatus?: 'active' | 'inactive';
+    validationStatus?: 'pending' | 'approved' | 'rejected';
+    assignedEmployeeId?: string;
+    assignedAt?: string;
+    validatedBy?: string;
+    validatedAt?: string;
+    rejectionReason?: string;
     stores?: RetailerStoreDto[];
     suppliers?: RetailerSupplierDto[];
     products?: Record<string, unknown>[];

@@ -108,12 +108,17 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
   createRequest(requestData: CreateBillerRequestDto) {
     const requests = this.getRequests();
     const scope = this.resolveRequestScope(requestData);
+    const assignedEmployeeId = this.usersService.getNextEmployeeId(
+      requests.map((request) => request.assignedEmployeeId),
+    );
     const newRequest: BillerRequest = {
       id: Date.now().toString(),
       ...requestData,
       retailerId: scope.retailerId,
       storeId: scope.storeId,
       status: 'pending',
+      assignedEmployeeId,
+      assignedAt: assignedEmployeeId ? new Date().toISOString() : '',
       createdAt: new Date().toISOString(),
     };
     requests.push(newRequest);
@@ -121,11 +126,24 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
     return newRequest;
   }
 
-  getRequests() {
-    return this.db.getCollection('biller_requests') || [];
+  getRequests(employeeId?: string) {
+    this.ensurePendingRequestAssignments();
+    const requests = this.db.getCollection('biller_requests') || [];
+    const normalizedEmployeeId = this.normalizeText(employeeId);
+    if (!normalizedEmployeeId) {
+      return requests;
+    }
+
+    return requests.filter((request) => {
+      return this.normalizeText(request.assignedEmployeeId) === normalizedEmployeeId;
+    });
   }
 
-  approveRequest(id: string, approvalScope?: ApproveBillerRequestDto) {
+  approveRequest(
+    id: string,
+    approvalScope?: ApproveBillerRequestDto,
+    resolvedBy?: string,
+  ) {
     const requests = this.getRequests();
     const requestIndex = requests.findIndex((r) => r.id === id);
     if (requestIndex === -1) {
@@ -147,12 +165,13 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
     }
     request.status = 'approved';
     request.approvedAt = new Date().toISOString();
+    request.resolvedBy = this.normalizeText(resolvedBy, request.resolvedBy);
 
     this.db.saveCollection('biller_requests', requests);
     return { request, biller };
   }
 
-  rejectRequest(id: string) {
+  rejectRequest(id: string, resolvedBy?: string, rejectionReason?: string) {
     const requests = this.getRequests();
     const requestIndex = requests.findIndex((r) => r.id === id);
     if (requestIndex === -1) {
@@ -162,9 +181,80 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
     const request = requests[requestIndex];
     request.status = 'rejected';
     request.rejectedAt = new Date().toISOString();
+    request.resolvedBy = this.normalizeText(resolvedBy, request.resolvedBy);
+    request.rejectionReason = this.normalizeText(
+      rejectionReason,
+      request.rejectionReason,
+    );
 
     this.db.saveCollection('biller_requests', requests);
     return request;
+  }
+
+  approveAssignedRequest(
+    id: string,
+    employeeId: string,
+    approvalScope?: ApproveBillerRequestDto,
+  ) {
+    const request = this.findAssignedRequest(id, employeeId);
+    return this.approveRequest(request.id, approvalScope, employeeId);
+  }
+
+  rejectAssignedRequest(
+    id: string,
+    employeeId: string,
+    rejectionReason?: string,
+  ) {
+    const request = this.findAssignedRequest(id, employeeId);
+    return this.rejectRequest(request.id, employeeId, rejectionReason);
+  }
+
+  private findAssignedRequest(id: string, employeeId: string) {
+    const request = this.getRequests().find((entry) => entry.id === id);
+    if (!request) {
+      throw new NotFoundException('Biller request not found');
+    }
+
+    if (
+      this.normalizeText(request.assignedEmployeeId) !==
+      this.normalizeText(employeeId)
+    ) {
+      throw new NotFoundException('Assigned request not found');
+    }
+
+    return request;
+  }
+
+  private ensurePendingRequestAssignments() {
+    const requests = this.db.getCollection('biller_requests') || [];
+    const assignments = requests
+      .map((request) => request.assignedEmployeeId)
+      .filter(Boolean);
+    let changed = false;
+    const now = new Date().toISOString();
+
+    requests.forEach((request) => {
+      if (
+        request.status !== 'pending' ||
+        this.normalizeText(request.assignedEmployeeId)
+      ) {
+        return;
+      }
+
+      const assignedEmployeeId = this.usersService.getNextEmployeeId(assignments);
+      if (!assignedEmployeeId) {
+        return;
+      }
+
+      request.assignedEmployeeId = assignedEmployeeId;
+      request.assignedAt = now;
+      assignments.push(assignedEmployeeId);
+      changed = true;
+    });
+
+    if (changed) {
+      this.db.saveCollection('biller_requests', requests);
+    }
   }
 
   private matchesScope(

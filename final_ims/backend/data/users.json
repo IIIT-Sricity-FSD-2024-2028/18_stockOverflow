@@ -1,5 +1,103 @@
 [
   {
+    "id": "83110052-ac18-4058-9c28-b99e519f3de9",
+    "name": "Biller",
+    "email": "biller@gmail.com",
+    "password": "pass1234",
+    "role": "biller",
+    "status": "Active",
+    "store": "",
+    "storeId": "STORE-A",
+    "currentStoreId": "STORE-A",
+    "accessibleStoreIds": [
+      "STORE-A"
+    ],
+    "profileId": "8",
+    "profile": {
+      "name": "Biller",
+      "email": "biller@gmail.com",
+      "retailerId": "8d4dc914-32fc-4b4d-a06d-c8b725a36b92"
+    },
+    "createdAt": "2026-08-14T07:08:32.451Z",
+    "updatedAt": "2026-08-14T07:08:59.279Z"
+  },
+  {
+    "id": "15436482-b154-432a-ba73-3d7d8219164e",
+    "name": "retailer",
+    "email": "nicole@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "Store A",
+    "storeId": "STORE-A",
+    "currentStoreId": "STORE-A",
+    "accessibleStoreIds": [
+      "STORE-A"
+    ],
+    "profileId": "8d4dc914-32fc-4b4d-a06d-c8b725a36b92",
+    "profile": {
+      "businessName": "Retailer",
+      "businessEmail": "nicole@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-543",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "Nicole",
+      "ownerTitle": "",
+      "ownerEmail": "nicole@gmail.com",
+      "profileStatus": "active",
+      "stores": [
+        {
+          "name": "Store A",
+          "code": "STORE-A",
+          "contactPerson": "Nicole",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-14T07:05:37.727Z",
+    "updatedAt": "2026-08-14T07:06:09.562Z"
+  },
+  {
+    "id": "cbd6fd77-5344-4490-89fa-5cf175f531b0",
+    "name": "consumer",
+    "email": "consumer@gmail.com",
+    "password": "pass1234",
+    "role": "consumer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-14T07:04:33.861Z",
+    "updatedAt": "2026-08-14T07:04:33.861Z"
+  },
+  {
+    "id": "186f3595-a91e-47fc-81dc-398b392a20b5",
+    "name": "Employee1",
+    "email": "employee1@gmail.com",
+    "password": "pass1234",
+    "role": "employee",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-14T06:28:10.138Z",
+    "updatedAt": "2026-08-14T06:28:10.138Z"
+  },
+  {
     "id": "15daae12-b621-452a-98f1-57f2e852b287",
     "name": "con1",
     "email": "con1@gmail.com",

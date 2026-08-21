@@ -21,11 +21,11 @@ let ReturnsController = class ReturnsController {
     constructor(returnsService) {
         this.returnsService = returnsService;
     }
-    findAll(retailerId, storeId, customerLookup) {
-        return this.returnsService.findAll(retailerId, storeId, customerLookup);
+    findAll(retailerId, storeId, customerLookup, customerEmail, customerId, supplierId, source) {
+        return this.returnsService.findAll(retailerId, storeId, [customerLookup, customerEmail, customerId], supplierId, source);
     }
-    findOne(id, retailerId, storeId, customerLookup) {
-        return this.returnsService.findOne(id, retailerId, storeId, customerLookup);
+    findOne(id, retailerId, storeId, customerLookup, customerEmail, customerId, supplierId, source) {
+        return this.returnsService.findOne(id, retailerId, storeId, [customerLookup, customerEmail, customerId], supplierId, source);
     }
     create(createReturnDto) {
         return this.returnsService.create(createReturnDto);
@@ -40,8 +40,12 @@ __decorate([
     __param(0, (0, common_1.Query)('retailerId')),
     __param(1, (0, common_1.Query)('storeId')),
     __param(2, (0, common_1.Query)('customer')),
+    __param(3, (0, common_1.Query)('customerEmail')),
+    __param(4, (0, common_1.Query)('customerId')),
+    __param(5, (0, common_1.Query)('supplierId')),
+    __param(6, (0, common_1.Query)('source')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], ReturnsController.prototype, "findAll", null);
 __decorate([
@@ -50,8 +54,12 @@ __decorate([
     __param(1, (0, common_1.Query)('retailerId')),
     __param(2, (0, common_1.Query)('storeId')),
     __param(3, (0, common_1.Query)('customer')),
+    __param(4, (0, common_1.Query)('customerEmail')),
+    __param(5, (0, common_1.Query)('customerId')),
+    __param(6, (0, common_1.Query)('supplierId')),
+    __param(7, (0, common_1.Query)('source')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], ReturnsController.prototype, "findOne", null);
 __decorate([

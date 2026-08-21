@@ -8,6 +8,18 @@ export class CreateReturnDto {
 
   @IsOptional()
   @IsString()
+  retailerName?: string;
+
+  @IsOptional()
+  @IsString()
+  supplierId?: string;
+
+  @IsOptional()
+  @IsString()
+  supplierName?: string;
+
+  @IsOptional()
+  @IsString()
   orderId?: string;
 
   @IsOptional()
@@ -70,6 +82,11 @@ export class CreateReturnDto {
   @Type(() => Number)
   @IsNumber()
   amount?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  quantity?: number;
 
   @IsOptional()
   @IsString()

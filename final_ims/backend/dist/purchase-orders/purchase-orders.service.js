@@ -30,9 +30,15 @@ let PurchaseOrdersService = class PurchaseOrdersService extends collection_servi
     }
     create(createPurchaseOrderDto) {
         const supplier = this.suppliersService.findOne(createPurchaseOrderDto.supplierId);
-        const retailer = createPurchaseOrderDto.retailerId
-            ? this.retailersService.findOne(createPurchaseOrderDto.retailerId)
-            : null;
+        let retailer = null;
+        if (createPurchaseOrderDto.retailerId) {
+            try {
+                retailer = this.retailersService.findOne(createPurchaseOrderDto.retailerId);
+            }
+            catch {
+                retailer = null;
+            }
+        }
         const purchaseOrders = this.findAllTyped();
         const subtotal = createPurchaseOrderDto.items.reduce((total, item) => total + item.price * item.qty, 0);
         const tax = Math.round(subtotal * 0.05);
@@ -134,11 +140,14 @@ let PurchaseOrdersService = class PurchaseOrdersService extends collection_servi
             this.normalizeText(order.retailerId) !== normalizedRetailerId) {
             return false;
         }
-        if (normalizedStoreId && this.normalizeText(order.storeId) !== normalizedStoreId) {
-            return false;
-        }
         if (normalizedSupplierId &&
             this.normalizeText(order.supplierId) !== normalizedSupplierId) {
+            return false;
+        }
+        if (normalizedStoreId &&
+            order.storeId &&
+            this.normalizeText(order.storeId) !== normalizedStoreId &&
+            !normalizedRetailerId) {
             return false;
         }
         return true;

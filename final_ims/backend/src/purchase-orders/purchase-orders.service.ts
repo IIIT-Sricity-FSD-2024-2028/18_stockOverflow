@@ -33,10 +33,14 @@ export class PurchaseOrdersService extends JsonCollectionService<
 
   create(createPurchaseOrderDto: CreatePurchaseOrderDto) {
     const supplier = this.suppliersService.findOne(createPurchaseOrderDto.supplierId);
-    const retailer =
-      createPurchaseOrderDto.retailerId
-        ? this.retailersService.findOne(createPurchaseOrderDto.retailerId)
-        : null;
+    let retailer = null;
+    if (createPurchaseOrderDto.retailerId) {
+      try {
+        retailer = this.retailersService.findOne(createPurchaseOrderDto.retailerId);
+      } catch {
+        retailer = null;
+      }
+    }
 
     const purchaseOrders = this.findAllTyped();
     const subtotal = createPurchaseOrderDto.items.reduce(
@@ -186,13 +190,18 @@ export class PurchaseOrdersService extends JsonCollectionService<
       return false;
     }
 
-    if (normalizedStoreId && this.normalizeText(order.storeId) !== normalizedStoreId) {
+    if (
+      normalizedSupplierId &&
+      this.normalizeText(order.supplierId) !== normalizedSupplierId
+    ) {
       return false;
     }
 
     if (
-      normalizedSupplierId &&
-      this.normalizeText(order.supplierId) !== normalizedSupplierId
+      normalizedStoreId &&
+      order.storeId &&
+      this.normalizeText(order.storeId) !== normalizedStoreId &&
+      !normalizedRetailerId
     ) {
       return false;
     }

@@ -21,11 +21,13 @@ export class TransactionsController {
     @Query('retailerId') retailerId?: string,
     @Query('storeId') storeId?: string,
     @Query('customer') customerLookup?: string,
+    @Query('customerEmail') customerEmail?: string,
+    @Query('customerId') customerId?: string,
   ) {
     return this.transactionsService.findAll(
       retailerId,
       storeId,
-      customerLookup,
+      [customerLookup, customerEmail, customerId],
     );
   }
 
@@ -34,11 +36,13 @@ export class TransactionsController {
     @Query('retailerId') retailerId?: string,
     @Query('storeId') storeId?: string,
     @Query('customer') customerLookup?: string,
+    @Query('customerEmail') customerEmail?: string,
+    @Query('customerId') customerId?: string,
   ) {
     return this.transactionsService.findLatest(
       retailerId,
       storeId,
-      customerLookup,
+      [customerLookup, customerEmail, customerId],
     );
   }
 
@@ -47,11 +51,13 @@ export class TransactionsController {
     @Query('retailerId') retailerId?: string,
     @Query('storeId') storeId?: string,
     @Query('customer') customerLookup?: string,
+    @Query('customerEmail') customerEmail?: string,
+    @Query('customerId') customerId?: string,
   ) {
     return this.transactionsService.getPurchasedProducts(
       retailerId,
       storeId,
-      customerLookup,
+      [customerLookup, customerEmail, customerId],
     );
   }
 
@@ -61,12 +67,14 @@ export class TransactionsController {
     @Query('retailerId') retailerId?: string,
     @Query('storeId') storeId?: string,
     @Query('customer') customerLookup?: string,
+    @Query('customerEmail') customerEmail?: string,
+    @Query('customerId') customerId?: string,
   ) {
     return this.transactionsService.findOne(
       orderId,
       retailerId,
       storeId,
-      customerLookup,
+      [customerLookup, customerEmail, customerId],
     );
   }
 

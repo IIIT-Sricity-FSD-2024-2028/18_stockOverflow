@@ -11,9 +11,9 @@ export declare class TransactionsService {
     private readonly customersService;
     private readonly reservationsService;
     constructor(db: JsonDbService, productsService: ProductsService, customersService: CustomersService, reservationsService: ReservationsService);
-    findAll(retailerId?: string, storeId?: string, customerLookup?: string): TransactionRecord[];
-    findLatest(retailerId?: string, storeId?: string, customerLookup?: string): TransactionRecord;
-    findOne(orderId: string, retailerId?: string, storeId?: string, customerLookup?: string): TransactionRecord;
+    findAll(retailerId?: string, storeId?: string, customerLookup?: string | string[]): TransactionRecord[];
+    findLatest(retailerId?: string, storeId?: string, customerLookup?: string | string[]): TransactionRecord;
+    findOne(orderId: string, retailerId?: string, storeId?: string, customerLookup?: string | string[]): TransactionRecord;
     create(createTransactionDto: CreateTransactionDto): TransactionRecord;
     update(orderId: string, updateTransactionDto: UpdateTransactionDto): TransactionRecord;
     remove(orderId: string): {
@@ -25,7 +25,7 @@ export declare class TransactionsService {
         transactions: number;
         products: number;
     };
-    getPurchasedProducts(retailerId?: string, storeId?: string, customerLookup?: string): {
+    getPurchasedProducts(retailerId?: string, storeId?: string, customerLookup?: string | string[]): {
         sku: string;
         name: string;
         totalQty: number;

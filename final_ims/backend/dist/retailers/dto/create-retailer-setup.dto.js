@@ -157,6 +157,37 @@ __decorate([
     (0, class_validator_1.IsIn)(['active', 'inactive']),
     __metadata("design:type", String)
 ], RetailerStoreDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['pending', 'approved', 'rejected']),
+    __metadata("design:type", String)
+], RetailerStoreDto.prototype, "validationStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RetailerStoreDto.prototype, "assignedEmployeeId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RetailerStoreDto.prototype, "assignedAt", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RetailerStoreDto.prototype, "validatedBy", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RetailerStoreDto.prototype, "validatedAt", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(600),
+    __metadata("design:type", String)
+], RetailerStoreDto.prototype, "rejectionReason", void 0);
 class RetailerSupplierDto {
 }
 exports.RetailerSupplierDto = RetailerSupplierDto;
@@ -304,6 +335,37 @@ __decorate([
     (0, class_validator_1.IsIn)(['active', 'inactive']),
     __metadata("design:type", String)
 ], CreateRetailerSetupDto.prototype, "profileStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['pending', 'approved', 'rejected']),
+    __metadata("design:type", String)
+], CreateRetailerSetupDto.prototype, "validationStatus", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRetailerSetupDto.prototype, "assignedEmployeeId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRetailerSetupDto.prototype, "assignedAt", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRetailerSetupDto.prototype, "validatedBy", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRetailerSetupDto.prototype, "validatedAt", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(600),
+    __metadata("design:type", String)
+], CreateRetailerSetupDto.prototype, "rejectionReason", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),

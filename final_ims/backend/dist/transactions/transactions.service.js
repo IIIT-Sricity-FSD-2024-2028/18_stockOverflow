@@ -313,7 +313,6 @@ let TransactionsService = class TransactionsService {
     matchesScope(transaction, retailerId, storeId, customerLookup) {
         const normalizedRetailerId = this.normalizeText(retailerId);
         const normalizedStoreId = this.normalizeText(storeId);
-        const normalizedCustomerLookup = this.normalizeText(customerLookup).toLowerCase();
         if (normalizedRetailerId &&
             this.normalizeText(transaction.retailerId) !== normalizedRetailerId) {
             return false;
@@ -321,13 +320,18 @@ let TransactionsService = class TransactionsService {
         if (normalizedStoreId && this.normalizeText(transaction.storeId) !== normalizedStoreId) {
             return false;
         }
-        if (normalizedCustomerLookup) {
+        const lookups = (Array.isArray(customerLookup) ? customerLookup : [customerLookup])
+            .map((item) => this.normalizeText(item).toLowerCase())
+            .filter(Boolean);
+        if (lookups.length > 0) {
             const customerName = this.normalizeText(transaction.customer).toLowerCase();
             const customerEmail = this.normalizeText(transaction.customerEmail).toLowerCase();
             const customerId = this.normalizeText(transaction.customerId).toLowerCase();
-            if (normalizedCustomerLookup !== customerName &&
-                normalizedCustomerLookup !== customerEmail &&
-                normalizedCustomerLookup !== customerId) {
+            const matched = lookups.some((lookup) => customerName === lookup ||
+                customerEmail === lookup ||
+                customerId === lookup ||
+                (customerName && customerName.includes(lookup)));
+            if (!matched) {
                 return false;
             }
         }

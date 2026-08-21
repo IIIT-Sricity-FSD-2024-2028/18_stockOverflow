@@ -31,13 +31,16 @@
       "name": "Customers"
     },
     {
+      "name": "Suppliers"
+    },
+    {
       "name": "Products"
     },
     {
-      "name": "PurchaseOrders"
+      "name": "Employees"
     },
     {
-      "name": "Suppliers"
+      "name": "PurchaseOrders"
     },
     {
       "name": "Reservations"
@@ -92,6 +95,9 @@
                         "consumers": {
                           "type": "number"
                         },
+                        "employees": {
+                          "type": "number"
+                        },
                         "retailers": {
                           "type": "number"
                         },
@@ -103,6 +109,7 @@
                         "admins",
                         "billers",
                         "consumers",
+                        "employees",
                         "retailers",
                         "suppliers"
                       ],
@@ -112,6 +119,9 @@
                       "type": "number"
                     },
                     "totalConsumers": {
+                      "type": "number"
+                    },
+                    "totalEmployees": {
                       "type": "number"
                     },
                     "totalProducts": {
@@ -139,6 +149,7 @@
                     "roleDistribution",
                     "totalBillers",
                     "totalConsumers",
+                    "totalEmployees",
                     "totalProducts",
                     "totalRetailers",
                     "totalRevenue",
@@ -1717,6 +1728,15 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2120,6 +2140,301 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/suppliers/setup": {
+      "post": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_create",
+        "summary": "Create",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/suppliers_dto_create_supplier_setup_dto_CreateSupplierSetupDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suppliers": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_findAll",
+        "summary": "Find All",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/suppliers/directory": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_getDirectory",
+        "summary": "Get Directory",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/suppliers_supplier_directory_entry_interface_SupplierDirectoryEntry"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/suppliers/latest": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_findLatest",
+        "summary": "Find Latest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/suppliers/by-email/{email}": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_findByBusinessEmail",
+        "summary": "Find By Business Email",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: email",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/suppliers/{id}": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_findOne",
+        "summary": "Find One",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_update",
+        "summary": "Update",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/suppliers_dto_update_supplier_setup_dto_UpdateSupplierSetupDto"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_remove",
+        "summary": "Remove",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request"
@@ -2612,6 +2927,846 @@
         }
       }
     },
+    "/employees/{employeeId}/work": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_getWork",
+        "summary": "Get Work",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "billerRequests": {
+                      "items": {
+                        "$ref": "#/components/schemas/common_database_types_BillerRequest"
+                      },
+                      "type": "array"
+                    },
+                    "employee": {
+                      "$ref": "#/components/schemas/users_users_service_PublicUser"
+                    },
+                    "retailerRegistrations": {
+                      "items": {
+                        "$ref": "#/components/schemas/retailers_retailer_record_interface_RetailerRecord"
+                      },
+                      "type": "array"
+                    },
+                    "retailerStores": {
+                      "items": {
+                        "properties": {
+                          "address": {
+                            "type": "string"
+                          },
+                          "assignedAt": {
+                            "type": "string"
+                          },
+                          "assignedEmployeeId": {
+                            "type": "string"
+                          },
+                          "businessEmail": {
+                            "type": "string"
+                          },
+                          "contactPerson": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "rejectionReason": {
+                            "type": "string"
+                          },
+                          "retailerId": {
+                            "type": "string"
+                          },
+                          "retailerName": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "enum": [
+                              "active",
+                              "inactive"
+                            ],
+                            "type": "string"
+                          },
+                          "storeCode": {
+                            "type": "string"
+                          },
+                          "storeName": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "validatedAt": {
+                            "type": "string"
+                          },
+                          "validatedBy": {
+                            "type": "string"
+                          },
+                          "validationStatus": {
+                            "enum": [
+                              "pending",
+                              "approved",
+                              "rejected"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "address",
+                          "assignedAt",
+                          "assignedEmployeeId",
+                          "businessEmail",
+                          "contactPerson",
+                          "createdAt",
+                          "id",
+                          "phone",
+                          "rejectionReason",
+                          "retailerId",
+                          "retailerName",
+                          "status",
+                          "storeCode",
+                          "storeName",
+                          "updatedAt",
+                          "validatedAt",
+                          "validatedBy",
+                          "validationStatus"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "stats": {
+                      "properties": {
+                        "billerRequests": {
+                          "type": "number"
+                        },
+                        "pending": {
+                          "type": "number"
+                        },
+                        "retailerRegistrations": {
+                          "type": "number"
+                        },
+                        "retailerStores": {
+                          "type": "number"
+                        },
+                        "suppliers": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "billerRequests",
+                        "pending",
+                        "retailerRegistrations",
+                        "retailerStores",
+                        "suppliers"
+                      ],
+                      "type": "object"
+                    },
+                    "suppliers": {
+                      "items": {
+                        "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "billerRequests",
+                    "employee",
+                    "retailerRegistrations",
+                    "retailerStores",
+                    "stats",
+                    "suppliers"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}/retailers/{retailerId}/approve": {
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_approveRetailer",
+        "summary": "Approve Retailer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/retailers_retailer_record_interface_RetailerRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}/retailers/{retailerId}/reject": {
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_rejectRetailer",
+        "summary": "Reject Retailer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/retailers_retailer_record_interface_RetailerRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/employees_dto_employee_action_dto_EmployeeActionDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}/retailers/{retailerId}/stores/{storeCode}/approve": {
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_approveRetailerStore",
+        "summary": "Approve Retailer Store",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storeCode",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: storeCode",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "address": {
+                      "type": "string"
+                    },
+                    "assignedAt": {
+                      "type": "string"
+                    },
+                    "assignedEmployeeId": {
+                      "type": "string"
+                    },
+                    "businessEmail": {
+                      "type": "string"
+                    },
+                    "contactPerson": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "rejectionReason": {
+                      "type": "string"
+                    },
+                    "retailerId": {
+                      "type": "string"
+                    },
+                    "retailerName": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "active",
+                        "inactive"
+                      ],
+                      "type": "string"
+                    },
+                    "storeCode": {
+                      "type": "string"
+                    },
+                    "storeName": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "validatedAt": {
+                      "type": "string"
+                    },
+                    "validatedBy": {
+                      "type": "string"
+                    },
+                    "validationStatus": {
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "rejected"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "assignedAt",
+                    "assignedEmployeeId",
+                    "businessEmail",
+                    "contactPerson",
+                    "createdAt",
+                    "id",
+                    "phone",
+                    "rejectionReason",
+                    "retailerId",
+                    "retailerName",
+                    "status",
+                    "storeCode",
+                    "storeName",
+                    "updatedAt",
+                    "validatedAt",
+                    "validatedBy",
+                    "validationStatus"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}/retailers/{retailerId}/stores/{storeCode}/reject": {
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_rejectRetailerStore",
+        "summary": "Reject Retailer Store",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storeCode",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: storeCode",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "address": {
+                      "type": "string"
+                    },
+                    "assignedAt": {
+                      "type": "string"
+                    },
+                    "assignedEmployeeId": {
+                      "type": "string"
+                    },
+                    "businessEmail": {
+                      "type": "string"
+                    },
+                    "contactPerson": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "rejectionReason": {
+                      "type": "string"
+                    },
+                    "retailerId": {
+                      "type": "string"
+                    },
+                    "retailerName": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "active",
+                        "inactive"
+                      ],
+                      "type": "string"
+                    },
+                    "storeCode": {
+                      "type": "string"
+                    },
+                    "storeName": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "validatedAt": {
+                      "type": "string"
+                    },
+                    "validatedBy": {
+                      "type": "string"
+                    },
+                    "validationStatus": {
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "rejected"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "assignedAt",
+                    "assignedEmployeeId",
+                    "businessEmail",
+                    "contactPerson",
+                    "createdAt",
+                    "id",
+                    "phone",
+                    "rejectionReason",
+                    "retailerId",
+                    "retailerName",
+                    "status",
+                    "storeCode",
+                    "storeName",
+                    "updatedAt",
+                    "validatedAt",
+                    "validatedBy",
+                    "validationStatus"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/employees_dto_employee_action_dto_EmployeeActionDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}/suppliers/{supplierId}/approve": {
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_approveSupplier",
+        "summary": "Approve Supplier",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "supplierId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: supplierId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}/suppliers/{supplierId}/reject": {
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_rejectSupplier",
+        "summary": "Reject Supplier",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "supplierId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: supplierId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/employees_dto_employee_action_dto_EmployeeActionDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}/biller-requests/{requestId}/approve": {
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_approveBillerRequest",
+        "summary": "Approve Biller Request",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: requestId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "biller": {
+                      "$ref": "#/components/schemas/common_database_types_BillerRecord"
+                    },
+                    "request": {
+                      "$ref": "#/components/schemas/common_database_types_BillerRequest"
+                    }
+                  },
+                  "required": [
+                    "biller",
+                    "request"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/employees_dto_employee_action_dto_EmployeeActionDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/{employeeId}/biller-requests/{requestId}/reject": {
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_rejectBillerRequest",
+        "summary": "Reject Biller Request",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: requestId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_BillerRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/employees_dto_employee_action_dto_EmployeeActionDto"
+              }
+            }
+          }
+        }
+      }
+    },
     "/purchase-orders": {
       "post": {
         "tags": [
@@ -2839,301 +3994,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/suppliers/setup": {
-      "post": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_create",
-        "summary": "Create",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/suppliers_dto_create_supplier_setup_dto_CreateSupplierSetupDto"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/suppliers": {
-      "get": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_findAll",
-        "summary": "Find All",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/suppliers/directory": {
-      "get": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_getDirectory",
-        "summary": "Get Directory",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/suppliers_supplier_directory_entry_interface_SupplierDirectoryEntry"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/suppliers/latest": {
-      "get": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_findLatest",
-        "summary": "Find Latest",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/suppliers/by-email/{email}": {
-      "get": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_findByBusinessEmail",
-        "summary": "Find By Business Email",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: email",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/suppliers/{id}": {
-      "get": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_findOne",
-        "summary": "Find One",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_update",
-        "summary": "Update",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/suppliers_dto_update_supplier_setup_dto_UpdateSupplierSetupDto"
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_remove",
-        "summary": "Remove",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
           },
           "400": {
             "description": "Bad Request"
@@ -3411,6 +4271,42 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "customerEmail",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerEmail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "supplierId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: supplierId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: source",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3513,6 +4409,42 @@
             "in": "query",
             "required": false,
             "description": "Query parameter: customer",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerEmail",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerEmail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "supplierId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: supplierId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: source",
             "schema": {
               "type": "string"
             }
@@ -3852,6 +4784,24 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "customerEmail",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerEmail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerId",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3948,6 +4898,24 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "customerEmail",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerEmail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerId",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4001,6 +4969,24 @@
             "in": "query",
             "required": false,
             "description": "Query parameter: customer",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerEmail",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerEmail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerId",
             "schema": {
               "type": "string"
             }
@@ -4105,6 +5091,24 @@
             "in": "query",
             "required": false,
             "description": "Query parameter: customer",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerEmail",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerEmail",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: customerId",
             "schema": {
               "type": "string"
             }
@@ -4567,6 +5571,7 @@
           "role": {
             "enum": [
               "admin",
+              "employee",
               "retailer",
               "supplier",
               "consumer",
@@ -4672,6 +5677,7 @@
           "role": {
             "enum": [
               "admin",
+              "employee",
               "retailer",
               "supplier",
               "consumer",
@@ -4850,6 +5856,12 @@
           "approvedAt": {
             "type": "string"
           },
+          "assignedAt": {
+            "type": "string"
+          },
+          "assignedEmployeeId": {
+            "type": "string"
+          },
           "company": {
             "type": "string"
           },
@@ -4872,6 +5884,12 @@
             "type": "string"
           },
           "rejectedAt": {
+            "type": "string"
+          },
+          "rejectionReason": {
+            "type": "string"
+          },
+          "resolvedBy": {
             "type": "string"
           },
           "retailerId": {
@@ -5730,6 +6748,9 @@
           "productName": {
             "type": "string"
           },
+          "quantity": {
+            "type": "number"
+          },
           "reason": {
             "type": "string"
           },
@@ -5740,6 +6761,9 @@
             "type": "string"
           },
           "retailerId": {
+            "type": "string"
+          },
+          "retailerName": {
             "type": "string"
           },
           "sku": {
@@ -5755,6 +6779,12 @@
             "type": "string"
           },
           "storeId": {
+            "type": "string"
+          },
+          "supplierId": {
+            "type": "string"
+          },
+          "supplierName": {
             "type": "string"
           }
         },
@@ -5885,6 +6915,12 @@
       },
       "common_database_types_StoreRecord": {
         "properties": {
+          "assignedAt": {
+            "type": "string"
+          },
+          "assignedEmployeeId": {
+            "type": "string"
+          },
           "createdAt": {
             "type": "string"
           },
@@ -5900,6 +6936,9 @@
           "name": {
             "type": "string"
           },
+          "rejectionReason": {
+            "type": "string"
+          },
           "retailerId": {
             "type": "string"
           },
@@ -5907,6 +6946,20 @@
             "type": "string"
           },
           "updatedAt": {
+            "type": "string"
+          },
+          "validatedAt": {
+            "type": "string"
+          },
+          "validatedBy": {
+            "type": "string"
+          },
+          "validationStatus": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
             "type": "string"
           }
         },
@@ -6094,6 +7147,7 @@
               "supplier",
               "consumer",
               "biller",
+              "employee",
               "admin"
             ],
             "type": "string"
@@ -6363,6 +7417,21 @@
           },
           "totalSpent": {
             "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "employees_dto_employee_action_dto_EmployeeActionDto": {
+        "properties": {
+          "reason": {
+            "maxLength": 600,
+            "type": "string"
+          },
+          "retailerId": {
+            "type": "string"
+          },
+          "storeId": {
+            "type": "string"
           }
         },
         "type": "object"
@@ -7071,6 +8140,12 @@
       },
       "retailers_dto_create_retailer_setup_dto_CreateRetailerSetupDto": {
         "properties": {
+          "assignedAt": {
+            "type": "string"
+          },
+          "assignedEmployeeId": {
+            "type": "string"
+          },
           "business": {
             "properties": {
               "businessAddress": {
@@ -7160,11 +8235,21 @@
             ],
             "type": "string"
           },
+          "rejectionReason": {
+            "maxLength": 600,
+            "type": "string"
+          },
           "stores": {
             "items": {
               "properties": {
                 "address": {
                   "maxLength": 250,
+                  "type": "string"
+                },
+                "assignedAt": {
+                  "type": "string"
+                },
+                "assignedEmployeeId": {
                   "type": "string"
                 },
                 "code": {
@@ -7186,6 +8271,10 @@
                 "phone": {
                   "type": "string"
                 },
+                "rejectionReason": {
+                  "maxLength": 600,
+                  "type": "string"
+                },
                 "status": {
                   "enum": [
                     "active",
@@ -7195,6 +8284,20 @@
                 },
                 "type": {
                   "maxLength": 60,
+                  "type": "string"
+                },
+                "validatedAt": {
+                  "type": "string"
+                },
+                "validatedBy": {
+                  "type": "string"
+                },
+                "validationStatus": {
+                  "enum": [
+                    "pending",
+                    "approved",
+                    "rejected"
+                  ],
                   "type": "string"
                 }
               },
@@ -7268,6 +8371,20 @@
             },
             "maxItems": 200,
             "type": "array"
+          },
+          "validatedAt": {
+            "type": "string"
+          },
+          "validatedBy": {
+            "type": "string"
+          },
+          "validationStatus": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "type": "string"
           }
         },
         "required": [
@@ -7278,6 +8395,12 @@
       },
       "retailers_dto_update_retailer_setup_dto_UpdateRetailerSetupDto": {
         "properties": {
+          "assignedAt": {
+            "type": "string"
+          },
+          "assignedEmployeeId": {
+            "type": "string"
+          },
           "business": {
             "properties": {
               "businessAddress": {
@@ -7367,11 +8490,21 @@
             ],
             "type": "string"
           },
+          "rejectionReason": {
+            "maxLength": 600,
+            "type": "string"
+          },
           "stores": {
             "items": {
               "properties": {
                 "address": {
                   "maxLength": 250,
+                  "type": "string"
+                },
+                "assignedAt": {
+                  "type": "string"
+                },
+                "assignedEmployeeId": {
                   "type": "string"
                 },
                 "code": {
@@ -7393,6 +8526,10 @@
                 "phone": {
                   "type": "string"
                 },
+                "rejectionReason": {
+                  "maxLength": 600,
+                  "type": "string"
+                },
                 "status": {
                   "enum": [
                     "active",
@@ -7402,6 +8539,20 @@
                 },
                 "type": {
                   "maxLength": 60,
+                  "type": "string"
+                },
+                "validatedAt": {
+                  "type": "string"
+                },
+                "validatedBy": {
+                  "type": "string"
+                },
+                "validationStatus": {
+                  "enum": [
+                    "pending",
+                    "approved",
+                    "rejected"
+                  ],
                   "type": "string"
                 }
               },
@@ -7475,6 +8626,20 @@
             },
             "maxItems": 200,
             "type": "array"
+          },
+          "validatedAt": {
+            "type": "string"
+          },
+          "validatedBy": {
+            "type": "string"
+          },
+          "validationStatus": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "type": "string"
           }
         },
         "type": "object"
@@ -7587,6 +8752,12 @@
       },
       "retailers_retailer_record_interface_RetailerRecord": {
         "properties": {
+          "assignedAt": {
+            "type": "string"
+          },
+          "assignedEmployeeId": {
+            "type": "string"
+          },
           "business": {
             "properties": {
               "businessAddress": {
@@ -7682,6 +8853,9 @@
             ],
             "type": "string"
           },
+          "rejectionReason": {
+            "type": "string"
+          },
           "status": {
             "enum": [
               "completed"
@@ -7693,6 +8867,12 @@
               "properties": {
                 "address": {
                   "maxLength": 250,
+                  "type": "string"
+                },
+                "assignedAt": {
+                  "type": "string"
+                },
+                "assignedEmployeeId": {
                   "type": "string"
                 },
                 "code": {
@@ -7714,6 +8894,10 @@
                 "phone": {
                   "type": "string"
                 },
+                "rejectionReason": {
+                  "maxLength": 600,
+                  "type": "string"
+                },
                 "status": {
                   "enum": [
                     "active",
@@ -7723,6 +8907,20 @@
                 },
                 "type": {
                   "maxLength": 60,
+                  "type": "string"
+                },
+                "validatedAt": {
+                  "type": "string"
+                },
+                "validatedBy": {
+                  "type": "string"
+                },
+                "validationStatus": {
+                  "enum": [
+                    "pending",
+                    "approved",
+                    "rejected"
+                  ],
                   "type": "string"
                 }
               },
@@ -7799,6 +8997,20 @@
           },
           "updatedAt": {
             "type": "string"
+          },
+          "validatedAt": {
+            "type": "string"
+          },
+          "validatedBy": {
+            "type": "string"
+          },
+          "validationStatus": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "type": "string"
           }
         },
         "required": [
@@ -7853,6 +9065,9 @@
           "productName": {
             "type": "string"
           },
+          "quantity": {
+            "type": "number"
+          },
           "reason": {
             "type": "string"
           },
@@ -7860,6 +9075,9 @@
             "type": "string"
           },
           "retailerId": {
+            "type": "string"
+          },
+          "retailerName": {
             "type": "string"
           },
           "sku": {
@@ -7875,6 +9093,12 @@
             "type": "string"
           },
           "storeId": {
+            "type": "string"
+          },
+          "supplierId": {
+            "type": "string"
+          },
+          "supplierName": {
             "type": "string"
           }
         },
@@ -7921,6 +9145,9 @@
           "productName": {
             "type": "string"
           },
+          "quantity": {
+            "type": "number"
+          },
           "reason": {
             "type": "string"
           },
@@ -7928,6 +9155,9 @@
             "type": "string"
           },
           "retailerId": {
+            "type": "string"
+          },
+          "retailerName": {
             "type": "string"
           },
           "sku": {
@@ -7943,6 +9173,12 @@
             "type": "string"
           },
           "storeId": {
+            "type": "string"
+          },
+          "supplierId": {
+            "type": "string"
+          },
+          "supplierName": {
             "type": "string"
           }
         },
@@ -8044,6 +9280,12 @@
       },
       "suppliers_dto_create_supplier_setup_dto_CreateSupplierSetupDto": {
         "properties": {
+          "assignedAt": {
+            "type": "string"
+          },
+          "assignedEmployeeId": {
+            "type": "string"
+          },
           "bankDetails": {
             "properties": {
               "accountHolderName": {
@@ -8333,6 +9575,10 @@
             ],
             "type": "string"
           },
+          "rejectionReason": {
+            "maxLength": 600,
+            "type": "string"
+          },
           "retailers": {
             "items": {
               "properties": {
@@ -8396,6 +9642,20 @@
             },
             "maxItems": 200,
             "type": "array"
+          },
+          "validatedAt": {
+            "type": "string"
+          },
+          "validatedBy": {
+            "type": "string"
+          },
+          "validationStatus": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "type": "string"
           }
         },
         "required": [
@@ -8406,6 +9666,12 @@
       },
       "suppliers_dto_update_supplier_setup_dto_UpdateSupplierSetupDto": {
         "properties": {
+          "assignedAt": {
+            "type": "string"
+          },
+          "assignedEmployeeId": {
+            "type": "string"
+          },
           "bankDetails": {
             "properties": {
               "accountHolderName": {
@@ -8688,6 +9954,17 @@
             "maxItems": 500,
             "type": "array"
           },
+          "profileStatus": {
+            "enum": [
+              "active",
+              "inactive"
+            ],
+            "type": "string"
+          },
+          "rejectionReason": {
+            "maxLength": 600,
+            "type": "string"
+          },
           "retailers": {
             "items": {
               "properties": {
@@ -8751,6 +10028,20 @@
             },
             "maxItems": 200,
             "type": "array"
+          },
+          "validatedAt": {
+            "type": "string"
+          },
+          "validatedBy": {
+            "type": "string"
+          },
+          "validationStatus": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "type": "string"
           }
         },
         "type": "object"
@@ -8817,6 +10108,12 @@
       },
       "suppliers_supplier_record_interface_SupplierRecord": {
         "properties": {
+          "assignedAt": {
+            "type": "string"
+          },
+          "assignedEmployeeId": {
+            "type": "string"
+          },
           "bankDetails": {
             "properties": {
               "accountHolderName": {
@@ -9110,6 +10407,9 @@
               "active",
               "inactive"
             ],
+            "type": "string"
+          },
+          "rejectionReason": {
             "type": "string"
           },
           "retailers": {
@@ -9184,6 +10484,20 @@
             "type": "string"
           },
           "updatedAt": {
+            "type": "string"
+          },
+          "validatedAt": {
+            "type": "string"
+          },
+          "validatedBy": {
+            "type": "string"
+          },
+          "validationStatus": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
             "type": "string"
           }
         },

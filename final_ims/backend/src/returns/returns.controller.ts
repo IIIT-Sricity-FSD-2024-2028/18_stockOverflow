@@ -20,8 +20,18 @@ export class ReturnsController {
     @Query('retailerId') retailerId?: string,
     @Query('storeId') storeId?: string,
     @Query('customer') customerLookup?: string,
+    @Query('customerEmail') customerEmail?: string,
+    @Query('customerId') customerId?: string,
+    @Query('supplierId') supplierId?: string,
+    @Query('source') source?: string,
   ) {
-    return this.returnsService.findAll(retailerId, storeId, customerLookup);
+    return this.returnsService.findAll(
+      retailerId,
+      storeId,
+      [customerLookup, customerEmail, customerId],
+      supplierId,
+      source,
+    );
   }
 
   @Get(':id')
@@ -30,12 +40,18 @@ export class ReturnsController {
     @Query('retailerId') retailerId?: string,
     @Query('storeId') storeId?: string,
     @Query('customer') customerLookup?: string,
+    @Query('customerEmail') customerEmail?: string,
+    @Query('customerId') customerId?: string,
+    @Query('supplierId') supplierId?: string,
+    @Query('source') source?: string,
   ) {
     return this.returnsService.findOne(
       id,
       retailerId,
       storeId,
-      customerLookup,
+      [customerLookup, customerEmail, customerId],
+      supplierId,
+      source,
     );
   }
 

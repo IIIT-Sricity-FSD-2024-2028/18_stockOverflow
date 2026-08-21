@@ -39,8 +39,8 @@ export class BillersController {
   }
 
   @Get('requests')
-  getRequests() {
-    return this.billersService.getRequests();
+  getRequests(@Query('employeeId') employeeId?: string) {
+    return this.billersService.getRequests(employeeId);
   }
 
   @Put('requests/:id/approve')

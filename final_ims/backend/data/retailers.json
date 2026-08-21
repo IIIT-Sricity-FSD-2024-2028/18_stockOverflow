@@ -1,6 +1,41 @@
 [
   {
     "business": {
+      "businessName": "Retailer",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "nicole@gmail.com",
+      "retailerCode": "RET-543",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "Nicole"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "Store A",
+        "code": "STORE-A",
+        "contactPerson": "Nicole",
+        "type": "Retail Store",
+        "status": "active",
+        "validationStatus": "pending",
+        "assignedEmployeeId": "186f3595-a91e-47fc-81dc-398b392a20b5",
+        "assignedAt": "2026-08-14T07:06:09.549Z"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "8d4dc914-32fc-4b4d-a06d-c8b725a36b92",
+    "status": "completed",
+    "validationStatus": "pending",
+    "assignedEmployeeId": "186f3595-a91e-47fc-81dc-398b392a20b5",
+    "assignedAt": "2026-08-14T07:06:09.549Z",
+    "createdAt": "2026-08-14T07:06:09.549Z",
+    "updatedAt": "2026-08-14T07:06:09.549Z"
+  },
+  {
+    "business": {
       "businessName": "doe",
       "businessType": "Sole Proprietorship",
       "businessEmail": "doe@gmail.com",
@@ -18,7 +53,13 @@
         "code": "DOESTORE",
         "contactPerson": "doe",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -26,7 +67,13 @@
     "id": "ca8c0f69-b03d-4556-9eec-f2a3e38fb6f9",
     "status": "completed",
     "createdAt": "2026-07-31T06:49:23.823Z",
-    "updatedAt": "2026-07-31T06:49:23.823Z"
+    "updatedAt": "2026-07-31T06:49:23.823Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -47,7 +94,13 @@
         "code": "R1",
         "contactPerson": "retailer1",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -55,7 +108,13 @@
     "id": "9b9513bb-3f6f-447d-9469-704dc3700954",
     "status": "completed",
     "createdAt": "2026-07-31T06:46:29.463Z",
-    "updatedAt": "2026-07-31T06:46:29.463Z"
+    "updatedAt": "2026-07-31T06:46:29.463Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -76,14 +135,26 @@
         "code": "R11",
         "contactPerson": "r11",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       },
       {
         "name": "r11-2",
         "code": "R11-2",
         "contactPerson": "r11",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -91,7 +162,13 @@
     "id": "d5b9b17a-3287-4be4-9164-e9173a49033d",
     "status": "completed",
     "createdAt": "2026-05-04T03:36:36.780Z",
-    "updatedAt": "2026-05-04T03:36:36.780Z"
+    "updatedAt": "2026-05-04T03:36:36.780Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -112,14 +189,26 @@
         "code": "R10-1",
         "contactPerson": "r10",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       },
       {
         "name": "r10-2",
         "code": "R10-2",
         "contactPerson": "r10",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -127,7 +216,13 @@
     "id": "eea40a42-2284-47e8-89ef-c4d837017996",
     "status": "completed",
     "createdAt": "2026-05-04T00:47:03.019Z",
-    "updatedAt": "2026-05-04T00:47:03.019Z"
+    "updatedAt": "2026-05-04T00:47:03.019Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -148,14 +243,26 @@
         "code": "R8-O",
         "contactPerson": "r8",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       },
       {
         "name": "r8-s",
         "code": "R8-S",
         "contactPerson": "r8",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -163,7 +270,13 @@
     "id": "5dcb8503-df17-4058-ae6f-bff73aae9e34",
     "status": "completed",
     "createdAt": "2026-05-04T00:09:32.692Z",
-    "updatedAt": "2026-05-04T00:09:32.692Z"
+    "updatedAt": "2026-05-04T00:09:32.692Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -184,14 +297,26 @@
         "code": "R7-1",
         "contactPerson": "r7",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       },
       {
         "name": "r7-s",
         "code": "R7-S",
         "contactPerson": "r7",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -199,7 +324,13 @@
     "id": "c212d790-8f65-43f7-b42b-bdccce777cea",
     "status": "completed",
     "createdAt": "2026-05-03T23:04:33.584Z",
-    "updatedAt": "2026-05-03T23:04:33.584Z"
+    "updatedAt": "2026-05-03T23:04:33.584Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -220,14 +351,26 @@
         "code": "R2-1",
         "contactPerson": "r2",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       },
       {
         "name": "r2-2",
         "code": "R2-2",
         "contactPerson": "r2",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -235,7 +378,13 @@
     "id": "590d6bb2-e7b9-4fd7-8477-ed6787f928b8",
     "status": "completed",
     "createdAt": "2026-05-03T22:15:17.938Z",
-    "updatedAt": "2026-05-03T22:15:17.938Z"
+    "updatedAt": "2026-05-03T22:15:17.938Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -256,7 +405,13 @@
         "code": "R1",
         "contactPerson": "rperson1",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -264,7 +419,13 @@
     "id": "5148fe43-0e98-46ec-a05b-f76acc5a748e",
     "status": "completed",
     "createdAt": "2026-05-03T21:23:56.142Z",
-    "updatedAt": "2026-05-03T21:23:56.142Z"
+    "updatedAt": "2026-05-03T21:23:56.142Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -286,14 +447,26 @@
         "code": "USMAR-STORE",
         "contactPerson": "ABHIRAJ AAAYUSH",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       },
       {
         "name": "hello",
         "code": "HELLO",
         "contactPerson": "hhhh",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -301,7 +474,13 @@
     "id": "2c4635b5-039d-4191-9137-988fb38c02f5",
     "status": "completed",
     "createdAt": "2026-05-03T14:53:30.477Z",
-    "updatedAt": "2026-05-03T14:53:30.477Z"
+    "updatedAt": "2026-05-03T14:53:30.477Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -322,7 +501,13 @@
         "code": "HELLO",
         "contactPerson": "hello",
         "type": "Retail Store",
-        "status": "active"
+        "status": "active",
+        "validationStatus": "approved",
+        "assignedEmployeeId": "",
+        "assignedAt": "",
+        "validatedBy": "",
+        "validatedAt": "",
+        "rejectionReason": ""
       }
     ],
     "suppliers": [],
@@ -330,6 +515,12 @@
     "id": "4be7ecb5-c37b-42a9-8db2-209901e86ba9",
     "status": "completed",
     "createdAt": "2026-05-03T14:24:53.044Z",
-    "updatedAt": "2026-05-03T14:24:53.044Z"
+    "updatedAt": "2026-05-03T14:24:53.044Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   }
 ]

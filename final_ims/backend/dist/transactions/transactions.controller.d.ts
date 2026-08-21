@@ -4,9 +4,9 @@ import { TransactionsService } from './transactions.service';
 export declare class TransactionsController {
     private readonly transactionsService;
     constructor(transactionsService: TransactionsService);
-    findAll(retailerId?: string, storeId?: string, customerLookup?: string): import("../common/database.types").TransactionRecord[];
-    findLatest(retailerId?: string, storeId?: string, customerLookup?: string): import("../common/database.types").TransactionRecord;
-    findPurchasedProducts(retailerId?: string, storeId?: string, customerLookup?: string): {
+    findAll(retailerId?: string, storeId?: string, customerLookup?: string, customerEmail?: string, customerId?: string): import("../common/database.types").TransactionRecord[];
+    findLatest(retailerId?: string, storeId?: string, customerLookup?: string, customerEmail?: string, customerId?: string): import("../common/database.types").TransactionRecord;
+    findPurchasedProducts(retailerId?: string, storeId?: string, customerLookup?: string, customerEmail?: string, customerId?: string): {
         sku: string;
         name: string;
         totalQty: number;
@@ -16,7 +16,7 @@ export declare class TransactionsController {
         productImg: string;
         emoji: string;
     }[];
-    findOne(orderId: string, retailerId?: string, storeId?: string, customerLookup?: string): import("../common/database.types").TransactionRecord;
+    findOne(orderId: string, retailerId?: string, storeId?: string, customerLookup?: string, customerEmail?: string, customerId?: string): import("../common/database.types").TransactionRecord;
     create(createTransactionDto: CreateTransactionDto): import("../common/database.types").TransactionRecord;
     update(orderId: string, updateTransactionDto: UpdateTransactionDto): import("../common/database.types").TransactionRecord;
     remove(orderId: string): {

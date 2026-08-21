@@ -12,6 +12,7 @@ const admin_module_1 = require("./admin/admin.module");
 const billers_module_1 = require("./billers/billers.module");
 const common_module_1 = require("./common/common.module");
 const customers_module_1 = require("./customers/customers.module");
+const employees_module_1 = require("./employees/employees.module");
 const products_module_1 = require("./products/products.module");
 const purchase_orders_module_1 = require("./purchase-orders/purchase-orders.module");
 const retailers_module_1 = require("./retailers/retailers.module");
@@ -31,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             common_module_1.CommonModule,
             admin_module_1.AdminModule,
+            employees_module_1.EmployeesModule,
             products_module_1.ProductsModule,
             stores_module_1.StoresModule,
             retailers_module_1.RetailersModule,

@@ -2,7 +2,10 @@ import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   IsArray,
+  IsIn,
   IsOptional,
+  IsString,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import {
@@ -24,6 +27,35 @@ export class UpdateSupplierSetupDto {
   @ValidateNested()
   @Type(() => PrimaryContactDto)
   primaryContact?: PrimaryContactDto;
+
+  @IsOptional()
+  @IsIn(['active', 'inactive'])
+  profileStatus?: 'active' | 'inactive';
+
+  @IsOptional()
+  @IsIn(['pending', 'approved', 'rejected'])
+  validationStatus?: 'pending' | 'approved' | 'rejected';
+
+  @IsOptional()
+  @IsString()
+  assignedEmployeeId?: string;
+
+  @IsOptional()
+  @IsString()
+  assignedAt?: string;
+
+  @IsOptional()
+  @IsString()
+  validatedBy?: string;
+
+  @IsOptional()
+  @IsString()
+  validatedAt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(600)
+  rejectionReason?: string;
 
   @IsOptional()
   @IsArray()

@@ -21,17 +21,17 @@ let TransactionsController = class TransactionsController {
     constructor(transactionsService) {
         this.transactionsService = transactionsService;
     }
-    findAll(retailerId, storeId, customerLookup) {
-        return this.transactionsService.findAll(retailerId, storeId, customerLookup);
+    findAll(retailerId, storeId, customerLookup, customerEmail, customerId) {
+        return this.transactionsService.findAll(retailerId, storeId, [customerLookup, customerEmail, customerId]);
     }
-    findLatest(retailerId, storeId, customerLookup) {
-        return this.transactionsService.findLatest(retailerId, storeId, customerLookup);
+    findLatest(retailerId, storeId, customerLookup, customerEmail, customerId) {
+        return this.transactionsService.findLatest(retailerId, storeId, [customerLookup, customerEmail, customerId]);
     }
-    findPurchasedProducts(retailerId, storeId, customerLookup) {
-        return this.transactionsService.getPurchasedProducts(retailerId, storeId, customerLookup);
+    findPurchasedProducts(retailerId, storeId, customerLookup, customerEmail, customerId) {
+        return this.transactionsService.getPurchasedProducts(retailerId, storeId, [customerLookup, customerEmail, customerId]);
     }
-    findOne(orderId, retailerId, storeId, customerLookup) {
-        return this.transactionsService.findOne(orderId, retailerId, storeId, customerLookup);
+    findOne(orderId, retailerId, storeId, customerLookup, customerEmail, customerId) {
+        return this.transactionsService.findOne(orderId, retailerId, storeId, [customerLookup, customerEmail, customerId]);
     }
     create(createTransactionDto) {
         return this.transactionsService.create(createTransactionDto);
@@ -52,8 +52,10 @@ __decorate([
     __param(0, (0, common_1.Query)('retailerId')),
     __param(1, (0, common_1.Query)('storeId')),
     __param(2, (0, common_1.Query)('customer')),
+    __param(3, (0, common_1.Query)('customerEmail')),
+    __param(4, (0, common_1.Query)('customerId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], TransactionsController.prototype, "findAll", null);
 __decorate([
@@ -61,8 +63,10 @@ __decorate([
     __param(0, (0, common_1.Query)('retailerId')),
     __param(1, (0, common_1.Query)('storeId')),
     __param(2, (0, common_1.Query)('customer')),
+    __param(3, (0, common_1.Query)('customerEmail')),
+    __param(4, (0, common_1.Query)('customerId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], TransactionsController.prototype, "findLatest", null);
 __decorate([
@@ -70,8 +74,10 @@ __decorate([
     __param(0, (0, common_1.Query)('retailerId')),
     __param(1, (0, common_1.Query)('storeId')),
     __param(2, (0, common_1.Query)('customer')),
+    __param(3, (0, common_1.Query)('customerEmail')),
+    __param(4, (0, common_1.Query)('customerId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], TransactionsController.prototype, "findPurchasedProducts", null);
 __decorate([
@@ -80,8 +86,10 @@ __decorate([
     __param(1, (0, common_1.Query)('retailerId')),
     __param(2, (0, common_1.Query)('storeId')),
     __param(3, (0, common_1.Query)('customer')),
+    __param(4, (0, common_1.Query)('customerEmail')),
+    __param(5, (0, common_1.Query)('customerId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], TransactionsController.prototype, "findOne", null);
 __decorate([

@@ -8,7 +8,7 @@ export declare class BillersController {
     create(createBillerDto: CreateBillerDto): import("../common/database.types").BillerRecord;
     findAll(retailerId?: string, storeId?: string): import("../common/database.types").BillerRecord[];
     createRequest(requestData: CreateBillerRequestDto): import("../common/database.types").BillerRequest;
-    getRequests(): import("../common/database.types").BillerRequest[];
+    getRequests(employeeId?: string): import("../common/database.types").BillerRequest[];
     approveRequest(id: string, approvalScope?: ApproveBillerRequestDto): {
         request: import("../common/database.types").BillerRequest;
         biller: import("../common/database.types").BillerRecord;

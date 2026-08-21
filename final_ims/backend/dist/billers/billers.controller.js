@@ -31,8 +31,8 @@ let BillersController = class BillersController {
     createRequest(requestData) {
         return this.billersService.createRequest(requestData);
     }
-    getRequests() {
-        return this.billersService.getRequests();
+    getRequests(employeeId) {
+        return this.billersService.getRequests(employeeId);
     }
     approveRequest(id, approvalScope) {
         return this.billersService.approveRequest(id, approvalScope);
@@ -69,8 +69,9 @@ __decorate([
 ], BillersController.prototype, "createRequest", null);
 __decorate([
     (0, common_1.Get)('requests'),
+    __param(0, (0, common_1.Query)('employeeId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], BillersController.prototype, "getRequests", null);
 __decorate([

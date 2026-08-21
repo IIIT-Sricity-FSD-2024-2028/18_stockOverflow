@@ -12,6 +12,9 @@ import { UpdateSupplierSetupDto } from './dto/update-supplier-setup.dto';
 import { SupplierDirectoryEntry } from './supplier-directory-entry.interface';
 import { SupplierRecord } from './supplier-record.interface';
 import { ProductsService } from '../products/products.service';
+import { UsersService } from '../users/users.service';
+
+type ValidationStatus = 'pending' | 'approved' | 'rejected';
 
 @Injectable()
 export class SuppliersService {
@@ -19,12 +22,18 @@ export class SuppliersService {
   private readonly dataDirectory = join(__dirname, '..', '..', 'data');
   private readonly dataFile = join(this.dataDirectory, 'suppliers.json');
 
-  constructor(private readonly productsService: ProductsService) {
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly usersService: UsersService,
+  ) {
     this.loadFromDisk();
   }
 
   create(createSupplierSetupDto: CreateSupplierSetupDto): SupplierRecord {
     const now = new Date().toISOString();
+    const assignedEmployeeId = this.usersService.getNextEmployeeId(
+      this.findAll().map((supplier) => supplier.assignedEmployeeId),
+    );
     const supplier: SupplierRecord = {
       ...createSupplierSetupDto,
       retailers: createSupplierSetupDto.retailers ?? [],
@@ -32,12 +41,19 @@ export class SuppliersService {
       id: randomUUID(),
       status: 'completed',
       profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
+      validationStatus: createSupplierSetupDto.validationStatus ?? 'pending',
+      assignedEmployeeId:
+        createSupplierSetupDto.assignedEmployeeId || assignedEmployeeId,
+      assignedAt:
+        createSupplierSetupDto.assignedAt || (assignedEmployeeId ? now : ''),
       createdAt: now,
       updatedAt: now,
     };
 
     this.suppliers.set(supplier.id, supplier);
-    this.syncProducts(supplier);
+    if ((supplier.validationStatus || 'approved') === 'approved') {
+      this.syncProducts(supplier);
+    }
     this.persistToDisk();
     return supplier;
   }
@@ -46,6 +62,14 @@ export class SuppliersService {
     return Array.from(this.suppliers.values()).sort((a, b) =>
       b.updatedAt.localeCompare(a.updatedAt),
     );
+  }
+
+  findAssignedValidations(employeeId: string): SupplierRecord[] {
+    this.ensurePendingAssignments();
+    const normalizedEmployeeId = this.normalizeText(employeeId);
+    return this.findAll().filter((supplier) => {
+      return this.normalizeText(supplier.assignedEmployeeId) === normalizedEmployeeId;
+    });
   }
 
   findOne(id: string): SupplierRecord {
@@ -94,13 +118,38 @@ export class SuppliersService {
         (updateSupplierSetupDto as UpdateSupplierSetupDto & {
           profileStatus?: 'active' | 'inactive';
         }).profileStatus ?? supplier.profileStatus ?? 'active',
+      validationStatus:
+        updateSupplierSetupDto.validationStatus ??
+        supplier.validationStatus ??
+        'approved',
+      assignedEmployeeId:
+        updateSupplierSetupDto.assignedEmployeeId ?? supplier.assignedEmployeeId,
+      assignedAt: updateSupplierSetupDto.assignedAt ?? supplier.assignedAt,
+      validatedBy: updateSupplierSetupDto.validatedBy ?? supplier.validatedBy,
+      validatedAt: updateSupplierSetupDto.validatedAt ?? supplier.validatedAt,
+      rejectionReason:
+        updateSupplierSetupDto.rejectionReason ?? supplier.rejectionReason,
       updatedAt: new Date().toISOString(),
     };
 
     this.suppliers.set(id, updatedSupplier);
-    this.syncProducts(updatedSupplier);
+    if ((updatedSupplier.validationStatus || 'approved') === 'approved') {
+      this.syncProducts(updatedSupplier);
+    }
     this.persistToDisk();
     return updatedSupplier;
+  }
+
+  approveValidation(id: string, employeeId: string): SupplierRecord {
+    return this.updateValidation(id, employeeId, 'approved');
+  }
+
+  rejectValidation(
+    id: string,
+    employeeId: string,
+    rejectionReason?: string,
+  ): SupplierRecord {
+    return this.updateValidation(id, employeeId, 'rejected', rejectionReason);
   }
 
   adjustProductStock(
@@ -197,6 +246,12 @@ export class SuppliersService {
           retailers: supplier.retailers ?? [],
           products: supplier.products ?? [],
           profileStatus: supplier.profileStatus ?? 'active',
+          validationStatus: supplier.validationStatus ?? 'approved',
+          assignedEmployeeId: supplier.assignedEmployeeId ?? '',
+          assignedAt: supplier.assignedAt ?? '',
+          validatedBy: supplier.validatedBy ?? '',
+          validatedAt: supplier.validatedAt ?? '',
+          rejectionReason: supplier.rejectionReason ?? '',
         });
       });
     } catch {
@@ -207,6 +262,78 @@ export class SuppliersService {
   private persistToDisk(): void {
     const suppliers = this.findAll();
     writeFileSync(this.dataFile, JSON.stringify(suppliers, null, 2), 'utf-8');
+  }
+
+  private updateValidation(
+    id: string,
+    employeeId: string,
+    validationStatus: ValidationStatus,
+    rejectionReason = '',
+  ) {
+    const supplier = this.findOne(id);
+    this.ensureAssignedToEmployee(supplier.assignedEmployeeId, employeeId);
+    const now = new Date().toISOString();
+    const updatedSupplier: SupplierRecord = {
+      ...supplier,
+      validationStatus,
+      profileStatus: validationStatus === 'rejected' ? 'inactive' : 'active',
+      validatedBy: employeeId,
+      validatedAt: now,
+      rejectionReason: validationStatus === 'rejected' ? rejectionReason : '',
+      updatedAt: now,
+    };
+
+    this.suppliers.set(id, updatedSupplier);
+    if (validationStatus === 'approved') {
+      this.syncProducts(updatedSupplier);
+    }
+    this.persistToDisk();
+    return updatedSupplier;
+  }
+
+  private ensurePendingAssignments() {
+    const suppliers = this.findAll();
+    const assignments = suppliers
+      .map((supplier) => supplier.assignedEmployeeId)
+      .filter(Boolean);
+    let changed = false;
+    const now = new Date().toISOString();
+
+    suppliers.forEach((supplier) => {
+      if (
+        (supplier.validationStatus || 'approved') !== 'pending' ||
+        this.normalizeText(supplier.assignedEmployeeId)
+      ) {
+        return;
+      }
+
+      const assignedEmployeeId = this.usersService.getNextEmployeeId(assignments);
+      if (!assignedEmployeeId) {
+        return;
+      }
+
+      supplier.assignedEmployeeId = assignedEmployeeId;
+      supplier.assignedAt = now;
+      assignments.push(assignedEmployeeId);
+      this.suppliers.set(supplier.id, supplier);
+      changed = true;
+    });
+
+    if (changed) {
+      this.persistToDisk();
+    }
+  }
+
+  private ensureAssignedToEmployee(
+    assignedEmployeeId: string | undefined,
+    employeeId: string,
+  ) {
+    if (
+      !this.normalizeText(assignedEmployeeId) ||
+      this.normalizeText(assignedEmployeeId) !== this.normalizeText(employeeId)
+    ) {
+      throw new NotFoundException('Assigned validation not found');
+    }
   }
 
   private syncProducts(supplier: SupplierRecord) {
@@ -232,5 +359,14 @@ export class SuppliersService {
         });
       }
     });
+  }
+
+  private normalizeText(...values: unknown[]) {
+    for (const value of values) {
+      if (typeof value === 'string' && value.trim()) {
+        return value.trim();
+      }
+    }
+    return '';
   }
 }

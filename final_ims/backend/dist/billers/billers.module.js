@@ -21,6 +21,7 @@ exports.BillersModule = BillersModule = __decorate([
         imports: [common_module_1.CommonModule, users_module_1.UsersModule, stores_module_1.StoresModule],
         controllers: [billers_controller_1.BillersController],
         providers: [billers_service_1.BillersService],
+        exports: [billers_service_1.BillersService],
     })
 ], BillersModule);
 //# sourceMappingURL=billers.module.js.map
