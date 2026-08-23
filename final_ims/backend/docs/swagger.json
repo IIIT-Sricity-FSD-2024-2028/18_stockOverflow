@@ -2612,6 +2612,64 @@
         }
       }
     },
+    "/products/upload": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_uploadFile",
+        "summary": "Upload File",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "filename": {},
+                        "message": {
+                          "type": "string"
+                        },
+                        "size": {}
+                      },
+                      "required": [
+                        "message"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "filename": {},
+                        "message": {
+                          "type": "string"
+                        },
+                        "size": {}
+                      },
+                      "required": [
+                        "filename",
+                        "message",
+                        "size"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/purchase-orders": {
       "post": {
         "tags": [

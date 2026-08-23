@@ -21,4 +21,13 @@ export declare class ProductsController {
         message: string;
         item: import("../common/database.types").ProductRecord;
     };
+    uploadFile(file: any): {
+        message: string;
+        filename?: undefined;
+        size?: undefined;
+    } | {
+        message: string;
+        filename: any;
+        size: any;
+    };
 }

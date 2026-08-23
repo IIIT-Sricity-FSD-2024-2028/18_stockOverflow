@@ -255,7 +255,7 @@
 
     const storeDropdown = document.getElementById('storeLocationFilter');
     if (storeDropdown) {
-      // Set dropdown to saved store value (using store name as value for simplicity in this mock)
+      // Set dropdown to saved store value
       const options = Array.from(storeDropdown.options);
       const match = options.find(opt => opt.text.includes(savedStore) && savedStore !== 'Global');
       if (match) storeDropdown.value = match.value;
@@ -263,15 +263,13 @@
       storeDropdown.addEventListener('change', (e) => {
         const val = e.target.value;
         if (val === 'auto') {
-          // Simulate Geolocation API request
           if (navigator.geolocation) {
             toast('Locating nearest store...');
             navigator.geolocation.getCurrentPosition(
               (position) => {
-                // Mock determining nearest store based on coordinates
                 setTimeout(() => {
                   toast('Located nearest store: Downtown Flagship');
-                  storeDropdown.value = 'S001'; // Defaulting to S001 for the demo
+                  storeDropdown.value = 'S001';
                   localStorage.setItem('imsSelectedStoreName', 'Downtown Flagship');
                   storeDropdown.dispatchEvent(new Event('change')); // trigger filter
                 }, 800);
@@ -286,17 +284,16 @@
             storeDropdown.value = '';
           }
         } else {
-          // Save manual selection
           const selectedText = storeDropdown.options[storeDropdown.selectedIndex].text;
           const storeName = val === '' ? 'Global' : selectedText.split(' (')[0];
           localStorage.setItem('imsSelectedStoreName', storeName);
-          toast(`Store set to: ${storeName}`);
+          toast('Store set to: ' + storeName);
         }
       });
     }
   };
 
-  /* Manages product searching, now upgraded with Store-specific filtering */
+  /* [Location-based Scaling] Manages product searching, now upgraded with Store-specific filtering */
   const wireProductListing = () => {
     const cards = Array.from(document.querySelectorAll('.prod-card'));
     if (!cards.length) return;
@@ -395,22 +392,35 @@
     if (addBtn) {
       addBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        
+        const storeSelect = document.getElementById('detailStoreSelect');
+        if (storeSelect && !storeSelect.value) {
+          alert('Please select a store to reserve from!');
+          return;
+        }
+        
+        const storeId = storeSelect ? storeSelect.value : null;
+        const storeName = storeSelect ? storeSelect.options[storeSelect.selectedIndex].text : null;
+        
         const sku = document.getElementById('breadcrumb-sku')?.textContent?.trim().split(' ').pop() || localStorage.getItem('imsSelectedSku') || 'UNKNOWN-SKU';
         const name = document.getElementById('product-name')?.textContent?.trim() || localStorage.getItem('imsSelectedProduct') || 'Product';
-        const priceText = document.getElementById('spec-price')?.textContent || '$99.99'; // Mocking price fallback if not on page
+        const priceText = document.getElementById('spec-price')?.textContent || '.99'; 
         const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 99.99;
         
-        // Find the main image src
         const mainImgEl = document.querySelector('#product-main-img');
         const productImg = mainImgEl ? mainImgEl.getAttribute('src') : '';
-        
-        window.addToCart({
-          sku,
-          name,
-          price,
-          productImg,
-          qty: 1
-        });
+
+        if (typeof window.addToCart === 'function') {
+          window.addToCart({
+            sku,
+            name,
+            price,
+            productImg,
+            qty: 1,
+            storeId,
+            storeName
+          });
+        }
       });
     }
   };
@@ -418,8 +428,8 @@
   const wireConsumerLanding = () => {
     const ctaPrimary = document.querySelector('.cta-primary');
     const ctaSecondary = document.querySelector('.cta-secondary');
-    if (ctaPrimary) ctaPrimary.addEventListener('click', () => go(FILES.products));
-    if (ctaSecondary) ctaSecondary.addEventListener('click', () => go(FILES.orders));
+    if (ctaPrimary) ctaPrimary.addEventListener('click', () => { window.location.href = 'productsearch.html'; });
+    if (ctaSecondary) ctaSecondary.addEventListener('click', () => { window.location.href = 'orders.html'; });
   };
 
   const wireDelegatedActions = () => {

@@ -163,6 +163,7 @@
             <div class="item-info">
               <div class="item-name">${item.name}</div>
               <div class="item-sku">SKU: ${item.sku}</div>
+              ${item.storeName ? `<div style="font-size:11px;color:#059669;font-weight:600;margin-top:2px;">📦 Reserving at: ${item.storeName}</div>` : ''}
             </div>
             <div class="qty-control">
               <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${item.qty - 1}); location.reload()">-</button>

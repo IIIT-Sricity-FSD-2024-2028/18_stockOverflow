@@ -235,6 +235,45 @@
     }
     .reserve-btn-secondary { background: #f8fafc; color: #334155; }
     .reserve-btn-primary { background: var(--accent); color: #fff; border-color: #1d4ed8; }
+    /* Recommendations */
+    .recommendation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .rec-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .rec-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+    }
+    .rec-img {
+      width: 100%;
+      height: 120px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+    .rec-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .rec-price {
+      font-size: 12.5px;
+      color: var(--accent);
+      font-weight: 700;
+    }
   </style>
   <script src="../retailer module/common-products.js"></script>
 </head>
@@ -302,6 +341,13 @@
             <button class="reserve-btn" id="addToCartBtn">+ Reserve</button>
           </div>
 
+          <div style="margin-bottom: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <label for="detailStoreSelect" style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:6px;">Select Store to Reserve From <span style="color:#ef4444;">*</span></label>
+            <select id="detailStoreSelect" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none;">
+              <option value="">Loading stores...</option>
+            </select>
+          </div>
+
           <!-- Tag row: SKU / Category / Stock status / Brand -->
           <div class="tag-row">
             <span class="tag tag-sku" id="tag-sku">MBP-M3-14</span>
@@ -330,9 +376,17 @@
             <div class="spec-row"><span class="spec-key">Min Order Qty</span><span class="spec-val">1 unit</span></div>
             <div class="spec-row"><span class="spec-key">Lead Time</span><span class="spec-val">5–7 days</span></div>
           </div>
-        </div>
+          </div>
 
-      </div><!-- /left-col -->
+          <!-- Product Recommendations -->
+          <div class="detail-card">
+            <div class="reserve-title">You Might Also Like</div>
+            <div class="recommendation-grid" id="recommendation-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div><!-- /left-col -->
 
       <!-- =============================================
            RIGHT COLUMN: Stock + Stores + Ratings
@@ -930,11 +984,38 @@
       openReserveModal();
     }
 
-    // Load product details when DOM is ready
-    document.addEventListener('DOMContentLoaded', async function() {
-      try {
-        await loadProductDetails();
-      } catch (error) {
+      // Load product details when DOM is ready
+      document.addEventListener('DOMContentLoaded', async function() {
+        try {
+          await loadProductDetails();
+
+          // Load Stores for select
+          const storeSelect = document.getElementById('detailStoreSelect');
+          if (storeSelect) {
+            const stores = await window.ImsApi.getStores();
+            storeSelect.innerHTML = '<option value="">Select a store...</option>' + stores.map(s => '<option value="' + s.id + '">' + s.name + '</option>').join('');
+            const savedStoreId = localStorage.getItem('imsSelectedStoreId');
+            if (savedStoreId) storeSelect.value = savedStoreId;
+          }
+
+          // Load Recommendations
+          const allProducts = await window.ImsApi.getProducts();
+          const currentSku = document.getElementById('spec-sku').textContent.trim();
+          const others = allProducts.filter(p => p.sku !== currentSku);
+          const shuffled = others.sort(() => 0.5 - Math.random());
+          const recommended = shuffled.slice(0, 3);
+          
+          const recGrid = document.getElementById('recommendation-grid');
+          if (recGrid) {
+            recGrid.innerHTML = recommended.map(p => `
+              <div class="rec-card" onclick="window.location.href='product-detail.html?sku=' + encodeURIComponent('${p.sku}')">
+                <img src="${p.productImg || 'https://picsum.photos/seed/' + p.sku + '/200'}" class="rec-img" alt="${p.name}">
+                <div class="rec-name" title="${p.name}">${p.name}</div>
+                <div class="rec-price">$${Number(p.price || 0).toFixed(2)}</div>
+              </div>
+            `).join('');
+          }
+        } catch (error) {
         alert(window.IMS_HTTP.getErrorMessage(error));
       }
 

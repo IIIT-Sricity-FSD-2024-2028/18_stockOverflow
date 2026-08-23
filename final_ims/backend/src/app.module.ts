@@ -1,4 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
+import { LoggingMiddleware, SecurityMiddleware } from './common/middlewares';
+import { AuditRouterMiddleware } from './common/router.middleware';
+import { GlobalExceptionFilter } from './common/http-exception.filter';
 import { AdminModule } from './admin/admin.module';
 import { BillersModule } from './billers/billers.module';
 import { CommonModule } from './common/common.module';
@@ -16,6 +20,12 @@ import { UsersModule } from './users/users.module';
 import { WarehousesModule } from './warehouses/warehouses.module';
 
 @Module({
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter, // 3. Global Exception Filter (Error Handling)
+    },
+  ],
   imports: [
     CommonModule,
     AdminModule,
@@ -34,4 +44,16 @@ import { WarehousesModule } from './warehouses/warehouses.module';
     UsersModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // 1. Global Middleware (Security & Logging)
+    consumer
+      .apply(SecurityMiddleware, LoggingMiddleware)
+      .forRoutes('*');
+      
+    // 2. Router-level Middleware
+    consumer
+      .apply(AuditRouterMiddleware)
+      .forRoutes('products/upload');
+  }
+}

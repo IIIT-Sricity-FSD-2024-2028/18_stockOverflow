@@ -8,6 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const core_1 = require("@nestjs/core");
+const middlewares_1 = require("./common/middlewares");
+const router_middleware_1 = require("./common/router.middleware");
+const http_exception_filter_1 = require("./common/http-exception.filter");
 const admin_module_1 = require("./admin/admin.module");
 const billers_module_1 = require("./billers/billers.module");
 const common_module_1 = require("./common/common.module");
@@ -24,10 +28,24 @@ const transactions_module_1 = require("./transactions/transactions.module");
 const users_module_1 = require("./users/users.module");
 const warehouses_module_1 = require("./warehouses/warehouses.module");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(middlewares_1.SecurityMiddleware, middlewares_1.LoggingMiddleware)
+            .forRoutes('*');
+        consumer
+            .apply(router_middleware_1.AuditRouterMiddleware)
+            .forRoutes('products/upload');
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
+        providers: [
+            {
+                provide: core_1.APP_FILTER,
+                useClass: http_exception_filter_1.GlobalExceptionFilter,
+            },
+        ],
         imports: [
             common_module_1.CommonModule,
             admin_module_1.AdminModule,

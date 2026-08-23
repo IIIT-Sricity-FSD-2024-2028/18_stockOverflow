@@ -93,14 +93,13 @@
     return JSON.parse(JSON.stringify(value));
   }
 
-  async function getProducts(force, storeId) {
-    if (!force && Array.isArray(cache.products)) {
+  async function getProducts(force) {
+      if (!force && Array.isArray(cache.products)) {
+        return clone(cache.products);
+      }
+      cache.products = await window.IMS_HTTP.request(withStaffScopeQuery('/products'));
       return clone(cache.products);
     }
-
-    cache.products = await window.IMS_HTTP.request(withStaffScopeQuery('/products'));
-    return clone(cache.products);
-  }
 
   async function getProductBySku(sku, force) {
     if (!sku) {
