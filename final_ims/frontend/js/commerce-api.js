@@ -93,7 +93,7 @@
     return JSON.parse(JSON.stringify(value));
   }
 
-  async function getProducts(force) {
+  async function getProducts(force, storeId) {
     if (!force && Array.isArray(cache.products)) {
       return clone(cache.products);
     }

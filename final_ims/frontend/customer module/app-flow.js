@@ -90,6 +90,7 @@
     }
     saveState(state);
     toast('Added to Cart');
+    setTimeout(() => { window.location.href = 'cart.html'; }, 500);
   };
 
   window.updateCartItem = (sku, qty) => {
@@ -396,13 +397,18 @@
         e.preventDefault();
         const sku = document.getElementById('breadcrumb-sku')?.textContent?.trim().split(' ').pop() || localStorage.getItem('imsSelectedSku') || 'UNKNOWN-SKU';
         const name = document.getElementById('product-name')?.textContent?.trim() || localStorage.getItem('imsSelectedProduct') || 'Product';
-        const priceText = document.querySelector('.spec-row .spec-val')?.textContent || '$99.99'; // Mocking price fallback if not on page
+        const priceText = document.getElementById('spec-price')?.textContent || '$99.99'; // Mocking price fallback if not on page
         const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 99.99;
+        
+        // Find the main image src
+        const mainImgEl = document.querySelector('#product-main-img');
+        const productImg = mainImgEl ? mainImgEl.getAttribute('src') : '';
         
         window.addToCart({
           sku,
           name,
           price,
+          productImg,
           qty: 1
         });
       });

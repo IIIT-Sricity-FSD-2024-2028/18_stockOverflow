@@ -119,7 +119,7 @@
     </div>
   </div>
 
-  <script src="../retailer module/mockData.js"></script>
+  
   <script src="app-flow.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -156,7 +156,10 @@
           const div = document.createElement('div');
           div.className = 'cart-item';
           div.innerHTML = `
-            <div class="item-img">📦</div>
+            <div class="item-img" style="overflow:hidden; background:#fff; padding:4px;">
+              <img src="${item.productImg || 'https://picsum.photos/seed/' + item.sku + '/400'}" alt="${item.name}" style="width:100%;height:100%;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+              <div style="display:none; font-size:24px;">📦</div>
+            </div>
             <div class="item-info">
               <div class="item-name">${item.name}</div>
               <div class="item-sku">SKU: ${item.sku}</div>
@@ -175,13 +178,13 @@
         const taxes = subtotal * 0.08; // 8% mock tax
         const total = subtotal + taxes;
         
-        subtotalEl.textContent = \`$\${subtotal.toFixed(2)}\`;
-        taxesEl.textContent = \`$\${taxes.toFixed(2)}\`;
-        totalEl.textContent = \`$\${total.toFixed(2)}\`;
+        subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+        taxesEl.textContent = `$${taxes.toFixed(2)}`;
+        totalEl.textContent = `$${total.toFixed(2)}`;
         
         // Save to order summary for receipt
         state.lastOrderSummary = {
-           total: \`$\${total.toFixed(2)}\`,
+           total: `$${total.toFixed(2)}`,
            date: new Date().toISOString(),
            source: 'store-reservation'
         };
