@@ -131,6 +131,13 @@
         <div class="header-sub">Browse all products from retailer inventory</div>
       </div>
       <div class="header-right">
+        <!-- [Shopping Cart] -->
+        <a href="cart.html" class="icon-btn2" style="position:relative;text-decoration:none;" title="View Cart">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <div class="cart-badge" style="position:absolute;top:-4px;right:-4px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;">0</div>
+        </a>
         <div class="icon-btn2">🔔</div>
         <div class="avatar">AK</div>
       </div>
@@ -139,6 +146,17 @@
     <div class="page-content">
       <div class="filter-bar">
         <div class="search-box">🔍 <input id="searchInput" type="text" placeholder="Search product name, SKU, brand..." /></div>
+        <!-- [Location-based Scaling] Store location selector for fetching specific store inventory -->
+        <div class="filter-select">
+          <select id="storeLocationFilter" style="font-weight: 500;">
+            <option value="">Global (All Stores)</option>
+            <option value="auto">Auto-detect Nearest Store</option>
+            <option disabled>──────────</option>
+            <option value="S001">Downtown Flagship (S001)</option>
+            <option value="S002">Uptown Hub (S002)</option>
+            <option value="S003">Suburban Outlet (S003)</option>
+          </select>
+        </div>
         <div class="filter-select"><select id="categoryFilter"><option value="">All Categories</option></select></div>
         <div class="filter-select"><select id="brandFilter"><option value="">All Brands</option></select></div>
         <div class="filter-select"><select id="stockFilter">

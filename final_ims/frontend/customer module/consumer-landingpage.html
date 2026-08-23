@@ -55,7 +55,7 @@
 
     .nav-links {
       position: absolute;
-      left: 1105px;
+      left: 1000px;
       top: 21px;
       display: flex;
       align-items: center;
@@ -73,9 +73,54 @@
     }
     .nav-links a:hover { color: #38BDF8; }
 
+    /* [Location-based Scaling] Formal Store Selection Widget */
+    .nav-location {
+      position: absolute;
+      left: 310px;
+      top: 17px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-location:hover { opacity: 0.8; }
+    .nav-location svg {
+      width: 18px;
+      height: 18px;
+      stroke: #64748b;
+    }
+    .nav-location-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .nav-location-lbl {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.1;
+    }
+    .nav-location-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      line-height: 1.2;
+    }
+
+    .cart-badge-inline {
+      background: #EF4444;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 4px;
+      display: none;
+    }
+
     .btn-logout {
       position: absolute;
-      left: 1274px;
+      left: 1300px;
       top: 14px;
       display: flex;
       align-items: center;
@@ -370,7 +415,7 @@
       font-size: 16px;
       line-height: 20px;
       letter-spacing: -0.5px;
-      color: rgba(255, 255, 255, 0.448);
+      color: rgb(255, 255, 255);
       text-align: center;
     }
 
@@ -398,6 +443,7 @@
       }
 
       .nav-logo,
+      .nav-location,
       .nav-links,
       .btn-logout {
         position: static;
@@ -489,10 +535,22 @@
   <!-- ═══ NAV ═══ -->
   <nav>
     <div class="nav-logo">StockOverflow</div>
+    
+    <!-- [Location-based Scaling] Formal Location Widget -->
+    <a href="productsearch.html" class="nav-location" title="Select a nearby store">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+      <div class="nav-location-text">
+        <span class="nav-location-lbl">Deliver to</span>
+        <span class="nav-location-val" id="globalStoreDisplay">Global</span>
+      </div>
+    </a>
+
     <div class="nav-links">
       <a href="productsearch.html">Products</a>
       <a href="orders.html">Orders</a>
+      <a href="cart.html">Cart <span class="cart-badge-inline cart-badge">0</span></a>
     </div>
+
     <button class="btn-logout" id="logoutbutton">
       <!-- logout icon -->
       <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

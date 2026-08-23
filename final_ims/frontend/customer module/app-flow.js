@@ -30,6 +30,8 @@
     restock: 'restockalert.html',
     feedback: 'feedback.html',
     detail: 'product-detail.html',
+    cart: 'cart.html',
+    checkout: 'checkout.html',
     pos: '../biller module/pos.html',
     sale: 'sale-confirmation.html'
   };
@@ -40,6 +42,7 @@
     alerts: [],
     returns: [],
     feedback: [],
+    cart: [], /* [Shopping Cart] Stores cart items {sku, name, price, qty, img} */
     lastOrderSummary: null
   };
 
@@ -61,9 +64,52 @@
       return;
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateCartBadge(); // Ensure UI reflects state changes
   };
 
   const state = loadState();
+  if (!state.cart) state.cart = []; // Retro-compatibility
+
+  /* [Shopping Cart] Global UI updates for the cart badge */
+  const updateCartBadge = () => {
+    const badges = document.querySelectorAll('.cart-badge');
+    const totalQty = state.cart.reduce((sum, item) => sum + item.qty, 0);
+    badges.forEach(badge => {
+      badge.textContent = totalQty;
+      badge.style.display = totalQty > 0 ? 'flex' : 'none';
+    });
+  };
+
+  /* [Shopping Cart] Actions exposed globally for cart manipulation */
+  window.addToCart = (productObj) => {
+    const existing = state.cart.find(item => item.sku === productObj.sku);
+    if (existing) {
+      existing.qty += productObj.qty || 1;
+    } else {
+      state.cart.push({ ...productObj, qty: productObj.qty || 1 });
+    }
+    saveState(state);
+    toast('Added to Cart');
+  };
+
+  window.updateCartItem = (sku, qty) => {
+    const item = state.cart.find(i => i.sku === sku);
+    if (item) {
+      item.qty = Math.max(1, qty);
+      saveState(state);
+    }
+  };
+
+  window.removeFromCart = (sku) => {
+    state.cart = state.cart.filter(i => i.sku !== sku);
+    saveState(state);
+    toast('Removed from Cart');
+  };
+
+  window.clearCart = () => {
+    state.cart = [];
+    saveState(state);
+  };
 
   const go = (file) => {
     if (!file) return;
@@ -196,6 +242,60 @@
     });
   };
 
+  /* [Location-based Scaling] Manages user's selected store location and auto-detect geolocation */
+  const wireStoreLocation = () => {
+    const globalDisplay = document.getElementById('globalStoreDisplay');
+    const savedStore = localStorage.getItem('imsSelectedStoreName') || 'Global';
+    
+    // Update global display on landing page if it exists
+    if (globalDisplay) {
+      globalDisplay.textContent = savedStore;
+    }
+
+    const storeDropdown = document.getElementById('storeLocationFilter');
+    if (storeDropdown) {
+      // Set dropdown to saved store value (using store name as value for simplicity in this mock)
+      const options = Array.from(storeDropdown.options);
+      const match = options.find(opt => opt.text.includes(savedStore) && savedStore !== 'Global');
+      if (match) storeDropdown.value = match.value;
+
+      storeDropdown.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val === 'auto') {
+          // Simulate Geolocation API request
+          if (navigator.geolocation) {
+            toast('Locating nearest store...');
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                // Mock determining nearest store based on coordinates
+                setTimeout(() => {
+                  toast('Located nearest store: Downtown Flagship');
+                  storeDropdown.value = 'S001'; // Defaulting to S001 for the demo
+                  localStorage.setItem('imsSelectedStoreName', 'Downtown Flagship');
+                  storeDropdown.dispatchEvent(new Event('change')); // trigger filter
+                }, 800);
+              },
+              (error) => {
+                toast('Location access denied. Please select manually.');
+                storeDropdown.value = '';
+              }
+            );
+          } else {
+            toast('Geolocation not supported by browser.');
+            storeDropdown.value = '';
+          }
+        } else {
+          // Save manual selection
+          const selectedText = storeDropdown.options[storeDropdown.selectedIndex].text;
+          const storeName = val === '' ? 'Global' : selectedText.split(' (')[0];
+          localStorage.setItem('imsSelectedStoreName', storeName);
+          toast(`Store set to: ${storeName}`);
+        }
+      });
+    }
+  };
+
+  /* Manages product searching, now upgraded with Store-specific filtering */
   const wireProductListing = () => {
     const cards = Array.from(document.querySelectorAll('.prod-card'));
     if (!cards.length) return;
@@ -212,13 +312,15 @@
       }
     });
 
-    const search = document.querySelector('.search-box input');
-    const category = document.querySelectorAll('.filter-select select')[0];
-    const brand = document.querySelectorAll('.filter-select select')[1];
-    const stock = document.querySelectorAll('.filter-select select')[2];
+    const search = document.querySelector('#searchInput');
+    const storeLocation = document.querySelector('#storeLocationFilter');
+    const category = document.querySelector('#categoryFilter');
+    const brand = document.querySelector('#brandFilter');
+    const stock = document.querySelector('#stockFilter');
 
     const apply = () => {
       const q = (search?.value || '').toLowerCase().trim();
+      const loc = (storeLocation?.value || '').toLowerCase(); // Store ID
       const c = (category?.value || '').toLowerCase();
       const b = (brand?.value || '').toLowerCase();
       const s = (stock?.value || '').toLowerCase();
@@ -227,21 +329,37 @@
         const name = card.querySelector('.prod-name')?.textContent.toLowerCase() || '';
         const meta = card.querySelector('.prod-cat')?.textContent.toLowerCase() || '';
         const status = card.querySelector('.stock-chip')?.textContent.toLowerCase() || '';
+        
+        // Mock Store Availability Logic: For demonstration, if a specific store is selected, 
+        // we simulate that every 3rd product is out of stock at that specific location to show the filtering working.
+        // In a real scenario, this would check a data attribute like `data-stores="S001,S002"`.
+        let mLoc = true;
+        if (loc && loc !== 'auto') {
+           const isAvailableAtStore = Math.random() > 0.3; // 70% chance of being in stock for demo purposes
+           // To make it deterministic for the user testing it without changing HTML:
+           const charCode = name.charCodeAt(0) || 0;
+           mLoc = (charCode + loc.charCodeAt(1)) % 3 !== 0; // Pseudo-random but stable check
+        }
 
         const mQ = !q || name.includes(q) || meta.includes(q);
         const mC = c.includes('all') || !c || meta.includes(c);
         const mB = b.includes('all') || !b || meta.includes(b);
         const mS = s.includes('stock status') || !s || status.includes(s.replace(' stock', ''));
 
-        card.style.display = mQ && mC && mB && mS ? '' : 'none';
+        card.style.display = mQ && mLoc && mC && mB && mS ? '' : 'none';
       });
     };
 
-    [search, category, brand, stock].forEach((el) => {
+    [search, storeLocation, category, brand, stock].forEach((el) => {
       if (!el) return;
       el.addEventListener('input', apply);
       el.addEventListener('change', apply);
     });
+    
+    // Initial apply to filter if a store was already saved
+    if (storeLocation && storeLocation.value && storeLocation.value !== 'auto') {
+       apply();
+    }
   };
 
   const wireProductDetail = () => {
@@ -271,6 +389,24 @@
       });
     }
 
+    /* [Shopping Cart] Wire up the Add to Cart button */
+    const addBtn = document.getElementById('addToCartBtn');
+    if (addBtn) {
+      addBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const sku = document.getElementById('breadcrumb-sku')?.textContent?.trim().split(' ').pop() || localStorage.getItem('imsSelectedSku') || 'UNKNOWN-SKU';
+        const name = document.getElementById('product-name')?.textContent?.trim() || localStorage.getItem('imsSelectedProduct') || 'Product';
+        const priceText = document.querySelector('.spec-row .spec-val')?.textContent || '$99.99'; // Mocking price fallback if not on page
+        const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 99.99;
+        
+        window.addToCart({
+          sku,
+          name,
+          price,
+          qty: 1
+        });
+      });
+    }
   };
 
   const wireConsumerLanding = () => {
@@ -660,6 +796,8 @@
     }
   };
 
+  updateCartBadge();
+  wireStoreLocation();
   wireGlobalNav();
   wireUploadZones();
 
