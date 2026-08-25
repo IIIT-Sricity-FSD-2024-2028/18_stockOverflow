@@ -1,5 +1,35 @@
 [
   {
+    "id": "0e1cc461-7769-4722-b2e0-6c871ac4f378",
+    "name": "3 In 1 Wall Mixer",
+    "email": "qweast@gmail.com",
+    "password": "pass1234",
+    "role": "consumer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-25T15:48:13.914Z",
+    "updatedAt": "2026-08-25T15:48:13.914Z"
+  },
+  {
+    "id": "260c9b8c-ac74-4617-8548-1e0264786b00",
+    "name": "krish kathiriya",
+    "email": "kriish@gmail.com",
+    "password": "pass1234",
+    "role": "consumer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-25T15:38:36.167Z",
+    "updatedAt": "2026-08-25T15:38:36.167Z"
+  },
+  {
     "id": "811471f9-7613-47f4-991b-b945a9fc0e92",
     "name": "retailer11",
     "email": "r11@gmail.com",

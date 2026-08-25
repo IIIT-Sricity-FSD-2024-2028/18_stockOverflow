@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const logsDir = path.join(process.cwd(), 'logs');
+const logsDir = path.join(process.cwd(), '.logs');
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir);
 }
