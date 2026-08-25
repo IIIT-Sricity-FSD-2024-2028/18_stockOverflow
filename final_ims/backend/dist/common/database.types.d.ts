@@ -97,6 +97,10 @@ export interface ProductRecord {
     createdAt: string;
     updatedAt: string;
     restockedAt?: string;
+    stockHistory?: Array<{
+        date: string;
+        qty: number;
+    }>;
     lastStockChangeAt?: string;
 }
 export type Product = ProductRecord;

@@ -58,5 +58,10 @@ export declare class CreateProductDto {
     shippingClass?: string;
     status?: string;
     visibility?: string;
+    restockedAt?: string;
+    stockHistory?: Array<{
+        date: string;
+        qty: number;
+    }>;
 }
 export {};

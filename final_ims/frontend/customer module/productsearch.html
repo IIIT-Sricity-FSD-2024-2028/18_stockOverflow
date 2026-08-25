@@ -187,12 +187,20 @@
       return { key: 'in', chipClass: 'in-stock', label: 'In Stock' };
     }
 
+    function openProductDetailBySku(sku, name) {
+      if (!sku) return;
+      localStorage.setItem('imsSelectedSku', sku);
+      if (name) localStorage.setItem('imsSelectedProduct', name);
+      window.location.href = 'product-detail.html?sku=' + encodeURIComponent(sku);
+    }
+
     function renderProducts(products) {
       const container = document.getElementById('productsContainer');
       container.innerHTML = products.map(function(product) {
         const stock = getStockMeta(product);
+        const escapedName = (product.name || '').replace(/'/g, "\\'");
         return `
-          <div class="prod-card" data-sku="${product.sku}">
+          <div class="prod-card" data-sku="${product.sku}" onclick="openProductDetailBySku('${product.sku}', '${escapedName}')" style="cursor:pointer;">
             <div class="prod-img">
               <img class="prod-img-photo" src="${product.productImg}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
               <div class="prod-img-fallback" style="display:none;">${product.emoji || '📦'}</div>
@@ -206,7 +214,7 @@
                 <div class="prod-price">$${product.priceUSD.toLocaleString()}</div>
                 ${stock.key === 'low' ? '<div class="low-stock-label">Low stock</div>' : ''}
               </div>
-              <button class="view-btn" data-sku="${product.sku}">View Details →</button>
+              <button class="view-btn" data-sku="${product.sku}" onclick="event.stopPropagation();openProductDetailBySku('${product.sku}', '${escapedName}')">View Details →</button>
             </div>
           </div>
         `;

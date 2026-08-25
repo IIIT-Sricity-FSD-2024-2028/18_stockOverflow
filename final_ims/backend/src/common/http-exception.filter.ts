@@ -19,13 +19,22 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const message =
-      exception instanceof HttpException
-        ? exception.message
-        : 'Internal server error';
+    let message: any = 'Internal server error';
 
-    // Log the error using our file logger
-    LoggerService.logError(`[ERROR] ${request.method} ${request.url} ${status} - ${message}`);
+    if (exception instanceof HttpException) {
+      const res = exception.getResponse();
+      if (typeof res === 'object' && res !== null) {
+        message = (res as any).message || (res as any).error || exception.message;
+      } else {
+        message = res || exception.message;
+      }
+    } else if (exception instanceof Error) {
+      message = exception.message;
+    }
+
+    const logMsg = Array.isArray(message) ? message.join(', ') : String(message);
+    LoggerService.logError(`[ERROR] ${request.method} ${request.url} ${status} - ${logMsg}`);
+    console.error(`[GlobalExceptionFilter] ${request.method} ${request.url} ${status}:`, logMsg);
 
     response.status(status).json({
       statusCode: status,

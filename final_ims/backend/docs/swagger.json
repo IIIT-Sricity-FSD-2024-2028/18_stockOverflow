@@ -5501,6 +5501,24 @@
           "status": {
             "type": "string"
           },
+          "stockHistory": {
+            "items": {
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "qty": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "qty"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "storeInventory": {
             "items": {
               "properties": {
@@ -6704,6 +6722,9 @@
           "reorderQty": {
             "type": "number"
           },
+          "restockedAt": {
+            "type": "string"
+          },
           "retailerId": {
             "type": "string"
           },
@@ -6724,6 +6745,24 @@
           },
           "status": {
             "type": "string"
+          },
+          "stockHistory": {
+            "items": {
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "qty": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "qty"
+              ],
+              "type": "object"
+            },
+            "type": "array"
           },
           "storeId": {
             "type": "string"
@@ -6952,6 +6991,9 @@
           "reorderQty": {
             "type": "number"
           },
+          "restockedAt": {
+            "type": "string"
+          },
           "retailerId": {
             "type": "string"
           },
@@ -6972,6 +7014,24 @@
           },
           "status": {
             "type": "string"
+          },
+          "stockHistory": {
+            "items": {
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "qty": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "qty"
+              ],
+              "type": "object"
+            },
+            "type": "array"
           },
           "storeId": {
             "type": "string"

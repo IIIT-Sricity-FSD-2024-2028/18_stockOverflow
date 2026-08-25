@@ -1046,14 +1046,14 @@ body{
                 <img id="mainImgEl" src="" alt="" style="display:none;width:100%;height:100%;object-fit:contain;padding:10px"/>
               </div>
               <!-- Upload zone -->
-              <div class="upload-zone" id="uploadZone">
-                <input type="file" id="imgInput" accept="image/*" multiple onchange="handleImgUpload(event)"/>
+              <div class="upload-zone" id="uploadZone" onclick="document.getElementById('imgInput').click()">
+                <input type="file" id="imgInput" accept="image/*" multiple onchange="handleImgUpload(event)" onclick="event.stopPropagation()"/>
                 <div class="upload-icon">
                   <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 17s0-2 2-2h10s2 0 2 2"/><line x1="11" y1="4" x2="11" y2="14"/><polyline points="7,8 11,4 15,8"/></svg>
                 </div>
                 <div class="upload-title">Drag &amp; drop to upload</div>
-                <div class="upload-sub">PNG, JPG, WEBP — max 5 MB</div>
-                <span class="upload-browse-btn" onclick="document.getElementById('imgInput').click()">Browse Files</span>
+                <div class="upload-sub">PNG, JPG, WEBP — max 10 MB</div>
+                <span class="upload-browse-btn">Browse Files</span>
               </div>
               <!-- Thumbnail strip -->
               <div class="img-strip" id="imgStrip"></div>
@@ -1172,6 +1172,13 @@ body{
                 <div class="field">
                   <label class="field-label">Reorder Quantity</label>
                   <input class="input" id="f-reorder-qty" type="number" min="0" placeholder="50"/>
+                </div>
+              </div>
+              <div class="field-row col-2" style="margin-top:12px">
+                <div class="field">
+                  <label class="field-label">Stock / Restock Date</label>
+                  <input class="input" id="f-restock-date" type="date"/>
+                  <div class="field-hint">Date when this stock level was recorded or restocked</div>
                 </div>
               </div>
             </div>
@@ -1808,6 +1815,9 @@ function buildProductPayload() {
     visibility: normalizeProductVisibility(
       (currentProductRecord && currentProductRecord.visibility) || selectedPublish,
     ),
+    restockedAt: getFieldValue('f-restock-date')
+      ? new Date(getFieldValue('f-restock-date')).toISOString()
+      : (currentProductRecord && currentProductRecord.restockedAt) || new Date().toISOString(),
   };
 }
 
@@ -1849,6 +1859,14 @@ function populateProductForm(product) {
   setFieldValue('f-bin', product.bin);
   setFieldValue('f-reorder', product.reorderPoint);
   setFieldValue('f-reorder-qty', product.reorderQty);
+  if (product.restockedAt) {
+    try {
+      var dRes = new Date(product.restockedAt);
+      if (!isNaN(dRes.getTime())) {
+        setFieldValue('f-restock-date', dRes.toISOString().split('T')[0]);
+      }
+    } catch (_e) {}
+  }
 
   images = buildImageState(product);
   mainImgIdx = 0;
@@ -2357,36 +2375,66 @@ async function appendUploadedImages(fileList) {
       showToastMsg('Only image files (JPEG, PNG, WEBP, GIF) are allowed.', true);
       continue;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      showToastMsg('File size must not exceed 5MB.', true);
+    if (file.size > 10 * 1024 * 1024) {
+      showToastMsg('File size must not exceed 10MB.', true);
       continue;
     }
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const apiBase = window.API_BASE_URL || 'http://localhost:3001';
-      const response = await fetch(apiBase + '/api/products/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const payload = await response.json();
-      if (!response.ok) {
-        throw new Error(payload.message || 'File upload failed');
+      // 1. Generate immediate local Data URL for fast & reliable local display
+      let localDataUrl = '';
+      try {
+        localDataUrl = await optimizeImageFile(file);
+      } catch (_e) {
+        localDataUrl = await readFileAsDataUrl(file);
       }
 
-      const imageUrl = payload.url.startsWith('http')
-        ? payload.url
-        : apiBase + payload.url;
+      // 2. Attempt backend server upload
+      let serverUrl = '';
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+        const response = await fetch(apiBase + '/api/products/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-      images.push({ src: imageUrl, name: file.name, serverPath: payload.url });
-      if (images.length === 1) mainImgIdx = 0;
-      showToastMsg('Image uploaded successfully!');
+        if (response.ok) {
+          const payload = await response.json();
+          if (payload && payload.url) {
+            serverUrl = payload.url.startsWith('http')
+              ? payload.url
+              : apiBase + payload.url;
+          }
+        }
+      } catch (uploadErr) {
+        console.warn('Server upload fallback to Data URL:', uploadErr);
+      }
+
+      const finalSrc = serverUrl || localDataUrl;
+      if (!finalSrc) {
+        showToastMsg('Failed to process image file.', true);
+        continue;
+      }
+
+      // Check if existing images are only default SVG card placeholders
+      const hasOnlyPlaceholders = images.length > 0 && images.every(function(img) {
+        return (img.src || '').indexOf('data:image/svg+xml') === 0;
+      });
+
+      if (hasOnlyPlaceholders) {
+        images = [{ src: finalSrc, name: file.name }];
+        mainImgIdx = 0;
+      } else {
+        images.push({ src: finalSrc, name: file.name });
+        mainImgIdx = images.length - 1;
+      }
+
+      showToastMsg('Image added successfully!');
     } catch (error) {
-      console.error('Error uploading image:', error);
-      showToastMsg(error.message || 'Failed to upload image.', true);
+      console.error('Error processing image upload:', error);
+      showToastMsg('Error loading image file.', true);
     }
   }
   renderImages();
@@ -2400,29 +2448,51 @@ function handleImgUpload(e) {
 
 function renderImages() {
   const strip = document.getElementById('imgStrip');
-  strip.innerHTML = '';
-  images.forEach((img, i) => {
-    const thumb = document.createElement('div');
-    thumb.className = 'img-thumb' + (i===mainImgIdx?' main-thumb':'');
-    thumb.onclick = () => setMainImg(i);
-    thumb.innerHTML = `
-      <img src="${img.src}" alt="${img.name}" style="width:100%;height:100%;object-fit:cover"/>
-      ${i===mainImgIdx?'<div class="main-badge">Main</div>':''}
-      <div class="img-thumb-del" onclick="event.stopPropagation();removeImg(${i})">
-        <svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
-      </div>`;
-    strip.appendChild(thumb);
-  });
-
-  // Main preview
-  if (images.length > 0) {
-    document.getElementById('mainImgPlaceholder').style.display = 'none';
-    document.getElementById('mainImgEl').style.display = 'block';
-    document.getElementById('mainImgEl').src = images[mainImgIdx].src;
-  } else {
-    document.getElementById('mainImgPlaceholder').style.display = 'flex';
-    document.getElementById('mainImgEl').style.display = 'none';
+  if (strip) {
+    strip.innerHTML = '';
+    images.forEach(function(img, i) {
+      const thumb = document.createElement('div');
+      thumb.className = 'img-thumb' + (i === mainImgIdx ? ' main-thumb' : '');
+      thumb.onclick = function() { setMainImg(i); };
+      thumb.innerHTML = `
+        <img src="${img.src}" alt="${img.name || 'Product Image'}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='https://picsum.photos/seed/thumb/200'"/>
+        ${i === mainImgIdx ? '<div class="main-badge">Main</div>' : ''}
+        <div class="img-thumb-del" onclick="event.stopPropagation();removeImg(${i})" title="Remove image">
+          <svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
+        </div>`;
+      strip.appendChild(thumb);
+    });
   }
+
+  // Main preview display
+  const mainPlaceholder = document.getElementById('mainImgPlaceholder');
+  const mainEl = document.getElementById('mainImgEl');
+
+  if (images.length > 0 && images[mainImgIdx]) {
+    if (mainPlaceholder) mainPlaceholder.style.display = 'none';
+    if (mainEl) {
+      mainEl.style.display = 'block';
+      mainEl.src = images[mainImgIdx].src;
+    }
+  } else {
+    if (mainPlaceholder) mainPlaceholder.style.display = 'flex';
+    if (mainEl) mainEl.style.display = 'none';
+  }
+}
+
+function setMainImg(i) {
+  if (i >= 0 && i < images.length) {
+    mainImgIdx = i;
+    renderImages();
+  }
+}
+
+function removeImg(i) {
+  images.splice(i, 1);
+  if (mainImgIdx >= images.length) {
+    mainImgIdx = Math.max(0, images.length - 1);
+  }
+  renderImages();
 }
 
 function setMainImg(i) {

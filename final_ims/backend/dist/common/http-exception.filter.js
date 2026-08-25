@@ -17,10 +17,22 @@ let GlobalExceptionFilter = class GlobalExceptionFilter {
         const status = exception instanceof common_1.HttpException
             ? exception.getStatus()
             : common_1.HttpStatus.INTERNAL_SERVER_ERROR;
-        const message = exception instanceof common_1.HttpException
-            ? exception.message
-            : 'Internal server error';
-        logger_service_1.LoggerService.logError(`[ERROR] ${request.method} ${request.url} ${status} - ${message}`);
+        let message = 'Internal server error';
+        if (exception instanceof common_1.HttpException) {
+            const res = exception.getResponse();
+            if (typeof res === 'object' && res !== null) {
+                message = res.message || res.error || exception.message;
+            }
+            else {
+                message = res || exception.message;
+            }
+        }
+        else if (exception instanceof Error) {
+            message = exception.message;
+        }
+        const logMsg = Array.isArray(message) ? message.join(', ') : String(message);
+        logger_service_1.LoggerService.logError(`[ERROR] ${request.method} ${request.url} ${status} - ${logMsg}`);
+        console.error(`[GlobalExceptionFilter] ${request.method} ${request.url} ${status}:`, logMsg);
         response.status(status).json({
             statusCode: status,
             timestamp: new Date().toISOString(),

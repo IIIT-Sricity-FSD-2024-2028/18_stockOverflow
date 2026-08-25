@@ -664,7 +664,7 @@
     const rating = getRatingMeta(product);
 
     return `
-      <article class="product-card" data-sku="${product.sku}">
+      <article class="product-card" data-sku="${product.sku}" onclick="openProductDetailBySku('${product.sku}')" style="cursor:pointer;">
         <div class="card-inner">
           <div class="card-img">
             <div class="img-placeholder" style="background:${product.palette && product.palette[0] ? product.palette[0] : 'linear-gradient(135deg,#e0f7ff,#bae6fd)'};">
@@ -677,7 +677,7 @@
           <div class="card-meta">Rating ${rating.avg ? rating.avg.toFixed(1) : '0.0'} (${rating.count})</div>
           <div class="card-price">${formatPrice(product.priceUSD)}</div>
           <div class="card-stock ${stock.key === 'low' ? 'low' : stock.key === 'out' ? 'out' : ''}">${stock.label} • ${Number(product.qty || 0)} units</div>
-          <button class="card-btn" type="button" data-sku="${product.sku}">View Product</button>
+          <button class="card-btn" type="button" data-sku="${product.sku}" onclick="event.stopPropagation();openProductDetailBySku('${product.sku}')">View Product</button>
         </div>
       </article>
     `;

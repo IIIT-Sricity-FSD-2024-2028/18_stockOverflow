@@ -257,4 +257,12 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   visibility?: string;
+
+  @IsOptional()
+  @IsString()
+  restockedAt?: string;
+
+  @IsOptional()
+  @IsArray()
+  stockHistory?: Array<{ date: string; qty: number }>;
 }

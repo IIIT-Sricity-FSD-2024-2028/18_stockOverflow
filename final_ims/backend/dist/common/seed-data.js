@@ -938,7 +938,16 @@ function buildProduct(seed, index) {
         status: 'active',
         visibility: 'published',
         createdAt: '2026-01-01T09:00:00.000Z',
-        updatedAt: '2026-01-01T09:00:00.000Z',
+        updatedAt: new Date().toISOString(),
+        restockedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+        stockHistory: Array.from({ length: 7 }, (_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - (6 - i));
+            const dateIso = d.toISOString().split('T')[0];
+            const step = 6 - i;
+            const variance = step === 0 ? 0 : Math.min(seed.qty, (step * 3) + Math.floor((step % 3) * 2));
+            return { date: dateIso, qty: Math.max(0, seed.qty - variance) };
+        }),
     };
 }
 exports.INITIAL_DB = {

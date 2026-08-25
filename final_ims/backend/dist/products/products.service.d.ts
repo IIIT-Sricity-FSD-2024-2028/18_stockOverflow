@@ -91,6 +91,10 @@ export declare class ProductsService {
         createdAt: string;
         updatedAt: string;
         restockedAt?: string;
+        stockHistory?: Array<{
+            date: string;
+            qty: number;
+        }>;
         lastStockChangeAt?: string;
     }[];
     applyInventoryAdjustment(sku: string, qtyDelta: number, preferredStoreId?: string, retailerId?: string): ProductRecord;
