@@ -101,4 +101,8 @@ export class CreateTransactionDto {
   @IsOptional()
   @IsString()
   status?: string;
+
+  @IsOptional()
+  @IsString()
+  receiptUrl?: string;
 }

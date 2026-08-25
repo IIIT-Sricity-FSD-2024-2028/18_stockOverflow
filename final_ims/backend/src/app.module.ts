@@ -54,6 +54,6 @@ export class AppModule implements NestModule {
     // 2. Router-level Middleware
     consumer
       .apply(AuditRouterMiddleware)
-      .forRoutes('products/upload');
+      .forRoutes('products/upload', 'transactions', 'billers');
   }
 }

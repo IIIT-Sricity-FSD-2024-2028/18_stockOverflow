@@ -22,5 +22,6 @@ export declare class CreateTransactionDto {
     discount?: number;
     roundoff?: number;
     status?: string;
+    receiptUrl?: string;
 }
 export {};

@@ -229,6 +229,25 @@
       </div>
     </div>
 
+    <!-- FILTER BAR -->
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:200px;border:1px solid var(--border);border-radius:6px;padding:6px 10px;background:#f9fafb;">
+        <span>🔍</span>
+        <input type="text" id="txSearchInput" placeholder="Search Order ID, Customer..." style="border:none;background:transparent;outline:none;width:100%;font-size:13px;" />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label style="font-size:12px;font-weight:600;color:var(--text-muted);">Payment:</label>
+        <select id="txPaymentFilter" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;background:#fff;">
+          <option value="">All Payments</option>
+          <option value="Cash">Cash</option>
+          <option value="Card">Card</option>
+          <option value="Points">Points</option>
+          <option value="Deposit">Deposit</option>
+          <option value="Cheque">Cheque</option>
+        </select>
+      </div>
+    </div>
+
     <div id="transactionsContainer" class="transactions-container"></div>
     <div id="emptyState" class="empty-state" style="display:none;">
       <div class="empty-state-icon">📭</div>

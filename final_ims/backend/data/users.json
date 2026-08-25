@@ -1,5 +1,42 @@
 [
   {
+    "id": "a1315d24-89d4-4b5a-aeef-d89924b2df9a",
+    "name": "consumer",
+    "email": "consumer1@gmail.com",
+    "password": "pass1234",
+    "role": "consumer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-25T16:34:39.552Z",
+    "updatedAt": "2026-08-25T16:34:39.552Z"
+  },
+  {
+    "id": "be7268f2-fada-4e45-8df9-eed9210efdc7",
+    "name": "biller",
+    "email": "biller@gmail.com",
+    "password": "pass1234",
+    "role": "biller",
+    "status": "Active",
+    "store": "",
+    "storeId": "JKJDFSJKDF",
+    "currentStoreId": "JKJDFSJKDF",
+    "accessibleStoreIds": [
+      "JKJDFSJKDF"
+    ],
+    "profileId": "7",
+    "profile": {
+      "name": "biller",
+      "email": "biller@gmail.com",
+      "retailerId": "f53f8742-69ce-4553-b410-97773f2494bb"
+    },
+    "createdAt": "2026-08-25T16:29:12.512Z",
+    "updatedAt": "2026-08-25T16:30:43.209Z"
+  },
+  {
     "id": "18a2d66a-9c65-4df3-8e81-ab609d9eb67b",
     "name": "retailer",
     "email": "retailer@gmail.com",

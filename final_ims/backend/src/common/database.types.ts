@@ -314,6 +314,7 @@ export interface TransactionRecord {
   roundoff: number;
   finalTotal: number;
   status: string;
+  receiptUrl?: string;
 }
 
 export interface ReturnRecord {

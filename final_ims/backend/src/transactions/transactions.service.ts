@@ -298,7 +298,20 @@ export class TransactionsService {
       roundoff,
       finalTotal,
       status: this.normalizeText(payload.status, 'Delivered'),
+      receiptUrl: this.normalizeText(payload.receiptUrl),
     };
+  }
+
+  attachReceipt(orderId: string, receiptUrl: string): TransactionRecord {
+    const transactions = this.findAll();
+    const transaction = transactions.find((t) => t.orderId === orderId);
+    if (!transaction) {
+      throw new NotFoundException(`Transaction ${orderId} not found`);
+    }
+
+    transaction.receiptUrl = receiptUrl;
+    this.db.saveCollection('transactions', transactions);
+    return transaction;
   }
 
   private enrichCustomerFromReservation<T extends CreateTransactionDto | UpdateTransactionDto>(

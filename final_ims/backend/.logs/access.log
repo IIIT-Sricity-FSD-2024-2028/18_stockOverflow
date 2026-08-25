@@ -123,3 +123,205 @@
 [2026-08-25T15:38:50.596Z] [GET] /api/transactions/purchased-products?customer=krish%20kathiriya 304 - IP: ::ffff:127.0.0.1
 [2026-08-25T15:38:50.599Z] [GET] /api/reservations/requests?status=pending&customer=krish%20kathiriya 304 - IP: ::ffff:127.0.0.1
 [2026-08-25T15:38:50.609Z] [GET] /api/products 304 - IP: ::ffff:127.0.0.1
+[2026-08-25T16:28:40.096Z] [GET] /api/stores 200 - 11ms - IP: ::1
+[2026-08-25T16:29:12.524Z] [POST] /api/users 201 - 25ms - IP: ::1
+[2026-08-25T16:29:12.537Z] [AUDIT] Action invoked on route: [POST] /api/billers/requests
+[2026-08-25T16:29:12.548Z] [POST] /api/billers/requests 201 - 12ms - IP: ::1
+[2026-08-25T16:29:38.417Z] [POST] /api/users/login 401 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:29:55.556Z] [POST] /api/users/login 401 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:29:56.017Z] [POST] /api/users/login 401 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.368Z] [POST] /api/users/login 201 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.563Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.570Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 200 - 5ms - IP: ::1
+[2026-08-25T16:30:16.576Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.625Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.627Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.630Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:30:16.629Z] [GET] /api/purchase-orders?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.632Z] [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.638Z] [GET] /api/suppliers 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:16.636Z] [GET] /api/returns?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:19.771Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:30:19.781Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:19.774Z] [GET] /api/billers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:19.783Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-25T16:30:19.785Z] [GET] /api/billers/requests 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:22.416Z] [AUDIT] Action invoked on route: [PUT] /api/billers/requests/1787675352543/approve
+[2026-08-25T16:30:22.434Z] [PUT] /api/billers/requests/1787675352543/approve 200 - 18ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:22.437Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-25T16:30:22.438Z] [GET] /api/billers/requests 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:22.441Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:30:22.442Z] [GET] /api/billers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:22.642Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:22.642Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:30:22.643Z] [GET] /api/billers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:22.645Z] [GET] /api/billers/requests 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:22.644Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-25T16:30:26.668Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-08-25T16:30:43.211Z] [POST] /api/users/login 201 - 8ms - IP: ::1
+[2026-08-25T16:30:43.215Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-25T16:30:43.217Z] [GET] /api/billers/requests 200 - 2ms - IP: ::1
+[2026-08-25T16:30:43.318Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:43.321Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:43.322Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:30:43.392Z] [GET] /api/reservations?storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:08.813Z] [POST] /api/users/login 201 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:08.977Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:08.980Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:08.982Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 1ms - IP: ::1
+[2026-08-25T16:31:08.991Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:08.993Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:09.002Z] [GET] /api/purchase-orders?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:09.005Z] [GET] /api/returns?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:09.007Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:08.999Z] [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:08.996Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:31:10.088Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:10.090Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:10.094Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 3ms - IP: ::1
+[2026-08-25T16:31:10.507Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:10.521Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:28.620Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:28.641Z] [POST] /api/products 201 - 13ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:28.897Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:28.904Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:31.258Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:31.263Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:31.266Z] [GET] /api/users/18a2d66a-9c65-4df3-8e81-ab609d9eb67b 304 - 2ms - IP: ::1
+[2026-08-25T16:31:41.573Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-08-25T16:31:48.768Z] [POST] /api/users/login 201 - 5ms - IP: ::1
+[2026-08-25T16:31:48.771Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-25T16:31:48.773Z] [GET] /api/billers/requests 304 - 2ms - IP: ::1
+[2026-08-25T16:31:48.866Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:48.870Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:48.873Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:31:48.931Z] [GET] /api/reservations?storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:32:38.439Z] [AUDIT] Action invoked on route: [POST] /api/transactions
+[2026-08-25T16:32:38.455Z] [POST] /api/transactions 201 - 16ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:32:42.566Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:32:42.634Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:32:42.636Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:32:42.637Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:32:42.641Z] [GET] /api/reservations?storeId=JKJDFSJKDF 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:17.937Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:17.936Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:17.938Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:17.956Z] [GET] /api/reservations?storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:29.277Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:29.278Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:29.283Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:29.321Z] [GET] /api/reservations?storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:38.430Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:38.431Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:38.433Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:38.446Z] [GET] /api/reservations?storeId=JKJDFSJKDF 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:33:58.722Z] [AUDIT] Action invoked on route: [POST] /api/transactions
+[2026-08-25T16:33:58.745Z] [POST] /api/transactions 201 - 23ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:00.827Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:00.837Z] [GET] /api/reservations?storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:00.894Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:00.898Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:00.899Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:00.906Z] [GET] /api/reservations?storeId=JKJDFSJKDF 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:02.849Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:34:02.850Z] [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:07.017Z] [AUDIT] Action invoked on route: [DELETE] /api/transactions/ORD933167
+[2026-08-25T16:34:07.030Z] [DELETE] /api/transactions/ORD933167 200 - 13ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:07.033Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:34:07.035Z] [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:07.221Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:34:07.223Z] [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:08.561Z] [AUDIT] Action invoked on route: [DELETE] /api/transactions/ORD362773
+[2026-08-25T16:34:08.574Z] [DELETE] /api/transactions/ORD362773 200 - 13ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:08.577Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:34:08.579Z] [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:08.786Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:34:08.788Z] [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:33.460Z] [POST] /api/users 409 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:39.555Z] [POST] /api/users 201 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:39.878Z] [GET] /api/products 200 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:43.086Z] [GET] /api/products 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:51.132Z] [GET] /api/products 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:34:51.143Z] [GET] /api/stores 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:16.793Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:35:16.797Z] [GET] /api/transactions/purchased-products?customer=consumer 200 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:16.807Z] [GET] /api/reservations/requests?status=pending&customer=consumer 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:16.815Z] [GET] /api/products 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:18.010Z] [GET] /api/products 304 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:18.023Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=consumer
+[2026-08-25T16:35:18.025Z] [GET] /api/transactions?customer=consumer 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:18.938Z] [GET] /api/products 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:18.943Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=consumer
+[2026-08-25T16:35:18.944Z] [GET] /api/transactions?customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:19.259Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:35:19.261Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:19.265Z] [GET] /api/reservations/requests?status=pending&customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:19.275Z] [GET] /api/products 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:19.819Z] [GET] /api/products 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:20.989Z] [GET] /api/products 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:21.977Z] [GET] /api/products 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:21.986Z] [GET] /api/stores 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:38.807Z] [POST] /api/reservations/requests 201 - 12ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:38.900Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:35:38.902Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:38.907Z] [GET] /api/reservations/requests?status=pending&customer=consumer 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:38.915Z] [GET] /api/products 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:40.921Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:35:40.923Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:40.927Z] [GET] /api/reservations/requests?status=pending&customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:35:43.971Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-08-25T16:35:52.318Z] [POST] /api/users/login 401 - 2ms - IP: ::1
+[2026-08-25T16:36:00.110Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-08-25T16:36:09.096Z] [POST] /api/users/login 201 - 5ms - IP: ::1
+[2026-08-25T16:36:09.099Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-25T16:36:09.100Z] [GET] /api/billers/requests 304 - 1ms - IP: ::1
+[2026-08-25T16:36:09.202Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:09.204Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:09.205Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:09.209Z] [GET] /api/reservations?storeId=JKJDFSJKDF 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:14.090Z] [GET] /api/reservations?storeId=JKJDFSJKDF 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:16.486Z] [AUDIT] Action invoked on route: [POST] /api/transactions
+[2026-08-25T16:36:16.512Z] [POST] /api/transactions 201 - 26ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:17.748Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:17.843Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:17.841Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:17.844Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:17.849Z] [GET] /api/reservations?storeId=JKJDFSJKDF 200 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:52.675Z] [GET] /api/products?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:52.679Z] [GET] /api/stores?retailerId=f53f8742-69ce-4553-b410-97773f2494bb 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:52.680Z] [GET] /api/customers?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:52.686Z] [GET] /api/reservations?storeId=JKJDFSJKDF 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:36:55.571Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF
+[2026-08-25T16:36:55.573Z] [GET] /api/transactions?retailerId=f53f8742-69ce-4553-b410-97773f2494bb&storeId=JKJDFSJKDF 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:11.599Z] [POST] /api/users/login 201 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:11.699Z] [GET] /api/products 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:16.185Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:37:16.189Z] [GET] /api/transactions/purchased-products?customer=consumer 200 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:16.200Z] [GET] /api/reservations/requests?status=pending&customer=consumer 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:16.213Z] [GET] /api/products 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:18.229Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:37:18.231Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:18.237Z] [GET] /api/reservations/requests?status=pending&customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:19.736Z] [GET] /api/products 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:19.747Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=consumer
+[2026-08-25T16:37:19.749Z] [GET] /api/transactions?customer=consumer 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:21.190Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:37:21.192Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:26.751Z] [POST] /api/returns 201 - 8ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:26.983Z] [GET] /api/products 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:26.988Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=consumer
+[2026-08-25T16:37:26.989Z] [GET] /api/transactions?customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:31.135Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:37:31.136Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:32.989Z] [POST] /api/returns 201 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:33.182Z] [GET] /api/products 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:33.185Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=consumer
+[2026-08-25T16:37:33.186Z] [GET] /api/transactions?customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:35.690Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:37:35.692Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:37.907Z] [POST] /api/returns 201 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:38.149Z] [GET] /api/products 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:38.163Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=consumer
+[2026-08-25T16:37:38.165Z] [GET] /api/transactions?customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-25T16:37:46.710Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-25T16:37:46.712Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1

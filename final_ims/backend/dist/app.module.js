@@ -34,7 +34,7 @@ let AppModule = class AppModule {
             .forRoutes('*');
         consumer
             .apply(router_middleware_1.AuditRouterMiddleware)
-            .forRoutes('products/upload');
+            .forRoutes('products/upload', 'transactions', 'billers');
     }
 };
 exports.AppModule = AppModule;

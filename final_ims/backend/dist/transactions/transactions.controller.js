@@ -14,9 +14,36 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionsController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const fs = require("fs");
+const path = require("path");
 const create_transaction_dto_1 = require("./dto/create-transaction.dto");
 const update_transaction_dto_1 = require("./dto/update-transaction.dto");
 const transactions_service_1 = require("./transactions.service");
+const receiptUploadsDir = path.join(process.cwd(), 'uploads', 'receipts');
+if (!fs.existsSync(receiptUploadsDir)) {
+    fs.mkdirSync(receiptUploadsDir, { recursive: true });
+}
+const receiptMulterOptions = {
+    storage: (0, multer_1.diskStorage)({
+        destination: receiptUploadsDir,
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            const ext = path.extname(file.originalname).toLowerCase();
+            cb(null, `receipt-${uniqueSuffix}${ext}`);
+        },
+    }),
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+    },
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp|pdf)$/)) {
+            return cb(new common_1.BadRequestException('Only image files (JPEG, PNG, WEBP, GIF) and PDFs are allowed.'), false);
+        }
+        cb(null, true);
+    },
+};
 let TransactionsController = class TransactionsController {
     constructor(transactionsService) {
         this.transactionsService = transactionsService;
@@ -29,6 +56,26 @@ let TransactionsController = class TransactionsController {
     }
     findPurchasedProducts(retailerId, storeId, customerLookup) {
         return this.transactionsService.getPurchasedProducts(retailerId, storeId, customerLookup);
+    }
+    uploadReceiptFile(file) {
+        if (!file) {
+            throw new common_1.BadRequestException('Receipt file is required.');
+        }
+        const relativeUrl = `/uploads/receipts/${file.filename}`;
+        return {
+            message: 'Receipt file uploaded successfully',
+            url: relativeUrl,
+            filename: file.filename,
+            originalName: file.originalname,
+            size: file.size,
+        };
+    }
+    attachReceiptFile(orderId, file) {
+        if (!file) {
+            throw new common_1.BadRequestException('Receipt file is required.');
+        }
+        const relativeUrl = `/uploads/receipts/${file.filename}`;
+        return this.transactionsService.attachReceipt(orderId, relativeUrl);
     }
     findOne(orderId, retailerId, storeId, customerLookup) {
         return this.transactionsService.findOne(orderId, retailerId, storeId, customerLookup);
@@ -74,6 +121,23 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], TransactionsController.prototype, "findPurchasedProducts", null);
+__decorate([
+    (0, common_1.Post)('upload-receipt'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', receiptMulterOptions)),
+    __param(0, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], TransactionsController.prototype, "uploadReceiptFile", null);
+__decorate([
+    (0, common_1.Post)(':orderId/receipt'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', receiptMulterOptions)),
+    __param(0, (0, common_1.Param)('orderId')),
+    __param(1, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], TransactionsController.prototype, "attachReceiptFile", null);
 __decorate([
     (0, common_1.Get)(':orderId'),
     __param(0, (0, common_1.Param)('orderId')),

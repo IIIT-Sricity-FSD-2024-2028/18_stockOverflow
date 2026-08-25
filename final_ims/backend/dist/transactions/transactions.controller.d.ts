@@ -16,6 +16,14 @@ export declare class TransactionsController {
         productImg: string;
         emoji: string;
     }[];
+    uploadReceiptFile(file: any): {
+        message: string;
+        url: string;
+        filename: any;
+        originalName: any;
+        size: any;
+    };
+    attachReceiptFile(orderId: string, file: any): import("../common/database.types").TransactionRecord;
     findOne(orderId: string, retailerId?: string, storeId?: string, customerLookup?: string): import("../common/database.types").TransactionRecord;
     create(createTransactionDto: CreateTransactionDto): import("../common/database.types").TransactionRecord;
     update(orderId: string, updateTransactionDto: UpdateTransactionDto): import("../common/database.types").TransactionRecord;

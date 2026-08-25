@@ -128,4 +128,9 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateTransactionDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateTransactionDto.prototype, "receiptUrl", void 0);
 //# sourceMappingURL=create-transaction.dto.js.map

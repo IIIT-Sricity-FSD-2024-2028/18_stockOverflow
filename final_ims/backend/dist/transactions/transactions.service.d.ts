@@ -36,6 +36,7 @@ export declare class TransactionsService {
         emoji: string;
     }[];
     private buildTransactionRecord;
+    attachReceipt(orderId: string, receiptUrl: string): TransactionRecord;
     private enrichCustomerFromReservation;
     private normalizeItem;
     private ensureInventoryAvailability;

@@ -485,11 +485,7 @@
   });
 
   newOrderBtn.addEventListener('click', () => {
-    if (getItemCount() > 0 && !window.confirm('Start a new order and clear current cart?')) {
-      return;
-    }
-    clearOrder();
-    showToast('New order started');
+    window.location.href = 'biller-dashboard.html';
   });
 
   storeSwitcher.addEventListener('click', async () => {
@@ -575,23 +571,28 @@
 
   roundoffToggle.addEventListener('change', () => {
     updateCart();
+    updateCashCalculator();
     showToast(roundoffToggle.checked ? 'Roundoff enabled' : 'Roundoff disabled');
   });
 
   shippingInput.addEventListener('change', () => {
     updateCart();
+    updateCashCalculator();
     showToast('Shipping updated');
   });
   taxInput.addEventListener('change', () => {
     updateCart();
+    updateCashCalculator();
     showToast('Tax updated');
   });
   couponInput.addEventListener('change', () => {
     updateCart();
+    updateCashCalculator();
     showToast('Coupon updated');
   });
   discountInput.addEventListener('change', () => {
     updateCart();
+    updateCashCalculator();
     showToast('Discount updated');
   });
 
@@ -634,6 +635,10 @@
     if (!window.confirm('Confirm payment of ' + total + '?')) {
       return;
     }
+
+    // Double-click protection
+    chargeBtn.disabled = true;
+    chargeBtn.textContent = 'Processing...';
 
     const lineItems = getLineItems();
     const subtotal = lineItems.reduce((sum, item) => sum + item.total, 0);
@@ -681,6 +686,9 @@
         return;
       }
       showToast(window.IMS_HTTP.getErrorMessage(error));
+    } finally {
+      chargeBtn.disabled = false;
+      chargeBtn.textContent = 'Place Order';
     }
   });
 

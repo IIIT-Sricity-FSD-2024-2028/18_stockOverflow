@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow — Biller Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f2f3f7;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+      --border: #e7e8ed;
+      --text-primary: #1f2937;
+      --text-muted: #6b7280;
+      --accent: #1d4ed8;
+      --accent-light: #e8efff;
+      --success: #0ea5a4;
+      --danger: #ef4444;
+      --orange: #f59e0b;
+      --dark-blue: #0f2f57;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      display: flex;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar {
+      width: 92px;
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 20;
+      padding: 10px 8px;
+    }
+    .sidebar-logo { width: 100%; display: flex; justify-content: center; padding: 6px 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+    .sidebar-logo img { width: 62px; height: auto; display: block; }
+    .sb-item {
+      width: 62px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border-radius: 8px;
+      margin: 4px 0;
+      border: 1px solid var(--border);
+      background: #f8f9fc;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all .18s;
+    }
+    .sb-item:hover { border-color: #cfd5e1; transform: translateY(-1px); }
+    .sb-item.active { background: var(--accent-light); border-color: #99b8ff; color: var(--accent); }
+    .sb-label { font-size: 10px; font-weight: 600; text-align: center; }
+
+    .main-wrap {
+      margin-left: 92px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 16px;
+      padding-bottom: 30px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+    .header h1 { font-size: 22px; font-weight: 700; color: var(--dark-blue); }
+    .header-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .btn-pos {
+      background: var(--dark-blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-pos:hover { background: #0d1f3c; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .stat-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .stat-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .stat-icon.blue { background: #eff6ff; color: #1d4ed8; }
+    .stat-icon.green { background: #ecfdf5; color: #059669; }
+    .stat-icon.purple { background: #f5f3ff; color: #7c3aed; }
+    .stat-icon.orange { background: #fff7ed; color: #ea580c; }
+    .stat-val { font-size: 26px; font-weight: 800; color: var(--dark-blue); }
+    .stat-lbl { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .action-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .action-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.06); }
+    .action-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .action-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .action-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .panel-title { font-size: 15px; font-weight: 700; color: var(--dark-blue); }
+    .panel-link { font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; }
+    .panel-link:hover { text-decoration: underline; }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.data-table th { background: #f9fafb; padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); text-transform: uppercase; }
+    table.data-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    table.data-table tbody tr:last-child td { border-bottom: none; }
+    table.data-table tbody tr:hover td { background: #fafafa; }
+
+    .badge-status { display: inline-flex; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+    .badge-status.delivered { background: #dcfce7; color: #15803d; }
+    .badge-status.pending { background: #fef3c7; color: #92400e; }
+
+    .sidebar-logout-wrap { width: 100%; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
+    .sidebar-logout-btn { width: 100%; border: 1px solid #fecaca; background: #fff1f2; color: #b91c1c; border-radius: 8px; padding: 8px 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"/></div>
+    <a class="sb-item active" href="biller-dashboard.html">
+      <span style="font-size:18px;">📊</span>
+      <span class="sb-label">Dashboard</span>
+    </a>
+    <a class="sb-item" href="pos.html">
+      <span style="font-size:18px;">🖥️</span>
+      <span class="sb-label">POS</span>
+    </a>
+    <a class="sb-item" href="transaction.html">
+      <span style="font-size:18px;">🧾</span>
+      <span class="sb-label">Orders</span>
+    </a>
+    <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
+      <button type="button" class="sidebar-logout-btn" onclick="localStorage.removeItem('so_session');window.location.href='../index.html'">Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <header class="header">
+      <div>
+        <h1 id="welcomeHeading">Biller Dashboard</h1>
+        <div class="header-sub" id="storeSub">Store: Downtown Store</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-pos" onclick="window.location.href='pos.html'">
+          🖥️ Open POS Terminal
+        </button>
+      </div>
+    </header>
+
+    <!-- METRIC CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-head">
+          <div class="stat-lbl">Today's Sales</div>
+          <div class="stat-icon blue">💰</div>
+        </div>
+        <div class="stat-val" id="todaySales">₹0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-head">
+          <div class="stat-lbl">Today's Transactions</div>
+          <div class="stat-icon green">🧾</div>
+        </div>
+        <div class="stat-val" id="todayCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-head">
+          <div class="stat-lbl">Total Revenue</div>
+          <div class="stat-icon purple">📈</div>
+        </div>
+        <div class="stat-val" id="totalRevenue">₹0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-head">
+          <div class="stat-lbl">Avg Order Value</div>
+          <div class="stat-icon orange">💳</div>
+        </div>
+        <div class="stat-val" id="avgOrderVal">₹0.00</div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTION CARDS -->
+    <div class="quick-actions">
+      <div class="action-card" onclick="window.location.href='pos.html'">
+        <div class="action-icon">🛒</div>
+        <div>
+          <div class="action-title">Point of Sale Terminal</div>
+          <div class="action-desc">Launch checkout terminal to process sales and generate bills</div>
+        </div>
+      </div>
+      <div class="action-card" onclick="window.location.href='transaction.html'">
+        <div class="action-icon">📋</div>
+        <div>
+          <div class="action-title">Transaction History</div>
+          <div class="action-desc">Search, filter, view details, and print receipts for all orders</div>
+        </div>
+      </div>
+      <div class="action-card" onclick="reconcileInventory()">
+        <div class="action-icon">🔄</div>
+        <div>
+          <div class="action-title">Inventory Sync</div>
+          <div class="action-desc">Reconcile product stock quantities directly from backend transactions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT TRANSACTIONS -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Recent Transactions</div>
+        <a href="transaction.html" class="panel-link">View All Transactions &rarr;</a>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date & Time</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Payment Method</th>
+              <th>Total Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recentTxBody">
+            <tr>
+              <td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">Loading transactions...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script>
+  (async function() {
+    const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+    if (!session || session.role !== 'biller') {
+      window.location.href = '../index.html';
+      return;
+    }
+
+    document.getElementById('welcomeHeading').textContent = `Welcome back, ${session.name || 'Biller'}`;
+    document.getElementById('storeSub').textContent = `Store: ${session.store || 'Assigned Store'}`;
+
+    const fmtInr = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amt || 0);
+
+    try {
+      const transactions = await window.ImsApi.getTransactions();
+      const txList = Array.isArray(transactions) ? transactions : [];
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayTx = txList.filter(t => t.timestamp && t.timestamp.startsWith(todayStr));
+
+      const todaySalesSum = todayTx.reduce((sum, t) => sum + (t.finalTotal || 0), 0);
+      const totalRevSum = txList.reduce((sum, t) => sum + (t.finalTotal || 0), 0);
+      const avgVal = txList.length ? (totalRevSum / txList.length) : 0;
+
+      document.getElementById('todaySales').textContent = fmtInr(todaySalesSum);
+      document.getElementById('todayCount').textContent = todayTx.length;
+      document.getElementById('totalRevenue').textContent = fmtInr(totalRevSum);
+      document.getElementById('avgOrderVal').textContent = fmtInr(avgVal);
+
+      const recentList = txList.slice(0, 8);
+      const tbody = document.getElementById('recentTxBody');
+
+      if (!recentList.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted);">No transactions recorded yet. Click "Open POS Terminal" to create a bill.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = recentList.map(t => {
+        const itemCount = Array.isArray(t.items) ? t.items.reduce((sum, i) => sum + (i.quantity || 1), 0) : 0;
+        const dateStr = new Date(t.timestamp).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+
+        return `
+          <tr>
+            <td><strong style="color:var(--accent);">${t.orderId}</strong></td>
+            <td>${dateStr}</td>
+            <td>${t.customer || 'Walk-in Customer'}</td>
+            <td>${itemCount} item${itemCount === 1 ? '' : 's'}</td>
+            <td>${t.paymentMethod || 'Cash'}</td>
+            <td><strong>${fmtInr(t.finalTotal)}</strong></td>
+            <td><span class="badge-status delivered">${t.status || 'Delivered'}</span></td>
+          </tr>
+        `;
+      }).join('');
+
+    } catch (error) {
+      console.error('Error loading biller dashboard:', error);
+    }
+  })();
+
+  async function reconcileInventory() {
+    try {
+      const res = await window.IMS_HTTP.request('/transactions/reconcile', { method: 'POST' });
+      alert(res.message || 'Inventory reconciled successfully!');
+    } catch (err) {
+      alert('Error reconciling inventory: ' + window.IMS_HTTP.getErrorMessage(err));
+    }
+  }
+  </script>
+</body>
+</html>

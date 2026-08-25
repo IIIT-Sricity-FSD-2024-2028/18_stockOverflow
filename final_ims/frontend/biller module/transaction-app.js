@@ -19,6 +19,9 @@
   let toastTimer = null;
   let transactions = [];
 
+  const txSearchInput = document.getElementById('txSearchInput');
+  const txPaymentFilter = document.getElementById('txPaymentFilter');
+
   function showToast(message) {
     toast.textContent = message;
     toast.classList.add('show');
@@ -40,12 +43,26 @@
     const emptyState = document.getElementById('emptyState');
     const currentTransactions = await loadTransactions();
 
-    if (!currentTransactions.length) {
+    const searchQuery = (txSearchInput ? txSearchInput.value : '').trim().toLowerCase();
+    const paymentFilter = txPaymentFilter ? txPaymentFilter.value.trim() : '';
+
+    const filteredTransactions = currentTransactions.filter((trans) => {
+      const matchesSearch = !searchQuery ||
+        (trans.orderId || '').toLowerCase().includes(searchQuery) ||
+        (trans.customer || '').toLowerCase().includes(searchQuery) ||
+        (trans.store || '').toLowerCase().includes(searchQuery);
+      const matchesPayment = !paymentFilter ||
+        (trans.paymentMethod || '').toLowerCase() === paymentFilter.toLowerCase();
+
+      return matchesSearch && matchesPayment;
+    });
+
+    if (!filteredTransactions.length) {
       container.innerHTML = '';
       emptyState.style.display = 'block';
-      document.getElementById('totalOrders').textContent = '0';
-      document.getElementById('totalRevenue').textContent = formatInr(0);
-      document.getElementById('totalItems').textContent = '0';
+      document.getElementById('totalOrders').textContent = String(currentTransactions.length);
+      document.getElementById('totalRevenue').textContent = formatInr(currentTransactions.reduce((sum, t) => sum + (t.finalTotal || 0), 0));
+      document.getElementById('totalItems').textContent = String(currentTransactions.reduce((sum, t) => sum + (Array.isArray(t.items) ? t.items.reduce((s, i) => s + (i.quantity || 0), 0) : 0), 0));
       return;
     }
 
@@ -53,10 +70,15 @@
     let totalItems = 0;
     let totalRevenue = 0;
 
-    container.innerHTML = currentTransactions.map((trans, index) => {
+    container.innerHTML = filteredTransactions.map((trans) => {
+      const index = transactions.findIndex(t => t.orderId === trans.orderId);
       const itemCount = (trans.items || []).reduce((sum, item) => sum + (item.quantity || 0), 0);
       totalItems += itemCount;
       totalRevenue += Number(trans.finalTotal || 0);
+
+      const receiptLink = trans.receiptUrl
+        ? `<a href="http://localhost:3001${trans.receiptUrl}" target="_blank" style="font-size:11px;color:var(--accent);font-weight:600;display:inline-flex;align-items:center;gap:3px;margin-top:4px;">📎 View Receipt Proof</a>`
+        : `<button class="trans-btn" onclick="window.uploadReceiptForOrder('${trans.orderId}')" style="font-size:11px;padding:4px 8px;margin-top:4px;">📎 Upload Receipt</button>`;
 
       return `
         <div class="transaction-card">
@@ -64,14 +86,16 @@
             <div class="trans-header">
               <span class="trans-id">${trans.orderId}</span>
               <span class="trans-date">${new Date(trans.timestamp).toLocaleString('en-IN')}</span>
+              <span style="font-size:11px;font-weight:700;padding:2px 6px;background:#f3f4f6;border-radius:4px;color:#4b5563;">${trans.paymentMethod || 'Cash'}</span>
             </div>
             <div class="trans-customer">Customer: ${trans.customer}</div>
             <div class="trans-items">${itemCount} items from ${trans.store}</div>
             <div class="trans-total">${formatInr(trans.finalTotal)}</div>
+            ${receiptLink}
           </div>
           <div class="trans-actions">
-            <button class="trans-btn" onclick="window.showTransactionDetails(${index})">View</button>
-            <button class="trans-btn" onclick="window.editTransactionInventory(${index})">Edit Inventory</button>
+            <button class="trans-btn" onclick="window.showTransactionDetails(${index})">View Invoice</button>
+            <button class="trans-btn" onclick="window.editTransactionInventory(${index})">Edit Items</button>
             <button class="trans-btn trans-btn-danger" onclick="window.deleteTransaction(${index})">Delete</button>
           </div>
         </div>
@@ -79,9 +103,38 @@
     }).join('');
 
     document.getElementById('totalOrders').textContent = String(currentTransactions.length);
-    document.getElementById('totalRevenue').textContent = formatInr(totalRevenue);
-    document.getElementById('totalItems').textContent = String(totalItems);
+    document.getElementById('totalRevenue').textContent = formatInr(currentTransactions.reduce((sum, t) => sum + (t.finalTotal || 0), 0));
+    document.getElementById('totalItems').textContent = String(currentTransactions.reduce((sum, t) => sum + (Array.isArray(t.items) ? t.items.reduce((s, i) => s + (i.quantity || 0), 0) : 0), 0));
   }
+
+  if (txSearchInput) txSearchInput.addEventListener('input', renderTransactions);
+  if (txPaymentFilter) txPaymentFilter.addEventListener('change', renderTransactions);
+
+  window.uploadReceiptForOrder = function (orderId) {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*,application/pdf';
+    fileInput.onchange = async function () {
+      if (!fileInput.files || !fileInput.files.length) return;
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+        const res = await fetch(`${apiBase}/api/transactions/${orderId}/receipt`, {
+          method: 'POST',
+          body: formData,
+        });
+        if (!res.ok) throw new Error('Failed to upload receipt');
+        showToast('Receipt file attached to ' + orderId);
+        await renderTransactions();
+      } catch (err) {
+        showToast(err.message || 'Error uploading receipt');
+      }
+    };
+    fileInput.click();
+  };
 
   window.showTransactionDetails = function (index) {
     const transaction = transactions[index];
@@ -89,7 +142,7 @@
     const details = transaction.items
       .map((item) => item.name + ' x ' + item.quantity + ' = ' + formatInr(item.total))
       .join('\n');
-    alert('Order: ' + transaction.orderId + '\nCustomer: ' + transaction.customer + '\n\n' + details + '\n\nTotal: ' + formatInr(transaction.finalTotal));
+    alert('Order ID: ' + transaction.orderId + '\nCustomer: ' + transaction.customer + '\nStore: ' + transaction.store + '\nPayment Method: ' + transaction.paymentMethod + '\n\n' + details + '\n\nSubtotal: ' + formatInr(transaction.subtotal || 0) + '\nShipping: ' + formatInr(transaction.shipping || 0) + '\nTax: ' + formatInr(transaction.tax || 0) + '\nDiscount: -' + formatInr(transaction.discount || 0) + '\nTotal Payable: ' + formatInr(transaction.finalTotal));
   };
 
   window.editTransactionInventory = function (index) {
@@ -174,5 +227,5 @@
   });
 
   renderTransactions();
-  setInterval(renderTransactions, 5000);
 })();
+

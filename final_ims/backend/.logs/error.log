@@ -1,0 +1,5 @@
+[2026-08-25T16:29:38.415Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-25T16:29:55.554Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-25T16:29:56.016Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-25T16:34:33.458Z] [ERROR] POST /api/users 409 - Email already exists
+[2026-08-25T16:35:52.317Z] [ERROR] POST /api/users/login 401 - Invalid email or password

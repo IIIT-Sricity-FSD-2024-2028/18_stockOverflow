@@ -191,7 +191,18 @@ let TransactionsService = class TransactionsService {
             roundoff,
             finalTotal,
             status: this.normalizeText(payload.status, 'Delivered'),
+            receiptUrl: this.normalizeText(payload.receiptUrl),
         };
+    }
+    attachReceipt(orderId, receiptUrl) {
+        const transactions = this.findAll();
+        const transaction = transactions.find((t) => t.orderId === orderId);
+        if (!transaction) {
+            throw new common_1.NotFoundException(`Transaction ${orderId} not found`);
+        }
+        transaction.receiptUrl = receiptUrl;
+        this.db.saveCollection('transactions', transactions);
+        return transaction;
     }
     enrichCustomerFromReservation(payload) {
         const currentCustomer = this.normalizeText(payload.customer).toLowerCase();

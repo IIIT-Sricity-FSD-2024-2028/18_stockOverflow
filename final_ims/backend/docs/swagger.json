@@ -4191,6 +4191,94 @@
         }
       }
     },
+    "/transactions/upload-receipt": {
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "Transactions_uploadReceiptFile",
+        "summary": "Upload Receipt File",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "filename": {},
+                    "message": {
+                      "type": "string"
+                    },
+                    "originalName": {},
+                    "size": {},
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "filename",
+                    "message",
+                    "originalName",
+                    "size",
+                    "url"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/transactions/{orderId}/receipt": {
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "Transactions_attachReceiptFile",
+        "summary": "Attach Receipt File",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: orderId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_TransactionRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/transactions/{orderId}": {
       "get": {
         "tags": [
@@ -6148,6 +6236,9 @@
             "type": "string"
           },
           "paymentMethod": {
+            "type": "string"
+          },
+          "receiptUrl": {
             "type": "string"
           },
           "retailerId": {
@@ -9388,6 +9479,9 @@
           "paymentMethod": {
             "type": "string"
           },
+          "receiptUrl": {
+            "type": "string"
+          },
           "retailerId": {
             "type": "string"
           },
@@ -9478,6 +9572,9 @@
             "type": "array"
           },
           "paymentMethod": {
+            "type": "string"
+          },
+          "receiptUrl": {
             "type": "string"
           },
           "retailerId": {
