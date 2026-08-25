@@ -25,11 +25,53 @@ let SuppliersService = class SuppliersService {
     }
     create(createSupplierSetupDto) {
         const now = new Date().toISOString();
+        const companyName = createSupplierSetupDto.business?.companyName ||
+            createSupplierSetupDto.companyName ||
+            createSupplierSetupDto.company ||
+            createSupplierSetupDto.name ||
+            'New Supplier';
+        const email = createSupplierSetupDto.business?.businessEmail ||
+            createSupplierSetupDto.businessEmail ||
+            createSupplierSetupDto.email ||
+            'supplier@example.com';
+        const phone = createSupplierSetupDto.business?.phoneNumber ||
+            createSupplierSetupDto.phoneNumber ||
+            createSupplierSetupDto.phone ||
+            '';
+        const code = createSupplierSetupDto.business?.supplierCode ||
+            createSupplierSetupDto.supplierCode ||
+            createSupplierSetupDto.code ||
+            `SUP-${Math.floor(100 + Math.random() * 900)}`;
+        const business = createSupplierSetupDto.business ?? {
+            companyName,
+            supplierCode: code,
+            businessType: createSupplierSetupDto.businessType || 'Wholesaler',
+            registrationNumber: createSupplierSetupDto.registrationNumber || '',
+            taxId: createSupplierSetupDto.taxId || '',
+            businessEmail: email,
+            phoneNumber: phone,
+            streetAddress: createSupplierSetupDto.streetAddress || createSupplierSetupDto.address || '',
+            city: createSupplierSetupDto.city || '',
+            state: createSupplierSetupDto.state || '',
+            postalCode: createSupplierSetupDto.postalCode || '',
+            country: createSupplierSetupDto.country || 'India',
+            website: createSupplierSetupDto.website || '',
+            primaryCategory: createSupplierSetupDto.primaryCategory || 'General',
+            paymentTerms: createSupplierSetupDto.paymentTerms || 'Net 30',
+        };
+        const primaryContact = createSupplierSetupDto.primaryContact ?? {
+            fullName: createSupplierSetupDto.contactPerson || companyName,
+            jobTitle: 'Account Manager',
+            directEmail: email,
+            directPhone: phone,
+        };
         const supplier = {
             ...createSupplierSetupDto,
+            business,
+            primaryContact,
             retailers: createSupplierSetupDto.retailers ?? [],
             products: createSupplierSetupDto.products ?? [],
-            id: (0, crypto_1.randomUUID)(),
+            id: createSupplierSetupDto.id || (0, crypto_1.randomUUID)(),
             status: 'completed',
             profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
             createdAt: now,
@@ -58,16 +100,36 @@ let SuppliersService = class SuppliersService {
         if (!lookup) {
             return null;
         }
-        return (this.findAll().find((supplier) => supplier.business.businessEmail.toLowerCase() === lookup ||
-            supplier.primaryContact.directEmail?.toLowerCase() === lookup) ?? null);
+        return (this.findAll().find((supplier) => supplier.business?.businessEmail?.toLowerCase() === lookup ||
+            supplier.primaryContact?.directEmail?.toLowerCase() === lookup) ?? null);
     }
     update(id, updateSupplierSetupDto) {
         const supplier = this.findOne(id);
+        const business = {
+            ...supplier.business,
+            ...(updateSupplierSetupDto.business || {}),
+        };
+        if (updateSupplierSetupDto.companyName || updateSupplierSetupDto.name) {
+            business.companyName = updateSupplierSetupDto.companyName || updateSupplierSetupDto.name;
+        }
+        if (updateSupplierSetupDto.email || updateSupplierSetupDto.businessEmail) {
+            business.businessEmail = updateSupplierSetupDto.email || updateSupplierSetupDto.businessEmail;
+        }
+        if (updateSupplierSetupDto.phone || updateSupplierSetupDto.phoneNumber) {
+            business.phoneNumber = updateSupplierSetupDto.phone || updateSupplierSetupDto.phoneNumber;
+        }
+        const primaryContact = {
+            ...supplier.primaryContact,
+            ...(updateSupplierSetupDto.primaryContact || {}),
+        };
+        if (updateSupplierSetupDto.contactPerson) {
+            primaryContact.fullName = updateSupplierSetupDto.contactPerson;
+        }
         const updatedSupplier = {
             ...supplier,
             ...updateSupplierSetupDto,
-            business: updateSupplierSetupDto.business ?? supplier.business,
-            primaryContact: updateSupplierSetupDto.primaryContact ?? supplier.primaryContact,
+            business,
+            primaryContact,
             retailers: updateSupplierSetupDto.retailers ?? supplier.retailers,
             products: updateSupplierSetupDto.products ?? supplier.products,
             pricingPolicies: updateSupplierSetupDto.pricingPolicies ?? supplier.pricingPolicies,

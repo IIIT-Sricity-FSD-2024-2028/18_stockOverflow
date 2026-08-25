@@ -1,6 +1,35 @@
 [
   {
     "business": {
+      "businessName": "Retailer",
+      "businessType": "Partnership",
+      "businessEmail": "abhirajaaayush@gmail.com",
+      "retailerCode": "RET-947",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "ABHIRAJ AAAYUSH"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "jkjdfsjkdf",
+        "code": "JKJDFSJKDF",
+        "contactPerson": "ABHIRAJ AAAYUSH",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "f53f8742-69ce-4553-b410-97773f2494bb",
+    "status": "completed",
+    "createdAt": "2026-08-25T16:19:29.965Z",
+    "updatedAt": "2026-08-25T16:19:29.965Z"
+  },
+  {
+    "business": {
       "businessName": "r11",
       "businessType": "Sole Proprietorship",
       "businessEmail": "r11@gmail.com",

@@ -1,23 +1,54 @@
 [
   {
-    "id": "0e1cc461-7769-4722-b2e0-6c871ac4f378",
-    "name": "3 In 1 Wall Mixer",
-    "email": "qweast@gmail.com",
+    "id": "18a2d66a-9c65-4df3-8e81-ab609d9eb67b",
+    "name": "retailer",
+    "email": "retailer@gmail.com",
     "password": "pass1234",
-    "role": "consumer",
+    "role": "retailer",
     "status": "Active",
-    "store": "",
-    "storeId": "",
-    "currentStoreId": "",
-    "accessibleStoreIds": [],
-    "profileId": "",
-    "createdAt": "2026-08-25T15:48:13.914Z",
-    "updatedAt": "2026-08-25T15:48:13.914Z"
+    "store": "jkjdfsjkdf",
+    "storeId": "JKJDFSJKDF",
+    "currentStoreId": "JKJDFSJKDF",
+    "accessibleStoreIds": [
+      "JKJDFSJKDF"
+    ],
+    "profileId": "f53f8742-69ce-4553-b410-97773f2494bb",
+    "profile": {
+      "businessName": "Retailer",
+      "businessEmail": "abhirajaaayush@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-947",
+      "address": "",
+      "website": "",
+      "businessType": "Partnership",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "ABHIRAJ AAAYUSH",
+      "ownerTitle": "",
+      "ownerEmail": "abhirajaaayush@gmail.com",
+      "profileStatus": "active",
+      "stores": [
+        {
+          "name": "jkjdfsjkdf",
+          "code": "JKJDFSJKDF",
+          "contactPerson": "ABHIRAJ AAAYUSH",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-25T16:19:13.113Z",
+    "updatedAt": "2026-08-25T16:19:29.996Z"
   },
   {
-    "id": "260c9b8c-ac74-4617-8548-1e0264786b00",
-    "name": "krish kathiriya",
-    "email": "kriish@gmail.com",
+    "id": "ba3b42ab-3529-41b6-98e6-9815a1a6097e",
+    "name": "consumer",
+    "email": "consumer@gmail.com",
     "password": "pass1234",
     "role": "consumer",
     "status": "Active",
@@ -26,8 +57,23 @@
     "currentStoreId": "",
     "accessibleStoreIds": [],
     "profileId": "",
-    "createdAt": "2026-08-25T15:38:36.167Z",
-    "updatedAt": "2026-08-25T15:38:36.167Z"
+    "createdAt": "2026-08-25T15:36:54.179Z",
+    "updatedAt": "2026-08-25T15:36:54.179Z"
+  },
+  {
+    "id": "b7cbd244-dfdf-4e0b-abfe-446c12d8fcd0",
+    "name": "customer",
+    "email": "consumer@gamil.com",
+    "password": "pass1234",
+    "role": "consumer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-25T15:34:51.401Z",
+    "updatedAt": "2026-08-25T15:34:51.401Z"
   },
   {
     "id": "811471f9-7613-47f4-991b-b945a9fc0e92",

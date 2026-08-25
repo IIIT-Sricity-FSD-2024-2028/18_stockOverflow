@@ -6,12 +6,14 @@ import { SuppliersService } from './suppliers.service';
 export declare class SuppliersController {
     private readonly suppliersService;
     constructor(suppliersService: SuppliersService);
+    createSupplier(dto: any): SupplierRecord;
     create(createSupplierSetupDto: CreateSupplierSetupDto): SupplierRecord;
     findAll(): SupplierRecord[];
     getDirectory(): SupplierDirectoryEntry[];
     findLatest(): SupplierRecord | null;
     findByBusinessEmail(email: string): SupplierRecord | null;
     findOne(id: string): SupplierRecord;
+    updatePut(id: string, dto: any): SupplierRecord;
     update(id: string, updateSupplierSetupDto: UpdateSupplierSetupDto): SupplierRecord;
     remove(id: string): void;
 }

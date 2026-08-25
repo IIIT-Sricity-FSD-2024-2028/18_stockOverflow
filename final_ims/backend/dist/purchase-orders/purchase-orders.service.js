@@ -93,9 +93,11 @@ let PurchaseOrdersService = class PurchaseOrdersService extends collection_servi
         };
         purchaseOrders[index] = updated;
         this.write(purchaseOrders);
-        if (updated.status === 'Delivered' &&
-            existing.status !== 'Delivered' &&
-            updated.retailerId) {
+        const nextStatusNorm = String(updated.status || '').toLowerCase();
+        const prevStatusNorm = String(existing.status || '').toLowerCase();
+        const isNowDelivered = nextStatusNorm.includes('deliver') || nextStatusNorm.includes('receiv');
+        const wasDelivered = prevStatusNorm.includes('deliver') || prevStatusNorm.includes('receiv');
+        if (isNowDelivered && !wasDelivered) {
             this.syncInventoryOnDelivery(updated);
         }
         return updated;

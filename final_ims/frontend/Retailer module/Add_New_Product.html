@@ -2349,15 +2349,44 @@ async function optimizeImageFile(file) {
 }
 
 async function appendUploadedImages(fileList) {
-  const files = Array.from(fileList || []).filter(file => file && file.type && file.type.startsWith('image/'));
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+
   for (const file of files) {
+    if (!file.type || !file.type.startsWith('image/')) {
+      showToastMsg('Only image files (JPEG, PNG, WEBP, GIF) are allowed.', true);
+      continue;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToastMsg('File size must not exceed 5MB.', true);
+      continue;
+    }
+
     try {
-      const src = await optimizeImageFile(file);
-      if (!src) continue;
-      images.push({ src, name: file.name });
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+      const response = await fetch(apiBase + '/api/products/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.message || 'File upload failed');
+      }
+
+      const imageUrl = payload.url.startsWith('http')
+        ? payload.url
+        : apiBase + payload.url;
+
+      images.push({ src: imageUrl, name: file.name, serverPath: payload.url });
       if (images.length === 1) mainImgIdx = 0;
+      showToastMsg('Image uploaded successfully!');
     } catch (error) {
-      console.error('Error preparing image upload:', error);
+      console.error('Error uploading image:', error);
+      showToastMsg(error.message || 'Failed to upload image.', true);
     }
   }
   renderImages();

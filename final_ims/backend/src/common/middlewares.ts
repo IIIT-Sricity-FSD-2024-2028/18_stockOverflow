@@ -4,15 +4,17 @@ import { LoggerService } from './logger.service';
 
 /**
  * IMPLEMENTATION DETAIL (Evaluation Criteria):
- * Logging Middleware - Logs all incoming HTTP requests to a file (access.log).
+ * Logging Middleware - Logs all incoming HTTP requests (method, URL, status, response duration, IP) to access.log.
  */
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
+    const start = Date.now();
     const { method, originalUrl, ip } = req;
     res.on('finish', () => {
+      const duration = Date.now() - start;
       const { statusCode } = res;
-      LoggerService.logAccess(`[${method}] ${originalUrl} ${statusCode} - IP: ${ip}`);
+      LoggerService.logAccess(`[${method}] ${originalUrl} ${statusCode} - ${duration}ms - IP: ${ip}`);
     });
     next();
   }
@@ -20,7 +22,7 @@ export class LoggingMiddleware implements NestMiddleware {
 
 /**
  * IMPLEMENTATION DETAIL (Evaluation Criteria):
- * Security Middleware - Adds basic security headers to all responses.
+ * Security Middleware - Adds security headers to all responses.
  */
 @Injectable()
 export class SecurityMiddleware implements NestMiddleware {
@@ -29,6 +31,8 @@ export class SecurityMiddleware implements NestMiddleware {
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('X-Download-Options', 'noopen');
     next();
   }
-}
+}

@@ -119,12 +119,13 @@ export class PurchaseOrdersService extends JsonCollectionService<
     purchaseOrders[index] = updated;
     this.write(purchaseOrders);
 
-    // Trigger inventory update if status changed to Delivered
-    if (
-      updated.status === 'Delivered' &&
-      existing.status !== 'Delivered' &&
-      updated.retailerId
-    ) {
+    // Trigger inventory update if status changed to Delivered or Received
+    const nextStatusNorm = String(updated.status || '').toLowerCase();
+    const prevStatusNorm = String(existing.status || '').toLowerCase();
+    const isNowDelivered = nextStatusNorm.includes('deliver') || nextStatusNorm.includes('receiv');
+    const wasDelivered = prevStatusNorm.includes('deliver') || prevStatusNorm.includes('receiv');
+
+    if (isNowDelivered && !wasDelivered) {
       this.syncInventoryOnDelivery(updated);
     }
 

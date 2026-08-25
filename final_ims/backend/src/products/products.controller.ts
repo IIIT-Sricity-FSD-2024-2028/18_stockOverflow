@@ -8,15 +8,53 @@ import {
   Query,
   Put,
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express';
-import { Multer } from 'multer';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+import * as fs from 'fs';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CreateProductFeedbackDto } from './dto/create-product-feedback.dto';
+
+const uploadsProductPath = join(process.cwd(), 'uploads', 'products');
+
+const multerProductStorage = diskStorage({
+  destination: (req, file, cb) => {
+    if (!fs.existsSync(uploadsProductPath)) {
+      fs.mkdirSync(uploadsProductPath, { recursive: true });
+    }
+    cb(null, uploadsProductPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = extname(file.originalname).toLowerCase() || '.png';
+    cb(null, `prod-${uniqueSuffix}${ext}`);
+  },
+});
+
+const multerOptions = {
+  storage: multerProductStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req: any, file: any, cb: any) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(
+        new BadRequestException(
+          'Invalid file type. Only JPEG, PNG, WEBP, and GIF images are allowed.',
+        ),
+        false,
+      );
+    }
+  },
+};
 
 @Controller('products')
 export class ProductsController {
@@ -95,17 +133,22 @@ export class ProductsController {
   /**
    * IMPLEMENTATION DETAIL (Evaluation Criteria):
    * File upload - Route to handle uploading product images via Multer FileInterceptor.
+   * Validates MIME type, enforces 5MB limit, saves to uploads/products/ and returns URL.
    */
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', multerOptions))
   uploadFile(@UploadedFile() file: any) {
     if (!file) {
-      return { message: 'No file uploaded' };
+      throw new BadRequestException('No file uploaded or file was rejected.');
     }
+    const relativeUrl = `/uploads/products/${file.filename}`;
     return {
       message: 'File uploaded successfully',
-      filename: file.originalname,
-      size: file.size
+      url: relativeUrl,
+      filename: file.filename,
+      size: file.size,
+      mimetype: file.mimetype,
     };
   }
 }
+

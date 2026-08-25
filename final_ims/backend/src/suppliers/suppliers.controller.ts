@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { CreateSupplierSetupDto } from './dto/create-supplier-setup.dto';
 import { UpdateSupplierSetupDto } from './dto/update-supplier-setup.dto';
@@ -18,6 +19,11 @@ import { SuppliersService } from './suppliers.service';
 @Controller('suppliers')
 export class SuppliersController {
   constructor(private readonly suppliersService: SuppliersService) {}
+
+  @Post()
+  createSupplier(@Body() dto: any): SupplierRecord {
+    return this.suppliersService.create(dto);
+  }
 
   @Post('setup')
   create(@Body() createSupplierSetupDto: CreateSupplierSetupDto): SupplierRecord {
@@ -49,6 +55,11 @@ export class SuppliersController {
     return this.suppliersService.findOne(id);
   }
 
+  @Put(':id')
+  updatePut(@Param('id') id: string, @Body() dto: any): SupplierRecord {
+    return this.suppliersService.update(id, dto);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -63,3 +74,4 @@ export class SuppliersController {
     return this.suppliersService.remove(id);
   }
 }
+

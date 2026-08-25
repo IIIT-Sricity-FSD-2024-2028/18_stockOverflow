@@ -3,10 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const common_1 = require("@nestjs/common");
 const express_1 = require("express");
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
 const app_module_1 = require("./app.module");
 const setup_swagger_1 = require("./docs/setup-swagger");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const uploadsDir = path.join(process.cwd(), 'uploads');
+    const productUploadsDir = path.join(uploadsDir, 'products');
+    if (!fs.existsSync(productUploadsDir)) {
+        fs.mkdirSync(productUploadsDir, { recursive: true });
+    }
+    app.use('/uploads', express.static(uploadsDir));
     app.use((0, express_1.json)({ limit: '25mb' }));
     app.use((0, express_1.urlencoded)({ extended: true, limit: '25mb' }));
     app.enableCors({

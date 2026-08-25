@@ -15,10 +15,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const path_1 = require("path");
+const fs = require("fs");
 const products_service_1 = require("./products.service");
 const create_product_dto_1 = require("./dto/create-product.dto");
 const update_product_dto_1 = require("./dto/update-product.dto");
 const create_product_feedback_dto_1 = require("./dto/create-product-feedback.dto");
+const uploadsProductPath = (0, path_1.join)(process.cwd(), 'uploads', 'products');
+const multerProductStorage = (0, multer_1.diskStorage)({
+    destination: (req, file, cb) => {
+        if (!fs.existsSync(uploadsProductPath)) {
+            fs.mkdirSync(uploadsProductPath, { recursive: true });
+        }
+        cb(null, uploadsProductPath);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = (0, path_1.extname)(file.originalname).toLowerCase() || '.png';
+        cb(null, `prod-${uniqueSuffix}${ext}`);
+    },
+});
+const multerOptions = {
+    storage: multerProductStorage,
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        }
+        else {
+            cb(new common_1.BadRequestException('Invalid file type. Only JPEG, PNG, WEBP, and GIF images are allowed.'), false);
+        }
+    },
+};
 let ProductsController = class ProductsController {
     constructor(productsService) {
         this.productsService = productsService;
@@ -52,12 +84,15 @@ let ProductsController = class ProductsController {
     }
     uploadFile(file) {
         if (!file) {
-            return { message: 'No file uploaded' };
+            throw new common_1.BadRequestException('No file uploaded or file was rejected.');
         }
+        const relativeUrl = `/uploads/products/${file.filename}`;
         return {
             message: 'File uploaded successfully',
-            filename: file.originalname,
-            size: file.size
+            url: relativeUrl,
+            filename: file.filename,
+            size: file.size,
+            mimetype: file.mimetype,
         };
     }
 };
@@ -137,7 +172,7 @@ __decorate([
 ], ProductsController.prototype, "remove", null);
 __decorate([
     (0, common_1.Post)('upload'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', multerOptions)),
     __param(0, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

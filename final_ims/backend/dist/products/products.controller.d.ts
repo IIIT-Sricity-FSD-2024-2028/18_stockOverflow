@@ -23,11 +23,9 @@ export declare class ProductsController {
     };
     uploadFile(file: any): {
         message: string;
-        filename?: undefined;
-        size?: undefined;
-    } | {
-        message: string;
+        url: string;
         filename: any;
         size: any;
+        mimetype: any;
     };
 }

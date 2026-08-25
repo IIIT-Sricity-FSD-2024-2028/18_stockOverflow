@@ -11,10 +11,12 @@ const common_1 = require("@nestjs/common");
 const logger_service_1 = require("./logger.service");
 let LoggingMiddleware = class LoggingMiddleware {
     use(req, res, next) {
+        const start = Date.now();
         const { method, originalUrl, ip } = req;
         res.on('finish', () => {
+            const duration = Date.now() - start;
             const { statusCode } = res;
-            logger_service_1.LoggerService.logAccess(`[${method}] ${originalUrl} ${statusCode} - IP: ${ip}`);
+            logger_service_1.LoggerService.logAccess(`[${method}] ${originalUrl} ${statusCode} - ${duration}ms - IP: ${ip}`);
         });
         next();
     }
@@ -29,6 +31,8 @@ let SecurityMiddleware = class SecurityMiddleware {
         res.setHeader('X-Frame-Options', 'DENY');
         res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        res.setHeader('X-Download-Options', 'noopen');
         next();
     }
 };
