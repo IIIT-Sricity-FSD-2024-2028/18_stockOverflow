@@ -14,9 +14,53 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SuppliersController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const path_1 = require("path");
+const fs = require("fs");
 const create_supplier_setup_dto_1 = require("./dto/create-supplier-setup.dto");
 const update_supplier_setup_dto_1 = require("./dto/update-supplier-setup.dto");
 const suppliers_service_1 = require("./suppliers.service");
+const uploadsSupplierPath = (0, path_1.join)(process.cwd(), 'uploads', 'suppliers');
+const multerSupplierStorage = (0, multer_1.diskStorage)({
+    destination: (req, file, cb) => {
+        if (!fs.existsSync(uploadsSupplierPath)) {
+            fs.mkdirSync(uploadsSupplierPath, { recursive: true });
+        }
+        cb(null, uploadsSupplierPath);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = (0, path_1.extname)(file.originalname).toLowerCase() || '.pdf';
+        cb(null, `doc-${uniqueSuffix}${ext}`);
+    },
+});
+const multerSupplierOptions = {
+    storage: multerSupplierStorage,
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = [
+            'application/pdf',
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'text/csv',
+            'application/csv',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/msword',
+        ];
+        const ext = (0, path_1.extname)(file.originalname).toLowerCase();
+        const allowedExts = ['.pdf', '.png', '.jpg', '.jpeg', '.webp', '.csv', '.docx', '.doc'];
+        if (allowedTypes.includes(file.mimetype) || allowedExts.includes(ext)) {
+            cb(null, true);
+        }
+        else {
+            cb(new common_1.BadRequestException('Invalid file type. Only PDF, PNG, JPEG, WEBP, CSV, and DOCX files are allowed for Supplier documents.'), false);
+        }
+    },
+};
 let SuppliersController = class SuppliersController {
     constructor(suppliersService) {
         this.suppliersService = suppliersService;
@@ -38,6 +82,18 @@ let SuppliersController = class SuppliersController {
     }
     findByBusinessEmail(email) {
         return this.suppliersService.findByBusinessEmail(email);
+    }
+    uploadDocument(id, file, docType) {
+        if (!file) {
+            throw new common_1.BadRequestException('No file uploaded or file extension was rejected.');
+        }
+        return this.suppliersService.addDocument(id, file, docType || 'General Certification');
+    }
+    getDocuments(id) {
+        return this.suppliersService.getDocuments(id);
+    }
+    removeDocument(id, docId) {
+        return this.suppliersService.removeDocument(id, docId);
     }
     findOne(id) {
         return this.suppliersService.findOne(id);
@@ -92,6 +148,32 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Object)
 ], SuppliersController.prototype, "findByBusinessEmail", null);
+__decorate([
+    (0, common_1.Post)(':id/upload-document'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', multerSupplierOptions)),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.Body)('docType')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, String]),
+    __metadata("design:returntype", Object)
+], SuppliersController.prototype, "uploadDocument", null);
+__decorate([
+    (0, common_1.Get)(':id/documents'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Array)
+], SuppliersController.prototype, "getDocuments", null);
+__decorate([
+    (0, common_1.Delete)(':id/documents/:docId'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('docId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], SuppliersController.prototype, "removeDocument", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

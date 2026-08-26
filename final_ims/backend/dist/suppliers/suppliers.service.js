@@ -15,6 +15,7 @@ const crypto_1 = require("crypto");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const products_service_1 = require("../products/products.service");
+const fs = require("fs");
 let SuppliersService = class SuppliersService {
     constructor(productsService) {
         this.productsService = productsService;
@@ -71,6 +72,7 @@ let SuppliersService = class SuppliersService {
             primaryContact,
             retailers: createSupplierSetupDto.retailers ?? [],
             products: createSupplierSetupDto.products ?? [],
+            documents: createSupplierSetupDto.documents ?? [],
             id: createSupplierSetupDto.id || (0, crypto_1.randomUUID)(),
             status: 'completed',
             profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
@@ -196,6 +198,59 @@ let SuppliersService = class SuppliersService {
         }
         this.persistToDisk();
     }
+    addDocument(supplierId, file, docType = 'General Document') {
+        const supplier = this.findOne(supplierId);
+        const docId = `DOC-${(0, crypto_1.randomUUID)().slice(0, 8)}`;
+        const relativeUrl = `/uploads/suppliers/${file.filename}`;
+        const newDoc = {
+            id: docId,
+            docType,
+            originalName: file.originalname,
+            filename: file.filename,
+            url: relativeUrl,
+            mimeType: file.mimetype,
+            size: file.size,
+            uploadedAt: new Date().toISOString(),
+        };
+        const documents = [...(supplier.documents || []), newDoc];
+        const updatedSupplier = {
+            ...supplier,
+            documents,
+            updatedAt: new Date().toISOString(),
+        };
+        this.suppliers.set(supplier.id, updatedSupplier);
+        this.persistToDisk();
+        return newDoc;
+    }
+    getDocuments(supplierId) {
+        const supplier = this.findOne(supplierId);
+        return supplier.documents || [];
+    }
+    removeDocument(supplierId, docId) {
+        const supplier = this.findOne(supplierId);
+        const existingDocs = supplier.documents || [];
+        const targetDoc = existingDocs.find((doc) => doc.id === docId);
+        if (!targetDoc) {
+            throw new common_1.NotFoundException(`Document "${docId}" was not found`);
+        }
+        try {
+            const filePath = (0, path_1.join)(process.cwd(), 'uploads', 'suppliers', targetDoc.filename);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+        catch (err) {
+            console.error(`Failed to delete physical file for doc ${docId}:`, err);
+        }
+        const updatedDocs = existingDocs.filter((doc) => doc.id !== docId);
+        const updatedSupplier = {
+            ...supplier,
+            documents: updatedDocs,
+            updatedAt: new Date().toISOString(),
+        };
+        this.suppliers.set(supplier.id, updatedSupplier);
+        this.persistToDisk();
+    }
     loadFromDisk() {
         (0, fs_1.mkdirSync)(this.dataDirectory, { recursive: true });
         if (!(0, fs_1.existsSync)(this.dataFile)) {
@@ -213,6 +268,7 @@ let SuppliersService = class SuppliersService {
                     ...supplier,
                     retailers: supplier.retailers ?? [],
                     products: supplier.products ?? [],
+                    documents: supplier.documents ?? [],
                     profileStatus: supplier.profileStatus ?? 'active',
                 });
             });

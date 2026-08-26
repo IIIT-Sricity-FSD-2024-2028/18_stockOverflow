@@ -11,7 +11,13 @@ const common_1 = require("@nestjs/common");
 const suppliers_controller_1 = require("./suppliers.controller");
 const suppliers_service_1 = require("./suppliers.service");
 const products_module_1 = require("../products/products.module");
+const router_middleware_1 = require("../common/router.middleware");
 let SuppliersModule = class SuppliersModule {
+    configure(consumer) {
+        consumer
+            .apply(router_middleware_1.SupplierAuditMiddleware)
+            .forRoutes(suppliers_controller_1.SuppliersController);
+    }
 };
 exports.SuppliersModule = SuppliersModule;
 exports.SuppliersModule = SuppliersModule = __decorate([

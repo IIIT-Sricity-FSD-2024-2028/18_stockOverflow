@@ -711,6 +711,70 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
           </div>
         </div>
       </div>
+
+      <!-- ══ SUPPLIER DOCUMENTS & CERTIFICATIONS ══ -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">
+            <div class="card-icon" style="background:#fef3c7">
+              <svg viewBox="0 0 13 13" fill="none" stroke="#f59e0b" stroke-width="1.4"><path d="M7 1.5H3a1 1 0 00-1 1v8.5a1 1 0 001 1h7a1 1 0 001-1V5.5L7 1.5z"/><polyline points="7,1.5 7,5.5 11,5.5"/></svg>
+            </div>
+            Business Documents & Certifications (File Upload)
+          </div>
+        </div>
+        <div style="padding:20px">
+          <div class="fg fg-3">
+            <div class="field">
+              <label class="field-label">Document Type <span class="req">*</span></label>
+              <select id="doc-type-select">
+                <option value="GST Registration Certificate">GST Registration Certificate</option>
+                <option value="Trade License">Trade License</option>
+                <option value="ISO / Quality Compliance Certificate">ISO / Quality Compliance Certificate</option>
+                <option value="Product Specification Sheet">Product Specification Sheet</option>
+                <option value="Bank Authorization Letter">Bank Authorization Letter</option>
+                <option value="General Certification">General Certification</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">Select File (PDF, PNG, JPG, DOCX, CSV - Max 5MB) <span class="req">*</span></label>
+              <input type="file" id="doc-file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.docx,.csv" style="height:40px;padding:6px 12px" />
+            </div>
+            <div class="field" style="justify-content:flex-end">
+              <label class="field-label">&nbsp;</label>
+              <button class="btn btn-primary" onclick="uploadSupplierDocument()" id="doc-upload-btn" type="button">
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 10V2.5M6.5 2.5L3.5 5.5M6.5 2.5L9.5 5.5"/><line x1="2" y1="11" x2="11" y2="11"/></svg>
+                Upload Document
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-top:20px">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600;margin-bottom:10px;color:var(--text)">
+              Uploaded Documents & Certifications
+            </div>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>Document Type</th>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Uploaded Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="supplierDocsBody">
+                  <tr>
+                    <td colspan="5" style="padding:16px;text-align:center;color:var(--text-3)">
+                      No documents uploaded yet.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ══ PRODUCTS ══ -->
@@ -2028,6 +2092,7 @@ showSection = function(id, el) {
   }
   document.getElementById('bc').innerHTML = `<a href="#">Home</a><span class="bc-sep">/</span><span class="current">${escapeHtml(labelMap[id])}</span>`;
   if (id === 'dashboard') renderDashboard();
+  if (id === 'profile') { fillDashboardProfileForm(); loadSupplierDocuments(); }
   if (id === 'products') renderProducts();
   if (id === 'orders') renderOrders();
   if (id === 'retailers') renderRetailers();
@@ -2706,6 +2771,137 @@ saveProfile = async function() {
   }
 };
 
+function formatFileSize(bytes) {
+  if (!bytes) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+async function loadSupplierDocuments() {
+  if (!currentSupplierId) return;
+  try {
+    const docs = await dashboardApiRequest(`/suppliers/${encodeURIComponent(currentSupplierId)}/documents`);
+    renderSupplierDocuments(docs || []);
+  } catch (error) {
+    console.error('Failed to load supplier documents:', error);
+  }
+}
+
+function renderSupplierDocuments(docs) {
+  const tbody = document.getElementById('supplierDocsBody');
+  if (!tbody) return;
+
+  if (!Array.isArray(docs) || docs.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" style="padding:16px;text-align:center;color:var(--text-3)">
+          No documents uploaded yet.
+        </td>
+      </tr>`;
+    return;
+  }
+
+  tbody.innerHTML = docs.map((doc) => {
+    const fileUrl = window.IMS_API_BASE_URL.replace('/api', '') + doc.url;
+    const formattedDate = formatDashboardDate(doc.uploadedAt);
+    const sizeStr = formatFileSize(doc.size);
+
+    return `
+      <tr>
+        <td>
+          <span class="badge" style="background:#eef3fc;color:#1e429f">${escapeHtml(doc.docType || 'General')}</span>
+        </td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-weight:700">${escapeHtml(doc.originalName || doc.filename)}</td>
+        <td>${sizeStr}</td>
+        <td>${formattedDate}</td>
+        <td>
+          <div style="display:flex;gap:6px;align-items:center">
+            <a href="${fileUrl}" target="_blank" class="btn btn-outline btn-sm" style="text-decoration:none">
+              View / Download
+            </a>
+            <button class="act-btn del" onclick="deleteSupplierDocument('${escapeHtml(doc.id)}')" title="Delete Document" type="button">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+async function uploadSupplierDocument() {
+  const fileInput = document.getElementById('doc-file-input');
+  const typeSelect = document.getElementById('doc-type-select');
+  const uploadBtn = document.getElementById('doc-upload-btn');
+
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    toast('Please select a file to upload.');
+    return;
+  }
+
+  const file = fileInput.files[0];
+  if (file.size > 5 * 1024 * 1024) {
+    toast('File size exceeds the 5MB limit.');
+    return;
+  }
+
+  const docType = typeSelect ? typeSelect.value : 'General Certification';
+  const supplierId = currentSupplierId;
+
+  if (!supplierId) {
+    toast('Supplier ID not ready. Please try again.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('docType', docType);
+
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = 'Uploading...';
+
+  try {
+    const uploadUrl = `${window.IMS_API_BASE_URL}/suppliers/${encodeURIComponent(supplierId)}/upload-document`;
+    const response = await fetch(uploadUrl, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || result.error || 'Upload failed');
+    }
+
+    fileInput.value = '';
+    await loadSupplierDocuments();
+    toast('Document uploaded successfully!');
+  } catch (error) {
+    toast(error.message || 'File upload failed.');
+  } finally {
+    uploadBtn.disabled = false;
+    uploadBtn.innerHTML = `
+      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 10V2.5M6.5 2.5L3.5 5.5M6.5 2.5L9.5 5.5"/><line x1="2" y1="11" x2="11" y2="11"/></svg>
+      Upload Document`;
+  }
+}
+
+async function deleteSupplierDocument(docId) {
+  if (!confirm('Are you sure you want to delete this document?')) {
+    return;
+  }
+
+  try {
+    await dashboardApiRequest(`/suppliers/${encodeURIComponent(currentSupplierId)}/documents/${encodeURIComponent(docId)}`, {
+      method: 'DELETE',
+    });
+    await loadSupplierDocuments();
+    toast('Document deleted successfully.');
+  } catch (error) {
+    toast(error.message || 'Failed to delete document.');
+  }
+}
+
 function toggleProfilePopover(event) {
   event.stopPropagation();
   document.getElementById('profilePopover').classList.toggle('open');
@@ -2764,6 +2960,7 @@ async function initDashboardOverrides() {
   renderOrders();
   renderRetailers();
   renderPerformance();
+  loadSupplierDocuments();
 }
 
 const activeSupplierSession = readSupplierSession();

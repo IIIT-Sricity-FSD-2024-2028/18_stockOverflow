@@ -10,8 +10,9 @@ import { join } from 'path';
 import { CreateSupplierSetupDto } from './dto/create-supplier-setup.dto';
 import { UpdateSupplierSetupDto } from './dto/update-supplier-setup.dto';
 import { SupplierDirectoryEntry } from './supplier-directory-entry.interface';
-import { SupplierRecord } from './supplier-record.interface';
+import { SupplierRecord, SupplierDocument } from './supplier-record.interface';
 import { ProductsService } from '../products/products.service';
+import * as fs from 'fs';
 
 @Injectable()
 export class SuppliersService {
@@ -78,6 +79,7 @@ export class SuppliersService {
       primaryContact,
       retailers: createSupplierSetupDto.retailers ?? [],
       products: createSupplierSetupDto.products ?? [],
+      documents: createSupplierSetupDto.documents ?? [],
       id: createSupplierSetupDto.id || randomUUID(),
       status: 'completed',
       profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
@@ -243,6 +245,73 @@ export class SuppliersService {
     this.persistToDisk();
   }
 
+  addDocument(
+    supplierId: string,
+    file: any,
+    docType: string = 'General Document',
+  ): SupplierDocument {
+    const supplier = this.findOne(supplierId);
+    const docId = `DOC-${randomUUID().slice(0, 8)}`;
+    const relativeUrl = `/uploads/suppliers/${file.filename}`;
+
+    const newDoc: SupplierDocument = {
+      id: docId,
+      docType,
+      originalName: file.originalname,
+      filename: file.filename,
+      url: relativeUrl,
+      mimeType: file.mimetype,
+      size: file.size,
+      uploadedAt: new Date().toISOString(),
+    };
+
+    const documents = [...(supplier.documents || []), newDoc];
+    const updatedSupplier: SupplierRecord = {
+      ...supplier,
+      documents,
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.suppliers.set(supplier.id, updatedSupplier);
+    this.persistToDisk();
+    return newDoc;
+  }
+
+  getDocuments(supplierId: string): SupplierDocument[] {
+    const supplier = this.findOne(supplierId);
+    return supplier.documents || [];
+  }
+
+  removeDocument(supplierId: string, docId: string): void {
+    const supplier = this.findOne(supplierId);
+    const existingDocs = supplier.documents || [];
+    const targetDoc = existingDocs.find((doc) => doc.id === docId);
+
+    if (!targetDoc) {
+      throw new NotFoundException(`Document "${docId}" was not found`);
+    }
+
+    // Try to delete physical file from disk
+    try {
+      const filePath = join(process.cwd(), 'uploads', 'suppliers', targetDoc.filename);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    } catch (err) {
+      console.error(`Failed to delete physical file for doc ${docId}:`, err);
+    }
+
+    const updatedDocs = existingDocs.filter((doc) => doc.id !== docId);
+    const updatedSupplier: SupplierRecord = {
+      ...supplier,
+      documents: updatedDocs,
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.suppliers.set(supplier.id, updatedSupplier);
+    this.persistToDisk();
+  }
+
   private loadFromDisk(): void {
     mkdirSync(this.dataDirectory, { recursive: true });
 
@@ -265,6 +334,7 @@ export class SuppliersService {
           ...supplier,
           retailers: supplier.retailers ?? [],
           products: supplier.products ?? [],
+          documents: supplier.documents ?? [],
           profileStatus: supplier.profileStatus ?? 'active',
         });
       });

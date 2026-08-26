@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuditRouterMiddleware = void 0;
+exports.SupplierAuditMiddleware = exports.AuditRouterMiddleware = void 0;
 const common_1 = require("@nestjs/common");
 const logger_service_1 = require("./logger.service");
 let AuditRouterMiddleware = class AuditRouterMiddleware {
@@ -19,4 +19,15 @@ exports.AuditRouterMiddleware = AuditRouterMiddleware;
 exports.AuditRouterMiddleware = AuditRouterMiddleware = __decorate([
     (0, common_1.Injectable)()
 ], AuditRouterMiddleware);
+let SupplierAuditMiddleware = class SupplierAuditMiddleware {
+    use(req, res, next) {
+        const userAgent = req.headers['user-agent'] || 'Unknown-Client';
+        logger_service_1.LoggerService.logAccess(`[SUPPLIER-ROUTER-MIDDLEWARE] [${req.method}] ${req.originalUrl} | Client: ${userAgent}`);
+        next();
+    }
+};
+exports.SupplierAuditMiddleware = SupplierAuditMiddleware;
+exports.SupplierAuditMiddleware = SupplierAuditMiddleware = __decorate([
+    (0, common_1.Injectable)()
+], SupplierAuditMiddleware);
 //# sourceMappingURL=router.middleware.js.map

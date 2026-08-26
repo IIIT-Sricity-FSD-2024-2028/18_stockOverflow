@@ -12,9 +12,12 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const uploadsDir = path.join(process.cwd(), 'uploads');
     const productUploadsDir = path.join(uploadsDir, 'products');
-    if (!fs.existsSync(productUploadsDir)) {
-        fs.mkdirSync(productUploadsDir, { recursive: true });
-    }
+    const supplierUploadsDir = path.join(uploadsDir, 'suppliers');
+    [productUploadsDir, supplierUploadsDir].forEach((dir) => {
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+    });
     app.use('/uploads', express.static(uploadsDir));
     app.use((0, express_1.json)({ limit: '25mb' }));
     app.use((0, express_1.urlencoded)({ extended: true, limit: '25mb' }));

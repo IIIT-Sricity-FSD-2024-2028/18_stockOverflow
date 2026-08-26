@@ -1,7 +1,7 @@
 import { CreateSupplierSetupDto } from './dto/create-supplier-setup.dto';
 import { UpdateSupplierSetupDto } from './dto/update-supplier-setup.dto';
 import { SupplierDirectoryEntry } from './supplier-directory-entry.interface';
-import { SupplierRecord } from './supplier-record.interface';
+import { SupplierRecord, SupplierDocument } from './supplier-record.interface';
 import { SuppliersService } from './suppliers.service';
 export declare class SuppliersController {
     private readonly suppliersService;
@@ -12,6 +12,9 @@ export declare class SuppliersController {
     getDirectory(): SupplierDirectoryEntry[];
     findLatest(): SupplierRecord | null;
     findByBusinessEmail(email: string): SupplierRecord | null;
+    uploadDocument(id: string, file: any, docType?: string): SupplierDocument;
+    getDocuments(id: string): SupplierDocument[];
+    removeDocument(id: string, docId: string): void;
     findOne(id: string): SupplierRecord;
     updatePut(id: string, dto: any): SupplierRecord;
     update(id: string, updateSupplierSetupDto: UpdateSupplierSetupDto): SupplierRecord;

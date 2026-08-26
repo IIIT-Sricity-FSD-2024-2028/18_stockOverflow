@@ -3,20 +3,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoggerService = void 0;
 const fs = require("fs");
 const path = require("path");
-const logsDir = path.join(process.cwd(), '.logs');
-if (!fs.existsSync(logsDir)) {
-    fs.mkdirSync(logsDir, { recursive: true });
-}
+const logsDir = path.join(process.cwd(), 'logs');
+const dotLogsDir = path.join(process.cwd(), '.logs');
+[logsDir, dotLogsDir].forEach((dir) => {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+});
 const MAX_LOG_SIZE_BYTES = 1 * 1024 * 1024;
-const rotateIfNeeded = (logFile) => {
+const rotateIfNeeded = (targetDir, filename) => {
     try {
+        const logFile = path.join(targetDir, filename);
         if (fs.existsSync(logFile)) {
             const stats = fs.statSync(logFile);
             if (stats.size >= MAX_LOG_SIZE_BYTES) {
                 const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                const ext = path.extname(logFile);
-                const base = path.basename(logFile, ext);
-                const rotatedFile = path.join(logsDir, `${base}-${timestamp}${ext}`);
+                const ext = path.extname(filename);
+                const base = path.basename(filename, ext);
+                const rotatedFile = path.join(targetDir, `${base}-${timestamp}${ext}`);
                 fs.renameSync(logFile, rotatedFile);
             }
         }
@@ -26,15 +30,18 @@ const rotateIfNeeded = (logFile) => {
     }
 };
 const appendLog = (file, message) => {
-    const logFile = path.join(logsDir, file);
-    rotateIfNeeded(logFile);
-    fs.appendFile(logFile, message + '\n', (err) => {
-        if (err)
-            console.error('Failed to write log', err);
+    const timestampedMessage = `[${new Date().toISOString()}] ${message}\n`;
+    [logsDir, dotLogsDir].forEach((dir) => {
+        rotateIfNeeded(dir, file);
+        const logFile = path.join(dir, file);
+        fs.appendFile(logFile, timestampedMessage, (err) => {
+            if (err)
+                console.error(`Failed to write log to ${logFile}`, err);
+        });
     });
 };
 exports.LoggerService = {
-    logAccess: (msg) => appendLog('access.log', `[${new Date().toISOString()}] ${msg}`),
-    logError: (msg) => appendLog('error.log', `[${new Date().toISOString()}] ${msg}`),
+    logAccess: (msg) => appendLog('access.log', msg),
+    logError: (msg) => appendLog('error.log', msg),
 };
 //# sourceMappingURL=logger.service.js.map

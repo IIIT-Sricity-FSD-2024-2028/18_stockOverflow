@@ -1,5 +1,5 @@
 import { SupplierDirectoryEntry } from './supplier-directory-entry.interface';
-import { SupplierRecord } from './supplier-record.interface';
+import { SupplierRecord, SupplierDocument } from './supplier-record.interface';
 import { ProductsService } from '../products/products.service';
 export declare class SuppliersService {
     private readonly productsService;
@@ -16,6 +16,9 @@ export declare class SuppliersService {
     adjustProductStock(supplierId: string | number, sku: string, qtyDelta: number): SupplierRecord;
     getDirectory(): SupplierDirectoryEntry[];
     remove(id: string): void;
+    addDocument(supplierId: string, file: any, docType?: string): SupplierDocument;
+    getDocuments(supplierId: string): SupplierDocument[];
+    removeDocument(supplierId: string, docId: string): void;
     private loadFromDisk;
     private persistToDisk;
     private syncProducts;

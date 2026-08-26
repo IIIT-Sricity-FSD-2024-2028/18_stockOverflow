@@ -3104,6 +3104,144 @@
         }
       }
     },
+    "/suppliers/{id}/upload-document": {
+      "post": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_uploadDocument",
+        "summary": "Upload Document",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierDocument"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suppliers/{id}/documents": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_getDocuments",
+        "summary": "Get Documents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierDocument"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/suppliers/{id}/documents/{docId}": {
+      "delete": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_removeDocument",
+        "summary": "Remove Document",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "docId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: docId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/suppliers/{id}": {
       "get": {
         "tags": [
@@ -9095,6 +9233,45 @@
         ],
         "type": "object"
       },
+      "suppliers_supplier_record_interface_SupplierDocument": {
+        "properties": {
+          "docType": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "originalName": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "uploadedAt": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "docType",
+          "filename",
+          "id",
+          "mimeType",
+          "originalName",
+          "size",
+          "uploadedAt",
+          "url"
+        ],
+        "type": "object"
+      },
       "suppliers_supplier_record_interface_SupplierRecord": {
         "properties": {
           "bankDetails": {
@@ -9222,6 +9399,48 @@
           },
           "createdAt": {
             "type": "string"
+          },
+          "documents": {
+            "items": {
+              "properties": {
+                "docType": {
+                  "type": "string"
+                },
+                "filename": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "mimeType": {
+                  "type": "string"
+                },
+                "originalName": {
+                  "type": "string"
+                },
+                "size": {
+                  "type": "number"
+                },
+                "uploadedAt": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "docType",
+                "filename",
+                "id",
+                "mimeType",
+                "originalName",
+                "size",
+                "uploadedAt",
+                "url"
+              ],
+              "type": "object"
+            },
+            "type": "array"
           },
           "id": {
             "type": "string"
