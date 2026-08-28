@@ -8,6 +8,7 @@ export declare class SuppliersService {
     private readonly dataFile;
     constructor(productsService: ProductsService);
     create(createSupplierSetupDto: any): SupplierRecord;
+    updateProfileStatus(id: string, status: 'active' | 'inactive' | 'pending' | 'rejected'): SupplierRecord;
     findAll(): SupplierRecord[];
     findOne(id: string): SupplierRecord;
     findLatest(): SupplierRecord | null;

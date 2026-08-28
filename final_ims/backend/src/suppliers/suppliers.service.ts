@@ -82,7 +82,7 @@ export class SuppliersService {
       documents: createSupplierSetupDto.documents ?? [],
       id: createSupplierSetupDto.id || randomUUID(),
       status: 'completed',
-      profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
+      profileStatus: createSupplierSetupDto.profileStatus ?? 'pending',
       createdAt: now,
       updatedAt: now,
     };
@@ -93,9 +93,23 @@ export class SuppliersService {
     return supplier;
   }
 
+  updateProfileStatus(
+    id: string,
+    status: 'active' | 'inactive' | 'pending' | 'rejected',
+  ): SupplierRecord {
+    const supplier = this.findOne(id);
+    supplier.profileStatus = status;
+    supplier.updatedAt = new Date().toISOString();
+    this.suppliers.set(id, supplier);
+    this.persistToDisk();
+    return supplier;
+  }
+
   findAll(): SupplierRecord[] {
     return Array.from(this.suppliers.values()).sort((a, b) =>
-      b.updatedAt.localeCompare(a.updatedAt),
+      String(b.updatedAt || b.createdAt || '').localeCompare(
+        String(a.updatedAt || a.createdAt || ''),
+      ),
     );
   }
 
@@ -330,12 +344,15 @@ export class SuppliersService {
       const suppliers = JSON.parse(raw) as SupplierRecord[];
 
       suppliers.forEach((supplier) => {
+        const now = new Date().toISOString();
         this.suppliers.set(supplier.id, {
           ...supplier,
           retailers: supplier.retailers ?? [],
           products: supplier.products ?? [],
           documents: supplier.documents ?? [],
           profileStatus: supplier.profileStatus ?? 'active',
+          createdAt: supplier.createdAt || now,
+          updatedAt: supplier.updatedAt || now,
         });
       });
     } catch {

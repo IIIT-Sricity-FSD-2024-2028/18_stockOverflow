@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var ROUTES = {
     admin: '../admin/dashboard.html',
+    employee: '../employee module/employee-dashboard.html',
     retailerSetup: '../Retailer module/Retailer-initial.html',
     retailerDashboard: '../Retailer module/Retialer_Dashboard.html',
     supplierSetup: '../supplier module/supplier-initial.html',
@@ -106,6 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var role = normalizeRole(user && user.role);
 
     if (role === 'admin') return ROUTES.admin;
+    if (role === 'employee') return ROUTES.employee;
     if (role === 'biller') {
       if (hasBillerStoreAccess(user)) {
         var billerStoreId = user.currentStoreId || user.storeId;
@@ -117,18 +119,30 @@ document.addEventListener('DOMContentLoaded', function () {
       var hasSupplierProfile =
         Boolean(user && user.profileId) ||
         Boolean(user && user.profile && user.profile.businessName);
-      return hasSupplierProfile
-        ? ROUTES.supplier +
-            (user && user.profileId
-              ? '?supplierId=' + encodeURIComponent(user.profileId)
-              : '')
-        : ROUTES.supplierSetup;
+      if (!hasSupplierProfile) return ROUTES.supplierSetup;
+      
+      var sStatus = String((user.profile && user.profile.profileStatus) || user.profileStatus || '').toLowerCase();
+      if (sStatus === 'pending' || sStatus === 'rejected') {
+        return '../auth/verification-pending.html';
+      }
+
+      return ROUTES.supplier +
+        (user && user.profileId
+          ? '?supplierId=' + encodeURIComponent(user.profileId)
+          : '');
     }
     if (role === 'retailer') {
       var hasProfile =
         Boolean(user && user.profileId) ||
         Boolean(user && user.profile && user.profile.businessName);
-      return hasProfile ? ROUTES.retailerDashboard : ROUTES.retailerSetup;
+      if (!hasProfile) return ROUTES.retailerSetup;
+
+      var rStatus = String((user.profile && user.profile.profileStatus) || user.profileStatus || '').toLowerCase();
+      if (rStatus === 'pending' || rStatus === 'rejected') {
+        return '../auth/verification-pending.html';
+      }
+
+      return ROUTES.retailerDashboard;
     }
 
     return ROUTES.consumer;
@@ -211,6 +225,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (!role) {
       throw new Error('Please select a role.');
+    }
+    if (role === 'admin') {
+      throw new Error('Admin accounts cannot be registered.');
+    }
+    if (role === 'employee') {
+      throw new Error('Employee accounts must be created by an Administrator.');
     }
 
     return {

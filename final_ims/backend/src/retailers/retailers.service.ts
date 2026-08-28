@@ -31,7 +31,7 @@ export class RetailersService {
       products: createRetailerSetupDto.products ?? [],
       id: randomUUID(),
       status: 'completed',
-      profileStatus: createRetailerSetupDto.profileStatus ?? 'active',
+      profileStatus: createRetailerSetupDto.profileStatus ?? 'pending',
       createdAt: now,
       updatedAt: now,
     };
@@ -41,9 +41,23 @@ export class RetailersService {
     return retailer;
   }
 
+  updateProfileStatus(
+    id: string,
+    status: 'active' | 'inactive' | 'pending' | 'rejected',
+  ): RetailerRecord {
+    const retailer = this.findOne(id);
+    retailer.profileStatus = status;
+    retailer.updatedAt = new Date().toISOString();
+    this.retailers.set(id, retailer);
+    this.persistToDisk();
+    return retailer;
+  }
+
   findAll(): RetailerRecord[] {
     return Array.from(this.retailers.values()).sort((a, b) =>
-      b.updatedAt.localeCompare(a.updatedAt),
+      String(b.updatedAt || b.createdAt || '').localeCompare(
+        String(a.updatedAt || a.createdAt || ''),
+      ),
     );
   }
 
@@ -154,12 +168,15 @@ export class RetailersService {
       const retailers = JSON.parse(raw) as RetailerRecord[];
 
       retailers.forEach((retailer) => {
+        const now = new Date().toISOString();
         this.retailers.set(retailer.id, {
           ...retailer,
           stores: retailer.stores ?? [],
           suppliers: retailer.suppliers ?? [],
           products: retailer.products ?? [],
           profileStatus: retailer.profileStatus ?? 'active',
+          createdAt: retailer.createdAt || now,
+          updatedAt: retailer.updatedAt || now,
         });
       });
     } catch {

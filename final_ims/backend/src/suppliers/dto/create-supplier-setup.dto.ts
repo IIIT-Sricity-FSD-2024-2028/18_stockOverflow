@@ -303,8 +303,8 @@ export class CreateSupplierSetupDto {
   primaryContact: PrimaryContactDto;
 
   @IsOptional()
-  @IsIn(['active', 'inactive'])
-  profileStatus?: 'active' | 'inactive';
+  @IsIn(['active', 'inactive', 'pending', 'rejected'])
+  profileStatus?: 'active' | 'inactive' | 'pending' | 'rejected';
 
   @IsOptional()
   @IsArray()

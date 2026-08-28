@@ -647,8 +647,8 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
       <div class="finish-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20,6 9,17 4,12"/></svg>
       </div>
-      <div class="finish-title">You're All Set! 🎉</div>
-      <div class="finish-sub">Your retailer account has been configured. Please log in to access your dashboard.</div>
+      <div class="finish-title">Registration Submitted for Verification! ⏳</div>
+      <div class="finish-sub">Your retailer profile and physical stores have been submitted and assigned to an employee for validation. You can log in to view your dashboard.</div>
       <div style="display:flex;gap:10px;justify-content:center">
         <button class="btn btn-primary" onclick="goToLogin()">
           <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="1.5" width="4" height="4" rx=".8"/><rect x="7.5" y="1.5" width="4" height="4" rx=".8"/><rect x="1.5" y="7.5" width="4" height="4" rx=".8"/><rect x="7.5" y="7.5" width="4" height="4" rx=".8"/></svg>
@@ -1375,7 +1375,7 @@ function completeSetup(){
           designation: document.getElementById('o-title').value.trim() || undefined,
           directEmail: document.getElementById('o-email').value.trim() || undefined,
         },
-        profileStatus: 'active',
+        profileStatus: 'pending',
         stores: normalizedStores,
         suppliers: [],
         products: [],

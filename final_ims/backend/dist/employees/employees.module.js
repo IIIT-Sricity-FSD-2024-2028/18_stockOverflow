@@ -8,8 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmployeesModule = void 0;
 const common_1 = require("@nestjs/common");
-const billers_module_1 = require("../billers/billers.module");
+const common_module_1 = require("../common/common.module");
 const retailers_module_1 = require("../retailers/retailers.module");
+const stores_module_1 = require("../stores/stores.module");
 const suppliers_module_1 = require("../suppliers/suppliers.module");
 const users_module_1 = require("../users/users.module");
 const employees_controller_1 = require("./employees.controller");
@@ -19,9 +20,16 @@ let EmployeesModule = class EmployeesModule {
 exports.EmployeesModule = EmployeesModule;
 exports.EmployeesModule = EmployeesModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule, retailers_module_1.RetailersModule, suppliers_module_1.SuppliersModule, billers_module_1.BillersModule],
+        imports: [
+            common_module_1.CommonModule,
+            users_module_1.UsersModule,
+            retailers_module_1.RetailersModule,
+            suppliers_module_1.SuppliersModule,
+            stores_module_1.StoresModule,
+        ],
         controllers: [employees_controller_1.EmployeesController],
         providers: [employees_service_1.EmployeesService],
+        exports: [employees_service_1.EmployeesService],
     })
 ], EmployeesModule);
 //# sourceMappingURL=employees.module.js.map

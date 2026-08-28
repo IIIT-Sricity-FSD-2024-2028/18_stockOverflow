@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -128,6 +129,28 @@ const DEFAULT_USERS: User[] = [
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
   {
+    id: 'u-employee-1',
+    name: 'Alex Morgan',
+    email: 'employee@stockoverflow.com',
+    password: 'pass1234',
+    role: 'employee',
+    status: 'Active',
+    store: 'Global Hub',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 'u-employee-2',
+    name: 'Sarah Chen',
+    email: 'sarah.employee@stockoverflow.com',
+    password: 'pass1234',
+    role: 'employee',
+    status: 'Active',
+    store: 'Global Hub',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
     id: 'u-consumer-1',
     name: 'Primary Customer',
     email: 'customer@stockoverflow.com',
@@ -186,6 +209,10 @@ export class UsersService {
     const email = this.normalizeEmail(createUserDto.email);
     const role = this.normalizeRole(createUserDto.role);
 
+    if (role === 'admin') {
+      throw new ForbiddenException('Admin accounts cannot be created.');
+    }
+
     if (
       users.some((entry) => this.normalizeEmail(entry.email) === email)
     ) {
@@ -241,13 +268,25 @@ export class UsersService {
       throw new ConflictException('Email already exists');
     }
 
+    const targetRole = updateUserDto.role
+      ? this.normalizeRole(updateUserDto.role)
+      : existing.role;
+
+    if (existing.role === 'admin' && targetRole !== 'admin') {
+      throw new ForbiddenException('Admin role cannot be modified.');
+    }
+
+    if (existing.role !== 'admin' && targetRole === 'admin') {
+      throw new ForbiddenException('Cannot elevate user to admin role.');
+    }
+
     const updated: User = {
       ...existing,
       ...updateUserDto,
       name: this.normalizeText(updateUserDto.name, existing.name),
       email: nextEmail,
       password: this.normalizeText(updateUserDto.password, existing.password),
-      role: this.normalizeRole(updateUserDto.role || existing.role),
+      role: targetRole,
       status: this.normalizeText(updateUserDto.status, existing.status || 'Active'),
       store: this.normalizeText(updateUserDto.store, existing.store),
       storeId: this.normalizeText(updateUserDto.storeId, existing.storeId),
@@ -285,6 +324,11 @@ export class UsersService {
 
     if (index === -1) {
       throw new NotFoundException('User not found');
+    }
+
+    const existing = users[index];
+    if (existing.role === 'admin') {
+      throw new ForbiddenException('Admin account cannot be deleted.');
     }
 
     users.splice(index, 1);
@@ -655,6 +699,18 @@ export class UsersService {
         const normalized = this.normalizeStoredUser(user);
         this.users.set(normalized.id, normalized);
       });
+
+      // Ensure default essential accounts exist
+      DEFAULT_USERS.forEach((defUser) => {
+        const exists = Array.from(this.users.values()).some(
+          (u) => this.normalizeEmail(u.email) === this.normalizeEmail(defUser.email),
+        );
+        if (!exists) {
+          const normalized = this.normalizeStoredUser(defUser);
+          this.users.set(normalized.id, normalized);
+        }
+      });
+
       this.persistToDisk();
     } catch {
       this.users.clear();

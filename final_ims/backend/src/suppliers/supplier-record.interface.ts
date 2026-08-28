@@ -14,7 +14,7 @@ export interface SupplierDocument {
 export interface SupplierRecord extends CreateSupplierSetupDto {
   id: string;
   status: 'draft' | 'completed';
-  profileStatus?: 'active' | 'inactive';
+  profileStatus?: 'active' | 'inactive' | 'pending' | 'rejected';
   documents?: SupplierDocument[];
   createdAt: string;
   updatedAt: string;

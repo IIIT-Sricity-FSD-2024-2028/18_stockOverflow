@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionsService = void 0;
 const common_1 = require("@nestjs/common");
+const node_crypto_1 = require("node:crypto");
 const customers_service_1 = require("../customers/customers.service");
 const json_db_service_1 = require("../common/json-db.service");
 const products_service_1 = require("../products/products.service");
@@ -47,6 +48,28 @@ let TransactionsService = class TransactionsService {
         const transactions = this.findAll();
         transactions.unshift(normalized);
         this.db.saveCollection('transactions', transactions);
+        try {
+            const commissions = this.db.getCollection('platformCommissions') || [];
+            commissions.unshift({
+                id: `comm-${(0, node_crypto_1.randomUUID)()}`,
+                transactionId: normalized.orderId,
+                orderId: normalized.orderId,
+                retailerId: normalized.retailerId || 'ret-default',
+                retailerName: normalized.store || 'Retailer Store',
+                storeId: normalized.storeId,
+                storeName: normalized.store,
+                customerName: normalized.customer,
+                orderTotal: normalized.finalTotal,
+                commissionRate: 0.02,
+                commissionAmount: normalized.platformFee || 0,
+                netRetailerAmount: normalized.netRetailerAmount || normalized.finalTotal,
+                currency: 'USD',
+                timestamp: normalized.timestamp,
+                status: 'settled',
+            });
+            this.db.saveCollection('platformCommissions', commissions);
+        }
+        catch (_commErr) { }
         const requestIds = this.collectTransactionRequestIds(normalized.items, normalized.storeId);
         if (requestIds.length) {
             this.reservationsService.completeRequests(requestIds, normalized.orderId);
@@ -172,6 +195,8 @@ let TransactionsService = class TransactionsService {
         const discount = this.toMoney(payload.discount ?? 0);
         const roundoff = this.toMoney(payload.roundoff ?? 0);
         const finalTotal = this.toMoney(subtotal + shipping + tax - coupon - discount + roundoff);
+        const platformFee = this.toMoney(finalTotal * 0.02);
+        const netRetailerAmount = this.toMoney(finalTotal - platformFee);
         return {
             orderId,
             retailerId: this.normalizeText(payload.retailerId),
@@ -190,6 +215,8 @@ let TransactionsService = class TransactionsService {
             discount,
             roundoff,
             finalTotal,
+            platformFee,
+            netRetailerAmount,
             status: this.normalizeText(payload.status, 'Delivered'),
             receiptUrl: this.normalizeText(payload.receiptUrl),
         };

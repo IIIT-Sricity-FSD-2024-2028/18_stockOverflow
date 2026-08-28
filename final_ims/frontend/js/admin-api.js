@@ -159,6 +159,33 @@
     });
   }
 
+  // Platform Revenue
+  async function getPlatformRevenueSummary(retailerId) {
+    var qs = retailerId ? '?retailerId=' + encodeURIComponent(retailerId) : '';
+    return window.IMS_HTTP.request('/platform-revenue/summary' + qs);
+  }
+
+  async function getPlatformCommissions(retailerId, limit) {
+    var params = [];
+    if (retailerId) params.push('retailerId=' + encodeURIComponent(retailerId));
+    if (limit) params.push('limit=' + encodeURIComponent(limit));
+    var qs = params.length ? '?' + params.join('&') : '';
+    return window.IMS_HTTP.request('/platform-revenue/commissions' + qs);
+  }
+
+  async function getSubscriptions(userId) {
+    var qs = userId ? '?userId=' + encodeURIComponent(userId) : '';
+    return window.IMS_HTTP.request('/platform-revenue/subscriptions' + qs);
+  }
+
+  async function updateSubscription(payload) {
+    return window.IMS_HTTP.request('/platform-revenue/subscriptions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  }
+
   window.AdminApi = {
     getDashboardStats,
     getAllUsers,
@@ -178,5 +205,9 @@
     deleteStore,
     getSystemSettings,
     updateSystemSettings,
+    getPlatformRevenueSummary,
+    getPlatformCommissions,
+    getSubscriptions,
+    updateSubscription,
   };
 })();

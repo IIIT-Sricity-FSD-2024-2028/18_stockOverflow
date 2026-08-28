@@ -30,11 +30,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Helper Badge Renderers
   const getRoleBadge = (role) => {
+    const r = String(role || '').toLowerCase();
     let colorClass = 'badge-primary';
-    if (role.toLowerCase() === 'supplier') colorClass = 'badge-warning';
-    if (role.toLowerCase() === 'consumer') colorClass = 'badge-success';
-    if (role.toLowerCase() === 'admin') colorClass = 'badge-danger';
-    return `<span class="badge ${colorClass}">${role.charAt(0).toUpperCase() + role.slice(1)}</span>`;
+    if (r === 'supplier') colorClass = 'badge-warning';
+    if (r === 'consumer') colorClass = 'badge-success';
+    if (r === 'biller') colorClass = 'badge-purple';
+    if (r === 'employee') colorClass = 'badge-info';
+    if (r === 'admin') colorClass = 'badge-danger';
+    return `<span class="badge ${colorClass}">${r.charAt(0).toUpperCase() + r.slice(1)}</span>`;
   };
 
   const getStatusBadge = (status) => {
@@ -64,7 +67,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const elProducts = document.getElementById('totalProducts');
         if (elProducts) elProducts.textContent = stats.totalProducts || 0;
         const elRevenue = document.getElementById('totalRevenue');
-        if (elRevenue) elRevenue.textContent = '$' + Number(stats.totalRevenue || 0).toLocaleString('en-US', { minimumFractionDigits: 0 });
+        if (elRevenue) elRevenue.textContent = '₹' + Number(stats.totalRevenue || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 });
+        const elPlatformCommission = document.getElementById('platformCommission');
+        if (elPlatformCommission) elPlatformCommission.textContent = '₹' + Number(stats.platformCommission || (stats.totalRevenue * 0.02) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const elTransactions = document.getElementById('totalTransactions');
         if (elTransactions) elTransactions.textContent = stats.totalTransactions || 0;
       }

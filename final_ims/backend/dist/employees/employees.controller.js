@@ -14,119 +14,99 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmployeesController = void 0;
 const common_1 = require("@nestjs/common");
-const employee_action_dto_1 = require("./dto/employee-action.dto");
+const create_query_dto_1 = require("./dto/create-query.dto");
+const resolve_assignment_dto_1 = require("./dto/resolve-assignment.dto");
+const resolve_query_dto_1 = require("./dto/resolve-query.dto");
 const employees_service_1 = require("./employees.service");
 let EmployeesController = class EmployeesController {
     constructor(employeesService) {
         this.employeesService = employeesService;
     }
-    getWork(employeeId) {
-        return this.employeesService.getWork(employeeId);
+    distributeWork() {
+        return this.employeesService.distributePendingWork();
     }
-    approveRetailer(employeeId, retailerId) {
-        return this.employeesService.approveRetailer(employeeId, retailerId);
+    getAssignments(employeeId, status) {
+        return this.employeesService.getAssignments(employeeId, status);
     }
-    rejectRetailer(employeeId, retailerId, actionDto) {
-        return this.employeesService.rejectRetailer(employeeId, retailerId, actionDto);
+    getAssignmentById(id) {
+        return this.employeesService.getAssignmentById(id);
     }
-    approveRetailerStore(employeeId, retailerId, storeCode) {
-        return this.employeesService.approveRetailerStore(employeeId, retailerId, storeCode);
+    resolveAssignment(id, dto) {
+        return this.employeesService.resolveAssignment(id, dto);
     }
-    rejectRetailerStore(employeeId, retailerId, storeCode, actionDto) {
-        return this.employeesService.rejectRetailerStore(employeeId, retailerId, storeCode, actionDto);
+    getQueries(employeeId, status) {
+        return this.employeesService.getQueries(employeeId, status);
     }
-    approveSupplier(employeeId, supplierId) {
-        return this.employeesService.approveSupplier(employeeId, supplierId);
+    createQuery(dto) {
+        return this.employeesService.createQuery(dto);
     }
-    rejectSupplier(employeeId, supplierId, actionDto) {
-        return this.employeesService.rejectSupplier(employeeId, supplierId, actionDto);
+    resolveQuery(id, dto) {
+        return this.employeesService.resolveQuery(id, dto);
     }
-    approveBillerRequest(employeeId, requestId, actionDto) {
-        return this.employeesService.approveBillerRequest(employeeId, requestId, actionDto);
-    }
-    rejectBillerRequest(employeeId, requestId, actionDto) {
-        return this.employeesService.rejectBillerRequest(employeeId, requestId, actionDto);
+    getStats(employeeId) {
+        return this.employeesService.getStats(employeeId);
     }
 };
 exports.EmployeesController = EmployeesController;
 __decorate([
-    (0, common_1.Get)(':employeeId/work'),
-    __param(0, (0, common_1.Param)('employeeId')),
+    (0, common_1.Post)('assignments/distribute'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EmployeesController.prototype, "distributeWork", null);
+__decorate([
+    (0, common_1.Get)('assignments'),
+    __param(0, (0, common_1.Query)('employeeId')),
+    __param(1, (0, common_1.Query)('status')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], EmployeesController.prototype, "getAssignments", null);
+__decorate([
+    (0, common_1.Get)('assignments/:id'),
+    __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "getWork", null);
+], EmployeesController.prototype, "getAssignmentById", null);
 __decorate([
-    (0, common_1.Put)(':employeeId/retailers/:retailerId/approve'),
-    __param(0, (0, common_1.Param)('employeeId')),
-    __param(1, (0, common_1.Param)('retailerId')),
+    (0, common_1.Patch)('assignments/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, resolve_assignment_dto_1.ResolveAssignmentDto]),
+    __metadata("design:returntype", void 0)
+], EmployeesController.prototype, "resolveAssignment", null);
+__decorate([
+    (0, common_1.Get)('queries'),
+    __param(0, (0, common_1.Query)('employeeId')),
+    __param(1, (0, common_1.Query)('status')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "approveRetailer", null);
+], EmployeesController.prototype, "getQueries", null);
 __decorate([
-    (0, common_1.Put)(':employeeId/retailers/:retailerId/reject'),
-    __param(0, (0, common_1.Param)('employeeId')),
-    __param(1, (0, common_1.Param)('retailerId')),
-    __param(2, (0, common_1.Body)()),
+    (0, common_1.Post)('queries'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, employee_action_dto_1.EmployeeActionDto]),
+    __metadata("design:paramtypes", [create_query_dto_1.CreateQueryDto]),
     __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "rejectRetailer", null);
+], EmployeesController.prototype, "createQuery", null);
 __decorate([
-    (0, common_1.Put)(':employeeId/retailers/:retailerId/stores/:storeCode/approve'),
-    __param(0, (0, common_1.Param)('employeeId')),
-    __param(1, (0, common_1.Param)('retailerId')),
-    __param(2, (0, common_1.Param)('storeCode')),
+    (0, common_1.Patch)('queries/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, resolve_query_dto_1.ResolveQueryDto]),
     __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "approveRetailerStore", null);
+], EmployeesController.prototype, "resolveQuery", null);
 __decorate([
-    (0, common_1.Put)(':employeeId/retailers/:retailerId/stores/:storeCode/reject'),
-    __param(0, (0, common_1.Param)('employeeId')),
-    __param(1, (0, common_1.Param)('retailerId')),
-    __param(2, (0, common_1.Param)('storeCode')),
-    __param(3, (0, common_1.Body)()),
+    (0, common_1.Get)('stats'),
+    __param(0, (0, common_1.Query)('employeeId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, employee_action_dto_1.EmployeeActionDto]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "rejectRetailerStore", null);
-__decorate([
-    (0, common_1.Put)(':employeeId/suppliers/:supplierId/approve'),
-    __param(0, (0, common_1.Param)('employeeId')),
-    __param(1, (0, common_1.Param)('supplierId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "approveSupplier", null);
-__decorate([
-    (0, common_1.Put)(':employeeId/suppliers/:supplierId/reject'),
-    __param(0, (0, common_1.Param)('employeeId')),
-    __param(1, (0, common_1.Param)('supplierId')),
-    __param(2, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, employee_action_dto_1.EmployeeActionDto]),
-    __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "rejectSupplier", null);
-__decorate([
-    (0, common_1.Put)(':employeeId/biller-requests/:requestId/approve'),
-    __param(0, (0, common_1.Param)('employeeId')),
-    __param(1, (0, common_1.Param)('requestId')),
-    __param(2, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, employee_action_dto_1.EmployeeActionDto]),
-    __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "approveBillerRequest", null);
-__decorate([
-    (0, common_1.Put)(':employeeId/biller-requests/:requestId/reject'),
-    __param(0, (0, common_1.Param)('employeeId')),
-    __param(1, (0, common_1.Param)('requestId')),
-    __param(2, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, employee_action_dto_1.EmployeeActionDto]),
-    __metadata("design:returntype", void 0)
-], EmployeesController.prototype, "rejectBillerRequest", null);
+], EmployeesController.prototype, "getStats", null);
 exports.EmployeesController = EmployeesController = __decorate([
     (0, common_1.Controller)('employees'),
     __metadata("design:paramtypes", [employees_service_1.EmployeesService])

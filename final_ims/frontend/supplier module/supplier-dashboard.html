@@ -2943,6 +2943,13 @@ async function initDashboardOverrides() {
   syncDashboardProfileUi();
   try {
     const supplier = await ensureDashboardSupplier();
+    if (supplier) {
+      const sStatus = String(supplier.profileStatus || '').toLowerCase();
+      if (sStatus === 'pending' || sStatus === 'rejected') {
+        window.location.href = '../auth/verification-pending.html';
+        return;
+      }
+    }
     mapDashboardSupplierRecord(supplier);
     retailerProfiles = await dashboardApiRequest('/retailers');
     purchaseOrderRecords = await dashboardApiRequest('/purchase-orders');

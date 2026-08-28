@@ -1,58 +1,41 @@
-import { EmployeeActionDto } from './dto/employee-action.dto';
+import { CreateQueryDto } from './dto/create-query.dto';
+import { ResolveAssignmentDto } from './dto/resolve-assignment.dto';
+import { ResolveQueryDto } from './dto/resolve-query.dto';
 import { EmployeesService } from './employees.service';
 export declare class EmployeesController {
     private readonly employeesService;
     constructor(employeesService: EmployeesService);
-    getWork(employeeId: string): {
-        employee: {
-            id: string;
-            name: string;
-            email: string;
-            role: string;
-            status: string;
-            store?: string;
-            storeId?: string;
-            currentStoreId?: string;
-            accessibleStoreIds?: string[];
-            profileId?: string;
-            profile?: Record<string, unknown>;
-            createdAt?: string;
-            updatedAt?: string;
-        };
-        stats: {
-            retailerRegistrations: number;
-            retailerStores: number;
-            suppliers: number;
-            billerRequests: number;
-            pending: number;
-        };
-        retailerRegistrations: any[];
-        retailerStores: any[];
-        suppliers: any[];
-        billerRequests: any[];
+    distributeWork(): {
+        message: string;
+        assignedCount: number;
+        totalAssignments?: undefined;
+    } | {
+        message: string;
+        assignedCount: number;
+        totalAssignments: number;
     };
-    approveRetailer(employeeId: string, retailerId: string): {
-        status: string;
+    getAssignments(employeeId?: string, status?: string): import("../common/database.types").EmployeeAssignment[];
+    getAssignmentById(id: string): import("../common/database.types").EmployeeAssignment;
+    resolveAssignment(id: string, dto: ResolveAssignmentDto): {
+        message: string;
+        assignment: import("../common/database.types").EmployeeAssignment;
     };
-    rejectRetailer(employeeId: string, retailerId: string, actionDto: EmployeeActionDto): {
-        status: string;
+    getQueries(employeeId?: string, status?: string): import("../common/database.types").UserQuery[];
+    createQuery(dto: CreateQueryDto): import("../common/database.types").UserQuery;
+    resolveQuery(id: string, dto: ResolveQueryDto): {
+        message: string;
+        query: import("../common/database.types").UserQuery;
     };
-    approveRetailerStore(employeeId: string, retailerId: string, storeCode: string): {
-        status: string;
-    };
-    rejectRetailerStore(employeeId: string, retailerId: string, storeCode: string, actionDto: EmployeeActionDto): {
-        status: string;
-    };
-    approveSupplier(employeeId: string, supplierId: string): {
-        status: string;
-    };
-    rejectSupplier(employeeId: string, supplierId: string, actionDto: EmployeeActionDto): {
-        status: string;
-    };
-    approveBillerRequest(employeeId: string, requestId: string, actionDto: EmployeeActionDto): {
-        status: string;
-    };
-    rejectBillerRequest(employeeId: string, requestId: string, actionDto: EmployeeActionDto): {
-        status: string;
+    getStats(employeeId?: string): {
+        totalAssigned: number;
+        pendingValidations: number;
+        approvedCount: number;
+        rejectedCount: number;
+        totalQueries: number;
+        pendingQueries: number;
+        resolvedQueries: number;
+        retailerValidations: number;
+        supplierValidations: number;
+        storeValidations: number;
     };
 }

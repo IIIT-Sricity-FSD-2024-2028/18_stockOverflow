@@ -503,39 +503,39 @@ tr:hover td{background:rgba(91,103,202,.03)}
     </div>
 
     <!-- FINANCIAL SUMMARY -->
-    <div class="section-label">Financial Summary</div>
+    <div class="section-label">Financial Summary &amp; Platform Settlement</div>
     <div class="fin-cards-grid">
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$18,920</div><div class="fin-card-label">Net Profit</div></div>
+          <div><div class="fin-card-val" id="finNetSales">$0</div><div class="fin-card-label">Net Sales Revenue</div></div>
           <div class="fin-card-icon" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>+12.4% vs last month</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>Net after 2% platform fee</span><span style="color:#16a34a; font-weight:700;">98.0% Retained</span></div>
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$7,340</div><div class="fin-card-label">Invoice Due</div></div>
-          <div class="fin-card-icon" style="background:#fee2e2"><svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <div><div class="fin-card-val" id="finPlatformFee" style="color:#2563eb;">$0</div><div class="fin-card-label">StockOverflow Fee (2%)</div></div>
+          <div class="fin-card-icon" style="background:#dbeafe"><svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M17 9.5a3.5 3.5 0 0 0-7 0c0 2.5 3.5 3.5 3.5 3.5s3.5 1 3.5 3.5a3.5 3.5 0 0 1-7 0"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>Due within 7 days</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>Platform SaaS &amp; POS commission</span><span style="color:#2563eb; font-weight:700;">2.0% Flat</span></div>
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$24,630</div><div class="fin-card-label">Total Expenses</div></div>
+          <div><div class="fin-card-val" id="finTotalExpenses">$0</div><div class="fin-card-label">Total Expenses &amp; POs</div></div>
           <div class="fin-card-icon" style="background:#fef3c7"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>-3.1% vs last month</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>Supplier purchases</span><span>Delivered Orders</span></div>
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$2,180</div><div class="fin-card-label">Payment Returns</div></div>
-          <div class="fin-card-icon" style="background:#dbeafe"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
+          <div><div class="fin-card-val" id="finPaymentReturns">$0</div><div class="fin-card-label">Sales Returns</div></div>
+          <div class="fin-card-icon" style="background:#fee2e2"><svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>+0.5% vs last month</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>Refunds &amp; returns</span><span>Store processed</span></div>
       </div>
     </div>
 
@@ -888,14 +888,14 @@ function logout() {
 <script>
 (function(){
   function formatCurrency(value){
-    return '$' + Number(value || 0).toLocaleString('en-US', {
+    return '₹' + Number(value || 0).toLocaleString('en-IN', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 2
     });
   }
 
   function formatCompact(value){
-    return Number(value || 0).toLocaleString('en-US');
+    return Number(value || 0).toLocaleString('en-IN');
   }
 
   function formatDate(value){
@@ -1051,11 +1051,23 @@ function logout() {
       metricCards[3].querySelector('.badge').textContent = '0.0%';
     }
 
+    const platformFee = Number((totalSales * 0.02).toFixed(2));
+    const netRetainedSales = Number((totalSales - platformFee).toFixed(2));
+
+    const elNetSales = document.getElementById('finNetSales');
+    if(elNetSales) elNetSales.textContent = formatCurrency(netRetainedSales);
+    const elPlatformFee = document.getElementById('finPlatformFee');
+    if(elPlatformFee) elPlatformFee.textContent = formatCurrency(platformFee);
+    const elExpenses = document.getElementById('finTotalExpenses');
+    if(elExpenses) elExpenses.textContent = formatCurrency(totalExpenses);
+    const elReturns = document.getElementById('finPaymentReturns');
+    if(elReturns) elReturns.textContent = formatCurrency(paymentReturns);
+
     const finCards = document.querySelectorAll('.fin-card');
-    if(finCards[0]) finCards[0].querySelector('.fin-card-val').textContent = formatCurrency(netProfit);
-    if(finCards[1]) finCards[1].querySelector('.fin-card-val').textContent = formatCurrency(invoiceDue);
-    if(finCards[2]) finCards[2].querySelector('.fin-card-val').textContent = formatCurrency(totalExpenses);
-    if(finCards[3]) finCards[3].querySelector('.fin-card-val').textContent = formatCurrency(paymentReturns);
+    if(finCards[0] && !elNetSales) finCards[0].querySelector('.fin-card-val').textContent = formatCurrency(netRetainedSales);
+    if(finCards[1] && !elPlatformFee) finCards[1].querySelector('.fin-card-val').textContent = formatCurrency(platformFee);
+    if(finCards[2] && !elExpenses) finCards[2].querySelector('.fin-card-val').textContent = formatCurrency(totalExpenses);
+    if(finCards[3] && !elReturns) finCards[3].querySelector('.fin-card-val').textContent = formatCurrency(paymentReturns);
 
     const legendValues = document.querySelectorAll('.legend-val');
     if(legendValues[0]) legendValues[0].textContent = formatCurrency(totalPurchase);

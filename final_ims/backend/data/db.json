@@ -2762,5 +2762,74 @@
       "timezone": "UTC",
       "updatedAt": "2026-07-31T06:45:42.353Z"
     }
-  ]
+  ],
+  "employeeAssignments": [
+    {
+      "id": "asgn-d8ccbdf5-8b39-4d90-8d07-fd78dc982a9e",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "220de2c1-08cb-4617-b0f1-d06bc7da0bb6",
+      "targetType": "retailer",
+      "title": "Retailer Verification: r16",
+      "details": {
+        "businessName": "r16",
+        "ownerName": "r16",
+        "email": "r16@gmail.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Sole Proprietorship",
+        "retailerCode": "RET-666",
+        "storeCount": 1,
+        "stores": [
+          {
+            "name": "r16",
+            "code": "R16",
+            "contactPerson": "r16",
+            "type": "Retail Store",
+            "status": "active"
+          }
+        ],
+        "submittedAt": "2026-08-28T17:47:23.682Z"
+      },
+      "status": "approved",
+      "createdAt": "2026-08-28T17:55:28.735Z",
+      "notes": "",
+      "resolvedAt": "2026-08-28T17:55:40.933Z"
+    },
+    {
+      "id": "asgn-64bc3453-61b5-4545-ae67-e4ac121d9d07",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "665f618b-52f6-4f06-9984-05a53a98fc5e",
+      "targetType": "retailer",
+      "title": "Retailer Verification: r15",
+      "details": {
+        "businessName": "r15",
+        "ownerName": "r15",
+        "email": "r15@gmail.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Sole Proprietorship",
+        "retailerCode": "RET-466",
+        "storeCount": 1,
+        "stores": [
+          {
+            "name": "r15",
+            "code": "R15",
+            "contactPerson": "r15",
+            "type": "Retail Store",
+            "status": "active"
+          }
+        ],
+        "submittedAt": "2026-08-28T07:02:42.479Z"
+      },
+      "status": "approved",
+      "createdAt": "2026-08-28T17:24:55.968Z",
+      "notes": "",
+      "resolvedAt": "2026-08-28T17:25:17.534Z"
+    }
+  ],
+  "userQueries": []
 }

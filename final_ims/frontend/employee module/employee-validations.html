@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StockOverflow – Entity Validations Queue</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #f5f6fa;
+  --card: #ffffff;
+  --sidebar: #1a1d2e;
+  --primary: #5b67ca;
+  --primary-light: #eef0fd;
+  --success: #22c55e;
+  --success-light: #dcfce7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  --text-primary: #1a1d2e;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 16px rgba(0,0,0,.07);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar-w: 252px;
+  --topbar-h: 58px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);display:flex;min-height:100vh;font-size:14px}
+
+/* SIDEBAR — Figma Exact */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;border-right:1px solid var(--border);font-family:'Nunito Sans',sans-serif}
+.sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-logo img{height:30px;width:auto;display:block}
+.sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+.sb-group{display:flex;flex-direction:column;gap:6px}
+.sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+.sb-divider{height:1px;background:var(--border);margin:4px 0}
+.sb-menus{display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+.sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+.sb-item.active{background:#fff6ee;color:#4e7fd9}
+.sb-item.active .sb-icon svg{stroke:#4e7fd9}
+.sb-item.active .sb-item-label{color:#4e7fd9}
+.sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+.sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-badge{font-size:11px;font-weight:700;padding:2px 6px;border-radius:10px;background:var(--primary-light);color:var(--primary)}
+
+/* MAIN */
+.main{margin-left:252px;flex:1;min-width:0}
+
+/* TOPBAR */
+.topbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:var(--topbar-h);position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.breadcrumb{font-size:12.5px;color:var(--text-secondary)}
+.breadcrumb span{color:var(--text-primary);font-weight:600}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;width:240px}
+.search-bar svg{width:13px;height:13px;color:var(--text-muted);flex-shrink:0}
+.search-bar input{border:none;background:transparent;outline:none;font-size:13px;color:var(--text-primary);font-family:inherit;width:100%}
+.topbar-right{display:flex;align-items:center;gap:12px;position:relative}
+.topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+
+/* CONTENT */
+.content{padding:22px 26px 40px;max-width:1280px}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.page-title{font-size:21px;font-weight:700;letter-spacing:-.4px}
+.page-subtitle{font-size:12.5px;color:var(--text-secondary);margin-top:3px}
+
+/* FILTER CONTROLS */
+.controls-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.filter-tabs{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:#fff}
+.filter-tab{padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-right:1px solid var(--border);background:transparent;border-top:none;border-bottom:none;border-left:none}
+.filter-tab:last-child{border-right:none}
+.filter-tab:hover{background:var(--bg)}
+.filter-tab.active{background:var(--primary);color:#fff}
+
+/* PANEL & TABLE */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;background:var(--border-light);border-bottom:1px solid var(--border)}
+td{padding:12px 16px;border-bottom:1px solid var(--border-light);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(91,103,202,.02)}
+
+.entity-cell{display:flex;align-items:center;gap:11px}
+.entity-avatar{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.entity-avatar.retailer{background:#3b82f6}
+.entity-avatar.supplier{background:#f59e0b}
+.entity-avatar.store{background:#10b981}
+.entity-name{font-weight:600;font-size:13.5px;color:var(--text-primary)}
+.entity-sub{font-size:11.5px;color:var(--text-muted);margin-top:1px}
+
+.type-pill{display:inline-flex;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.type-pill.retailer{background:#dbeafe;color:#1d4ed8}
+.type-pill.supplier{background:#fef3c7;color:#b45309}
+.type-pill.store{background:#dcfce7;color:#15803d}
+
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
+.status-pill.pending{background:var(--warning-light);color:#92400e}
+.status-pill.approved{background:var(--success-light);color:#15803d}
+.status-pill.rejected{background:var(--danger-light);color:#b91c1c}
+
+.action-btns{display:flex;align-items:center;gap:6px}
+.btn-act{padding:5px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
+.btn-approve{background:var(--success-light);color:#15803d;border-color:#bbf7d0}
+.btn-approve:hover{background:#bbf7d0}
+.btn-reject{background:var(--danger-light);color:#b91c1c;border-color:#fecaca}
+.btn-reject:hover{background:#fecaca}
+.btn-view{background:var(--border-light);color:var(--text-primary);border-color:var(--border)}
+.btn-view:hover{background:var(--border)}
+
+/* MODAL */
+.modal-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.6);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.active{display:flex}
+.modal-box{background:#fff;border-radius:14px;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);width:100%;max-width:580px;max-height:90vh;overflow-y:auto;position:relative}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px}
+.modal-body{padding:20px 22px}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--bg);border-radius:0 0 14px 14px}
+.dossier-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.dossier-item{background:var(--bg);border-radius:8px;padding:10px 12px}
+.dossier-label{font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:3px}
+.dossier-val{font-size:13px;font-weight:600;color:var(--text-primary)}
+.dossier-full{grid-column:1 / -1}
+.btn{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-success{background:var(--success);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-light{background:#fff;border:1px solid var(--border);color:var(--text-primary)}
+
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:10px}
+.toast{background:#1e293b;color:#fff;padding:12px 18px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px;font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-title">
+    <div class="sidebar-logo"><img src="../Retailer module/Logo.png" alt="StockOverflow" onerror="this.src='../assets/Logo.png'"></div>
+  </div>
+  <div class="sidebar-body">
+
+    <!-- MAIN -->
+    <div class="sb-group">
+      <div class="sb-group-label">Command Center</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="employee-dashboard.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
+          <span class="sb-item-label">Employee Dashboard</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- VALIDATIONS -->
+    <div class="sb-group">
+      <div class="sb-group-label">Validation Queue</div>
+      <div class="sb-menus">
+        <a class="sb-item active" href="employee-validations.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M14 5l-7 7-4-4"/><circle cx="8" cy="8" r="7"/></svg></span>
+          <span class="sb-item-label">All Validations</span>
+        </a>
+        <a class="sb-item" href="employee-validations.html?type=retailer">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-item-label">Retailer Approvals</span>
+        </a>
+        <a class="sb-item" href="employee-validations.html?type=supplier">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/></svg></span>
+          <span class="sb-item-label">Supplier Approvals</span>
+        </a>
+        <a class="sb-item" href="employee-validations.html?type=store">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="14" height="12" rx="1"/><line x1="5" y1="2" x2="5" y2="14"/></svg></span>
+          <span class="sb-item-label">Store Validations</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SUPPORT -->
+    <div class="sb-group">
+      <div class="sb-group-label">Helpdesk &amp; Queries</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="employee-queries.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M14 10a2 2 0 01-2 2H5l-3 3V4a2 2 0 012-2h8a2 2 0 012 2v6z"/></svg></span>
+          <span class="sb-item-label">User Queries</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- ACCOUNT -->
+    <div class="sb-group">
+      <div class="sb-group-label">Account</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="#" onclick="logout()">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
+          <span class="sb-item-label">Logout</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">Home / Verification / <span>Assigned Queue</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="topSearch" placeholder="Filter by name, email..." oninput="handleSearch(this.value)">
+      </div>
+      <button class="topbar-avatar" id="topbarAvatar">EM</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Entity Verification Desk</div>
+        <div class="page-subtitle">Review, validate, approve, or reject new retailer, supplier, and store registrations.</div>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-card">
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="setFilter('all', this)">All Items</button>
+        <button class="filter-tab" onclick="setFilter('retailer', this)">Retailers</button>
+        <button class="filter-tab" onclick="setFilter('supplier', this)">Suppliers</button>
+        <button class="filter-tab" onclick="setFilter('store', this)">Stores</button>
+        <button class="filter-tab" onclick="setFilter('pending', this)">Pending</button>
+        <button class="filter-tab" onclick="setFilter('approved', this)">Approved</button>
+        <button class="filter-tab" onclick="setFilter('rejected', this)">Rejected</button>
+      </div>
+
+      <div style="font-size:12.5px;color:var(--text-muted)" id="queueCountLabel">Showing 0 assignments</div>
+    </div>
+
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Target Entity / Registration</th>
+              <th>Category</th>
+              <th>Applicant &amp; Email</th>
+              <th>Location / Address</th>
+              <th>Assigned Date</th>
+              <th>Status</th>
+              <th style="text-align:right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="validationsTableBody">
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Loading validations...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOSSIER MODAL -->
+<div class="modal-backdrop" id="dossierModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="dossierTitle">Verification Dossier</div>
+      <button class="modal-close" onclick="closeModal('dossierModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="dossier-grid" id="dossierGrid"></div>
+      <div id="rejectionSection" style="display:none;margin-top:12px">
+        <label style="font-size:12px;font-weight:700;color:var(--danger);display:block;margin-bottom:6px">Reason for Rejection *</label>
+        <textarea id="rejectionReason" rows="3" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:8px;font-family:inherit;font-size:13px" placeholder="Please state reasons for registration rejection..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-light" onclick="closeModal('dossierModal')">Cancel</button>
+      <button class="btn btn-danger" id="btnModalReject" onclick="handleRejectClick()">Reject</button>
+      <button class="btn btn-success" id="btnModalApprove" onclick="handleApproveClick()">Approve &amp; Activate</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="../js/api-config.js"></script>
+<script>
+  let currentSession = null;
+  let allAssignments = [];
+  let currentFilter = 'all';
+  let searchQuery = '';
+  let activeDossierAssignment = null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      currentSession = JSON.parse(localStorage.getItem('so_session') || 'null');
+    } catch {
+      currentSession = null;
+    }
+
+    if (!currentSession || (currentSession.role !== 'employee' && currentSession.role !== 'admin')) {
+      window.location.href = '../auth/login.html';
+      return;
+    }
+
+    const initials = (currentSession.name || 'EM').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    document.getElementById('topbarAvatar').textContent = initials;
+
+    // Check query params for initial filter
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    if (typeParam) {
+      currentFilter = typeParam;
+      document.querySelectorAll('.filter-tab').forEach(t => {
+        if (t.textContent.toLowerCase().includes(typeParam)) t.classList.add('active');
+        else t.classList.remove('active');
+      });
+    }
+
+    loadAssignments();
+  });
+
+  function logout() {
+    localStorage.removeItem('so_session');
+    window.location.href = '../auth/login.html';
+  }
+
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'danger' ? '✕' : 'ℹ'}</span> <span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      toast.style.transition = 'all .2s ease';
+      setTimeout(() => toast.remove(), 200);
+    }, 3200);
+  }
+
+  async function loadAssignments() {
+    const empId = currentSession ? currentSession.id : '';
+    try {
+      const res = await window.IMS_HTTP.request(`/employees/assignments?employeeId=${encodeURIComponent(empId)}`);
+      allAssignments = Array.isArray(res) ? res : [];
+    } catch (err) {
+      console.warn('API error:', err);
+    }
+    renderAssignments();
+  }
+
+  function setFilter(filter, el) {
+    currentFilter = filter;
+    if (el) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+    }
+    renderAssignments();
+  }
+
+  function handleSearch(val) {
+    searchQuery = (val || '').toLowerCase().trim();
+    renderAssignments();
+  }
+
+  function renderAssignments() {
+    const tbody = document.getElementById('validationsTableBody');
+    let filtered = [...allAssignments];
+
+    if (currentFilter === 'retailer' || currentFilter === 'supplier' || currentFilter === 'store') {
+      filtered = filtered.filter(a => a.targetType === currentFilter);
+    } else if (currentFilter === 'pending' || currentFilter === 'approved' || currentFilter === 'rejected') {
+      filtered = filtered.filter(a => a.status === currentFilter);
+    }
+
+    if (searchQuery) {
+      filtered = filtered.filter(a =>
+        (a.title || '').toLowerCase().includes(searchQuery) ||
+        (a.details?.businessName || '').toLowerCase().includes(searchQuery) ||
+        (a.details?.email || '').toLowerCase().includes(searchQuery)
+      );
+    }
+
+    document.getElementById('queueCountLabel').textContent = `Showing ${filtered.length} of ${allAssignments.length} total assignments`;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:center;padding:36px;color:var(--text-muted)">
+            <div style="font-size:24px;margin-bottom:6px">📋</div>
+            <div style="font-weight:600">No items found matching the current filter</div>
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(a => {
+      const type = a.targetType || 'retailer';
+      const initials = (a.details?.businessName || a.title || 'SO').substring(0, 2).toUpperCase();
+      const name = a.details?.businessName || a.title;
+      const owner = a.details?.ownerName || 'Applicant';
+      const email = a.details?.email || '-';
+      const loc = a.details?.address || 'Registered Location';
+      const date = a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-';
+      const status = a.status || 'pending';
+
+      return `
+        <tr>
+          <td>
+            <div class="entity-cell">
+              <div class="entity-avatar ${type}">${initials}</div>
+              <div>
+                <div class="entity-name">${name}</div>
+                <div class="entity-sub">Code: ${a.details?.retailerCode || a.details?.supplierCode || a.details?.storeCode || 'AUTO'}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="type-pill ${type}">${type}</span></td>
+          <td>
+            <div style="font-weight:600">${owner}</div>
+            <div style="font-size:11.5px;color:var(--text-muted)">${email}</div>
+          </td>
+          <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${loc}</td>
+          <td style="color:var(--text-secondary)">${date}</td>
+          <td><span class="status-pill ${status}">${status.toUpperCase()}</span></td>
+          <td style="text-align:right">
+            <div class="action-btns" style="justify-content:flex-end">
+              <button class="btn-act btn-view" onclick="openDossier('${a.id}')">Dossier</button>
+              ${status === 'pending' ? `
+                <button class="btn-act btn-approve" onclick="executeResolve('${a.id}', 'approve')">✓ Approve</button>
+                <button class="btn-act btn-reject" onclick="openRejectDossier('${a.id}')">✕</button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function openDossier(id) {
+    const a = allAssignments.find(item => item.id === id);
+    if (!a) return;
+    activeDossierAssignment = a;
+
+    document.getElementById('dossierTitle').textContent = `Verification Dossier – ${a.title}`;
+    document.getElementById('rejectionSection').style.display = 'none';
+    document.getElementById('rejectionReason').value = '';
+
+    const d = a.details || {};
+    const type = a.targetType || 'retailer';
+
+    document.getElementById('dossierGrid').innerHTML = `
+      <div class="dossier-item">
+        <div class="dossier-label">Business / Store Name</div>
+        <div class="dossier-val">${d.businessName || d.companyName || a.title}</div>
+      </div>
+      <div class="dossier-item">
+        <div class="dossier-label">Entity Type</div>
+        <div class="dossier-val"><span class="type-pill ${type}">${type}</span></div>
+      </div>
+      <div class="dossier-item">
+        <div class="dossier-label">Applicant Name</div>
+        <div class="dossier-val">${d.ownerName || 'Registered Applicant'}</div>
+      </div>
+      <div class="dossier-item">
+        <div class="dossier-label">Direct Email</div>
+        <div class="dossier-val">${d.email || '-'}</div>
+      </div>
+      <div class="dossier-item dossier-full">
+        <div class="dossier-label">Facility / Store Address</div>
+        <div class="dossier-val">${d.address || 'Registered corporate location'}</div>
+      </div>
+      <div class="dossier-item dossier-full">
+        <div class="dossier-label">Verification Status</div>
+        <div class="dossier-val"><span class="status-pill ${a.status}">${a.status.toUpperCase()}</span> ${a.notes ? ` – Reason: ${a.notes}` : ''}</div>
+      </div>`;
+
+    const isPending = a.status === 'pending';
+    document.getElementById('btnModalApprove').style.display = isPending ? 'inline-block' : 'none';
+    document.getElementById('btnModalReject').style.display = isPending ? 'inline-block' : 'none';
+
+    document.getElementById('dossierModal').classList.add('active');
+  }
+
+  function openRejectDossier(id) {
+    openDossier(id);
+    document.getElementById('rejectionSection').style.display = 'block';
+  }
+
+  function handleRejectClick() {
+    const sec = document.getElementById('rejectionSection');
+    if (sec.style.display === 'none') {
+      sec.style.display = 'block';
+      document.getElementById('rejectionReason').focus();
+      return;
+    }
+    const reason = document.getElementById('rejectionReason').value.trim();
+    if (!reason) {
+      alert('Please enter reason for rejection.');
+      return;
+    }
+    executeResolve(activeDossierAssignment.id, 'reject', reason);
+  }
+
+  function handleApproveClick() {
+    if (!activeDossierAssignment) return;
+    executeResolve(activeDossierAssignment.id, 'approve');
+  }
+
+  async function executeResolve(id, action, notes = '') {
+    try {
+      await window.IMS_HTTP.request(`/employees/assignments/${encodeURIComponent(id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action,
+          notes,
+          employeeId: currentSession ? currentSession.id : '',
+        }),
+      });
+
+      showToast(`Entity ${action === 'approve' ? 'approved' : 'rejected'} successfully!`, 'success');
+      closeModal('dossierModal');
+      await loadAssignments();
+    } catch (err) {
+      showToast('Error resolving assignment: ' + window.IMS_HTTP.getErrorMessage(err), 'danger');
+    }
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+</script>
+</body>
+</html>

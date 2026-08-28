@@ -62,6 +62,11 @@
       redirectToLogin();
       return null;
     }
+    var status = String((session.profile && session.profile.profileStatus) || session.profileStatus || '').toLowerCase();
+    if (status === 'pending' || status === 'rejected') {
+      window.location.href = '../auth/verification-pending.html';
+      return null;
+    }
     if (!session.profileId && !(session.profile && session.profile.businessName)) {
       window.location.href = '../index.html';
       return null;
@@ -361,14 +366,22 @@
         storeId: selectedStoreId || user.storeId || user.currentStoreId,
         initials: buildInitials(user.name),
       };
+
+      if (user.profileId) {
+        try {
+          var profile = await request('/api/retailers/' + encodeURIComponent(user.profileId));
+          if (profile) {
+            nextSession.profile = profile;
+            nextSession.profileStatus = profile.profileStatus || 'active';
+          }
+        } catch (_profileErr) {}
+      }
+
       syncSessionStores(nextSession);
-      var refreshedSession = readSession();
-      if (
-        !refreshedSession ||
-        (!refreshedSession.profileId &&
-          !(refreshedSession.profile && refreshedSession.profile.businessName))
-      ) {
-        window.location.href = '../index.html';
+      var refreshedSession = writeSession(nextSession);
+      var status = String((refreshedSession && refreshedSession.profile && refreshedSession.profile.profileStatus) || (refreshedSession && refreshedSession.profileStatus) || '').toLowerCase();
+      if (status === 'pending' || status === 'rejected') {
+        window.location.href = '../auth/verification-pending.html';
         return null;
       }
       return refreshedSession;

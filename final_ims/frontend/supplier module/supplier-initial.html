@@ -1249,6 +1249,7 @@ function buildLandingPayload() {
       designation: document.getElementById('c-title').value.trim() || undefined,
       directEmail: document.getElementById('c-email').value.trim() || undefined,
     },
+    profileStatus: 'pending',
     retailers: [],
     products: getProducts().map((product) => ({
       sku: product.sku,

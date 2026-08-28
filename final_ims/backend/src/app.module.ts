@@ -18,6 +18,8 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UsersModule } from './users/users.module';
 import { WarehousesModule } from './warehouses/warehouses.module';
+import { EmployeesModule } from './employees/employees.module';
+import { PlatformRevenueModule } from './platform-revenue/platform-revenue.module';
 
 @Module({
   providers: [
@@ -42,6 +44,8 @@ import { WarehousesModule } from './warehouses/warehouses.module';
     ReturnsModule,
     StockAdjustmentsModule,
     UsersModule,
+    EmployeesModule,
+    PlatformRevenueModule,
   ],
 })
 export class AppModule implements NestModule {

@@ -75,7 +75,7 @@ let SuppliersService = class SuppliersService {
             documents: createSupplierSetupDto.documents ?? [],
             id: createSupplierSetupDto.id || (0, crypto_1.randomUUID)(),
             status: 'completed',
-            profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
+            profileStatus: createSupplierSetupDto.profileStatus ?? 'pending',
             createdAt: now,
             updatedAt: now,
         };
@@ -84,8 +84,16 @@ let SuppliersService = class SuppliersService {
         this.persistToDisk();
         return supplier;
     }
+    updateProfileStatus(id, status) {
+        const supplier = this.findOne(id);
+        supplier.profileStatus = status;
+        supplier.updatedAt = new Date().toISOString();
+        this.suppliers.set(id, supplier);
+        this.persistToDisk();
+        return supplier;
+    }
     findAll() {
-        return Array.from(this.suppliers.values()).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+        return Array.from(this.suppliers.values()).sort((a, b) => String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || '')));
     }
     findOne(id) {
         const supplier = this.suppliers.get(id);
@@ -264,12 +272,15 @@ let SuppliersService = class SuppliersService {
         try {
             const suppliers = JSON.parse(raw);
             suppliers.forEach((supplier) => {
+                const now = new Date().toISOString();
                 this.suppliers.set(supplier.id, {
                     ...supplier,
                     retailers: supplier.retailers ?? [],
                     products: supplier.products ?? [],
                     documents: supplier.documents ?? [],
                     profileStatus: supplier.profileStatus ?? 'active',
+                    createdAt: supplier.createdAt || now,
+                    updatedAt: supplier.updatedAt || now,
                 });
             });
         }

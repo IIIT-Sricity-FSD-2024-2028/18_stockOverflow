@@ -1,5 +1,112 @@
 [
   {
+    "id": "7d0e3c2c-30a7-4423-9c05-0a4a70c19fea",
+    "name": "r16",
+    "email": "r16@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "r16",
+    "storeId": "R16",
+    "currentStoreId": "R16",
+    "accessibleStoreIds": [
+      "R16"
+    ],
+    "profileId": "220de2c1-08cb-4617-b0f1-d06bc7da0bb6",
+    "profile": {
+      "businessName": "r16",
+      "businessEmail": "r16@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-666",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "r16",
+      "ownerTitle": "",
+      "ownerEmail": "r16@gmail.com",
+      "profileStatus": "pending",
+      "stores": [
+        {
+          "name": "r16",
+          "code": "R16",
+          "contactPerson": "r16",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-28T17:46:48.091Z",
+    "updatedAt": "2026-08-28T17:47:23.694Z"
+  },
+  {
+    "id": "9f114528-9d35-4c99-9700-113600c496f9",
+    "name": "r15",
+    "email": "r15@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "r15",
+    "storeId": "R15",
+    "currentStoreId": "R15",
+    "accessibleStoreIds": [
+      "R15"
+    ],
+    "profileId": "665f618b-52f6-4f06-9984-05a53a98fc5e",
+    "profile": {
+      "businessName": "r15",
+      "businessEmail": "r15@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-466",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "r15",
+      "ownerTitle": "",
+      "ownerEmail": "r15@gmail.com",
+      "profileStatus": "active",
+      "stores": [
+        {
+          "name": "r15",
+          "code": "R15",
+          "contactPerson": "r15",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-28T07:02:08.965Z",
+    "updatedAt": "2026-08-28T07:02:42.490Z"
+  },
+  {
+    "id": "683c1f42-fef7-431e-a0cd-b2840c8c684e",
+    "name": "r13",
+    "email": "r13@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-28T06:55:34.068Z",
+    "updatedAt": "2026-08-28T06:55:34.068Z"
+  },
+  {
     "id": "e905308e-7cae-4129-8ac8-9f06d3b1338c",
     "name": "John",
     "email": "john@gmail.com",
@@ -1100,6 +1207,36 @@
     "role": "consumer",
     "status": "Active",
     "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "u-employee-1",
+    "name": "Alex Morgan",
+    "email": "employee@stockoverflow.com",
+    "password": "pass1234",
+    "role": "employee",
+    "status": "Active",
+    "store": "Global Hub",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "u-employee-2",
+    "name": "Sarah Chen",
+    "email": "sarah.employee@stockoverflow.com",
+    "password": "pass1234",
+    "role": "employee",
+    "status": "Active",
+    "store": "Global Hub",
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],

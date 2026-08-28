@@ -27,6 +27,8 @@ const suppliers_module_1 = require("./suppliers/suppliers.module");
 const transactions_module_1 = require("./transactions/transactions.module");
 const users_module_1 = require("./users/users.module");
 const warehouses_module_1 = require("./warehouses/warehouses.module");
+const employees_module_1 = require("./employees/employees.module");
+const platform_revenue_module_1 = require("./platform-revenue/platform-revenue.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -62,6 +64,8 @@ exports.AppModule = AppModule = __decorate([
             returns_module_1.ReturnsModule,
             stock_adjustments_module_1.StockAdjustmentsModule,
             users_module_1.UsersModule,
+            employees_module_1.EmployeesModule,
+            platform_revenue_module_1.PlatformRevenueModule,
         ],
     })
 ], AppModule);

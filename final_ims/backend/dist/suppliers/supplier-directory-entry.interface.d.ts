@@ -9,7 +9,7 @@ export interface SupplierDirectoryEntry {
     website?: string;
     primaryCategory?: string;
     paymentTerms?: string;
-    profileStatus?: 'active' | 'inactive';
+    profileStatus?: 'active' | 'inactive' | 'pending' | 'rejected' | string;
     productCount: number;
     createdAt: string;
     updatedAt: string;

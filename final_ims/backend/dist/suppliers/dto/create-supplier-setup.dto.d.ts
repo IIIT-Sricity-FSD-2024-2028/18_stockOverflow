@@ -64,7 +64,7 @@ export declare class BankDetailsDto {
 export declare class CreateSupplierSetupDto {
     business: SupplierBusinessInfoDto;
     primaryContact: PrimaryContactDto;
-    profileStatus?: 'active' | 'inactive';
+    profileStatus?: 'active' | 'inactive' | 'pending' | 'rejected';
     retailers?: RetailerDto[];
     products?: ProductDto[];
     pricingPolicies?: PricingPoliciesDto;

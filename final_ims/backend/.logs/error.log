@@ -50,3 +50,44 @@
 [2026-08-28T04:56:56.047Z] [ERROR] GET /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 404 - Cannot GET /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents
 [2026-08-28T04:57:00.709Z] [ERROR] GET /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 404 - Cannot GET /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents
 [2026-08-28T04:57:14.786Z] [ERROR] GET /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 404 - Cannot GET /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents
+[2026-08-28T06:48:32.041Z] [ERROR] GET /api/admin/dashboard/stats 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:48:37.097Z] [ERROR] GET /api/stores 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:48:42.216Z] [ERROR] GET /api/admin/stores 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:48:42.538Z] [ERROR] GET /api/stores 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:48:42.543Z] [ERROR] GET /api/admin/reports/summary 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:48:44.410Z] [ERROR] GET /api/admin/dashboard/stats 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:49:58.966Z] [ERROR] POST /api/users/login 400 - email must be an email
+[2026-08-28T06:50:18.346Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:31.928Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:32.982Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:34.072Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:35.050Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:35.875Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:36.526Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:37.408Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:37.849Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:40.567Z] [ERROR] GET /api/employees/queries?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:42.448Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:43.680Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:45.325Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:50:49.110Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:51:33.702Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-28T06:51:38.655Z] [ERROR] GET /api/admin/dashboard/stats 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:51:41.414Z] [ERROR] GET /api/stores 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:52:00.035Z] [ERROR] GET /api/employees/assignments?employeeId=u-employee-1 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:55:28.664Z] [ERROR] POST /api/users 409 - Email already exists
+[2026-08-28T06:56:47.841Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:57:04.029Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:57:05.396Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:57:07.519Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:57:08.113Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:57:08.759Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:57:09.756Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:57:14.351Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T06:57:42.802Z] [ERROR] POST /api/retailers/setup 500 - Cannot read properties of undefined (reading 'localeCompare')
+[2026-08-28T07:02:04.077Z] [ERROR] POST /api/users 409 - Email already exists
+[2026-08-28T17:24:30.921Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-28T17:24:44.731Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-28T17:24:45.681Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-28T17:24:45.870Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-28T17:55:19.999Z] [ERROR] POST /api/users/login 401 - Invalid email or password

@@ -24,7 +24,7 @@ export declare class RetailerStoreDto {
     address?: string;
     type?: string;
     notes?: string;
-    status?: 'active' | 'inactive';
+    status?: 'active' | 'inactive' | 'pending' | 'rejected';
 }
 export declare class RetailerSupplierDto {
     supplierId?: string;
@@ -53,7 +53,7 @@ export declare class RetailerProductDto {
 export declare class CreateRetailerSetupDto {
     business: RetailerBusinessInfoDto;
     primaryContact: RetailerPrimaryContactDto;
-    profileStatus?: 'active' | 'inactive';
+    profileStatus?: 'active' | 'inactive' | 'pending' | 'rejected';
     stores?: RetailerStoreDto[];
     suppliers?: RetailerSupplierDto[];
     products?: Record<string, unknown>[];

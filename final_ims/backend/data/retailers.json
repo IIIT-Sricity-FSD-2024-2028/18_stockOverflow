@@ -1,33 +1,61 @@
 [
   {
-    "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
-    "profileStatus": "active",
     "business": {
-      "businessName": "John's Retail Store",
-      "businessType": "Retailer",
-      "businessEmail": "john@gmail.com",
-      "phoneNumber": "+91 98765 11111",
-      "retailerCode": "RET-101",
-      "currency": "INR",
-      "businessAddress": "Gujarat, India",
-      "primaryIndustry": "Retail"
+      "businessName": "r16",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "r16@gmail.com",
+      "retailerCode": "RET-666",
+      "currency": "USD",
+      "fiscalYear": "January"
     },
     "primaryContact": {
-      "fullName": "John",
-      "designation": "Owner",
-      "directEmail": "john@gmail.com"
+      "fullName": "r16"
     },
+    "profileStatus": "active",
     "stores": [
       {
-        "name": "John's Retail Store",
-        "code": "JOHN-S-STORE",
-        "contactPerson": "John",
-        "phone": "+91 98765 11111",
-        "address": "Gujarat, India",
+        "name": "r16",
+        "code": "R16",
+        "contactPerson": "r16",
         "type": "Retail Store",
         "status": "active"
       }
-    ]
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "220de2c1-08cb-4617-b0f1-d06bc7da0bb6",
+    "status": "completed",
+    "createdAt": "2026-08-28T17:47:23.682Z",
+    "updatedAt": "2026-08-28T17:55:40.933Z"
+  },
+  {
+    "business": {
+      "businessName": "r15",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "r15@gmail.com",
+      "retailerCode": "RET-466",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "r15"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r15",
+        "code": "R15",
+        "contactPerson": "r15",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "665f618b-52f6-4f06-9984-05a53a98fc5e",
+    "status": "completed",
+    "createdAt": "2026-08-28T07:02:42.479Z",
+    "updatedAt": "2026-08-28T17:25:17.534Z"
   },
   {
     "business": {
@@ -57,6 +85,40 @@
     "status": "completed",
     "createdAt": "2026-08-25T16:19:29.965Z",
     "updatedAt": "2026-08-25T16:19:29.965Z"
+  },
+  {
+    "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+    "profileStatus": "active",
+    "business": {
+      "businessName": "John's Retail Store",
+      "businessType": "Retailer",
+      "businessEmail": "john@gmail.com",
+      "phoneNumber": "+91 98765 11111",
+      "retailerCode": "RET-101",
+      "currency": "INR",
+      "businessAddress": "Gujarat, India",
+      "primaryIndustry": "Retail"
+    },
+    "primaryContact": {
+      "fullName": "John",
+      "designation": "Owner",
+      "directEmail": "john@gmail.com"
+    },
+    "stores": [
+      {
+        "name": "John's Retail Store",
+        "code": "JOHN-S-STORE",
+        "contactPerson": "John",
+        "phone": "+91 98765 11111",
+        "address": "Gujarat, India",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "createdAt": "2026-08-25T00:00:00.000Z",
+    "updatedAt": "2026-08-25T00:00:00.000Z",
+    "suppliers": [],
+    "products": []
   },
   {
     "business": {
