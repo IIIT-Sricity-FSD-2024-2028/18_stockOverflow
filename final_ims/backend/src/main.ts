@@ -10,16 +10,20 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: '25mb' }));
   app.enableCors({
     origin: true,
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
   });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: false,
     }),
   );
   setupSwagger(app);
   await app.listen(process.env.PORT ?? 3001);
+  console.log('NestJS Backend Server listening on http://localhost:3001/api');
 }
 void bootstrap();

@@ -198,6 +198,20 @@ export class TransactionsService {
     };
   }
 
+  attachReceipt(orderId: string, receiptUrl: string) {
+    const transactions = this.db.getCollection('transactions');
+    const index = transactions.findIndex((t) => t.orderId === orderId);
+    if (index === -1) {
+      throw new NotFoundException('Transaction not found');
+    }
+    transactions[index] = {
+      ...transactions[index],
+      receiptUrl,
+    };
+    this.db.saveCollection('transactions', transactions);
+    return transactions[index];
+  }
+
   getPurchasedProducts(
     retailerId?: string,
     storeId?: string,
@@ -481,14 +495,22 @@ export class TransactionsService {
     const normalizedRetailerId = this.normalizeText(retailerId);
     const normalizedStoreId = this.normalizeText(storeId);
 
+    const txRetailerId = this.normalizeText(transaction.retailerId);
     if (
       normalizedRetailerId &&
-      this.normalizeText(transaction.retailerId) !== normalizedRetailerId
+      txRetailerId &&
+      txRetailerId !== normalizedRetailerId
     ) {
       return false;
     }
 
-    if (normalizedStoreId && this.normalizeText(transaction.storeId) !== normalizedStoreId) {
+    const txStoreId = this.normalizeText(transaction.storeId);
+    if (
+      normalizedStoreId &&
+      txStoreId &&
+      txStoreId !== normalizedStoreId &&
+      !normalizedRetailerId
+    ) {
       return false;
     }
 

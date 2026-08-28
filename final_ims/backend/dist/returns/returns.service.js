@@ -132,7 +132,7 @@ let ReturnsService = class ReturnsService {
         const supplierName = this.normalizeText(payload.supplierName, existing?.supplierName, product?.supplier);
         return this.normalizeReturnRecord({
             id: options.id,
-            retailerId: this.normalizeText(payload.retailerId, existing?.retailerId, transactionContext.transaction?.retailerId),
+            retailerId: this.normalizeText(payload.retailerId, existing?.retailerId, transactionContext.transaction?.retailerId, product?.retailerId),
             retailerName,
             supplierId,
             supplierName,
@@ -414,8 +414,10 @@ let ReturnsService = class ReturnsService {
         const normalizedStoreId = this.normalizeText(storeId);
         const normalizedSupplierId = this.normalizeText(supplierId);
         const normalizedSource = this.normalizeText(source).toLowerCase();
+        const entryRetailerId = this.normalizeText(entry.retailerId);
         if (normalizedRetailerId &&
-            this.normalizeText(entry.retailerId) !== normalizedRetailerId) {
+            entryRetailerId &&
+            entryRetailerId !== normalizedRetailerId) {
             return false;
         }
         const entryStoreId = this.normalizeText(entry.storeId);

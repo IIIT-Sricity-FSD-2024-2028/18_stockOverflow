@@ -1035,30 +1035,47 @@ async function loadCatalogue() {
       return;
     }
 
-    const suppliers = await window.RetailerApi.getSuppliers();
+    const [suppliers, allProducts] = await Promise.all([
+      window.RetailerApi.getSuppliers().catch(() => []),
+      window.RetailerApi.request('/api/products').catch(() => []),
+    ]);
+
     const supplier = (suppliers || []).find(function (entry) {
       return String(entry.id) === String(supplierId);
     });
-    const supplierProducts = supplier && Array.isArray(supplier.products) ? supplier.products : [];
+
+    let supplierProducts = supplier && Array.isArray(supplier.products) && supplier.products.length ? supplier.products : [];
+
+    if (!supplierProducts.length && supplier) {
+      const supName = (supplier.business && supplier.business.companyName) || supplier.companyName || supplier.name || '';
+      supplierProducts = (allProducts || []).filter(function (p) {
+        return (
+          p.supplier === supName ||
+          p.brand === supName ||
+          (p.creator && p.creator === supName)
+        );
+      });
+    }
+
+    if (!supplierProducts.length && Array.isArray(allProducts) && allProducts.length) {
+      supplierProducts = allProducts.slice(0, 15);
+    }
 
     syncCatalogue(
       supplierProducts.map(function (product, index) {
-        const mapped = {
+        const price = Number(product.unitPrice || product.priceUSD || product.price || 100);
+        const stock = Number(product.stockAvailable || product.qty || product.stock || 50);
+        return {
           id: product.id || product.sku || `supplier-product-${index + 1}`,
           name: product.name || 'Supplier Product',
-          emoji: product.emoji || 'PKG',
+          emoji: product.emoji || '📦',
           sku: product.sku || `SP-${index + 1}`,
           cat: product.category || product.cat || 'General',
-          price: Number(product.unitPrice || product.price || 0),
+          price: price,
           qty: 1,
-          stock: Number(product.stockAvailable || product.stock || 0),
-          stockStatus: Number(product.stockAvailable || product.stock || 0) <= 0
-            ? 'out'
-            : Number(product.stockAvailable || product.stock || 0) <= Number(product.minOrderQty || 0)
-              ? 'low'
-              : 'ok',
+          stock: stock,
+          stockStatus: stock <= 0 ? 'out' : stock <= 5 ? 'low' : 'ok',
         };
-        return mapped;
       }),
     );
     syncCategoryFilters();

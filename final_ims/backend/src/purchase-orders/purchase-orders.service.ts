@@ -32,7 +32,15 @@ export class PurchaseOrdersService extends JsonCollectionService<
   }
 
   create(createPurchaseOrderDto: CreatePurchaseOrderDto) {
-    const supplier = this.suppliersService.findOne(createPurchaseOrderDto.supplierId);
+    let supplier = null;
+    if (createPurchaseOrderDto.supplierId) {
+      try {
+        supplier = this.suppliersService.findOne(createPurchaseOrderDto.supplierId);
+      } catch {
+        supplier = null;
+      }
+    }
+
     let retailer = null;
     if (createPurchaseOrderDto.retailerId) {
       try {
@@ -60,11 +68,12 @@ export class PurchaseOrdersService extends JsonCollectionService<
 
     const purchaseOrder: PurchaseOrder = {
       id: `PO-${year}-${String(nextNumber).padStart(4, '0')}`,
-      supplierId: supplier.id,
+      supplierId: createPurchaseOrderDto.supplierId,
       supplierName:
         createPurchaseOrderDto.supplierName ||
-        supplier.business.companyName ||
-        supplier.primaryContact.fullName,
+        supplier?.business?.companyName ||
+        supplier?.primaryContact?.fullName ||
+        createPurchaseOrderDto.supplierId,
       retailerId: retailer?.id || createPurchaseOrderDto.retailerId || '',
       retailerName:
         createPurchaseOrderDto.retailerName ||
@@ -190,11 +199,22 @@ export class PurchaseOrdersService extends JsonCollectionService<
       return false;
     }
 
-    if (
-      normalizedSupplierId &&
-      this.normalizeText(order.supplierId) !== normalizedSupplierId
-    ) {
-      return false;
+    if (normalizedSupplierId) {
+      const orderSupId = this.normalizeText(order.supplierId);
+      const orderSupName = this.normalizeText(order.supplierName).toLowerCase();
+      let targetName = '';
+      try {
+        const sup = this.suppliersService.findOne(normalizedSupplierId);
+        targetName = (sup?.business?.companyName || sup?.primaryContact?.fullName || '').toLowerCase();
+      } catch {
+        targetName = '';
+      }
+
+      const idMatched = orderSupId === normalizedSupplierId;
+      const nameMatched = orderSupName && targetName && (orderSupName.includes(targetName) || targetName.includes(orderSupName));
+      if (!idMatched && !nameMatched) {
+        return false;
+      }
     }
 
     if (

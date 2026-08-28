@@ -1,5 +1,123 @@
 [
   {
+    "id": "0ccceb67-958d-4957-9728-e023994a8e8d",
+    "status": "completed",
+    "profileStatus": "active",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "EMP-1001",
+    "assignedAt": "2026-08-27T19:26:09.950Z",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-08-27T19:26:09.950Z",
+    "business": {
+      "companyName": "Hans",
+      "businessType": "Distributor",
+      "businessEmail": "hans@gmail.com",
+      "phoneNumber": "+91 98765 43210",
+      "primaryCategory": "Electronics & Technology",
+      "state": "Gujarat",
+      "paymentTerms": "Net 30",
+      "businessAddress": "123 Tech Park, Ahmedabad",
+      "website": "https://hans.supplier.local",
+      "gstNumber": "24AAAAA0000A1Z5",
+      "description": "Primary Electronics Supplier Hans",
+      "currency": "INR",
+      "sellingType": "Wholesale",
+      "supplierCode": "SUP-HANS-001"
+    },
+    "primaryContact": {
+      "fullName": "Hans",
+      "designation": "Managing Director",
+      "directEmail": "hans@gmail.com",
+      "mobileNumber": "+91 98765 43210"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "sku": "OP3-BLK-2026",
+        "name": "op3",
+        "brand": "Hans",
+        "variant": "Standard",
+        "category": "Electronics",
+        "unitPrice": 525,
+        "minOrderQty": 1,
+        "stockAvailable": 150,
+        "unit": "Piece",
+        "description": "Product op3 supplied by Hans"
+      }
+    ],
+    "pricingPolicies": [],
+    "bankDetails": []
+  },
+  {
+    "id": "50c1c24d-9efa-4fd6-acdb-137f8cc8936f",
+    "status": "completed",
+    "profileStatus": "active",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "EMP-1002",
+    "assignedAt": "2026-08-27T19:26:09.951Z",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-08-27T19:26:09.951Z",
+    "business": {
+      "companyName": "Arun Singh",
+      "businessType": "Wholesaler",
+      "businessEmail": "supplier@gmail.com",
+      "phoneNumber": "+91 98765 12345",
+      "primaryCategory": "Electronics & Technology",
+      "state": "Maharashtra",
+      "paymentTerms": "Net 30",
+      "businessAddress": "456 Commercial Hub, Mumbai",
+      "website": "https://arunsingh.local",
+      "gstNumber": "27BBBBB1111B1Z2",
+      "description": "Wholesale Electronics & Peripherals",
+      "currency": "INR",
+      "sellingType": "Wholesale",
+      "supplierCode": "SUP-ARUN-002"
+    },
+    "primaryContact": {
+      "fullName": "Arun Singh",
+      "designation": "Owner",
+      "directEmail": "supplier@gmail.com",
+      "mobileNumber": "+91 98765 12345"
+    },
+    "retailers": [],
+    "products": [],
+    "pricingPolicies": [],
+    "bankDetails": []
+  },
+  {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "Ranjit Singh",
+      "businessType": "Manufacturer",
+      "businessEmail": "supplier@gmail.com"
+    },
+    "primaryContact": {
+      "fullName": "Ranjit Singh"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP001",
+        "name": "f",
+        "category": "Fashion",
+        "unitPrice": 10,
+        "minOrderQty": 1,
+        "stockAvailable": 9
+      }
+    ],
+    "id": "a56f7932-bebb-4a17-92c4-63e7c61bffc1",
+    "status": "completed",
+    "profileStatus": "active",
+    "validationStatus": "pending",
+    "assignedEmployeeId": "186f3595-a91e-47fc-81dc-398b392a20b5",
+    "assignedAt": "2026-08-27T16:57:44.772Z",
+    "createdAt": "2026-08-27T16:57:44.772Z",
+    "updatedAt": "2026-08-27T16:58:35.358Z"
+  },
+  {
     "business": {
       "currency": "INR",
       "paymentTerms": "Net 30",
@@ -31,7 +149,13 @@
     "status": "completed",
     "profileStatus": "active",
     "createdAt": "2026-07-31T06:54:11.253Z",
-    "updatedAt": "2026-07-31T07:00:31.969Z"
+    "updatedAt": "2026-07-31T07:00:31.969Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -61,7 +185,13 @@
     "status": "completed",
     "profileStatus": "active",
     "createdAt": "2026-07-31T06:54:01.730Z",
-    "updatedAt": "2026-07-31T06:54:01.730Z"
+    "updatedAt": "2026-07-31T06:54:01.730Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -92,7 +222,13 @@
     "status": "completed",
     "profileStatus": "active",
     "createdAt": "2026-05-04T00:49:59.359Z",
-    "updatedAt": "2026-05-04T00:53:14.859Z"
+    "updatedAt": "2026-05-04T00:53:14.859Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -123,7 +259,13 @@
     "status": "completed",
     "profileStatus": "active",
     "createdAt": "2026-05-04T00:13:09.778Z",
-    "updatedAt": "2026-05-04T00:17:57.863Z"
+    "updatedAt": "2026-05-04T00:17:57.863Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -153,7 +295,13 @@
     "status": "completed",
     "profileStatus": "active",
     "createdAt": "2026-05-03T23:07:35.520Z",
-    "updatedAt": "2026-05-03T23:07:35.520Z"
+    "updatedAt": "2026-05-03T23:07:35.520Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -186,7 +334,13 @@
     "status": "completed",
     "profileStatus": "active",
     "createdAt": "2026-05-03T21:44:30.114Z",
-    "updatedAt": "2026-05-03T21:46:27.128Z"
+    "updatedAt": "2026-05-03T21:46:27.128Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -215,6 +369,12 @@
     "status": "completed",
     "profileStatus": "active",
     "createdAt": "2026-05-03T21:43:46.065Z",
-    "updatedAt": "2026-05-03T21:43:46.065Z"
+    "updatedAt": "2026-05-03T21:43:46.065Z",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "",
+    "assignedAt": "",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   }
 ]

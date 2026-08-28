@@ -252,6 +252,7 @@ export class ReturnsService {
         payload.retailerId,
         existing?.retailerId,
         transactionContext.transaction?.retailerId,
+        product?.retailerId,
       ),
       retailerName,
       supplierId,
@@ -704,9 +705,11 @@ export class ReturnsService {
     const normalizedSupplierId = this.normalizeText(supplierId);
     const normalizedSource = this.normalizeText(source).toLowerCase();
 
+    const entryRetailerId = this.normalizeText(entry.retailerId);
     if (
       normalizedRetailerId &&
-      this.normalizeText(entry.retailerId) !== normalizedRetailerId
+      entryRetailerId &&
+      entryRetailerId !== normalizedRetailerId
     ) {
       return false;
     }

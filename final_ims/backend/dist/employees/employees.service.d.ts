@@ -11,19 +11,19 @@ export declare class EmployeesService {
     constructor(usersService: UsersService, retailersService: RetailersService, suppliersService: SuppliersService, billersService: BillersService);
     getWork(employeeId: string): {
         employee: {
-            store?: string;
-            storeId?: string;
-            status: string;
-            id: string;
             name: string;
-            createdAt?: string;
-            updatedAt?: string;
             email: string;
             role: string;
+            status: string;
+            store?: string;
+            storeId?: string;
+            id: string;
             currentStoreId?: string;
             accessibleStoreIds?: string[];
             profileId?: string;
             profile?: Record<string, unknown>;
+            createdAt?: string;
+            updatedAt?: string;
         };
         stats: {
             retailerRegistrations: number;

@@ -265,26 +265,21 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
     const normalizedRetailerId = this.normalizeText(retailerId);
     const normalizedStoreId = this.normalizeText(storeId);
 
+    const bRetailerId = this.normalizeText(biller.retailerId);
     if (
       normalizedRetailerId &&
-      this.normalizeText(biller.retailerId) &&
-      this.normalizeText(biller.retailerId) !== normalizedRetailerId
+      bRetailerId &&
+      bRetailerId !== normalizedRetailerId
     ) {
       return false;
     }
 
-    if (
-      normalizedRetailerId &&
-      !this.normalizeText(biller.retailerId) &&
-      !this.normalizeText(biller.storeId)
-    ) {
-      return false;
-    }
-
+    const bStoreId = this.normalizeText(biller.storeId);
     if (
       normalizedStoreId &&
-      this.normalizeText(biller.storeId) &&
-      this.normalizeText(biller.storeId) !== normalizedStoreId
+      bStoreId &&
+      bStoreId !== normalizedStoreId &&
+      !normalizedRetailerId
     ) {
       return false;
     }

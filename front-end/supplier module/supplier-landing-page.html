@@ -59,6 +59,7 @@ body{background:var(--bg)}
 .hero::before{
   content:'';position:absolute;inset:0;
   background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:repeat;
 }
 .hero-title{
   font-family:'Nunito Sans',sans-serif;font-size:20px;font-weight:700;
@@ -402,7 +403,7 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
         <div class="fg fg-2">
           <div class="field">
             <label class="field-label">Supplier / Company Name <span class="req">*</span></label>
-            <input type="text" id="s-name" placeholder="e.g. Apex Tech Supplies"/>
+            <input type="text" id="s-name" placeholder="Enter supplier name"/>
             <div class="field-error" id="e-sname">Company name is required</div>
           </div>
           <div class="field">
@@ -825,7 +826,7 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
     <div class="fg fg-2" style="margin-bottom:16px">
       <div class="field">
         <label class="field-label">Retailer Name <span class="req">*</span></label>
-        <input type="text" id="rm-name" placeholder="e.g. FreshMart"/>
+        <input type="text" id="rm-name" placeholder="Enter retailer name"/>
         <div class="field-error" id="rm-name-err">Retailer name is required</div>
       </div>
       <div class="field">
@@ -1283,10 +1284,169 @@ updateHero();
 updateBottomBar();
 updateProdCount();
 renderRetailers();
+</script>
+<script>
+const LANDING_API_BASE = window.IMS_API_BASE_URL || (
+  window.location && window.location.protocol !== 'file:' && window.location.hostname
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : 'http://localhost:3001/api'
+);
+const LANDING_STORAGE_KEY = 'supplier-module-current-supplier-id';
+let completedSupplierId = readLandingSupplierId();
 
-setTimeout(()=>{
-  addProductRow({sku:'SP001',name:'Sample Product',cat:'Electronics',price:'1200.00',moq:10,stock:500,unit:'Piece'});
-},200);
+function readLandingSupplierId() {
+  try {
+    return localStorage.getItem(LANDING_STORAGE_KEY) || '';
+  } catch {
+    return '';
+  }
+}
+
+function writeLandingSupplierId(id) {
+  try {
+    if (id) {
+      localStorage.setItem(LANDING_STORAGE_KEY, id);
+    } else {
+      localStorage.removeItem(LANDING_STORAGE_KEY);
+    }
+  } catch {}
+}
+
+async function landingApiRequest(path, options) {
+  const response = await fetch(`${LANDING_API_BASE}${path}`, {
+    headers: { 'Content-Type': 'application/json', ...(options?.headers || {}) },
+    ...options,
+  });
+  if (response.status === 204) {
+    return null;
+  }
+  const text = await response.text();
+  let payload = null;
+  if (text) {
+    try {
+      payload = JSON.parse(text);
+    } catch {
+      payload = text;
+    }
+  }
+  if (!response.ok) {
+    if (Array.isArray(payload?.message)) {
+      throw new Error(payload.message.join(', '));
+    }
+    throw new Error(payload?.message || 'Unable to save supplier setup.');
+  }
+  return payload;
+}
+
+function buildLandingPayload() {
+  const pricingPolicies = {
+    defaultPaymentTerms: document.getElementById('pp-terms').value || undefined,
+    minimumOrderValue: Number(document.getElementById('pp-mov').value || 0) || undefined,
+    averageLeadTimeDays: Number(document.getElementById('pp-lead').value || 0) || undefined,
+    deliveryRadius: document.getElementById('pp-radius').value || undefined,
+    shippingMode: document.getElementById('pp-ship').value || undefined,
+    returnPolicy: document.getElementById('pp-return').value || undefined,
+    specialTermsNotes: document.getElementById('pp-notes').value.trim() || undefined,
+  };
+
+  const bankDetails = {
+    bankName: document.getElementById('bk-name').value.trim() || undefined,
+    accountHolderName: document.getElementById('bk-holder').value.trim() || undefined,
+    accountNumber: document.getElementById('bk-acc').value.trim() || undefined,
+    ifscCode: document.getElementById('bk-ifsc').value.trim() || undefined,
+    upiId: document.getElementById('bk-upi').value.trim() || undefined,
+  };
+
+  return {
+    business: {
+      companyName: document.getElementById('s-name').value.trim(),
+      businessType: document.getElementById('s-type').value || 'Distributor',
+      businessEmail: document.getElementById('s-email').value.trim(),
+      phoneNumber: document.getElementById('s-phone').value.trim() || undefined,
+      gstNumber: document.getElementById('s-gst').value.trim() || undefined,
+      supplierCode: document.getElementById('s-code').value.trim() || undefined,
+      currency: document.getElementById('s-currency').value || 'INR',
+      businessAddress: document.getElementById('s-addr').value.trim() || undefined,
+      state: document.getElementById('s-state').value || undefined,
+      website: document.getElementById('s-web').value.trim() || undefined,
+      primaryCategory: document.getElementById('s-cat').value || undefined,
+      paymentTerms: document.getElementById('s-terms').value || undefined,
+      sellingType: document.getElementById('s-selling').value || undefined,
+      description: document.getElementById('s-desc').value.trim() || undefined,
+    },
+    primaryContact: {
+      fullName: document.getElementById('c-name').value.trim(),
+      designation: document.getElementById('c-title').value.trim() || undefined,
+      directEmail: document.getElementById('c-email').value.trim() || undefined,
+    },
+    retailers: retailers.map((retailer) => ({
+      name: retailer.name,
+      code: retailer.code,
+      contactPerson: retailer.contact,
+      phone: retailer.phone || undefined,
+      email: retailer.email || undefined,
+      state: retailer.state || undefined,
+      categorySupplied: retailer.cat || undefined,
+      creditTerms: retailer.terms || undefined,
+      address: retailer.addr || undefined,
+    })),
+    products: getProducts().map((product) => ({
+      sku: product.sku,
+      name: product.name,
+      category: product.cat || undefined,
+      unitPrice: Number(product.price || 0),
+      minOrderQty: Number(product.moq || 1),
+      stockAvailable: Number(product.stock || 0),
+      unit: product.unit || 'Piece',
+    })),
+    pricingPolicies,
+    bankDetails,
+  };
+}
+
+completeSetup = async function() {
+  const payload = buildLandingPayload();
+  try {
+    let supplierRecord = null;
+    if (completedSupplierId) {
+      try {
+        supplierRecord = await landingApiRequest(`/suppliers/${completedSupplierId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        completedSupplierId = '';
+      }
+    }
+    if (!supplierRecord) {
+      supplierRecord = await landingApiRequest('/suppliers/setup', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    }
+    completedSupplierId = supplierRecord.id;
+    writeLandingSupplierId(completedSupplierId);
+    document.getElementById('reviewContent').style.display='none';
+    document.getElementById('finishHero').style.display='block';
+    document.getElementById('btnNext').style.display='none';
+    document.getElementById('btnBack').style.visibility='hidden';
+    showToast('Setup saved to backend.');
+  } catch (error) {
+    showToast(error.message || 'Unable to save setup.', 'err');
+  }
+};
+
+goToDashboard = function() {
+  const supplierId = completedSupplierId || readLandingSupplierId();
+  if (!supplierId) {
+    showToast('Complete setup before opening the dashboard.', 'err');
+    return;
+  }
+  showToast('Redirecting to dashboard...');
+  setTimeout(() => {
+    window.location.href = `supplier-dashboard.html?supplierId=${encodeURIComponent(supplierId)}`;
+  }, 900);
+};
 </script>
 </body>
 </html>

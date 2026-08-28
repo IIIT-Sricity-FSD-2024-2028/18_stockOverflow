@@ -223,16 +223,19 @@
     function enrichReturnItem(item, orderId, transaction) {
       const sku = String(item && item.sku || '').trim();
       const product = getProductSnapshot(sku);
+      const tx = transaction || returnPageState.transactions.find(function(t) {
+        return t && (t.orderId === orderId || t.orderId === (item && item.lastOrderId));
+      }) || null;
       return {
         sku: sku,
         name: String(item && item.name || product.name || 'Product').trim(),
         totalSpent: Number(item && (item.total || item.totalSpent || item.price) || product.price || 0),
         productImg: String(item && item.productImg || product.productImg || '').trim(),
         emoji: String(item && item.emoji || product.emoji || 'PKG').trim(),
-        orderId: String(orderId || item && item.lastOrderId || '').trim(),
-        retailerId: String(transaction && transaction.retailerId || product.retailerId || '').trim(),
-        storeId: String(transaction && transaction.storeId || '').trim(),
-        store: String(transaction && transaction.store || '').trim()
+        orderId: String(orderId || item && item.lastOrderId || tx && tx.orderId || '').trim(),
+        retailerId: String(tx && tx.retailerId || product.retailerId || '').trim(),
+        storeId: String(tx && tx.storeId || '').trim(),
+        store: String(tx && tx.store || '').trim()
       };
     }
 
@@ -255,7 +258,7 @@
       }
 
       return purchased.map(function(item) {
-            return enrichReturnItem(item, item.lastOrderId, null);
+        return enrichReturnItem(item, item.lastOrderId, null);
       });
     }
 
@@ -307,21 +310,8 @@
       });
     }
 
-    async function loadReturnHistory() {
+    async function fetchAndRenderReturnHistory() {
       const host = document.getElementById('submittedReturnsList');
-      const skuSet = {};
-      const orderIdSet = {};
-
-      returnPageState.transactions.forEach(function(transaction) {
-        if (transaction && transaction.orderId) {
-          orderIdSet[transaction.orderId] = true;
-        }
-        (transaction && transaction.items || []).forEach(function(item) {
-          if (item && item.sku) {
-            skuSet[item.sku] = true;
-          }
-        });
-      });
 
       let items = [];
       try {
@@ -332,9 +322,7 @@
           : [];
       }
 
-      const filtered = (items || []).filter(function(entry) {
-        return orderIdSet[entry.orderId] || skuSet[entry.sku];
-      }).sort(function(left, right) {
+      const filtered = (items || []).sort(function(left, right) {
         return new Date(right.date || 0) - new Date(left.date || 0);
       });
 
@@ -371,12 +359,23 @@
     };
 
     window.loadReturnHistory = async function() {
-      await loadReturnHistory();
+      await fetchAndRenderReturnHistory();
     };
 
     document.addEventListener('DOMContentLoaded', async function() {
-      await hydrateReturnContext();
-      await loadReturnHistory();
+      try {
+        await fetchAndRenderReturnHistory();
+      } catch (err) {
+        console.error('Initial return history load failed:', err);
+        const host = document.getElementById('submittedReturnsList');
+        if (host) {
+          host.innerHTML = '<div class="return-history-empty">No return requests submitted yet.</div>';
+        }
+      }
+
+      try {
+        await hydrateReturnContext();
+      } catch (_e) {}
 
       let latest = null;
       try {
@@ -386,21 +385,31 @@
       }
 
       if (latest && latest.orderId) {
-        document.getElementById('orderInput').value = latest.orderId;
+        const orderInput = document.getElementById('orderInput');
+        if (orderInput && !orderInput.value) {
+          orderInput.value = latest.orderId;
+        }
       }
       const requestedOrderId = getQueryOrderId() || '';
       if (requestedOrderId) {
-        document.getElementById('orderInput').value = requestedOrderId;
+        const orderInput = document.getElementById('orderInput');
+        if (orderInput) {
+          orderInput.value = requestedOrderId;
+        }
       }
 
-      await renderReturnItems(requestedOrderId || (latest && latest.orderId ? latest.orderId : ''));
+      try {
+        await renderReturnItems(requestedOrderId || (latest && latest.orderId ? latest.orderId : ''));
+      } catch (_e) {}
 
       if (returnHistoryRefreshTimer) {
         clearInterval(returnHistoryRefreshTimer);
       }
       returnHistoryRefreshTimer = setInterval(async function() {
-        await loadReturnHistory();
-      }, 5000);
+        try {
+          await fetchAndRenderReturnHistory();
+        } catch (_e) {}
+      }, 4000);
 
       window.addEventListener('beforeunload', function() {
         if (returnHistoryRefreshTimer) {

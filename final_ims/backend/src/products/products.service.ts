@@ -1005,7 +1005,7 @@ export class ProductsService {
     const normalizedCandidate = this.normalizeText(candidateRetailerId);
     const normalizedRetailerId = this.normalizeText(retailerId);
 
-    if (!normalizedRetailerId) {
+    if (!normalizedRetailerId || !normalizedCandidate) {
       return true;
     }
 

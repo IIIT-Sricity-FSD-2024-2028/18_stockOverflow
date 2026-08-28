@@ -624,10 +624,6 @@ table.po-table tbody tr:hover td{background:#fafbfc}
                 <div class="po-select-wrap">
                   <select class="po-select" id="supplierSelect" onchange="onSupplierChange()">
                     <option value="">Select supplier...</option>
-                    <option value="abc">ABC Suppliers Inc</option>
-                    <option value="global">Global Trade Ltd</option>
-                    <option value="premium">Premium Goods Co</option>
-                    <option value="rapid">Rapid Imports Co</option>
                   </select>
                 </div>
               </div>
@@ -929,12 +925,8 @@ table.po-table tbody tr:hover td{background:#fafbfc}
 let products = [];   // Array of { id, name, emoji, sku, cat, price, qty, stock, stockStatus }
 let deleteTargetId = null;
 
-const SUPPLIER_NAMES = {
-  abc: 'ABC Suppliers Inc',
-  global: 'Global Trade Ltd',
-  premium: 'Premium Goods Co',
-  rapid: 'Rapid Imports Co',
-};
+window.SUPPLIER_NAMES = window.SUPPLIER_NAMES || {};
+var SUPPLIER_NAMES = window.SUPPLIER_NAMES;
 
 const PAYMENT_NAMES = {
   net30:'Net 30', net15:'Net 15', net45:'Net 45',
@@ -1137,12 +1129,10 @@ function updateSummaryPanel() {
   document.getElementById('summaryTax').textContent = '₹' + tax.toLocaleString('en-IN');
   document.getElementById('summaryTotal').textContent = '₹' + total.toLocaleString('en-IN');
 
-  // Right panel
   document.getElementById('osProdCount').textContent = products.length ? `${products.length} added` : '0 added';
   document.getElementById('osTotalUnits').textContent = totalUnits;
   document.getElementById('osValue').textContent = total > 0 ? '₹' + total.toLocaleString('en-IN') : '₹0';
 
-  // Products mini-list
   const wrap = document.getElementById('selProdListWrap');
   const list = document.getElementById('selProdList');
   if (products.length) {
@@ -1158,7 +1148,6 @@ function updateSummaryPanel() {
     wrap.style.display = 'none';
   }
 
-  // Prod count badge in card header
   const badge = document.getElementById('prodCountBadge');
   if (products.length) {
     badge.style.display = 'inline';
@@ -1168,15 +1157,22 @@ function updateSummaryPanel() {
   }
 }
 
-/* ── SUPPLIER/DATE CHANGE ─────────────────────────── */
 function onSupplierChange() {
   const select = document.getElementById('supplierSelect');
+  if (!select) return;
   const val = select.value;
-  const selectedText = select.options[select.selectedIndex]?.text || val;
-  document.getElementById('osSup').textContent = val ? (SUPPLIER_NAMES[val] || selectedText) : '—';
-  updateChecklist();
-  loadPoHistory();
+  const selectedText = (select.options && select.options[select.selectedIndex]) ? select.options[select.selectedIndex].text : val;
+  const osSup = document.getElementById('osSup');
+  if (osSup) {
+    osSup.textContent = val ? ((window.SUPPLIER_NAMES && window.SUPPLIER_NAMES[val]) || selectedText) : '—';
+  }
+  if (typeof updateChecklist === 'function') updateChecklist();
+  if (typeof loadPoHistory === 'function') loadPoHistory();
 }
+window.onSupplierChange = onSupplierChange;
+
+let poHistoryItems = [];
+let currentPoDetail = null;
 
 async function loadPoHistory() {
   const container = document.getElementById('poHistoryList');
@@ -1187,40 +1183,47 @@ async function loadPoHistory() {
   const supplierId = select ? select.value : '';
   const selectedName = select && select.selectedIndex > 0 ? select.options[select.selectedIndex].text : '';
 
-  const session = JSON.parse(localStorage.getItem('so_session') || '{}');
-  const retailerId = session.profileId || session.id || '';
-
   if (title) {
     title.textContent = supplierId
-      ? `PO History (${selectedName || SUPPLIER_NAMES[supplierId] || supplierId})`
+      ? `PO History (${selectedName || (window.SUPPLIER_NAMES && window.SUPPLIER_NAMES[supplierId]) || supplierId})`
       : 'PO History (Whole History)';
   }
 
   try {
-    container.innerHTML = '<div style="padding:15px;color:var(--text-secondary);text-align:center;">Loading purchase history...</div>';
-    let url = `/api/purchase-orders?retailerId=${encodeURIComponent(retailerId)}`;
-    if (supplierId) {
-      url += `&supplierId=${encodeURIComponent(supplierId)}`;
+    let pos = [];
+    if (window.RetailerApi && typeof window.RetailerApi.getPurchaseOrders === 'function') {
+      pos = await window.RetailerApi.getPurchaseOrders();
+    } else {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const retailerId = session.profileId || session.id || '';
+      const url = `http://localhost:3001/api/purchase-orders?retailerId=${encodeURIComponent(retailerId)}`;
+      pos = await fetch(url).then(r => r.json());
     }
-    const pos = window.RetailerApi && typeof window.RetailerApi.request === 'function'
-      ? await window.RetailerApi.request(url)
-      : await fetch('http://localhost:3001' + url).then(r => r.json());
 
-    if (!Array.isArray(pos) || pos.length === 0) {
+    if (!Array.isArray(pos)) pos = [];
+
+    if (supplierId) {
+      pos = pos.filter(p => String(p.supplierId || '') === String(supplierId));
+    }
+
+    poHistoryItems = pos;
+
+    if (!pos.length) {
       container.innerHTML = `<div style="padding:20px;color:var(--text-secondary);text-align:center;">No purchase history found${supplierId ? ' for this supplier' : ''}.</div>`;
       return;
     }
 
     let html = `
-      <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
+      <table style="width:100%; border-collapse:collapse; font-size:12.5px; text-align:left; font-family:'Nunito Sans',sans-serif;">
         <thead>
-          <tr style="border-bottom:1px solid var(--border); color:var(--text-secondary); font-weight:600;">
-            <th style="padding:8px;">PO ID</th>
-            <th style="padding:8px;">Supplier</th>
-            <th style="padding:8px;">Date</th>
-            <th style="padding:8px;">Items Bought</th>
-            <th style="padding:8px;">Total</th>
-            <th style="padding:8px;">Status</th>
+          <tr style="border-bottom:1px solid var(--border); color:var(--text-secondary); font-weight:700; font-size:11px; text-transform:uppercase; background:#f9fafb;">
+            <th style="padding:10px 8px;">PO ID</th>
+            <th style="padding:10px 8px;">Supplier</th>
+            <th style="padding:10px 8px;">Date</th>
+            <th style="padding:10px 8px;">Items</th>
+            <th style="padding:10px 8px;">Total</th>
+            <th style="padding:10px 8px;">Status</th>
+            <th style="padding:10px 8px; text-align:right;">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -1228,21 +1231,41 @@ async function loadPoHistory() {
 
     pos.forEach(po => {
       const dateStr = po.createdAt ? new Date(po.createdAt).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}) : '-';
-      const itemsStr = Array.isArray(po.items) ? po.items.map(i => `${i.name} (x${i.qty})`).join(', ') : '-';
-      const totalStr = `$${Number(po.total || 0).toLocaleString()}`;
-      let statusColor = '#3b82f6';
-      if (po.status === 'Delivered') statusColor = '#10b981';
-      if (po.status === 'Cancelled') statusColor = '#ef4444';
-      if (po.status === 'Pending') statusColor = '#f59e0b';
+      const itemsList = Array.isArray(po.items) ? po.items : [];
+      const itemsStr = itemsList.map(i => `${i.name || i.productName || 'Item'} (x${i.qty || 1})`).join(', ') || '-';
+      const totalStr = `$${Number(po.total || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+      
+      let statusBg = '#eef3fc', statusColor = '#2e6bc5', statusSymbol = '⏳';
+      const s = String(po.status || 'Pending');
+      if (s === 'Delivered') { statusBg = '#dcfce7'; statusColor = '#15803d'; statusSymbol = '✅'; }
+      else if (s === 'Cancelled') { statusBg = '#fee2e2'; statusColor = '#b91c1c'; statusSymbol = '✕'; }
+      else if (s === 'Approved' || s === 'Confirmed') { statusBg = '#ede9fe'; statusColor = '#6366f1'; statusSymbol = '✓'; }
+      else if (s === 'Shipped' || s === 'In Delivery' || s === 'In Transit') { statusBg = '#e0f2fe'; statusColor = '#0369a1'; statusSymbol = '🚚'; }
 
       html += `
         <tr style="border-bottom:1px solid #f1f5f9;">
-          <td style="padding:8px; font-weight:600;">${po.id}</td>
-          <td style="padding:8px;">${po.supplierName || po.supplierId || '-'}</td>
-          <td style="padding:8px; color:var(--text-secondary);">${dateStr}</td>
-          <td style="padding:8px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${itemsStr}">${itemsStr}</td>
-          <td style="padding:8px; font-weight:600;">${totalStr}</td>
-          <td style="padding:8px;"><span style="background:${statusColor}15; color:${statusColor}; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">${po.status || 'Pending'}</span></td>
+          <td style="padding:10px 8px; font-weight:700; color:#2e6bc5;">${po.id}</td>
+          <td style="padding:10px 8px; font-weight:600; color:#212b36;">${po.supplierName || po.supplierId || '-'}</td>
+          <td style="padding:10px 8px; color:var(--text-secondary); font-size:12px;">${dateStr}</td>
+          <td style="padding:10px 8px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#212b36;" title="${itemsStr}">${itemsStr}</td>
+          <td style="padding:10px 8px; font-weight:700; color:#212b36;">${totalStr}</td>
+          <td style="padding:10px 8px;"><span style="background:${statusBg}; color:${statusColor}; padding:3px 9px; border-radius:12px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">${statusSymbol} ${s}</span></td>
+          <td style="padding:10px 8px; text-align:right;">
+            <div style="display:inline-flex; gap:4px; flex-wrap:nowrap;">
+              <button type="button" onclick="viewPoDetail('${po.id}')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:1px solid #e6eaed; border-radius:4px; background:#fff; color:#646b72; cursor:pointer;" title="View Order Details">View</button>
+              ${s === 'Pending' ? `
+                <button type="button" onclick="markPoStatus('${po.id}', 'Confirmed')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#ede9fe; color:#6366f1; cursor:pointer;" title="Approve/Confirm PO">Approve</button>
+                <button type="button" onclick="markPoStatus('${po.id}', 'Cancelled')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#fee2e2; color:#b91c1c; cursor:pointer;" title="Cancel Order">Cancel</button>
+              ` : ''}
+              ${(s === 'Approved' || s === 'Confirmed') ? `
+                <button type="button" onclick="markPoStatus('${po.id}', 'In Delivery')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#e0f2fe; color:#0369a1; cursor:pointer;" title="Mark In Delivery">In Delivery</button>
+                <button type="button" onclick="markPoStatus('${po.id}', 'Delivered')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#dcfce7; color:#15803d; cursor:pointer;" title="Receive Stock into Inventory">Receive</button>
+              ` : ''}
+              ${(s === 'Shipped' || s === 'In Delivery' || s === 'In Transit') ? `
+                <button type="button" onclick="markPoStatus('${po.id}', 'Delivered')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#dcfce7; color:#15803d; cursor:pointer;" title="Confirm Delivery & Receive Stock">Receive Stock</button>
+              ` : ''}
+            </div>
+          </td>
         </tr>
       `;
     });
@@ -1253,6 +1276,115 @@ async function loadPoHistory() {
     console.error('Error loading PO history:', error);
     container.innerHTML = '<div style="padding:20px;color:#ef4444;text-align:center;">Could not load purchase history.</div>';
   }
+}
+
+async function markPoStatus(poId, newStatus) {
+  try {
+    const url = `/api/purchase-orders/${encodeURIComponent(poId)}`;
+    if (window.RetailerApi && typeof window.RetailerApi.request === 'function') {
+      await window.RetailerApi.request(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    } else {
+      await fetch(`http://localhost:3001${url}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    }
+
+    if (window.RetailerUi && typeof window.RetailerUi.showToast === 'function') {
+      window.RetailerUi.showToast(
+        newStatus === 'Delivered'
+          ? `PO ${poId} marked as Delivered! Stock received into inventory.`
+          : `PO ${poId} marked as ${newStatus}.`,
+        newStatus === 'Delivered' ? 'success' : 'info'
+      );
+    } else {
+      showToast(`PO ${poId} updated to ${newStatus}`, 'ok');
+    }
+
+    await loadPoHistory();
+  } catch (err) {
+    console.error('Error updating PO status:', err);
+    if (window.RetailerUi && typeof window.RetailerUi.showToast === 'function') {
+      window.RetailerUi.showToast('Error updating PO status: ' + window.RetailerUi.getErrorMessage(err), 'error');
+    }
+  }
+}
+
+function viewPoDetail(poId) {
+  const po = poHistoryItems.find(p => p.id === poId);
+  if (!po) return;
+  currentPoDetail = po;
+
+  let modal = document.getElementById('poDetailModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'poDetailModal';
+    modal.className = 'modal-overlay';
+    modal.onclick = function(e) { if (e.target === modal) modal.classList.remove('open'); };
+    document.body.appendChild(modal);
+  }
+
+  const itemsList = Array.isArray(po.items) ? po.items : [];
+  const dateStr = po.createdAt ? new Date(po.createdAt).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}) : '-';
+
+  modal.innerHTML = `
+    <div class="modal" style="width:520px; max-width:calc(100vw - 40px); background:#fff; border-radius:8px; overflow:hidden; font-family:'Nunito Sans',sans-serif;">
+      <div style="padding:16px 20px; border-bottom:1px solid #e6eaed; display:flex; justify-content:space-between; align-items:center; background:#f9fafb;">
+        <div>
+          <div style="font-size:16px; font-weight:800; color:#2e6bc5;">${po.id}</div>
+          <div style="font-size:12px; color:#646b72; margin-top:2px;">Created on ${dateStr}</div>
+        </div>
+        <div style="font-size:20px; font-weight:700; cursor:pointer; color:#a6aaaf;" onclick="document.getElementById('poDetailModal').classList.remove('open')">✕</div>
+      </div>
+      <div style="padding:20px; max-height:420px; overflow-y:auto;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; font-size:12.5px; background:#f5f6fa; padding:12px; border-radius:6px;">
+          <div><span style="color:#646b72;">Supplier:</span> <strong style="color:#212b36;">${po.supplierName || po.supplierId}</strong></div>
+          <div><span style="color:#646b72;">Status:</span> <strong style="color:#2e6bc5;">${po.status}</strong></div>
+          <div><span style="color:#646b72;">Delivery Date:</span> <strong>${po.deliveryDate || '-'}</strong></div>
+          <div><span style="color:#646b72;">Payment Terms:</span> <strong>${po.paymentTerms || 'Net 30'}</strong></div>
+        </div>
+        <div style="font-size:13px; font-weight:700; color:#212b36; margin-bottom:8px;">Ordered Items</div>
+        <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:16px;">
+          <thead>
+            <tr style="border-bottom:1px solid #e6eaed; color:#646b72; font-weight:700; text-transform:uppercase; font-size:10px;">
+              <th style="padding:6px 0; text-align:left;">Product</th>
+              <th style="padding:6px; text-align:center;">Qty</th>
+              <th style="padding:6px; text-align:right;">Unit Price</th>
+              <th style="padding:6px 0; text-align:right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsList.map(item => `
+              <tr style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:8px 0; font-weight:600;">${item.name || item.productName || 'Item'}<br><span style="font-size:10.5px; color:#a6aaaf;">SKU: ${item.sku || '-'}</span></td>
+                <td style="padding:8px; text-align:center;">${item.qty || 1}</td>
+                <td style="padding:8px; text-align:right;">$${Number(item.price || 0).toFixed(2)}</td>
+                <td style="padding:8px 0; text-align:right; font-weight:700;">$${(Number(item.price || 0) * Number(item.qty || 1)).toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; border-top:1px solid #e6eaed; padding-top:10px;">
+          <span>Grand Total</span>
+          <span style="color:#2e6bc5; font-size:15px;">$${Number(po.total || 0).toFixed(2)}</span>
+        </div>
+        ${po.notes ? `<div style="margin-top:12px; font-size:12px; color:#646b72; background:#fffbeb; padding:10px; border-radius:5px;"><strong>Notes:</strong> ${po.notes}</div>` : ''}
+      </div>
+      <div style="padding:12px 20px; border-top:1px solid #e6eaed; background:#f9fafb; display:flex; justify-content:flex-end; gap:8px;">
+        ${(po.status === 'Pending' || po.status === 'Approved' || po.status === 'Shipped') ? `
+          <button type="button" onclick="document.getElementById('poDetailModal').classList.remove('open'); markPoStatus('${po.id}', 'Delivered');" style="padding:8px 16px; border-radius:5px; border:none; background:#22c55e; color:#fff; font-size:12.5px; font-weight:700; cursor:pointer;">Receive Stock (Mark Delivered)</button>
+        ` : ''}
+        <button type="button" onclick="document.getElementById('poDetailModal').classList.remove('open')" style="padding:8px 16px; border-radius:5px; border:1px solid #e6eaed; background:#fff; color:#646b72; font-size:12.5px; font-weight:700; cursor:pointer;">Close</button>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('open');
 }
 function onDeliveryChange() {
   const val = document.getElementById('deliveryDate').value;
@@ -1377,8 +1509,8 @@ function showToast(msg, type) {
   clearTimeout(t._tm);
   t._tm = setTimeout(() => t.classList.remove('show'), 2800);
 }
-</script>
-<script>
+
+var SUPPLIER_NAMES = window.SUPPLIER_NAMES = window.SUPPLIER_NAMES || {};
 let suppliers = [];
 let createdPurchaseOrder = null;
 
@@ -1415,7 +1547,7 @@ async function loadSuppliers() {
     const select = document.getElementById('supplierSelect');
     const [supplierProfiles, supplierUsers] = await Promise.all([
       window.RetailerApi.getSuppliers().catch(function () { return []; }),
-      window.RetailerApi.request('/api/users', undefined, { role: 'supplier' }).catch(function () { return []; }),
+      window.RetailerApi.request('/api/users?role=supplier').catch(function () { return []; }),
     ]);
 
     const mappedProfiles = (supplierProfiles || []).map(function (supplier) {
@@ -1450,7 +1582,21 @@ async function loadSuppliers() {
         };
       });
 
-    suppliers = mappedProfiles.concat(mappedUsers);
+    const rawCombined = mappedProfiles.concat(mappedUsers);
+    const seenKeys = new Set();
+    const uniqueSuppliers = [];
+
+    rawCombined.forEach(function (sup) {
+      const cName = String(sup.companyName || sup.name || '').trim().toLowerCase();
+      const cEmail = String(sup.businessEmail || '').trim().toLowerCase();
+      const key = cName || cEmail || String(sup.id);
+      if (key && !seenKeys.has(key)) {
+        seenKeys.add(key);
+        uniqueSuppliers.push(sup);
+      }
+    });
+
+    suppliers = uniqueSuppliers;
     populateSupplierSelect();
     const preferredSupplierId = localStorage.getItem('po_supplier_id');
     if (preferredSupplierId && SUPPLIER_NAMES[preferredSupplierId]) {
@@ -1572,7 +1718,11 @@ createPO = function () {
   document.getElementById('createModal').classList.add('open');
 };
 
-document.addEventListener('DOMContentLoaded', loadSuppliers);
+document.addEventListener('DOMContentLoaded', async function() {
+  await loadSuppliers();
+  await loadPoHistory();
+  setInterval(loadPoHistory, 4000);
+});
 </script>
 
 <script>
