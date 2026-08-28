@@ -6,12 +6,12 @@ export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
     login(loginData: LoginUserDto): {
-        email: string;
-        id: string;
         name: string;
+        store?: string;
+        id: string;
+        email: string;
         role: string;
         status: string;
-        store?: string;
         storeId?: string;
         currentStoreId?: string;
         accessibleStoreIds?: string[];
@@ -21,12 +21,12 @@ export declare class UsersController {
         updatedAt?: string;
     };
     create(createUserDto: CreateUserDto): {
-        email: string;
-        id: string;
         name: string;
+        store?: string;
+        id: string;
+        email: string;
         role: string;
         status: string;
-        store?: string;
         storeId?: string;
         currentStoreId?: string;
         accessibleStoreIds?: string[];
@@ -36,12 +36,12 @@ export declare class UsersController {
         updatedAt?: string;
     };
     findAll(role?: string, email?: string): {
-        email: string;
-        id: string;
         name: string;
+        store?: string;
+        id: string;
+        email: string;
         role: string;
         status: string;
-        store?: string;
         storeId?: string;
         currentStoreId?: string;
         accessibleStoreIds?: string[];
@@ -51,12 +51,12 @@ export declare class UsersController {
         updatedAt?: string;
     }[];
     findOne(id: string): {
-        email: string;
-        id: string;
         name: string;
+        store?: string;
+        id: string;
+        email: string;
         role: string;
         status: string;
-        store?: string;
         storeId?: string;
         currentStoreId?: string;
         accessibleStoreIds?: string[];
@@ -66,12 +66,12 @@ export declare class UsersController {
         updatedAt?: string;
     };
     update(id: string, updateUserDto: UpdateUserDto): {
-        email: string;
-        id: string;
         name: string;
+        store?: string;
+        id: string;
+        email: string;
         role: string;
         status: string;
-        store?: string;
         storeId?: string;
         currentStoreId?: string;
         accessibleStoreIds?: string[];
@@ -81,12 +81,12 @@ export declare class UsersController {
         updatedAt?: string;
     };
     updateProfile(id: string, profile: Record<string, unknown>): {
-        email: string;
-        id: string;
         name: string;
+        store?: string;
+        id: string;
+        email: string;
         role: string;
         status: string;
-        store?: string;
         storeId?: string;
         currentStoreId?: string;
         accessibleStoreIds?: string[];

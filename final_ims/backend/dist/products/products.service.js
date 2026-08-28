@@ -38,11 +38,9 @@ let ProductsService = class ProductsService {
     }
     create(createProductDto) {
         const products = this.getProducts();
-        let sku = this.normalizeSku(createProductDto.sku || '');
-        const isDuplicate = products.some((p) => p.sku.toLowerCase() === sku.toLowerCase());
-        if (!sku || isDuplicate) {
-            sku = this.generateNextSku(products, createProductDto.retailerId);
-        }
+        const sku = this.normalizeSku(createProductDto.sku ||
+            this.generateNextSku(products, createProductDto.retailerId));
+        this.ensureUniqueSku(products, sku, undefined, createProductDto.retailerId);
         const created = this.buildProductRecord(createProductDto, {
             id: (0, node_crypto_1.randomUUID)(),
             sku,
@@ -440,19 +438,7 @@ let ProductsService = class ProductsService {
             visibility: this.normalizeText(payload.visibility, existing?.visibility || 'published'),
             createdAt: existing?.createdAt || now,
             updatedAt: now,
-            restockedAt: payload.restockedAt || restockedAt,
-            stockHistory: Array.isArray(payload.stockHistory) && payload.stockHistory.length
-                ? payload.stockHistory
-                : existing?.stockHistory && existing.stockHistory.length
-                    ? existing.stockHistory
-                    : Array.from({ length: 7 }, (_, i) => {
-                        const d = new Date();
-                        d.setDate(d.getDate() - (6 - i));
-                        const dateIso = d.toISOString().split('T')[0];
-                        const step = 6 - i;
-                        const variance = step === 0 ? 0 : Math.min(qty, (step * 3) + Math.floor((step % 3) * 2));
-                        return { date: dateIso, qty: Math.max(0, qty - variance) };
-                    }),
+            restockedAt,
             lastStockChangeAt: explicitQty && qty !== previousQty ? now : existing?.lastStockChangeAt,
         };
         this.applyRatings(product);
@@ -670,7 +656,7 @@ let ProductsService = class ProductsService {
                 entry.id !== ignoreId);
         });
         if (exists) {
-            throw new common_1.BadRequestException(`A product with SKU "${sku}" already exists`);
+            throw new Error('A product with this SKU already exists');
         }
     }
     generateNextSku(products, retailerId) {
@@ -701,7 +687,7 @@ let ProductsService = class ProductsService {
     matchesRetailerScope(candidateRetailerId, retailerId) {
         const normalizedCandidate = this.normalizeText(candidateRetailerId);
         const normalizedRetailerId = this.normalizeText(retailerId);
-        if (!normalizedRetailerId) {
+        if (!normalizedRetailerId || !normalizedCandidate) {
             return true;
         }
         return normalizedCandidate === normalizedRetailerId;

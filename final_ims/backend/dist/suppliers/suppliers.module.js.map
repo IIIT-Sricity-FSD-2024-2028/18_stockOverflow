@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 {"version":3,"file":"suppliers.module.js","sourceRoot":"","sources":["../../src/suppliers/suppliers.module.ts"],"names":[],"mappings":";;;;;;;;;AAAA,2CAAwE;AACxE,iEAA6D;AAC7D,2DAAuD;AACvD,iEAA6D;AAC7D,mEAAsE;AAa/D,IAAM,eAAe,GAArB,MAAM,eAAe;IAC1B,SAAS,CAAC,QAA4B;QACpC,QAAQ;aACL,KAAK,CAAC,2CAAuB,CAAC;aAC9B,SAAS,CAAC,0CAAmB,CAAC,CAAC;IACpC,CAAC;CACF,CAAA;AANY,0CAAe;0BAAf,eAAe;IAN3B,IAAA,eAAM,EAAC;QACN,OAAO,EAAE,CAAC,gCAAc,CAAC;QACzB,WAAW,EAAE,CAAC,0CAAmB,CAAC;QAClC,SAAS,EAAE,CAAC,oCAAgB,CAAC;QAC7B,OAAO,EAAE,CAAC,oCAAgB,CAAC;KAC5B,CAAC;GACW,eAAe,CAM3B"}
+=======
+{"version":3,"file":"suppliers.module.js","sourceRoot":"","sources":["../../src/suppliers/suppliers.module.ts"],"names":[],"mappings":";;;;;;;;;AAAA,2CAAwC;AACxC,iEAA6D;AAC7D,2DAAuD;AACvD,iEAA6D;AAC7D,wDAAoD;AAQ7C,IAAM,eAAe,GAArB,MAAM,eAAe;CAAG,CAAA;AAAlB,0CAAe;0BAAf,eAAe;IAN3B,IAAA,eAAM,EAAC;QACN,OAAO,EAAE,CAAC,gCAAc,EAAE,0BAAW,CAAC;QACtC,WAAW,EAAE,CAAC,0CAAmB,CAAC;QAClC,SAAS,EAAE,CAAC,oCAAgB,CAAC;QAC7B,OAAO,EAAE,CAAC,oCAAgB,CAAC;KAC5B,CAAC;GACW,eAAe,CAAG"}
+>>>>>>> Stashed changes

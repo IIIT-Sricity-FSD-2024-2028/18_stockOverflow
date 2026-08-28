@@ -171,11 +171,17 @@ let CustomersService = class CustomersService {
     matchesScope(customer, retailerId, storeId) {
         const normalizedRetailerId = this.normalizeText(retailerId);
         const normalizedStoreId = this.normalizeText(storeId);
+        const custRetailerId = this.normalizeText(customer.retailerId);
         if (normalizedRetailerId &&
-            this.normalizeText(customer.retailerId) !== normalizedRetailerId) {
+            custRetailerId &&
+            custRetailerId !== normalizedRetailerId) {
             return false;
         }
-        if (normalizedStoreId && this.normalizeText(customer.storeId) !== normalizedStoreId) {
+        const custStoreId = this.normalizeText(customer.storeId);
+        if (normalizedStoreId &&
+            custStoreId &&
+            custStoreId !== normalizedStoreId &&
+            !normalizedRetailerId) {
             return false;
         }
         return true;

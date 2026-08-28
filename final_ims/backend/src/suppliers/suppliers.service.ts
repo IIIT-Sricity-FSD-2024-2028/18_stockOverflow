@@ -12,7 +12,13 @@ import { UpdateSupplierSetupDto } from './dto/update-supplier-setup.dto';
 import { SupplierDirectoryEntry } from './supplier-directory-entry.interface';
 import { SupplierRecord, SupplierDocument } from './supplier-record.interface';
 import { ProductsService } from '../products/products.service';
+<<<<<<< Updated upstream
 import * as fs from 'fs';
+=======
+import { UsersService } from '../users/users.service';
+
+type ValidationStatus = 'pending' | 'approved' | 'rejected';
+>>>>>>> Stashed changes
 
 @Injectable()
 export class SuppliersService {
@@ -20,75 +26,61 @@ export class SuppliersService {
   private readonly dataDirectory = join(__dirname, '..', '..', 'data');
   private readonly dataFile = join(this.dataDirectory, 'suppliers.json');
 
-  constructor(private readonly productsService: ProductsService) {
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly usersService: UsersService,
+  ) {
     this.loadFromDisk();
   }
 
-  create(createSupplierSetupDto: any): SupplierRecord {
+  create(createSupplierSetupDto: CreateSupplierSetupDto): SupplierRecord {
+    const email = (createSupplierSetupDto.business?.businessEmail || createSupplierSetupDto.primaryContact?.directEmail || '').toLowerCase().trim();
+    const company = (createSupplierSetupDto.business?.companyName || '').toLowerCase().trim();
+    
+    let existing: SupplierRecord | undefined = undefined;
+    if (email) {
+      existing = this.findByBusinessEmail(email) || undefined;
+    }
+    if (!existing && company) {
+      existing = this.findAll().find(s => {
+        const cName = (s.business?.companyName || (s as any).companyName || (s as any).name || '').toLowerCase().trim();
+        return cName === company;
+      });
+    }
+
+    if (existing) {
+      return this.update(existing.id, createSupplierSetupDto as any);
+    }
+
     const now = new Date().toISOString();
-    const companyName =
-      createSupplierSetupDto.business?.companyName ||
-      createSupplierSetupDto.companyName ||
-      createSupplierSetupDto.company ||
-      createSupplierSetupDto.name ||
-      'New Supplier';
-    const email =
-      createSupplierSetupDto.business?.businessEmail ||
-      createSupplierSetupDto.businessEmail ||
-      createSupplierSetupDto.email ||
-      'supplier@example.com';
-    const phone =
-      createSupplierSetupDto.business?.phoneNumber ||
-      createSupplierSetupDto.phoneNumber ||
-      createSupplierSetupDto.phone ||
-      '';
-    const code =
-      createSupplierSetupDto.business?.supplierCode ||
-      createSupplierSetupDto.supplierCode ||
-      createSupplierSetupDto.code ||
-      `SUP-${Math.floor(100 + Math.random() * 900)}`;
-
-    const business = createSupplierSetupDto.business ?? {
-      companyName,
-      supplierCode: code,
-      businessType: createSupplierSetupDto.businessType || 'Wholesaler',
-      registrationNumber: createSupplierSetupDto.registrationNumber || '',
-      taxId: createSupplierSetupDto.taxId || '',
-      businessEmail: email,
-      phoneNumber: phone,
-      streetAddress: createSupplierSetupDto.streetAddress || createSupplierSetupDto.address || '',
-      city: createSupplierSetupDto.city || '',
-      state: createSupplierSetupDto.state || '',
-      postalCode: createSupplierSetupDto.postalCode || '',
-      country: createSupplierSetupDto.country || 'India',
-      website: createSupplierSetupDto.website || '',
-      primaryCategory: createSupplierSetupDto.primaryCategory || 'General',
-      paymentTerms: createSupplierSetupDto.paymentTerms || 'Net 30',
-    };
-
-    const primaryContact = createSupplierSetupDto.primaryContact ?? {
-      fullName: createSupplierSetupDto.contactPerson || companyName,
-      jobTitle: 'Account Manager',
-      directEmail: email,
-      directPhone: phone,
-    };
-
+    const assignedEmployeeId = this.usersService.getNextEmployeeId(
+      this.findAll().map((supplier) => supplier.assignedEmployeeId),
+    );
     const supplier: SupplierRecord = {
       ...createSupplierSetupDto,
-      business,
-      primaryContact,
       retailers: createSupplierSetupDto.retailers ?? [],
       products: createSupplierSetupDto.products ?? [],
+<<<<<<< Updated upstream
       documents: createSupplierSetupDto.documents ?? [],
       id: createSupplierSetupDto.id || randomUUID(),
+=======
+      id: randomUUID(),
+>>>>>>> Stashed changes
       status: 'completed',
       profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
+      validationStatus: createSupplierSetupDto.validationStatus ?? 'pending',
+      assignedEmployeeId:
+        createSupplierSetupDto.assignedEmployeeId || assignedEmployeeId,
+      assignedAt:
+        createSupplierSetupDto.assignedAt || (assignedEmployeeId ? now : ''),
       createdAt: now,
       updatedAt: now,
     };
 
     this.suppliers.set(supplier.id, supplier);
-    this.syncProducts(supplier);
+    if ((supplier.validationStatus || 'approved') === 'approved') {
+      this.syncProducts(supplier);
+    }
     this.persistToDisk();
     return supplier;
   }
@@ -99,18 +91,123 @@ export class SuppliersService {
     );
   }
 
+  findAssignedValidations(employeeId: string): SupplierRecord[] {
+    this.ensurePendingAssignments();
+    const normalizedEmployeeId = this.normalizeText(employeeId);
+    return this.findAll().filter((supplier) => {
+      return this.normalizeText(supplier.assignedEmployeeId) === normalizedEmployeeId;
+    });
+  }
+
   findOne(id: string): SupplierRecord {
-    const supplier = this.suppliers.get(id);
+    let supplier = this.suppliers.get(id);
+    if (!supplier) {
+      const norm = String(id || '').trim().toLowerCase();
+      const normPrefix = norm.split('@')[0];
+      supplier = this.findAll().find((s) => {
+        const sId = (s.id || '').toLowerCase();
+        const bName = (s.business?.companyName || '').toLowerCase();
+        const bEmail = (s.business?.businessEmail || '').toLowerCase();
+        const cName = (s.primaryContact?.fullName || '').toLowerCase();
+        return (
+          sId === norm ||
+          bName === norm ||
+          bEmail === norm ||
+          cName === norm ||
+          (normPrefix && (bName.includes(normPrefix) || bEmail.includes(normPrefix)))
+        );
+      });
+    }
 
     if (!supplier) {
-      throw new NotFoundException(`Supplier setup "${id}" was not found`);
+      const norm = String(id || '').trim().toLowerCase();
+      const user = this.usersService
+        .findAll()
+        .find(
+          (u) =>
+            u.id === id ||
+            u.profileId === id ||
+            u.name.toLowerCase() === norm ||
+            u.email.toLowerCase() === norm,
+        );
+      if (user) {
+        const matched = this.findAll().find(
+          (s) =>
+            s.id === user.profileId ||
+            s.id === user.id ||
+            (s.business?.businessEmail && s.business.businessEmail.toLowerCase() === user.email.toLowerCase()),
+        );
+        if (matched) {
+          return matched;
+        }
+
+        return {
+          id: user.profileId || user.id,
+          status: 'completed',
+          profileStatus: 'active',
+          validationStatus: 'approved',
+          assignedEmployeeId: '',
+          assignedAt: '',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          business: {
+            companyName: user.profile?.businessName || user.name || 'Supplier',
+            businessEmail: user.email || '',
+            businessType: 'Distributor',
+            phoneNumber: '+91 98765 43210',
+            primaryCategory: 'Electronics & Technology',
+            state: 'Gujarat',
+            paymentTerms: 'Net 30',
+            currency: 'INR',
+            sellingType: 'Wholesale',
+          },
+          primaryContact: {
+            fullName: user.name || 'Supplier Contact',
+            directEmail: user.email || '',
+          },
+          retailers: [],
+          products: [],
+          pricingPolicies: [],
+          bankDetails: [],
+        } as SupplierRecord;
+      }
+
+      return {
+        id: id,
+        status: 'completed',
+        profileStatus: 'active',
+        validationStatus: 'approved',
+        assignedEmployeeId: '',
+        assignedAt: '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        business: {
+          companyName: id,
+          businessEmail: '',
+          businessType: 'Distributor',
+          primaryCategory: 'Electronics & Technology',
+          state: 'Gujarat',
+          paymentTerms: 'Net 30',
+          currency: 'INR',
+          sellingType: 'Wholesale',
+        },
+        primaryContact: {
+          fullName: 'Supplier Contact',
+        },
+        retailers: [],
+        products: [],
+        pricingPolicies: [],
+        bankDetails: [],
+      } as SupplierRecord;
     }
 
     return supplier;
   }
 
   findLatest(): SupplierRecord | null {
-    return this.findAll()[0] ?? null;
+    const list = this.findAll();
+    const hans = list.find((s) => (s.business?.companyName || '').toLowerCase() === 'hans');
+    return hans || list[0] || null;
   }
 
   findByBusinessEmail(email: string): SupplierRecord | null {
@@ -119,59 +216,90 @@ export class SuppliersService {
       return null;
     }
 
-    return (
-      this.findAll().find(
-        (supplier) =>
-          supplier.business?.businessEmail?.toLowerCase() === lookup ||
-          supplier.primaryContact?.directEmail?.toLowerCase() === lookup,
-      ) ?? null
-    );
+    const lookupPrefix = lookup.split('@')[0];
+
+    const match = this.findAll().find((supplier) => {
+      const bEmail = (supplier.business?.businessEmail || '').toLowerCase();
+      const cEmail = (supplier.primaryContact?.directEmail || '').toLowerCase();
+      const cName = (supplier.business?.companyName || supplier.primaryContact?.fullName || '').toLowerCase();
+
+      if (bEmail === lookup || cEmail === lookup) return true;
+      if (bEmail.includes(lookup) || cEmail.includes(lookup)) return true;
+      if (lookupPrefix && (bEmail.startsWith(lookupPrefix) || cName.includes(lookupPrefix))) return true;
+      if (cName === lookup) return true;
+
+      return false;
+    });
+
+    if (match) {
+      return match;
+    }
+
+    const user = this.usersService
+      .findAll()
+      .find(
+        (u) =>
+          u.email.toLowerCase() === lookup ||
+          u.email.toLowerCase().includes(lookup) ||
+          u.name.toLowerCase() === lookup,
+      );
+
+    if (user) {
+      return this.findOne(user.profileId || user.id);
+    }
+
+    return null;
   }
 
-  update(id: string, updateSupplierSetupDto: any): SupplierRecord {
+  update(id: string, updateSupplierSetupDto: UpdateSupplierSetupDto): SupplierRecord {
     const supplier = this.findOne(id);
-
-    const business = {
-      ...supplier.business,
-      ...(updateSupplierSetupDto.business || {}),
-    };
-    if (updateSupplierSetupDto.companyName || updateSupplierSetupDto.name) {
-      business.companyName = updateSupplierSetupDto.companyName || updateSupplierSetupDto.name;
-    }
-    if (updateSupplierSetupDto.email || updateSupplierSetupDto.businessEmail) {
-      business.businessEmail = updateSupplierSetupDto.email || updateSupplierSetupDto.businessEmail;
-    }
-    if (updateSupplierSetupDto.phone || updateSupplierSetupDto.phoneNumber) {
-      business.phoneNumber = updateSupplierSetupDto.phone || updateSupplierSetupDto.phoneNumber;
-    }
-
-    const primaryContact = {
-      ...supplier.primaryContact,
-      ...(updateSupplierSetupDto.primaryContact || {}),
-    };
-    if (updateSupplierSetupDto.contactPerson) {
-      primaryContact.fullName = updateSupplierSetupDto.contactPerson;
-    }
-
     const updatedSupplier: SupplierRecord = {
       ...supplier,
       ...updateSupplierSetupDto,
-      business,
-      primaryContact,
+      business: updateSupplierSetupDto.business ?? supplier.business,
+      primaryContact:
+        updateSupplierSetupDto.primaryContact ?? supplier.primaryContact,
       retailers: updateSupplierSetupDto.retailers ?? supplier.retailers,
       products: updateSupplierSetupDto.products ?? supplier.products,
       pricingPolicies:
         updateSupplierSetupDto.pricingPolicies ?? supplier.pricingPolicies,
       bankDetails: updateSupplierSetupDto.bankDetails ?? supplier.bankDetails,
       profileStatus:
-        updateSupplierSetupDto.profileStatus ?? supplier.profileStatus ?? 'active',
+        (updateSupplierSetupDto as UpdateSupplierSetupDto & {
+          profileStatus?: 'active' | 'inactive';
+        }).profileStatus ?? supplier.profileStatus ?? 'active',
+      validationStatus:
+        updateSupplierSetupDto.validationStatus ??
+        supplier.validationStatus ??
+        'approved',
+      assignedEmployeeId:
+        updateSupplierSetupDto.assignedEmployeeId ?? supplier.assignedEmployeeId,
+      assignedAt: updateSupplierSetupDto.assignedAt ?? supplier.assignedAt,
+      validatedBy: updateSupplierSetupDto.validatedBy ?? supplier.validatedBy,
+      validatedAt: updateSupplierSetupDto.validatedAt ?? supplier.validatedAt,
+      rejectionReason:
+        updateSupplierSetupDto.rejectionReason ?? supplier.rejectionReason,
       updatedAt: new Date().toISOString(),
     };
 
     this.suppliers.set(id, updatedSupplier);
-    this.syncProducts(updatedSupplier);
+    if ((updatedSupplier.validationStatus || 'approved') === 'approved') {
+      this.syncProducts(updatedSupplier);
+    }
     this.persistToDisk();
     return updatedSupplier;
+  }
+
+  approveValidation(id: string, employeeId: string): SupplierRecord {
+    return this.updateValidation(id, employeeId, 'approved');
+  }
+
+  rejectValidation(
+    id: string,
+    employeeId: string,
+    rejectionReason?: string,
+  ): SupplierRecord {
+    return this.updateValidation(id, employeeId, 'rejected', rejectionReason);
   }
 
   adjustProductStock(
@@ -336,6 +464,12 @@ export class SuppliersService {
           products: supplier.products ?? [],
           documents: supplier.documents ?? [],
           profileStatus: supplier.profileStatus ?? 'active',
+          validationStatus: supplier.validationStatus ?? 'approved',
+          assignedEmployeeId: supplier.assignedEmployeeId ?? '',
+          assignedAt: supplier.assignedAt ?? '',
+          validatedBy: supplier.validatedBy ?? '',
+          validatedAt: supplier.validatedAt ?? '',
+          rejectionReason: supplier.rejectionReason ?? '',
         });
       });
     } catch {
@@ -346,6 +480,78 @@ export class SuppliersService {
   private persistToDisk(): void {
     const suppliers = this.findAll();
     writeFileSync(this.dataFile, JSON.stringify(suppliers, null, 2), 'utf-8');
+  }
+
+  private updateValidation(
+    id: string,
+    employeeId: string,
+    validationStatus: ValidationStatus,
+    rejectionReason = '',
+  ) {
+    const supplier = this.findOne(id);
+    this.ensureAssignedToEmployee(supplier.assignedEmployeeId, employeeId);
+    const now = new Date().toISOString();
+    const updatedSupplier: SupplierRecord = {
+      ...supplier,
+      validationStatus,
+      profileStatus: validationStatus === 'rejected' ? 'inactive' : 'active',
+      validatedBy: employeeId,
+      validatedAt: now,
+      rejectionReason: validationStatus === 'rejected' ? rejectionReason : '',
+      updatedAt: now,
+    };
+
+    this.suppliers.set(id, updatedSupplier);
+    if (validationStatus === 'approved') {
+      this.syncProducts(updatedSupplier);
+    }
+    this.persistToDisk();
+    return updatedSupplier;
+  }
+
+  private ensurePendingAssignments() {
+    const suppliers = this.findAll();
+    const assignments = suppliers
+      .map((supplier) => supplier.assignedEmployeeId)
+      .filter(Boolean);
+    let changed = false;
+    const now = new Date().toISOString();
+
+    suppliers.forEach((supplier) => {
+      if (
+        (supplier.validationStatus || 'approved') !== 'pending' ||
+        this.normalizeText(supplier.assignedEmployeeId)
+      ) {
+        return;
+      }
+
+      const assignedEmployeeId = this.usersService.getNextEmployeeId(assignments);
+      if (!assignedEmployeeId) {
+        return;
+      }
+
+      supplier.assignedEmployeeId = assignedEmployeeId;
+      supplier.assignedAt = now;
+      assignments.push(assignedEmployeeId);
+      this.suppliers.set(supplier.id, supplier);
+      changed = true;
+    });
+
+    if (changed) {
+      this.persistToDisk();
+    }
+  }
+
+  private ensureAssignedToEmployee(
+    assignedEmployeeId: string | undefined,
+    employeeId: string,
+  ) {
+    if (
+      !this.normalizeText(assignedEmployeeId) ||
+      this.normalizeText(assignedEmployeeId) !== this.normalizeText(employeeId)
+    ) {
+      throw new NotFoundException('Assigned validation not found');
+    }
   }
 
   private syncProducts(supplier: SupplierRecord) {
@@ -371,5 +577,14 @@ export class SuppliersService {
         });
       }
     });
+  }
+
+  private normalizeText(...values: unknown[]) {
+    for (const value of values) {
+      if (typeof value === 'string' && value.trim()) {
+        return value.trim();
+      }
+    }
+    return '';
   }
 }

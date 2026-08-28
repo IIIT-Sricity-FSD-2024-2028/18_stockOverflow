@@ -29,10 +29,24 @@ let PurchaseOrdersService = class PurchaseOrdersService extends collection_servi
         return this.findAllTyped().filter((order) => this.matchesScope(order, retailerId, storeId, supplierId));
     }
     create(createPurchaseOrderDto) {
-        const supplier = this.suppliersService.findOne(createPurchaseOrderDto.supplierId);
-        const retailer = createPurchaseOrderDto.retailerId
-            ? this.retailersService.findOne(createPurchaseOrderDto.retailerId)
-            : null;
+        let supplier = null;
+        if (createPurchaseOrderDto.supplierId) {
+            try {
+                supplier = this.suppliersService.findOne(createPurchaseOrderDto.supplierId);
+            }
+            catch {
+                supplier = null;
+            }
+        }
+        let retailer = null;
+        if (createPurchaseOrderDto.retailerId) {
+            try {
+                retailer = this.retailersService.findOne(createPurchaseOrderDto.retailerId);
+            }
+            catch {
+                retailer = null;
+            }
+        }
         const purchaseOrders = this.findAllTyped();
         const subtotal = createPurchaseOrderDto.items.reduce((total, item) => total + item.price * item.qty, 0);
         const tax = Math.round(subtotal * 0.05);
@@ -46,10 +60,11 @@ let PurchaseOrdersService = class PurchaseOrdersService extends collection_servi
             .reduce((max, value) => Math.max(max, value), 0) + 1;
         const purchaseOrder = {
             id: `PO-${year}-${String(nextNumber).padStart(4, '0')}`,
-            supplierId: supplier.id,
+            supplierId: createPurchaseOrderDto.supplierId,
             supplierName: createPurchaseOrderDto.supplierName ||
-                supplier.business.companyName ||
-                supplier.primaryContact.fullName,
+                supplier?.business?.companyName ||
+                supplier?.primaryContact?.fullName ||
+                createPurchaseOrderDto.supplierId,
             retailerId: retailer?.id || createPurchaseOrderDto.retailerId || '',
             retailerName: createPurchaseOrderDto.retailerName ||
                 retailer?.business.businessName ||
@@ -93,11 +108,9 @@ let PurchaseOrdersService = class PurchaseOrdersService extends collection_servi
         };
         purchaseOrders[index] = updated;
         this.write(purchaseOrders);
-        const nextStatusNorm = String(updated.status || '').toLowerCase();
-        const prevStatusNorm = String(existing.status || '').toLowerCase();
-        const isNowDelivered = nextStatusNorm.includes('deliver') || nextStatusNorm.includes('receiv');
-        const wasDelivered = prevStatusNorm.includes('deliver') || prevStatusNorm.includes('receiv');
-        if (isNowDelivered && !wasDelivered) {
+        if (updated.status === 'Delivered' &&
+            existing.status !== 'Delivered' &&
+            updated.retailerId) {
             this.syncInventoryOnDelivery(updated);
         }
         return updated;
@@ -136,11 +149,27 @@ let PurchaseOrdersService = class PurchaseOrdersService extends collection_servi
             this.normalizeText(order.retailerId) !== normalizedRetailerId) {
             return false;
         }
-        if (normalizedStoreId && this.normalizeText(order.storeId) !== normalizedStoreId) {
-            return false;
+        if (normalizedSupplierId) {
+            const orderSupId = this.normalizeText(order.supplierId);
+            const orderSupName = this.normalizeText(order.supplierName).toLowerCase();
+            let targetName = '';
+            try {
+                const sup = this.suppliersService.findOne(normalizedSupplierId);
+                targetName = (sup?.business?.companyName || sup?.primaryContact?.fullName || '').toLowerCase();
+            }
+            catch {
+                targetName = '';
+            }
+            const idMatched = orderSupId === normalizedSupplierId;
+            const nameMatched = orderSupName && targetName && (orderSupName.includes(targetName) || targetName.includes(orderSupName));
+            if (!idMatched && !nameMatched) {
+                return false;
+            }
         }
-        if (normalizedSupplierId &&
-            this.normalizeText(order.supplierId) !== normalizedSupplierId) {
+        if (normalizedStoreId &&
+            order.storeId &&
+            this.normalizeText(order.storeId) !== normalizedStoreId &&
+            !normalizedRetailerId) {
             return false;
         }
         return true;

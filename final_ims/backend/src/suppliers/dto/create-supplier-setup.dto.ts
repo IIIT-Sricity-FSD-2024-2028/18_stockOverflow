@@ -307,6 +307,31 @@ export class CreateSupplierSetupDto {
   profileStatus?: 'active' | 'inactive';
 
   @IsOptional()
+  @IsIn(['pending', 'approved', 'rejected'])
+  validationStatus?: 'pending' | 'approved' | 'rejected';
+
+  @IsOptional()
+  @IsString()
+  assignedEmployeeId?: string;
+
+  @IsOptional()
+  @IsString()
+  assignedAt?: string;
+
+  @IsOptional()
+  @IsString()
+  validatedBy?: string;
+
+  @IsOptional()
+  @IsString()
+  validatedAt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(600)
+  rejectionReason?: string;
+
+  @IsOptional()
   @IsArray()
   @ArrayMaxSize(200)
   @ValidateNested({ each: true })

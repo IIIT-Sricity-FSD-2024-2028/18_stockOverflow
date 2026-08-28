@@ -24,7 +24,11 @@ export class TransactionsService {
     private readonly reservationsService: ReservationsService,
   ) {}
 
-  findAll(retailerId?: string, storeId?: string, customerLookup?: string) {
+  findAll(
+    retailerId?: string,
+    storeId?: string,
+    customerLookup?: string | string[],
+  ) {
     return this.db
       .getCollection('transactions')
       .filter((transaction) =>
@@ -35,7 +39,11 @@ export class TransactionsService {
       });
   }
 
-  findLatest(retailerId?: string, storeId?: string, customerLookup?: string) {
+  findLatest(
+    retailerId?: string,
+    storeId?: string,
+    customerLookup?: string | string[],
+  ) {
     return this.findAll(retailerId, storeId, customerLookup)[0] || null;
   }
 
@@ -43,7 +51,7 @@ export class TransactionsService {
     orderId: string,
     retailerId?: string,
     storeId?: string,
-    customerLookup?: string,
+    customerLookup?: string | string[],
   ) {
     const transaction = this.findAll(
       retailerId,
@@ -190,10 +198,24 @@ export class TransactionsService {
     };
   }
 
+  attachReceipt(orderId: string, receiptUrl: string) {
+    const transactions = this.db.getCollection('transactions');
+    const index = transactions.findIndex((t) => t.orderId === orderId);
+    if (index === -1) {
+      throw new NotFoundException('Transaction not found');
+    }
+    transactions[index] = {
+      ...transactions[index],
+      receiptUrl,
+    };
+    this.db.saveCollection('transactions', transactions);
+    return transactions[index];
+  }
+
   getPurchasedProducts(
     retailerId?: string,
     storeId?: string,
-    customerLookup?: string,
+    customerLookup?: string | string[],
   ) {
     const products = this.db.getCollection('products');
     const grouped = this.findAll(
@@ -298,20 +320,7 @@ export class TransactionsService {
       roundoff,
       finalTotal,
       status: this.normalizeText(payload.status, 'Delivered'),
-      receiptUrl: this.normalizeText(payload.receiptUrl),
     };
-  }
-
-  attachReceipt(orderId: string, receiptUrl: string): TransactionRecord {
-    const transactions = this.findAll();
-    const transaction = transactions.find((t) => t.orderId === orderId);
-    if (!transaction) {
-      throw new NotFoundException(`Transaction ${orderId} not found`);
-    }
-
-    transaction.receiptUrl = receiptUrl;
-    this.db.saveCollection('transactions', transactions);
-    return transaction;
   }
 
   private enrichCustomerFromReservation<T extends CreateTransactionDto | UpdateTransactionDto>(
@@ -481,33 +490,47 @@ export class TransactionsService {
     transaction: Partial<TransactionRecord>,
     retailerId?: string,
     storeId?: string,
-    customerLookup?: string,
+    customerLookup?: string | string[],
   ) {
     const normalizedRetailerId = this.normalizeText(retailerId);
     const normalizedStoreId = this.normalizeText(storeId);
-    const normalizedCustomerLookup = this.normalizeText(customerLookup).toLowerCase();
 
+    const txRetailerId = this.normalizeText(transaction.retailerId);
     if (
       normalizedRetailerId &&
-      this.normalizeText(transaction.retailerId) !== normalizedRetailerId
+      txRetailerId &&
+      txRetailerId !== normalizedRetailerId
     ) {
       return false;
     }
 
-    if (normalizedStoreId && this.normalizeText(transaction.storeId) !== normalizedStoreId) {
+    const txStoreId = this.normalizeText(transaction.storeId);
+    if (
+      normalizedStoreId &&
+      txStoreId &&
+      txStoreId !== normalizedStoreId &&
+      !normalizedRetailerId
+    ) {
       return false;
     }
 
-    if (normalizedCustomerLookup) {
+    const lookups = (Array.isArray(customerLookup) ? customerLookup : [customerLookup])
+      .map((item) => this.normalizeText(item).toLowerCase())
+      .filter(Boolean);
+
+    if (lookups.length > 0) {
       const customerName = this.normalizeText(transaction.customer).toLowerCase();
       const customerEmail =
         this.normalizeText(transaction.customerEmail).toLowerCase();
       const customerId = this.normalizeText(transaction.customerId).toLowerCase();
-      if (
-        normalizedCustomerLookup !== customerName &&
-        normalizedCustomerLookup !== customerEmail &&
-        normalizedCustomerLookup !== customerId
-      ) {
+      const matched = lookups.some(
+        (lookup) =>
+          customerName === lookup ||
+          customerEmail === lookup ||
+          customerId === lookup ||
+          (customerName && customerName.includes(lookup)),
+      );
+      if (!matched) {
         return false;
       }
     }

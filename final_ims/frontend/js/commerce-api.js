@@ -71,12 +71,21 @@
   }
 
   function withCustomerQuery(path) {
-    var customerLookup = getCustomerLookup();
-    if (!customerLookup) {
+    var session = readSession();
+    if (!session) {
       return path;
     }
-    var suffix = 'customer=' + encodeURIComponent(customerLookup);
-    return path + (path.indexOf('?') >= 0 ? '&' : '?') + suffix;
+    var role = String(session.role || '').toLowerCase();
+    if (role !== 'consumer' && role !== 'customer') {
+      return path;
+    }
+
+    var params = {};
+    if (session.name) params.customer = String(session.name).trim();
+    if (session.email) params.customerEmail = String(session.email).trim();
+    if (session.id) params.customerId = String(session.id).trim();
+
+    return withQuery(path, params);
   }
 
   function withStaffScopeQuery(path, extraParams) {
@@ -94,12 +103,13 @@
   }
 
   async function getProducts(force) {
-      if (!force && Array.isArray(cache.products)) {
-        return clone(cache.products);
-      }
-      cache.products = await window.IMS_HTTP.request(withStaffScopeQuery('/products'));
+    if (!force && Array.isArray(cache.products)) {
       return clone(cache.products);
     }
+
+    cache.products = await window.IMS_HTTP.request(withStaffScopeQuery('/products'));
+    return clone(cache.products);
+  }
 
   async function getProductBySku(sku, force) {
     if (!sku) {

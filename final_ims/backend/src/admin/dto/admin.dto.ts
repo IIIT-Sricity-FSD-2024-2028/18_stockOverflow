@@ -2,6 +2,7 @@ import { IsString, IsOptional, IsEnum, IsArray, IsBoolean } from 'class-validato
 
 export enum UserRole {
   ADMIN = 'admin',
+  EMPLOYEE = 'employee',
   RETAILER = 'retailer',
   SUPPLIER = 'supplier',
   CONSUMER = 'consumer',

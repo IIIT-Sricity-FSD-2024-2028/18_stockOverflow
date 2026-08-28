@@ -11,3 +11,25 @@
 [2026-08-25T17:17:41.657Z] [ERROR] POST /api/products 400 - Bad Request Exception
 [2026-08-25T17:18:13.067Z] [ERROR] POST /api/products 400 - Bad Request Exception
 [2026-08-25T17:18:57.243Z] [ERROR] POST /api/products 400 - Bad Request Exception
+[2026-08-27T16:46:28.066Z] [ERROR] POST /api/users 409 - Email already exists
+[2026-08-27T16:55:30.954Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-27T16:55:38.490Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-27T16:55:54.950Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-27T16:55:55.589Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-27T17:19:47.107Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-27T17:38:39.018Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-27T17:51:23.168Z] [ERROR] POST /api/returns 400 - property customerEmail should not exist
+[2026-08-27T17:51:35.516Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this item.
+[2026-08-27T17:51:44.070Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this item.
+[2026-08-27T17:52:15.892Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this item.
+[2026-08-27T17:59:18.668Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this item.
+[2026-08-27T18:12:04.386Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this item.
+[2026-08-27T18:14:38.110Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this item.
+[2026-08-27T18:21:17.175Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this item.
+[2026-08-27T18:26:38.846Z] [ERROR] POST /api/purchase-orders 404 - Supplier setup "a56f7932-bebb-4a17-92c4-63e7c61bffc1" was not found
+[2026-08-27T18:28:22.149Z] [ERROR] POST /api/purchase-orders 404 - Supplier setup "a56f7932-bebb-4a17-92c4-63e7c61bffc1" was not found
+[2026-08-27T18:45:46.682Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-27T18:46:00.641Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-27T18:59:05.838Z] [ERROR] PUT /api/purchase-orders/PO-2026-0098?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 400 - status must be one of the following values: Draft, Pending, Pending Approval, Confirmed, In Delivery, Delivered, Cancelled, Received
+[2026-08-27T18:59:10.643Z] [ERROR] PUT /api/purchase-orders/PO-2026-0098?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 400 - status must be one of the following values: Draft, Pending, Pending Approval, Confirmed, In Delivery, Delivered, Cancelled, Received
+[2026-08-27T19:26:38.342Z] [ERROR] POST /api/purchase-orders 400 - items.0.emoji must be longer than or equal to 1 characters, items.0.emoji must be a string

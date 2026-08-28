@@ -111,6 +111,12 @@ export interface StoreRecord {
     location: string;
     manager: string;
     status: string;
+    validationStatus?: 'pending' | 'approved' | 'rejected';
+    assignedEmployeeId?: string;
+    assignedAt?: string;
+    validatedBy?: string;
+    validatedAt?: string;
+    rejectionReason?: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -295,6 +301,9 @@ export interface TransactionRecord {
 export interface ReturnRecord {
     id: string;
     retailerId?: string;
+    retailerName?: string;
+    supplierId?: string;
+    supplierName?: string;
     orderId: string;
     customer: string;
     customerId?: string;
@@ -313,6 +322,7 @@ export interface ReturnRecord {
     date: string;
     dateN: number;
     amount: number;
+    quantity?: number;
     priority: ReturnPriority | string;
     storeId?: string;
     store?: string;
@@ -347,11 +357,15 @@ export interface BillerRequest {
     retailerId: string;
     storeId?: string;
     status: 'pending' | 'approved' | 'rejected';
+    assignedEmployeeId?: string;
+    assignedAt?: string;
     createdAt: string;
     approvedAt?: string;
     rejectedAt?: string;
+    resolvedBy?: string;
+    rejectionReason?: string;
 }
-export type UserRole = 'admin' | 'retailer' | 'supplier' | 'consumer' | 'biller';
+export type UserRole = 'admin' | 'employee' | 'retailer' | 'supplier' | 'consumer' | 'biller';
 export type UserStatus = 'Active' | 'Inactive' | 'Pending' | 'active' | 'inactive' | 'suspended';
 export interface UserRecord {
     id: string;

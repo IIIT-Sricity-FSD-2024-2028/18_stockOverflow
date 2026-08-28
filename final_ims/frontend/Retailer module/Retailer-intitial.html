@@ -1424,7 +1424,8 @@ function completeSetup(){
       document.getElementById('finishHero').style.display='block';
       document.getElementById('btnNext').style.display='none';
       document.getElementById('btnBack').style.visibility='hidden';
-      toast('Setup complete! Welcome to StockOverflow.');
+      toast('Setup complete! Redirecting to login page...');
+      setTimeout(goToLogin, 2000);
     })
     .catch(error => {
       submitButton.disabled = false;

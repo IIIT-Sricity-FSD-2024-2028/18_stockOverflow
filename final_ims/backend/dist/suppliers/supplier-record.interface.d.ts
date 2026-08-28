@@ -13,7 +13,16 @@ export interface SupplierRecord extends CreateSupplierSetupDto {
     id: string;
     status: 'draft' | 'completed';
     profileStatus?: 'active' | 'inactive';
+<<<<<<< Updated upstream
     documents?: SupplierDocument[];
+=======
+    validationStatus?: 'pending' | 'approved' | 'rejected';
+    assignedEmployeeId?: string;
+    assignedAt?: string;
+    validatedBy?: string;
+    validatedAt?: string;
+    rejectionReason?: string;
+>>>>>>> Stashed changes
     createdAt: string;
     updatedAt: string;
 }

@@ -1,826 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>StockOverflow — Returns Management (Retailer)</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    /* =========================================================
-       RESET & VARIABLES
-    ========================================================= */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StockOverflow – Returns Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f5f6fa;
+  --card: #ffffff;
+  --sidebar: #1a1d2e;
+  --primary: #5b67ca;
+  --primary-light: #eef0fd;
+  --success: #22c55e;
+  --success-light: #dcfce7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  --text-primary: #1a1d2e;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 16px rgba(0,0,0,.07);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar-w: 252px;
+  --topbar-h: 58px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);display:flex;min-height:100vh;font-size:14px}
 
-    :root {
-      --bg:           #f5f6fa;
-      --sidebar-bg:   #1e1e2d;
-      --card-bg:      #ffffff;
-      --border:       #e8e9f0;
-      --text-primary: #1a1a2e;
-      --text-muted:   #6b7280;
-      --text-light:   #9ca3af;
-      --accent:       #4f46e5;
-      --accent-h:     #4338ca;
-      --accent-light: #eef2ff;
-      --green:        #10b981;
-      --green-light:  #d1fae5;
-      --green-dark:   #065f46;
-      --red:          #ef4444;
-      --red-light:    #fee2e2;
-      --red-dark:     #7f1d1d;
-      --yellow:       #f59e0b;
-      --yellow-light: #fef3c7;
-      --yellow-dark:  #92400e;
-      --orange:       #f97316;
-      --orange-light: #ffedd5;
-      --sidebar-w:    240px;
-      --header-h:     60px;
-      --r:            8px;
-      --r-lg:         12px;
-      --shadow-sm:    0 1px 3px rgba(0,0,0,.06);
-      --shadow:       0 4px 14px rgba(0,0,0,.08);
-      --shadow-lg:    0 16px 40px rgba(0,0,0,.14);
-      --trans:        150ms ease;
-    }
+/* SIDEBAR — Figma Exact */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;border-right:1px solid var(--border);
+  font-family:'Nunito Sans',sans-serif;
+}
+.sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-logo img { height: 30px; width: auto; display: block; }
+.sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
+.sb-group{display:flex;flex-direction:column;gap:6px}
+.sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
+.sb-divider{height:1px;background:var(--border);margin:4px 0}
+.sb-menus{display:flex;flex-direction:column;gap:2px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
+.sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
+.sb-item.active{background:#fff6ee;color:#4e7fd9}
+.sb-item.active .sb-icon svg{stroke:#4e7fd9}
+.sb-item.active .sb-item-label{color:#4e7fd9}
+.sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
+.sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-end-icon svg{width:10px;height:10px}
+.sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-dot-badge svg{width:10px;height:10px}
 
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
-      display: flex;
-      min-height: 100vh;
-      font-size: 14px;
-      line-height: 1.5;
-    }
+/* MAIN */
+.main{margin-left:252px;flex:1;min-width:0;display:flex;flex-direction:column}
 
-    /* =========================================================
-       SIDEBAR
-    ========================================================= */
-    .sidebar{
-      width:var(--sidebar-w);min-width:var(--sidebar-w);background:#fff;
-      display:flex;flex-direction:column;
-      position:fixed;top:0;left:0;bottom:0;z-index:100;
-      overflow-y:auto;border-right:1px solid var(--border);
-      font-family:'Nunito Sans',sans-serif;
-    }
-    .sidebar-title{height:var(--topbar-h);display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
-    .sb-logo{display:flex;align-items:center;gap:10px}
-    .sidebar-logo img { height: 30px; width: auto; display: block; }
-    .sb-logo-icon{width:34px;height:34px;background:#4e7fd9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .sb-logo-icon svg{width:18px;height:18px}
-    .sb-logo-text{font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;color:#092c4c;letter-spacing:-.2px}
-    .sidebar-body{display:flex;flex-direction:column;gap:16px;padding:20px 16px;flex:1}
-    .sb-group{display:flex;flex-direction:column;gap:6px}
-    .sb-group-label{font-size:11px;font-weight:700;color:#092c4c;font-family:'Nunito Sans',sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 8px;margin-bottom:2px}
-    .sb-divider{height:1px;background:var(--border);margin:4px 0}
-    .sb-menus{display:flex;flex-direction:column;gap:2px}
-    .sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .13s,color .13s;color:#4a5568;font-size:13.5px;font-weight:600;line-height:1.4;font-family:'Nunito Sans',sans-serif}
-    .sb-item:hover{background:#f5f6fa;color:var(--text-primary)}
-    .sb-item.active{background:#fff6ee;color:#4e7fd9}
-    .sb-item.active .sb-icon svg{stroke:#4e7fd9}
-    .sb-item.active .sb-item-label{color:#4e7fd9}
-    .sb-icon{width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-    .sb-icon svg{width:17px;height:17px;display:block;transition:stroke .13s}
-    .sb-item-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .sb-end-icon{width:16px;height:16px;border-radius:50%;background:#f0f2f4;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .sb-end-icon svg{width:10px;height:10px}
-    .sb-dot-badge{width:16px;height:16px;border-radius:50%;background:#fff0e6;border:1px solid #ffd9b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .sb-dot-badge svg{width:10px;height:10px}
+/* TOPBAR */
+.topbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:58px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.breadcrumb{font-size:12.5px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif}
+.breadcrumb span{color:var(--text-primary);font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-icon-btn{width:35px;height:35px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background .15s}
+.topbar-icon-btn:hover{background:var(--bg)}
+.topbar-icon-btn svg{width:15px;height:15px;color:var(--text-secondary)}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--danger);border-radius:50%;border:2px solid var(--card)}
+.topbar-avatar{width:33px;height:33px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
 
-    /* =========================================================
-       MAIN
-    ========================================================= */
-    .main-wrap {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* =========================================================
-       HEADER
-    ========================================================= */
-    .header {
-      height: var(--header-h);
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-
-    .header-left .page-title { font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
-    .header-left .page-sub   { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-
-    .header-right { display: flex; align-items: center; gap: 10px; }
-
-    .search-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      padding: 7px 12px;
-      background: var(--bg);
-      min-width: 220px;
-      transition: border-color var(--trans), box-shadow var(--trans);
-    }
-    .search-bar:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(79,70,229,.1);
-      background: #fff;
-    }
-    .search-bar svg { color: var(--text-light); flex-shrink: 0; }
-    .search-input {
-      flex: 1; border: none; background: transparent;
-      font-size: 13px; font-family: inherit; color: var(--text-primary); outline: none;
-    }
-    .search-input::placeholder { color: var(--text-light); }
-    .kbd {
-      font-size: 10px; color: var(--text-light);
-      background: var(--border); padding: 2px 6px;
-      border-radius: 4px; font-family: monospace;
-    }
-
-    .icon-btn {
-      width: 36px; height: 36px;
-      border-radius: var(--r);
-      border: 1.5px solid var(--border);
-      background: var(--card-bg);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: var(--text-muted);
-      position: relative;
-      transition: background var(--trans);
-    }
-    .icon-btn:hover { background: var(--bg); }
-    .notif-dot {
-      width: 8px; height: 8px;
-      background: var(--red);
-      border: 2px solid #fff;
-      border-radius: 50%;
-      position: absolute; top: -2px; right: -2px;
-    }
-    .h-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff; font-size: 11px; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; letter-spacing: .5px;
-    }
-
-    /* =========================================================
-       PAGE CONTENT
-    ========================================================= */
-    .page-content { padding: 24px 28px; flex: 1; }
-
-    /* =========================================================
-       KPI STATS
-    ========================================================= */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .stat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: 18px 20px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      transition: box-shadow var(--trans), transform var(--trans);
-    }
-    .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
-
-    .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
-    .stat-value { font-size: 28px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
-    .stat-note  { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
-    .stat-up    { color: var(--green); font-weight: 700; }
-    .stat-down  { color: var(--red); font-weight: 700; }
-
-    .stat-icon {
-      width: 46px; height: 46px;
-      border-radius: var(--r);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .si-red    { background: var(--red-light); }
-    .si-yellow { background: var(--yellow-light); }
-    .si-green  { background: var(--green-light); }
-    .si-blue   { background: var(--accent-light); }
-
-    /* =========================================================
-       MAIN BODY — 2 COLUMNS
-    ========================================================= */
-    .body-cols {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 20px;
-      align-items: start;
-    }
-
-    /* =========================================================
-       CARD
-    ========================================================= */
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: 20px;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: -.2px;
-    }
-
-    /* =========================================================
-       FILTER / CONTROLS BAR
-    ========================================================= */
-    .controls-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .sel-wrap { position: relative; display: inline-block; }
-    .ctrl-sel {
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      padding: 8px 30px 8px 10px;
-      font-size: 12.5px;
-      font-family: inherit;
-      background: var(--bg);
-      color: var(--text-primary);
-      cursor: pointer;
-      appearance: none;
-      outline: none;
-      transition: border-color var(--trans);
-      font-weight: 500;
-    }
-    .ctrl-sel:focus { border-color: var(--accent); }
-    .sel-arr {
-      position: absolute; right: 8px; top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: var(--text-muted);
-      display: flex;
-    }
-
-    .btn-export {
-      display: flex; align-items: center; gap: 5px;
-      padding: 8px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      background: var(--card-bg);
-      font-size: 12.5px;
-      font-family: inherit;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background var(--trans), color var(--trans);
-    }
-    .btn-export:hover { background: var(--bg); color: var(--text-primary); }
-
-    /* =========================================================
-       TABLE
-    ========================================================= */
-    .table-wrap { overflow-x: auto; }
-
-    table { width: 100%; border-collapse: collapse; min-width: 660px; }
-
-    thead tr { background: #fafbfc; }
-    th {
-      padding: 10px 12px;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-      user-select: none;
-    }
-    .th-s { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
-    .th-s:hover { color: var(--text-primary); }
-    .sort-i { opacity: .35; font-size: 10px; }
-
-    td {
-      padding: 13px 12px;
-      font-size: 13px;
-      border-bottom: 1px solid var(--border);
-    }
-    tbody tr:last-child td { border-bottom: none; }
-    tbody tr { transition: background var(--trans); cursor: pointer; }
-    tbody tr:hover td { background: #f9fafc; }
-    tbody tr.selected-row td { background: var(--accent-light) !important; }
-
-    /* badges */
-    .badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px; font-weight: 700;
-      white-space: nowrap;
-    }
-    .badge::before {
-      content: '';
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-      opacity: .7;
-    }
-    .b-pending  { background: var(--yellow-light); color: var(--yellow-dark); }
-    .b-approved { background: var(--green-light);  color: var(--green-dark); }
-    .b-rejected { background: var(--red-light);    color: var(--red-dark); }
-    .b-exchange { background: var(--accent-light); color: var(--accent); }
-
-    /* row action btns */
-    .row-acts { display: flex; gap: 6px; }
-    .btn-view {
-      padding: 5px 11px;
-      font-size: 12px; font-weight: 600; font-family: inherit;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--card-bg);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background var(--trans);
-    }
-    .btn-view:hover { background: var(--bg); color: var(--text-primary); }
-
-    .btn-approve {
-      padding: 5px 11px;
-      font-size: 12px; font-weight: 700; font-family: inherit;
-      border: none; border-radius: 6px;
-      background: var(--green-light);
-      color: var(--green-dark);
-      cursor: pointer;
-      transition: background var(--trans), transform var(--trans);
-    }
-    .btn-approve:hover { background: #bbf7d0; }
-    .btn-approve:active { transform: scale(.96); }
-
-    .btn-reject {
-      padding: 5px 11px;
-      font-size: 12px; font-weight: 700; font-family: inherit;
-      border: none; border-radius: 6px;
-      background: var(--red-light);
-      color: var(--red-dark);
-      cursor: pointer;
-      transition: background var(--trans), transform var(--trans);
-    }
-    .btn-reject:hover { background: #fecaca; }
-    .btn-reject:active { transform: scale(.96); }
-
-    /* table footer */
-    .table-foot {
-      display: flex; align-items: center; justify-content: space-between;
-      padding-top: 14px; margin-top: 14px;
-      border-top: 1px solid var(--border);
-    }
-    .tbl-count { font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
-    .pagination { display: flex; gap: 4px; }
-    .pg-btn {
-      width: 30px; height: 30px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      font-size: 12px; font-weight: 700; font-family: inherit;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all var(--trans);
-    }
-    .pg-btn:hover { background: var(--bg); }
-    .pg-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-    /* =========================================================
-       RIGHT PANEL — RETURN DETAIL
-    ========================================================= */
-    .detail-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: sticky;
-      top: calc(var(--header-h) + 16px);
-    }
-
-    /* Empty state */
-    .empty-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 24px;
-      text-align: center;
-      min-height: 260px;
-    }
-    .empty-icon { font-size: 42px; margin-bottom: 12px; opacity: .5; }
-    .empty-title { font-size: 14px; font-weight: 700; color: var(--text-muted); }
-    .empty-sub   { font-size: 12px; color: var(--text-light); margin-top: 4px; }
-
-    /* Detail header */
-    .detail-top {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    .detail-id { font-size: 13px; font-weight: 800; color: var(--accent); }
-    .detail-date { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
-
-    /* Customer chip */
-    .cust-chip {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 10px 12px;
-      margin-bottom: 14px;
-    }
-    .cust-av {
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0;
-    }
-    .cust-name { font-size: 13px; font-weight: 700; }
-    .cust-email { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-
-    /* Info rows */
-    .info-section { margin-bottom: 14px; }
-    .info-section-label {
-      font-size: 10.5px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .7px;
-      color: var(--text-light);
-      margin-bottom: 8px;
-    }
-    .info-row {
-      display: flex; justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 12.5px;
-    }
-    .info-row:last-child { border-bottom: none; }
-    .info-label { color: var(--text-muted); }
-    .info-val   { font-weight: 700; text-align: right; max-width: 60%; word-break: break-word; }
-
-    /* Product preview */
-    .product-preview {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 10px 12px;
-      margin-bottom: 14px;
-    }
-    .prod-emoji { font-size: 28px; flex-shrink: 0; }
-    .prod-name  { font-size: 13px; font-weight: 700; }
-    .prod-sku   { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .prod-price { font-size: 15px; font-weight: 900; color: var(--accent); margin-left: auto; flex-shrink: 0; }
-
-    /* Notes box */
-    .notes-box {
-      background: var(--yellow-light);
-      border: 1px solid #fde68a;
-      border-radius: var(--r);
-      padding: 10px 12px;
-      font-size: 12.5px;
-      color: #78350f;
-      line-height: 1.55;
-      margin-bottom: 14px;
-    }
-    .notes-box-label {
-      font-size: 10px; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .7px;
-      color: var(--yellow-dark); margin-bottom: 5px;
-    }
-
-    /* Timeline */
-    .timeline { display: flex; flex-direction: column; gap: 0; }
-    .tl-item { display: flex; gap: 10px; padding-bottom: 14px; position: relative; }
-    .tl-item:last-child { padding-bottom: 0; }
-    .tl-left { display: flex; flex-direction: column; align-items: center; width: 16px; flex-shrink: 0; }
-    .tl-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-      flex-shrink: 0; margin-top: 3px;
-    }
-    .tl-dot.grey { background: #d1d5db; }
-    .tl-line {
-      flex: 1; width: 2px;
-      background: var(--border);
-      margin-top: 4px;
-    }
-    .tl-item:last-child .tl-line { display: none; }
-    .tl-text { font-size: 12.5px; font-weight: 600; }
-    .tl-time { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-
-    /* Action buttons */
-    .action-row { display: flex; gap: 8px; margin-top: 4px; }
-
-    .btn-full-approve {
-      flex: 1; padding: 12px;
-      font-size: 13px; font-weight: 800; font-family: inherit;
-      border: none; border-radius: var(--r);
-      background: var(--green);
-      color: #fff; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      transition: background var(--trans), transform var(--trans), box-shadow var(--trans);
-    }
-    .btn-full-approve:hover {
-      background: #059669;
-      box-shadow: 0 4px 14px rgba(16,185,129,.4);
-      transform: translateY(-1px);
-    }
-    .btn-full-approve:active { transform: scale(.97); }
-
-    .btn-full-reject {
-      flex: 1; padding: 12px;
-      font-size: 13px; font-weight: 800; font-family: inherit;
-      border: 1.5px solid var(--red-light);
-      border-radius: var(--r);
-      background: var(--red-light);
-      color: var(--red-dark); cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      transition: background var(--trans), transform var(--trans);
-    }
-    .btn-full-reject:hover { background: #fecaca; }
-    .btn-full-reject:active { transform: scale(.97); }
-
-    .btn-full-disabled {
-      flex: 1; padding: 12px;
-      font-size: 13px; font-weight: 700; font-family: inherit;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      background: var(--bg);
-      color: var(--text-light); cursor: not-allowed;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-
-    /* Refund summary bar */
-    .refund-bar {
-      background: linear-gradient(135deg, var(--accent-light), #f0f7ff);
-      border: 1px solid rgba(79,70,229,.2);
-      border-radius: var(--r);
-      padding: 12px 14px;
-    }
-    .rb-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-    .rb-divider { height: 1px; background: rgba(79,70,229,.15); margin: 8px 0; }
-    .rb-total { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; color: var(--text-primary); }
-    .rb-amount { color: var(--accent); font-size: 17px; font-weight: 900; }
-
-    /* =========================================================
-       RETURNED TO STOCK SECTION
-    ========================================================= */
-    .restock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .restock-card {
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 14px;
-      background: var(--bg);
-      transition: box-shadow var(--trans), transform var(--trans);
-    }
-    .restock-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
-    .rc-icon { font-size: 26px; margin-bottom: 8px; line-height: 1; }
-    .rc-name { font-size: 13px; font-weight: 700; }
-    .rc-units { font-size: 12px; color: var(--green); font-weight: 700; margin-top: 2px; }
-    .rc-time  { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-
-    /* =========================================================
-       BULK ACTION BAR
-    ========================================================= */
-    .bulk-bar {
-      display: none;
-      align-items: center;
-      gap: 10px;
-      background: var(--accent);
-      border-radius: var(--r);
-      padding: 10px 16px;
-      margin-bottom: 14px;
-      animation: slideDown .2s ease;
-    }
-    .bulk-bar.show { display: flex; }
-    .bulk-count { font-size: 13px; font-weight: 700; color: #fff; flex: 1; }
-    .btn-bulk {
-      padding: 7px 14px;
-      font-size: 12px; font-weight: 700; font-family: inherit;
-      border: none; border-radius: 6px;
-      cursor: pointer;
-      transition: opacity var(--trans);
-    }
-    .btn-bulk:hover { opacity: .85; }
-    .btn-bulk-approve { background: #fff; color: var(--green-dark); }
-    .btn-bulk-reject  { background: rgba(0,0,0,.25); color: #fff; }
-    .btn-bulk-clear   { background: transparent; color: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.3); }
-
-    @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-
-    /* =========================================================
-       MODAL OVERLAY
-    ========================================================= */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.4);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 300;
-      opacity: 0; pointer-events: none;
-      transition: opacity .2s ease;
-      backdrop-filter: blur(2px);
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-    .modal {
-      background: var(--card-bg);
-      border-radius: var(--r-lg);
-      width: 420px;
-      max-width: calc(100vw - 40px);
-      box-shadow: var(--shadow-lg);
-      transform: scale(.94) translateY(8px);
-      transition: transform .2s ease;
-      overflow: hidden;
-    }
-    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
-
-    .modal-head {
-      padding: 18px 20px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .modal-title-sm { font-size: 15px; font-weight: 800; letter-spacing: -.2px; }
-    .modal-sub-sm { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-    .modal-x {
-      width: 30px; height: 30px;
-      border-radius: 6px; border: 1px solid var(--border);
-      background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: var(--text-muted);
-      transition: background var(--trans);
-    }
-    .modal-x:hover { background: var(--red-light); color: var(--red); }
-
-    .modal-body { padding: 16px 20px; }
-    .modal-textarea {
-      width: 100%; border: 1.5px solid var(--border); border-radius: var(--r);
-      padding: 10px 12px; font-size: 13px; font-family: inherit;
-      resize: vertical; min-height: 90px; outline: none;
-      background: var(--bg); transition: border-color var(--trans);
-    }
-    .modal-textarea:focus { border-color: var(--accent); background: #fff; }
-    .modal-textarea::placeholder { color: var(--text-light); }
-
-    .modal-foot {
-      padding: 12px 20px;
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: flex-end; gap: 8px;
-    }
-    .mf-cancel {
-      padding: 9px 16px;
-      border: 1px solid var(--border); border-radius: 6px;
-      background: var(--card-bg); font-size: 13px; font-weight: 700;
-      font-family: inherit; cursor: pointer; color: var(--text-muted);
-      transition: background var(--trans);
-    }
-    .mf-cancel:hover { background: var(--bg); }
-    .mf-confirm {
-      padding: 9px 16px;
-      border: none; border-radius: 6px;
-      font-size: 13px; font-weight: 700;
-      font-family: inherit; cursor: pointer; color: #fff;
-      transition: opacity var(--trans), transform var(--trans);
-    }
-    .mf-confirm:hover { opacity: .88; }
-    .mf-confirm:active { transform: scale(.97); }
-    .mf-green { background: var(--green); }
-    .mf-red   { background: var(--red); }
-
-    /* =========================================================
-       TOAST
-    ========================================================= */
-    .toast {
-      position: fixed; bottom: 24px; right: 24px;
-      background: var(--text-primary); color: #fff;
-      padding: 12px 16px;
-      border-radius: var(--r);
-      font-size: 13.5px; font-weight: 600;
-      display: flex; align-items: center; gap: 10px;
-      box-shadow: var(--shadow-lg);
-      z-index: 400;
-      transform: translateY(80px); opacity: 0;
-      transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
-      pointer-events: none;
-      max-width: 340px;
-    }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast-icon {
-      width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; flex-shrink: 0;
-    }
-    .ti-ok  { background: var(--green); }
-    .ti-err { background: var(--red); }
-    .ti-inf { background: var(--accent); }
-
-    /* =========================================================
-       MISC / UTILS
-    ========================================================= */
-    .spinner {
-      width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,.4);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin .65s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .view-all {
-      font-size: 12px; color: var(--accent); font-weight: 600;
-      cursor: pointer; transition: opacity var(--trans);
-    }
-    .view-all:hover { opacity: .7; }
-
-    /* row entry animation */
-    @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-    tbody tr { animation: fadeUp .25s ease both; }
-
-    /* Checkbox in table header */
-    .th-cb { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .cb {
-      width: 16px; height: 16px;
-      border: 2px solid var(--border); border-radius: 4px;
-      background: #fff; display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: all var(--trans); cursor: pointer;
-    }
-    .cb.checked { background: var(--accent); border-color: var(--accent); }
-    .cb.indeterminate { background: var(--accent); border-color: var(--accent); }
-
-    /* Urgency tag */
-    .urgency { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; }
-    .urgency.high { color: var(--red); }
-    .urgency.med  { color: var(--yellow-dark); }
-    .urgency.low  { color: var(--green-dark); }
-
-    /* =========================================================
-       RESPONSIVE
-    ========================================================= */
-    @media (max-width: 1100px) {
-      .body-cols { grid-template-columns: 1fr; }
-      .detail-panel { position: static; }
-      .restock-grid { grid-template-columns: repeat(2, 1fr); }
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 680px) {
-      :root { --sidebar-w: 0px; }
-      .sidebar { display: none; }
-      .page-content { padding: 14px; }
-      .header { padding: 0 14px; }
-      .stats-row { grid-template-columns: 1fr 1fr; }
-      .search-bar { display: none; }
-    }
-  
+/* PROFILE POPOVER */
 .profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
 .profile-popover.open{display:block;}
 .profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
 .profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
 .profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
-.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
-.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
-.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
-.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
-.profile-popover-actions{display:flex;gap:8px}
-.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
-.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
 
+/* PAGE CONTENT */
+.sa-content{padding:24px 28px 40px;max-width:1200px}
+.sa-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.sa-page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;line-height:27px;color:#212b36}
+.sa-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#646b72;margin-top:2px}
+
+.sa-toolbar{display:flex;align-items:center;gap:8px}
+.sa-btn-primary{display:flex;align-items:center;gap:6px;padding:7px 14px;background:#2e6bc5;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;transition:background .14s}
+.sa-btn-primary:hover{background:#2460b0}
+.sa-btn-secondary{display:flex;align-items:center;gap:6px;padding:7px 14px;background:#092c4c;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;transition:background .14s}
+.sa-btn-secondary:hover{background:#0a3660}
+
+/* SUMMARY METRIC CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.metric-card{background:#fff;border:1px solid #e6eaed;border-radius:8px;padding:16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 1px rgba(198,198,198,.2)}
+.metric-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.metric-icon.blue{background:#eef3fc;color:#2e6bc5}
+.metric-icon.yellow{background:#fef3c7;color:#92400e}
+.metric-icon.green{background:#dcfce7;color:#15803d}
+.metric-icon.purple{background:#ede9fe;color:#8b5cf6}
+.metric-lbl{font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;color:#646b72;margin-bottom:2px;text-transform:uppercase;letter-spacing:.3px}
+.metric-val{font-family:'Nunito Sans',sans-serif;font-size:20px;font-weight:700;color:#212b36}
+
+/* TABLE CARD */
+.sa-table-card{background:#fff;border:1px solid #e6eaed;border-radius:8px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden}
+.sa-table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #e6eaed;gap:16px;flex-wrap:wrap}
+.sa-search{display:flex;align-items:center;gap:8px;border:1px solid #e6eaed;border-radius:5px;padding:6px 10px;width:220px;background:#fff}
+.sa-search svg{width:14px;height:14px;color:#a6aaaf;flex-shrink:0}
+.sa-search input{border:none;outline:none;font-family:'Nunito Sans',sans-serif;font-size:13px;color:#212b36;background:transparent;width:100%}
+.sa-search input::placeholder{color:#a6aaaf;font-weight:600}
+
+.sa-filter-group{display:flex;align-items:center;gap:8px}
+.sa-filter-select{padding:6px 10px;border:1px solid #e6eaed;border-radius:5px;background:#fff;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#212b36;outline:none}
+
+/* TABLE PROPER */
+.sa-table-wrap{overflow-x:auto}
+table.sa-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:13px}
+table.sa-table thead tr{background:#f2f2f2}
+table.sa-table th{padding:10px 15px;text-align:left;font-size:11px;font-weight:700;color:#212b36;white-space:nowrap;border-bottom:1px solid #e6eaed;height:35px;letter-spacing:.5px;text-transform:uppercase}
+table.sa-table td{padding:12px 15px;border-bottom:1px solid #e6eaed;vertical-align:middle;height:52px;background:#fff}
+table.sa-table tbody tr:hover td{background:#fafafa;cursor:pointer}
+
+/* STATUS BADGES */
+.sa-status-pending{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#fef3c7;color:#92400e;font-weight:700;font-size:11px}
+.sa-status-approved{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#dcfce7;color:#15803d;font-weight:700;font-size:11px}
+.sa-status-rejected{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#fee2e2;color:#b91c1c;font-weight:700;font-size:11px}
+.sa-status-exchanged{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#eef0fd;color:#2e6bc5;font-weight:700;font-size:11px}
+
+/* ACTION BUTTONS */
+.row-actions{display:flex;align-items:center;gap:6px}
+.btn-act-view{padding:4px 10px;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;border:1px solid #e6eaed;border-radius:5px;background:#fff;color:#646b72;cursor:pointer}
+.btn-act-view:hover{background:#f5f6fa;color:#212b36}
+.btn-act-approve{padding:4px 10px;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;border:none;border-radius:5px;background:#dcfce7;color:#15803d;cursor:pointer}
+.btn-act-approve:hover{background:#bbf7d0}
+.btn-act-reject{padding:4px 10px;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;border:none;border-radius:5px;background:#fee2e2;color:#b91c1c;cursor:pointer}
+.btn-act-reject:hover{background:#fecaca}
+
+/* TABLE FOOTER */
+.sa-table-footer{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:#fff;border-top:1px solid #e6eaed}
+.sa-rows-per-page{display:flex;align-items:center;gap:8px;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#646b72}
+
+/* MODAL OVERLAY */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:300;opacity:0;pointer-events:none;transition:opacity .2s ease;backdrop-filter:blur(2px)}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:8px;width:440px;max-width:calc(100vw - 40px);box-shadow:0 16px 40px rgba(0,0,0,.15);overflow:hidden;font-family:'Nunito Sans',sans-serif}
+.modal-head{padding:16px 20px;border-bottom:1px solid #e6eaed;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:700;color:#212b36}
+.modal-x{cursor:pointer;color:#a6aaaf;font-size:20px;font-weight:700}
+.modal-body{padding:18px 20px}
+.modal-detail-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f2f2f2;font-size:13px}
+.modal-detail-row:last-child{border-bottom:none}
+.modal-lbl{color:#646b72;font-weight:600}
+.modal-val{font-weight:700;color:#212b36;text-align:right}
+.modal-foot{padding:14px 20px;border-top:1px solid #e6eaed;display:flex;justify-content:flex-end;gap:8px;background:#f9fafb}
+.mf-btn{padding:8px 16px;border-radius:5px;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none}
+.mf-cancel{background:#fff;color:#646b72;border:1px solid #e6eaed}
+.mf-approve{background:#22c55e;color:#fff}
+.mf-reject{background:#ef4444;color:#fff}
 </style>
 </head>
 <body>
 
-<!-- =========================================================
-     SIDEBAR
-========================================================= -->
+<!-- SIDEBAR — Standard Retailer Navigation -->
 <aside class="sidebar">
   <div class="sidebar-title">
     <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
   </div>
   <div class="sidebar-body">
-
     <!-- MAIN -->
     <div class="sb-group">
       <div class="sb-group-label">Main</div>
@@ -828,7 +181,6 @@
         <a class="sb-item" href="Retialer_Dashboard.html">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span>
           <span class="sb-item-label">Retailer Dashboard</span>
-          <span class="sb-dot-badge"><svg viewBox="0 0 10 10" fill="none" stroke="#f97316" stroke-width="1.6"><polyline points="2,3.5 5,6.5 8,3.5"/></svg></span>
         </a>
       </div>
     </div>
@@ -875,7 +227,6 @@
         <a class="sb-item" href="stock_adjustment.html">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
           <span class="sb-item-label">Stock Adjustment</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
       </div>
     </div>
@@ -889,17 +240,14 @@
         <a class="sb-item" href="Customer_List.html">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
           <span class="sb-item-label">Customers</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
         <a class="sb-item" href="billers.html">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
           <span class="sb-item-label">Billers</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
         <a class="sb-item" href="supplier-list.html">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
           <span class="sb-item-label">Suppliers</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
       </div>
     </div>
@@ -911,13 +259,12 @@
       <div class="sb-group-label">Purchases</div>
       <div class="sb-menus">
         <a class="sb-item" href="Reorder_Recommendations.html">
-          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
-          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/></svg></span>
+          <span class="sb-item-label">Reorder Recommendation</span>
         </a>
         <a class="sb-item" href="Create_Purchase_Order.html">
-          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/></svg></span>
           <span class="sb-item-label">Purchase Order</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
         <a class="sb-item active" href="Returns_Management.html">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><polyline points="5.5,8 8,5.5 10.5,8"/><line x1="8" y1="5.5" x2="8" y2="11"/></svg></span>
@@ -938,1113 +285,360 @@
         </a>
       </div>
     </div>
-
   </div>
 </aside>
 
-<!-- =========================================================
-     MAIN WRAP
-========================================================= -->
-<div class="main-wrap">
-
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-left">
-      <div class="page-title">Returns Management</div>
-      <div class="page-sub">Review and action incoming return requests</div>
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb">Dashboard / <span>Returns Management</span></div>
     </div>
-    <div class="header-right">
-      <div class="icon-btn" title="Notifications">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <div class="topbar-right">
+      <div class="topbar-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      
-      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button" style="border:none;">RS</button>
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RM</button>
       <div class="profile-popover" id="profilePopover">
         <div class="profile-popover-head">
-          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RM</div>
           <div>
-            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-name" id="profilePopoverName">Retail Manager</div>
             <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
           </div>
         </div>
-        <div class="profile-popover-grid">
-          <div class="profile-popover-item">
-            <div class="profile-popover-label">Email</div>
-            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
-          </div>
-          <div class="profile-popover-item">
-            <div class="profile-popover-label">Phone</div>
-            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
-          </div>
-        </div>
         <div class="profile-popover-actions">
-          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
-          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+          <button type="button" onclick="logout()">Logout</button>
         </div>
       </div>
-
     </div>
   </header>
 
-  <!-- PAGE CONTENT -->
-  <div class="page-content">
+  <!-- CONTENT CONTAINER -->
+  <div class="sa-content">
+    <div class="sa-page-header">
+      <div>
+        <div class="sa-page-title">Returns Management</div>
+        <div class="sa-breadcrumb">Dashboard > Returns Management</div>
+      </div>
+      <div class="sa-toolbar">
+        <button class="sa-btn-primary" type="button" onclick="exportCSV()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
 
-    <!-- KPI CARDS -->
-    <div class="stats-row">
-      <div class="stat-card">
+    <!-- METRIC CARDS -->
+    <div class="cards-grid">
+      <div class="metric-card">
+        <div class="metric-icon blue">🔄</div>
         <div>
-          <div class="stat-label">Total Returns (30d)</div>
-          <div class="stat-value" id="kpi-total">0</div>
-          <div class="stat-note">real-time total</div>
-        </div>
-        <div class="stat-icon si-red">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.61"/></svg>
+          <div class="metric-lbl">Total Returns</div>
+          <div class="metric-val" id="kpi-total">0</div>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="metric-card">
+        <div class="metric-icon yellow">⏳</div>
         <div>
-          <div class="stat-label">Pending Review</div>
-          <div class="stat-value" id="kpi-pending">0</div>
-          <div class="stat-note">need immediate action</div>
-        </div>
-        <div class="stat-icon si-yellow">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="metric-lbl">Pending Review</div>
+          <div class="metric-val" style="color:#92400e;" id="kpi-pending">0</div>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="metric-card">
+        <div class="metric-icon green">✅</div>
         <div>
-          <div class="stat-label">Approved & Refunded</div>
-          <div class="stat-value" id="kpi-approved">0</div>
-          <div class="stat-note">processed successfully</div>
-        </div>
-        <div class="stat-icon si-green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="metric-lbl">Approved & Refunded</div>
+          <div class="metric-val" style="color:#15803d;" id="kpi-approved">0</div>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="metric-card">
+        <div class="metric-icon purple">💰</div>
         <div>
-          <div class="stat-label">Total Refund Value</div>
-          <div class="stat-value" id="kpi-refund-val">₹0</div>
-          <div class="stat-note">total approved refunds</div>
-        </div>
-        <div class="stat-icon si-blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <div class="metric-lbl">Total Refund Value</div>
+          <div class="metric-val" id="kpi-refund-value">$0.00</div>
         </div>
       </div>
     </div>
 
-    <!-- MAIN BODY -->
-    <div class="body-cols">
-
-      <!-- LEFT: RETURNS TABLE -->
-      <div>
-
-        <!-- Bulk action bar -->
-        <div class="bulk-bar" id="bulkBar">
-          <span class="bulk-count" id="bulkCount">0 selected</span>
-          <button class="btn-bulk btn-bulk-approve" onclick="bulkAction('approve')">✓ Approve All</button>
-          <button class="btn-bulk btn-bulk-reject" onclick="bulkAction('reject')">✕ Reject All</button>
-          <button class="btn-bulk btn-bulk-clear" onclick="clearSelection()">Clear</button>
+    <!-- TABLE CARD -->
+    <div class="sa-table-card">
+      <div class="sa-table-toolbar">
+        <div class="sa-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Search returns..." oninput="applyFilters()"/>
         </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              Return Requests
-              <span id="pendingBadge" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:var(--red);color:#fff;border-radius:50%;font-size:10px;font-weight:800;margin-left:8px;vertical-align:middle;">0</span>
-            </div>
-            <div class="controls-bar">
-              <input type="text" id="searchInput" placeholder="Search Return ID, Customer..." oninput="applyFilters()" style="border:1.5px solid var(--border);border-radius:var(--r);padding:7px 12px;font-size:12.5px;outline:none;background:var(--bg);width:180px;" />
-              <div class="sel-wrap">
-                <select class="ctrl-sel" id="statusFilter" onchange="applyFilters()">
-                  <option value="">All Status</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Rejected">Rejected</option>
-                  <option value="Exchanged">Exchanged</option>
-                </select>
-                <span class="sel-arr">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                </span>
-              </div>
-              <div class="sel-wrap">
-                <select class="ctrl-sel" id="reasonFilter" onchange="applyFilters()">
-                  <option value="">All Reasons</option>
-                  <option value="Defective">Defective</option>
-                  <option value="Wrong Item">Wrong Item</option>
-                  <option value="Changed Mind">Changed Mind</option>
-                  <option value="Not as Described">Not as Described</option>
-                </select>
-                <span class="sel-arr">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                </span>
-              </div>
-              <button class="btn-export" onclick="exportCSV()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export
-              </button>
-            </div>
-          </div>
-
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    <div class="th-cb" onclick="toggleSelectAll()">
-                      <div class="cb" id="headerCb"></div>
-                    </div>
-                  </th>
-                  <th><span class="th-s" onclick="sortBy('id')">Return ID <span class="sort-i">↕</span></span></th>
-                  <th>Customer</th>
-                  <th>Product</th>
-                  <th><span class="th-s" onclick="sortBy('date')">Date <span class="sort-i">↕</span></span></th>
-                  <th>Reason</th>
-                  <th>Priority</th>
-                  <th>Status</th>
-                  <th><span class="th-s" onclick="sortBy('amount')">Amount <span class="sort-i">↕</span></span></th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="tableBody"></tbody>
-            </table>
-          </div>
-
-          <div class="table-foot">
-            <span class="tbl-count" id="tblCount">Loading…</span>
-            <div class="pagination" id="paginationControls"></div>
-          </div>
-        </div>
-
-        <!-- Returned to Stock -->
-        <div class="card" style="margin-top:20px;">
-          <div class="card-header">
-            <div class="card-title">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;margin-right:6px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-              Returned to Stock
-            </div>
-            <span class="view-all" onclick="window.location.href='Inventory_Overview.html'">View inventory →</span>
-          </div>
-          <div class="restock-grid" id="restockGrid"></div>
+        <div class="sa-filter-group">
+          <select class="sa-filter-select" id="statusFilter" onchange="applyFilters()">
+            <option value="">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Exchanged">Exchanged</option>
+          </select>
+          <select class="sa-filter-select" id="reasonFilter" onchange="applyFilters()">
+            <option value="">All Reasons</option>
+            <option value="Defective / Not Working">Defective / Not Working</option>
+            <option value="Wrong Item Received">Wrong Item Received</option>
+            <option value="Changed Mind">Changed Mind</option>
+            <option value="Not as Described">Not as Described</option>
+          </select>
         </div>
       </div>
 
-      <!-- RIGHT: DETAIL PANEL -->
-      <div class="detail-panel" id="detailPanel">
+      <div class="sa-table-wrap">
+        <table class="sa-table">
+          <thead>
+            <tr>
+              <th>Return ID</th>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Product</th>
+              <th>Reason</th>
+              <th>Condition</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="10" style="text-align:center;padding:32px;color:#a6aaaf;">Loading return requests...</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-        <!-- Empty state (default) -->
-        <div class="card" id="emptyCard">
-          <div class="empty-panel">
-            <div class="empty-icon">📋</div>
-            <div class="empty-title">No return selected</div>
-            <div class="empty-sub">Click any row to review<br>the return details here</div>
-          </div>
+      <div class="sa-table-footer">
+        <div class="sa-rows-per-page">
+          Row Per Page <span id="countBadge" style="color:#212b36;">0</span> Entries
         </div>
-
-        <!-- Detail card (hidden until row clicked) -->
-        <div class="card" id="detailCard" style="display:none;">
-          <div class="detail-top">
-            <div>
-              <div class="detail-id" id="d-id">—</div>
-              <div class="detail-date" id="d-date">—</div>
-            </div>
-            <span id="d-badge"></span>
-          </div>
-
-          <!-- Customer -->
-          <div class="cust-chip" id="d-cust-chip">
-            <div class="cust-av" id="d-av"></div>
-            <div>
-              <div class="cust-name" id="d-name">—</div>
-              <div class="cust-email" id="d-email">—</div>
-            </div>
-          </div>
-
-          <!-- Product -->
-          <div class="product-preview" id="d-prod-wrap">
-            <div class="prod-emoji" id="d-emoji">📦</div>
-            <div>
-              <div class="prod-name" id="d-prod">—</div>
-              <div class="prod-sku" id="d-sku">—</div>
-            </div>
-            <div class="prod-price" id="d-price">—</div>
-          </div>
-
-          <!-- Info rows -->
-          <div class="info-section">
-            <div class="info-section-label">Return Details</div>
-            <div class="info-row">
-              <span class="info-label">Reason</span>
-              <span class="info-val" id="d-reason">—</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Condition</span>
-              <span class="info-val" id="d-condition">—</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Refund Method</span>
-              <span class="info-val" id="d-method">—</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Priority</span>
-              <span class="info-val" id="d-priority">—</span>
-            </div>
-          </div>
-
-          <!-- Notes -->
-          <div class="notes-box" id="d-notes-wrap" style="display:none;">
-            <div class="notes-box-label">📝 Customer Notes</div>
-            <div id="d-notes">—</div>
-          </div>
-
-          <!-- Refund bar -->
-          <div class="refund-bar" style="margin-bottom:14px;" id="d-refund-bar">
-            <div class="rb-row"><span>Product</span><span id="d-rb-prod">—</span></div>
-            <div class="rb-row"><span>Qty</span><span>×1</span></div>
-            <div class="rb-divider"></div>
-            <div class="rb-total"><span>Refund Total</span><span class="rb-amount" id="d-rb-total">—</span></div>
-          </div>
-
-          <!-- Timeline -->
-          <div class="info-section">
-            <div class="info-section-label">Timeline</div>
-            <div class="timeline" id="d-timeline"></div>
-          </div>
-
-          <!-- Action buttons -->
-          <div class="action-row" id="d-actions"></div>
-        </div>
-
-        <!-- Quick stats card -->
-        <div class="card" id="quickStats">
-          <div class="card-title" style="font-size:13px;margin-bottom:12px;">Today's Activity</div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
-              <span style="color:var(--text-muted);">Reviewed</span>
-              <span style="font-weight:800;" id="today-reviewed">0 returns</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
-              <span style="color:var(--text-muted);">Approved</span>
-              <span style="font-weight:800;color:var(--green);" id="today-approved">0</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
-              <span style="color:var(--text-muted);">Rejected</span>
-              <span style="font-weight:800;color:var(--red);" id="today-rejected">0</span>
-            </div>
-            <div style="height:1px;background:var(--border);margin:4px 0;"></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;">
-              <span style="color:var(--text-muted);">Refunds Issued</span>
-              <span style="font-weight:800;color:var(--accent);" id="today-refunds">₹0</span>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
 </div>
 
-<!-- =========================================================
-     CONFIRM MODAL
-========================================================= -->
-<div class="modal-overlay" id="confirmModal" onclick="closeConfirm(event)">
+<!-- DETAIL / CONFIRM MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-head">
-      <div>
-        <div class="modal-title-sm" id="modalTitle">Confirm Action</div>
-        <div class="modal-sub-sm" id="modalSub">This action cannot be undone.</div>
-      </div>
-      <div class="modal-x" onclick="closeConfirm(null)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </div>
+      <div class="modal-title" id="modalTitle">Return Details</div>
+      <div class="modal-x" onclick="closeModal(null)">×</div>
     </div>
-    <div class="modal-body">
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;" id="modalDesc"></div>
-      <label style="font-size:11.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;" id="notesLabel">Notes (optional)</label>
-      <textarea class="modal-textarea" id="modalNotes" placeholder="Add a reason or message…"></textarea>
+    <div class="modal-body" id="modalBody">
+      <!-- Dynamic details -->
     </div>
-    <div class="modal-foot">
-      <button class="mf-cancel" onclick="closeConfirm(null)">Cancel</button>
-      <button class="mf-confirm" id="modalConfirmBtn" onclick="executeAction()">Confirm</button>
+    <div class="modal-foot" id="modalFoot">
+      <button class="mf-btn mf-cancel" onclick="closeModal(null)">Close</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <div class="toast-icon" id="toastIcon"></div>
-  <span id="toastMsg"></span>
-</div>
-
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
 <script src="api-config.js"></script>
-<script src="../js/commerce-api.js"></script>
 <script>
 'use strict';
 
-/* ---- STATE ---- */
-let rawReturns = [];
+let RETURNS = [];
 let filtered = [];
-let selectedIds = new Set();
-let activeId = null;
-let sortField = null, sortDir = 1;
-let pendingAction = null;
-let currentPage = 1;
-const pageSize = 5;
+let activeReturn = null;
+let pollTimer = null;
 
-/* ---- BOOT ---- */
-document.addEventListener('DOMContentLoaded', () => {
-  loadReturns();
-
-  document.addEventListener('keydown', e => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); document.getElementById('searchInput').focus(); }
-    if (e.key === 'Escape') closeConfirm(null);
-  });
-});
-
-async function loadReturns() {
-  try {
-    const data = await window.IMS_HTTP.request('/returns');
-    rawReturns = Array.isArray(data) ? data : [];
-    updateSummaryCards(rawReturns);
-    updateTodaysActivity(rawReturns);
-    renderReturnedToStock(rawReturns);
-    applyFilters();
-  } catch (err) {
-    console.error('Failed to load returns:', err);
-    showToast('Failed to load returns from server', 'err');
-  }
+function formatMoney(amount) {
+  const num = Number(amount || 0);
+  return '$' + num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function updateSummaryCards(returns) {
-  const total = returns.length;
-  const pending = returns.filter(r => r.status === 'Pending').length;
-  const approved = returns.filter(r => r.status === 'Approved' || r.status === 'Exchanged').length;
-  const refundTotal = returns
-    .filter(r => r.status === 'Approved' || r.status === 'Exchanged')
-    .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
-
-  document.getElementById('kpi-total').textContent = total;
-  document.getElementById('kpi-pending').textContent = pending;
-  document.getElementById('kpi-approved').textContent = approved;
-  document.getElementById('kpi-refund-val').textContent = '₹' + refundTotal.toLocaleString('en-IN');
-  document.getElementById('pendingBadge').textContent = pending;
+function formatDate(raw) {
+  if (!raw) return 'Recently';
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return String(raw);
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function updateTodaysActivity(returns) {
-  const todayStr = new Date().toISOString().split('T')[0];
-
-  const reviewedToday = returns.filter(r => {
-    const actDt = r.retailerActionAt || r.date;
-    return r.status !== 'Pending' && actDt && actDt.startsWith(todayStr);
-  });
-
-  const approvedToday = returns.filter(r => (r.status === 'Approved' || r.status === 'Exchanged') && (r.retailerActionAt || r.date || '').startsWith(todayStr));
-  const rejectedToday = returns.filter(r => r.status === 'Rejected' && (r.retailerActionAt || r.date || '').startsWith(todayStr));
-  const refundTodaySum = approvedToday.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
-
-  document.getElementById('today-reviewed').textContent = reviewedToday.length + ' returns';
-  document.getElementById('today-approved').textContent = approvedToday.length;
-  document.getElementById('today-rejected').textContent = rejectedToday.length;
-  document.getElementById('today-refunds').textContent = '₹' + refundTodaySum.toLocaleString('en-IN');
+function getStatusBadge(status) {
+  const s = String(status || 'Pending');
+  if (s === 'Approved') return `<span class="sa-status-approved">✓ ${s}</span>`;
+  if (s === 'Rejected') return `<span class="sa-status-rejected">✕ ${s}</span>`;
+  if (s === 'Exchanged') return `<span class="sa-status-exchanged">🔄 ${s}</span>`;
+  return `<span class="sa-status-pending">⏳ ${s}</span>`;
 }
 
-function renderReturnedToStock(returns) {
-  const restocked = returns.filter(r => r.inventoryProcessedAt || r.status === 'Approved' || r.status === 'Exchanged');
-  const grid = document.getElementById('restockGrid');
-  if (!restocked.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text-muted);font-size:12.5px;">No items returned to stock yet.</div>';
-    return;
-  }
+function updateMetrics() {
+  const pending = RETURNS.filter(r => r.status === 'Pending');
+  const approved = RETURNS.filter(r => r.status === 'Approved' || r.status === 'Exchanged');
+  const totalRefund = approved.reduce((sum, r) => sum + Number(r.amount || 0), 0);
 
-  grid.innerHTML = restocked.slice(0, 3).map(r => {
-    const dtStr = r.inventoryProcessedAt ? new Date(r.inventoryProcessedAt).toLocaleString('en-IN', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : (r.date ? new Date(r.date).toLocaleDateString('en-IN') : 'Recent');
-    return `
-      <div class="restock-card">
-        <div class="rc-icon">${r.emoji || '📦'}</div>
-        <div class="rc-name">${r.productName || r.product || 'Product'}</div>
-        <div class="rc-units">+1 unit</div>
-        <div class="rc-time">${dtStr}</div>
-      </div>
-    `;
-  }).join('');
+  document.getElementById('kpi-total').textContent = RETURNS.length;
+  document.getElementById('kpi-pending').textContent = pending.length;
+  document.getElementById('kpi-approved').textContent = approved.length;
+  document.getElementById('kpi-refund-value').textContent = formatMoney(totalRefund);
+  document.getElementById('countBadge').textContent = filtered.length;
 }
 
-/* ---- NAV ---- */
-function setNav(el) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  el.classList.add('active');
-}
-
-/* ---- RENDER TABLE ---- */
 function renderTable() {
   const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
-
   if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">No returns match the current filters.</td></tr>`;
-    document.getElementById('tblCount').textContent = '0 results';
-    renderPagination(0);
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#646b72;font-size:13px;">No return requests recorded for this store yet.</td></tr>`;
+    updateMetrics();
     return;
   }
 
-  const totalPages = Math.ceil(filtered.length / pageSize);
-  if (currentPage > totalPages) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-
-  const startIdx = (currentPage - 1) * pageSize;
-  const pageItems = filtered.slice(startIdx, startIdx + pageSize);
-
-  pageItems.forEach((r, i) => {
-    const isSelected = selectedIds.has(r.id);
-    const isActive   = r.id === activeId;
-    const tr = document.createElement('tr');
-    tr.style.animationDelay = `${i*35}ms`;
-    if (isActive) tr.classList.add('selected-row');
-
-    const displayDate = r.date ? new Date(r.date).toLocaleDateString('en-IN', { month:'short', day:'numeric' }) : 'N/A';
-    const amountVal = Number(r.amount || 0);
-
-    tr.innerHTML = `
-      <td onclick="event.stopPropagation()">
-        <div class="cb ${isSelected ? 'checked' : ''}" onclick="toggleRow('${r.id}', this)">
-          ${isSelected ? `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
-        </div>
-      </td>
-      <td><span style="font-weight:800;font-size:12.5px;color:var(--accent);">${r.id}</span></td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(r.customer)};color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials(r.customer)}</div>
-          <span style="font-weight:600;">${r.customer}</span>
-        </div>
-      </td>
-      <td>${r.productName || r.product || 'Product'}</td>
-      <td style="color:var(--text-muted);font-size:12.5px;">${displayDate}</td>
-      <td style="font-size:12.5px;">${r.reason}</td>
-      <td><span class="urgency ${r.priority === 'High' ? 'high' : r.priority === 'Medium' ? 'med' : 'low'}">${r.priority === 'High' ? '▲' : r.priority === 'Medium' ? '◆' : '▼'} ${r.priority}</span></td>
-      <td><span class="badge ${badgeClass(r.status)}">${r.status}</span></td>
-      <td style="font-weight:800;">₹${amountVal.toLocaleString('en-IN')}</td>
-      <td onclick="event.stopPropagation()">
-        <div class="row-acts">
-          <button class="btn-view" onclick="openDetail('${r.id}')">View</button>
-          ${r.status === 'Pending'
-            ? `<button class="btn-approve" onclick="openConfirm('approve','${r.id}')">✓</button>
-               <button class="btn-reject" onclick="openConfirm('reject','${r.id}')">✕</button>`
-            : ''}
-        </div>
-      </td>
+  tbody.innerHTML = filtered.map(function(r) {
+    return `
+      <tr onclick="viewDetail('${r.id}')">
+        <td style="font-weight:700;color:#2e6bc5;">${r.id}</td>
+        <td style="font-weight:700;color:#646b72;">${r.orderId || '---'}</td>
+        <td style="font-weight:600;color:#212b36;">${r.customer || 'Customer'}</td>
+        <td style="font-weight:600;color:#212b36;">${r.productName || r.product || 'Product'}</td>
+        <td style="color:#646b72;">${r.reason || 'Defective'}</td>
+        <td style="color:#646b72;">${r.condition || '---'}</td>
+        <td style="color:#646b72;font-size:12px;">${formatDate(r.date)}</td>
+        <td>${getStatusBadge(r.status)}</td>
+        <td style="font-weight:700;color:#212b36;">${formatMoney(r.amount)}</td>
+        <td onclick="event.stopPropagation()">
+          <div class="row-actions">
+            <button class="btn-act-view" onclick="viewDetail('${r.id}')">View</button>
+            ${r.status === 'Pending' ? `
+              <button class="btn-act-approve" onclick="actionReturn('${r.id}', 'Approved')">Approve</button>
+              <button class="btn-act-reject" onclick="actionReturn('${r.id}', 'Rejected')">Reject</button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
     `;
+  }).join('');
 
-    tr.addEventListener('click', () => openDetail(r.id));
-    tbody.appendChild(tr);
-  });
-
-  const endIdx = Math.min(startIdx + pageSize, filtered.length);
-  document.getElementById('tblCount').textContent = `Showing ${startIdx + 1}–${endIdx} of ${filtered.length} returns`;
-  renderPagination(totalPages);
-  updateHeaderCb();
+  updateMetrics();
 }
 
-function renderPagination(totalPages) {
-  const container = document.getElementById('paginationControls');
-  if (!container) return;
-  if (totalPages <= 1) {
-    container.innerHTML = '';
-    return;
-  }
-
-  let html = '';
-  for (let i = 1; i <= totalPages; i++) {
-    html += `<button class="pg-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-  }
-  container.innerHTML = html;
-}
-
-function goToPage(page) {
-  currentPage = page;
-  renderTable();
-}
-
-/* ---- FILTERS ---- */
 function applyFilters() {
+  const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
   const status = document.getElementById('statusFilter').value;
   const reason = document.getElementById('reasonFilter').value;
-  const q = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').trim().toLowerCase();
 
-  filtered = rawReturns.filter(r => {
+  filtered = RETURNS.filter(function(r) {
     if (status && r.status !== status) return false;
     if (reason && r.reason !== reason) return false;
-    if (q && !`${r.id} ${r.customer} ${r.productName || r.product} ${r.reason}`.toLowerCase().includes(q)) return false;
+    if (q) {
+      const hay = `${r.id} ${r.customer} ${r.productName} ${r.product} ${r.sku} ${r.orderId}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
     return true;
   });
 
-  if (sortField) filtered = doSort(filtered);
-  currentPage = 1;
   renderTable();
 }
 
-function searchTable() { applyFilters(); }
+function viewDetail(id) {
+  activeReturn = RETURNS.find(r => r.id === id);
+  if (!activeReturn) return;
 
-/* ---- SORT ---- */
-function sortBy(field) {
-  if (sortField === field) sortDir *= -1; else { sortField = field; sortDir = 1; }
-  document.querySelectorAll('.sort-i').forEach(el => el.textContent = '↕');
-  const icons = document.querySelectorAll('.sort-i');
-  const fields = ['id','date','amount'];
-  const idx = fields.indexOf(field);
-  if (idx >= 0 && icons[idx]) icons[idx].textContent = sortDir === 1 ? '↑' : '↓';
-  filtered = doSort(filtered);
-  renderTable();
-}
-function doSort(arr) {
-  return [...arr].sort((a,b) => {
-    if (sortField === 'id')     return sortDir * a.id.localeCompare(b.id);
-    if (sortField === 'date')   return sortDir * (new Date(a.date).getTime() - new Date(b.date).getTime());
-    if (sortField === 'amount') return sortDir * ((a.amount || 0) - (b.amount || 0));
-    return 0;
-  });
-}
+  const r = activeReturn;
+  document.getElementById('modalTitle').textContent = `Return Request ${r.id}`;
+  
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-detail-row"><span class="modal-lbl">Return ID</span><span class="modal-val" style="color:#2e6bc5;">${r.id}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Order ID</span><span class="modal-val">${r.orderId || '---'}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Customer</span><span class="modal-val">${r.customer || '---'}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Customer Email</span><span class="modal-val">${r.email || '---'}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Product</span><span class="modal-val">${r.productName || r.product || '---'}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">SKU</span><span class="modal-val">${r.sku || '---'}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Amount</span><span class="modal-val">${formatMoney(r.amount)}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Reason</span><span class="modal-val">${r.reason || '---'}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Item Condition</span><span class="modal-val">${r.condition || '---'}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Refund Method</span><span class="modal-val">${r.refundMethod || r.method || '---'}</span></div>
+    <div class="modal-detail-row"><span class="modal-lbl">Status</span><span class="modal-val">${getStatusBadge(r.status)}</span></div>
+    ${r.notes ? `<div style="margin-top:12px;padding:10px;background:#fffbeb;border:1px solid #fde68a;border-radius:5px;font-size:12.5px;color:#92400e;"><strong>Notes:</strong> ${r.notes}</div>` : ''}
+  `;
 
-/* ---- SELECTION ---- */
-function toggleRow(id, cbEl) {
-  if (selectedIds.has(id)) {
-    selectedIds.delete(id);
-    cbEl.classList.remove('checked');
-    cbEl.innerHTML = '';
-  } else {
-    selectedIds.add(id);
-    cbEl.classList.add('checked');
-    cbEl.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-  }
-  updateBulkBar();
-  updateHeaderCb();
-}
-
-function toggleSelectAll() {
-  const allSelected = selectedIds.size === filtered.length && filtered.length > 0;
-  if (allSelected) { selectedIds.clear(); } else { filtered.forEach(r => selectedIds.add(r.id)); }
-  updateBulkBar();
-  renderTable();
-}
-
-function clearSelection() {
-  selectedIds.clear();
-  updateBulkBar();
-  renderTable();
-}
-
-function updateBulkBar() {
-  const bar = document.getElementById('bulkBar');
-  if (selectedIds.size > 0) {
-    bar.classList.add('show');
-    document.getElementById('bulkCount').textContent = `${selectedIds.size} return${selectedIds.size > 1 ? 's' : ''} selected`;
-  } else {
-    bar.classList.remove('show');
-  }
-  updateHeaderCb();
-}
-
-function updateHeaderCb() {
-  const cb = document.getElementById('headerCb');
-  if (!cb) return;
-  cb.innerHTML = '';
-  if (filtered.length > 0 && selectedIds.size === filtered.length) {
-    cb.classList.add('checked');
-    cb.innerHTML = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-  } else if (selectedIds.size > 0) {
-    cb.classList.add('indeterminate');
-    cb.innerHTML = `<div style="width:8px;height:2px;background:#fff;border-radius:1px;"></div>`;
-  } else {
-    cb.classList.remove('checked','indeterminate');
-  }
-}
-
-/* ---- DETAIL PANEL ---- */
-function openDetail(id) {
-  activeId = id;
-  const r = rawReturns.find(x => x.id === id);
-  if (!r) return;
-
-  document.getElementById('emptyCard').style.display = 'none';
-  document.getElementById('quickStats').style.display = 'none';
-  document.getElementById('detailCard').style.display = 'block';
-
-  const dateLabel = r.date ? new Date(r.date).toLocaleDateString('en-IN', { month:'short', day:'numeric', year:'numeric' }) : 'N/A';
-  const amountVal = Number(r.amount || 0);
-
-  document.getElementById('d-id').textContent = r.id;
-  document.getElementById('d-date').textContent = `Submitted ${dateLabel}`;
-  document.getElementById('d-badge').innerHTML = `<span class="badge ${badgeClass(r.status)}">${r.status}</span>`;
-
-  // Customer
-  const av = document.getElementById('d-av');
-  av.style.background = avatarColor(r.customer);
-  av.textContent = initials(r.customer);
-  document.getElementById('d-name').textContent  = r.customer;
-  document.getElementById('d-email').textContent = r.email || 'customer@stockoverflow.com';
-
-  // Product
-  document.getElementById('d-emoji').textContent   = r.emoji || '📦';
-  document.getElementById('d-prod').textContent    = r.productName || r.product || 'Product';
-  document.getElementById('d-sku').textContent     = `SKU: ${r.sku || 'N/A'}`;
-  document.getElementById('d-price').textContent   = `₹${amountVal.toLocaleString('en-IN')}`;
-
-  // Details
-  document.getElementById('d-reason').textContent    = r.reason;
-  document.getElementById('d-condition').textContent = r.condition || 'Opened but Unused';
-  document.getElementById('d-method').textContent    = r.refundMethod || r.method || 'Original Payment';
-  document.getElementById('d-priority').innerHTML = `<span class="urgency ${r.priority==='High'?'high':r.priority==='Medium'?'med':'low'}">${r.priority==='High'?'▲':r.priority==='Medium'?'◆':'▼'} ${r.priority}</span>`;
-
-  // Notes
-  const nw = document.getElementById('d-notes-wrap');
-  if (r.notes) {
-    nw.style.display = 'block';
-    document.getElementById('d-notes').textContent = r.notes;
-  } else { nw.style.display = 'none'; }
-
-  // Refund bar
-  document.getElementById('d-rb-prod').textContent  = r.productName || r.product || 'Product';
-  document.getElementById('d-rb-total').textContent = `₹${amountVal.toLocaleString('en-IN')}`;
-
-  // Timeline
-  const tl = document.getElementById('d-timeline');
-  tl.innerHTML = buildTimeline(r);
-
-  // Actions
-  const acts = document.getElementById('d-actions');
+  const foot = document.getElementById('modalFoot');
   if (r.status === 'Pending') {
-    acts.innerHTML = `
-      <button class="btn-full-approve" onclick="openConfirm('approve','${r.id}')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Approve Return
-      </button>
-      <button class="btn-full-reject" onclick="openConfirm('reject','${r.id}')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        Reject
-      </button>
+    foot.innerHTML = `
+      <button class="mf-btn mf-cancel" onclick="closeModal(null)">Cancel</button>
+      <button class="mf-btn mf-reject" onclick="actionReturn('${r.id}', 'Rejected')">Reject Return</button>
+      <button class="mf-btn mf-approve" onclick="actionReturn('${r.id}', 'Approved')">Approve Return</button>
     `;
   } else {
-    const labels = { Approved:'Return Approved ✓', Rejected:'Return Rejected', Exchanged:'Exchange Processed' };
-    acts.innerHTML = `<div class="btn-full-disabled">${labels[r.status] || r.status}</div>`;
+    foot.innerHTML = `<button class="mf-btn mf-cancel" onclick="closeModal(null)">Close</button>`;
   }
 
-  renderTable(); // re-highlight row
+  document.getElementById('detailModal').classList.add('open');
 }
 
-function buildTimeline(r) {
-  const dtLabel = r.date ? new Date(r.date).toLocaleDateString('en-IN', { month:'short', day:'numeric' }) : 'Date';
-  const actLabel = r.retailerActionAt ? new Date(r.retailerActionAt).toLocaleString('en-IN', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : dtLabel;
-
-  const items = [
-    { text:`Return requested by ${r.customer}`, time:`${dtLabel}`, done: true },
-    { text:'Retailer notified', time:`${dtLabel}`, done: true },
-  ];
-  if (r.status === 'Pending') {
-    items.push({ text:'Awaiting retailer review', time:'Pending…', done: false });
-  } else if (r.status === 'Approved') {
-    items.push({ text:'Approved by retailer', time:`${actLabel}`, done: true });
-    items.push({ text:`Refund processed via ${r.refundMethod || r.method || 'Original Payment'}`, time:`${actLabel}`, done: true });
-  } else if (r.status === 'Rejected') {
-    items.push({ text:'Return rejected by retailer', time:`${actLabel}`, done: false });
-  } else if (r.status === 'Exchanged') {
-    items.push({ text:'Exchange approved', time:`${actLabel}`, done: true });
-    items.push({ text:'Replacement dispatched', time:`${actLabel}`, done: true });
-  }
-
-  return items.map((item, i) => `
-    <div class="tl-item">
-      <div class="tl-left">
-        <div class="tl-dot ${item.done ? '' : 'grey'}"></div>
-        <div class="tl-line"></div>
-      </div>
-      <div>
-        <div class="tl-text">${item.text}</div>
-        <div class="tl-time">${item.time}</div>
-      </div>
-    </div>
-  `).join('');
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('detailModal')) return;
+  document.getElementById('detailModal').classList.remove('open');
 }
 
-/* ---- CONFIRM MODAL ---- */
-function openConfirm(action, id) {
-  pendingAction = { action, id };
-  const r = rawReturns.find(x => x.id === id);
-  const modal = document.getElementById('confirmModal');
-  const isApprove = action === 'approve';
-
-  document.getElementById('modalTitle').textContent = isApprove ? `Approve Return ${id}` : `Reject Return ${id}`;
-  document.getElementById('modalSub').textContent   = r ? `${r.productName || r.product} — ${r.customer}` : '';
-  document.getElementById('modalDesc').textContent  = isApprove
-    ? `Approving this return will restock inventory and initiate a refund of ₹${r ? Number(r.amount || 0).toLocaleString('en-IN') : '—'} via ${r ? (r.refundMethod || r.method) : '—'}.`
-    : 'Rejecting this return will notify the customer with your reason.';
-  document.getElementById('modalNotes').value = '';
-  document.getElementById('notesLabel').textContent = isApprove ? 'Approval Notes (optional)' : 'Rejection Reason (optional)';
-
-  const btn = document.getElementById('modalConfirmBtn');
-  btn.textContent = isApprove ? 'Approve & Refund' : 'Reject Return';
-  btn.className   = `mf-confirm ${isApprove ? 'mf-green' : 'mf-red'}`;
-  btn.disabled = false;
-  btn.onclick = executeAction;
-
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(() => document.getElementById('modalNotes').focus(), 200);
-}
-
-function closeConfirm(e) {
-  if (e && e.target !== document.getElementById('confirmModal')) return;
-  document.getElementById('confirmModal').classList.remove('open');
-  document.body.style.overflow = '';
-  pendingAction = null;
-}
-
-async function executeAction() {
-  if (!pendingAction) return;
-  const { action, id } = pendingAction;
-  const r = rawReturns.find(x => x.id === id);
-  if (!r) return;
-
-  const btn = document.getElementById('modalConfirmBtn');
-  btn.innerHTML = `<div class="spinner"></div>`;
-  btn.disabled = true;
-
-  const notes = (document.getElementById('modalNotes').value || '').trim();
-  const nextStatus = action === 'approve' ? 'Approved' : 'Rejected';
-
+async function actionReturn(id, status) {
   try {
-    await window.IMS_HTTP.request('/returns/' + id, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        status: nextStatus,
-        notes: notes || undefined,
-      }),
-    });
-
-    closeConfirm(null);
-    showToast(
-      action === 'approve'
-        ? `${id} approved & restocked successfully!`
-        : `${id} rejected`,
-      action === 'approve' ? 'ok' : 'err'
-    );
-
+    await window.RetailerApi.updateReturn(id, { status: status });
+    closeModal(null);
     await loadReturns();
-    if (activeId === id) openDetail(id);
-  } catch (err) {
-    showToast(window.IMS_HTTP.getErrorMessage(err), 'err');
-  } finally {
-    btn.disabled = false;
-    btn.onclick = executeAction;
-  }
-}
-
-/* ---- BULK ACTIONS ---- */
-function bulkAction(action) {
-  const ids = [...selectedIds];
-  const modal = document.getElementById('confirmModal');
-
-  pendingAction = { action, bulk: true, ids };
-
-  const count = ids.length;
-  document.getElementById('modalTitle').textContent = action === 'approve'
-    ? `Approve ${count} Return${count > 1 ? 's' : ''}?`
-    : `Reject ${count} Return${count > 1 ? 's' : ''}?`;
-  document.getElementById('modalSub').textContent = `This will ${action} all selected return requests.`;
-  document.getElementById('modalDesc').textContent = action === 'approve'
-    ? 'All pending selected returns will be approved and refunds initiated.'
-    : 'All selected returns will be rejected and customers notified.';
-  document.getElementById('modalNotes').value = '';
-
-  const btn = document.getElementById('modalConfirmBtn');
-  btn.textContent = action === 'approve' ? `Approve All (${count})` : `Reject All (${count})`;
-  btn.className   = `mf-confirm ${action === 'approve' ? 'mf-green' : 'mf-red'}`;
-  btn.disabled = false;
-
-  btn.onclick = async () => {
-    btn.innerHTML = `<div class="spinner"></div>`;
-    btn.disabled = true;
-
-    try {
-      for (const id of ids) {
-        const r = rawReturns.find(x => x.id === id);
-        if (r && r.status === 'Pending') {
-          await window.IMS_HTTP.request('/returns/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: action === 'approve' ? 'Approved' : 'Rejected' }),
-          });
-        }
-      }
-
-      selectedIds.clear();
-      closeConfirm(null);
-      showToast(`${count} returns ${action}d successfully`, 'ok');
-      await loadReturns();
-      if (activeId) openDetail(activeId);
-    } catch (err) {
-      showToast(window.IMS_HTTP.getErrorMessage(err), 'err');
-    } finally {
-      btn.disabled = false;
-      btn.onclick = executeAction;
+    if (window.RetailerUi && typeof window.RetailerUi.showToast === 'function') {
+      window.RetailerUi.showToast(`Return ${id} marked as ${status}.`, status === 'Approved' ? 'success' : 'info');
     }
-  };
-
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-/* ---- RESTOCK ---- */
-function renderRestock(items) {
-  renderReturnedToStock(rawReturns);
-}
-
-/* ---- EXPORT ---- */
-function exportCSV() {
-  const headers = ['Return ID','Customer','Product','Date','Reason','Priority','Status','Amount'];
-  const rows = filtered.map(r => [r.id, r.customer, r.productName || r.product, r.date, r.reason, r.priority, r.status, `₹${r.amount}`]);
-  const csv = [headers,...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `returns_${Date.now()}.csv`;
-  a.click();
-}
-
-/* ---- HELPERS ---- */
-
-const AV_COLORS = ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899'];
-function avatarColor(n) {
-  let h = 0;
-  for (let c of n) h = (h*31 + c.charCodeAt(0)) & 0x7fffffff;
-  return AV_COLORS[h % AV_COLORS.length];
-}
-
-/* ---- TOAST ---- */
-function showToast(msg, type = 'ok') {
-  const toast = document.getElementById('toast');
-  const icon  = document.getElementById('toastIcon');
-  document.getElementById('toastMsg').textContent = msg;
-  icon.className = `toast-icon ${type === 'ok' ? 'ti-ok' : type === 'err' ? 'ti-err' : 'ti-inf'}`;
-  icon.textContent = type === 'ok' ? '✓' : type === 'err' ? '✕' : 'i';
-  toast.classList.add('show');
-  clearTimeout(toast._t);
-  toast._t = setTimeout(() => toast.classList.remove('show'), 3400);
-}
-</script>
-<script>
-function formatReturnDateLabel(value) {
-  if (!value) {
-    return 'Unknown';
+  } catch (err) {
+    if (window.RetailerUi && typeof window.RetailerUi.showToast === 'function') {
+      window.RetailerUi.showToast('Error updating return: ' + window.RetailerUi.getErrorMessage(err), 'error');
+    }
   }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return String(value);
-  }
-
-  return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: '2-digit',
-  });
 }
-
-function normalizeReturnEntry(entry) {
-  const rawDate = entry && entry.date ? entry.date : '';
-  const parsed = new Date(rawDate);
-  return Object.assign({}, entry, {
-    customer: entry && entry.customer ? entry.customer : 'Customer',
-    email: entry && entry.email ? entry.email : '',
-    product: entry && (entry.product || entry.productName) ? (entry.product || entry.productName) : 'Product',
-    productName: entry && (entry.productName || entry.product) ? (entry.productName || entry.product) : 'Product',
-    emoji: entry && entry.emoji ? entry.emoji : 'PKG',
-    amount: Number(entry && entry.amount || 0),
-    method: entry && (entry.method || entry.refundMethod) ? (entry.method || entry.refundMethod) : 'Original Payment',
-    priority: entry && entry.priority ? entry.priority : 'Medium',
-    notes: entry && entry.notes ? entry.notes : '',
-    date: formatReturnDateLabel(rawDate),
-    dateN: Number(entry && entry.dateN) || (Number.isNaN(parsed.getTime()) ? Date.now() : parsed.getTime()),
-  });
-}
-
-function syncReturns(nextReturns) {
-  RETURNS.splice(0, RETURNS.length);
-  nextReturns.forEach(function (entry) {
-    RETURNS.push(normalizeReturnEntry(entry));
-  });
-}
-
-function refreshReturnMetrics() {
-  document.getElementById('kpi-total').textContent = RETURNS.length;
-  document.getElementById('kpi-pending').textContent = RETURNS.filter(function (entry) {
-    return entry.status === 'Pending';
-  }).length;
-  document.getElementById('kpi-approved').textContent = RETURNS.filter(function (entry) {
-    return entry.status === 'Approved' || entry.status === 'Exchanged';
-  }).length;
-}
-
-animateKpi = refreshReturnMetrics;
 
 async function loadReturns() {
   try {
     const data = await window.RetailerApi.getReturns();
-    syncReturns(data);
-    refreshReturnMetrics();
+    RETURNS = Array.isArray(data) ? data : [];
     applyFilters();
-    await loadRestockHighlights();
-  } catch (error) {
-    console.error('Error loading returns:', error);
-    refreshReturnMetrics();
+  } catch (err) {
+    console.error('Error fetching retailer returns:', err);
+    RETURNS = [];
     applyFilters();
-    await loadRestockHighlights();
-    window.RetailerUi.showToast(
-      'Using saved returns data: ' + window.RetailerUi.getErrorMessage(error),
-      'info',
-    );
   }
 }
 
-executeAction = async function () {
-  if (!pendingAction) {
-    return;
-  }
+function exportCSV() {
+  if (!filtered.length) return;
+  const headers = ['Return ID', 'Order ID', 'Customer', 'Product', 'SKU', 'Date', 'Reason', 'Status', 'Amount'];
+  const rows = filtered.map(r => [r.id, r.orderId, r.customer, r.productName || r.product, r.sku, r.date, r.reason, r.status, r.amount]);
+  const csv = [headers, ...rows].map(row => row.map(cell => `"${cell || ''}"`).join(',')).join('\n');
 
-  const action = pendingAction.action;
-  const ids = pendingAction.bulk ? pendingAction.ids.slice() : [pendingAction.id];
-  const nextStatus = action === 'approve' ? 'Approved' : 'Rejected';
-  const wasBulk = !!pendingAction.bulk;
-  const confirmButton = document.getElementById('modalConfirmBtn');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `returns-export-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
 
-  confirmButton.innerHTML = '<div class="spinner"></div>';
-  confirmButton.disabled = true;
-
-  try {
-    await Promise.all(
-      ids.map(function (id) {
-        return window.RetailerApi.updateReturn(id, { status: nextStatus });
-      }),
-    );
-
-    closeConfirm(null);
-    selectedIds.clear();
-    updateBulkBar();
-    await loadReturns();
-
-    if (activeId) {
-      const activeReturn = RETURNS.find(function (entry) {
-        return entry.id === activeId;
-      });
-      if (activeReturn) {
-        openDetail(activeId);
-      } else {
-        activeId = null;
-      }
-    }
-
-    window.RetailerUi.showToast(
-      wasBulk
-        ? `${ids.length} return${ids.length > 1 ? 's' : ''} updated successfully.`
-        : `${ids[0]} marked as ${nextStatus}.`,
-      action === 'approve' ? 'success' : 'info',
-    );
-  } catch (error) {
-    confirmButton.disabled = false;
-    confirmButton.textContent = action === 'approve' ? 'Approve' : 'Reject';
-    window.RetailerUi.showToast(
-      'Could not update return status: ' + window.RetailerUi.getErrorMessage(error),
-      'error',
-    );
-  }
-};
-
-bulkAction = function (action) {
-  const ids = Array.from(selectedIds).filter(function (id) {
-    const entry = RETURNS.find(function (item) {
-      return item.id === id;
-    });
-    return entry && entry.status === 'Pending';
-  });
-
-  if (!ids.length) {
-    window.RetailerUi.showToast('Select at least one pending return first.', 'info');
-    return;
-  }
-
-  pendingAction = { action: action, bulk: true, ids: ids };
-  document.getElementById('modalTitle').textContent =
-    (action === 'approve' ? 'Approve ' : 'Reject ') +
-    ids.length +
-    ' Return' +
-    (ids.length > 1 ? 's' : '') +
-    '?';
-  document.getElementById('modalSub').textContent =
-    'This will update all selected pending return requests.';
-  document.getElementById('modalDesc').textContent =
-    action === 'approve'
-      ? 'Selected returns will be approved and refunds can be processed.'
-      : 'Selected returns will be rejected and customers can be notified.';
-  document.getElementById('modalNotes').value = '';
-
-  const confirmButton = document.getElementById('modalConfirmBtn');
-  confirmButton.textContent = action === 'approve' ? 'Approve Selected' : 'Reject Selected';
-  confirmButton.className = `mf-confirm ${action === 'approve' ? 'mf-green' : 'mf-red'}`;
-  confirmButton.disabled = false;
-  confirmButton.onclick = executeAction;
-
-  document.getElementById('confirmModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-};
-
-closeConfirm = function (event) {
-  if (event && event.target !== document.getElementById('confirmModal')) {
-    return;
-  }
-  document.getElementById('confirmModal').classList.remove('open');
-  document.body.style.overflow = '';
-  pendingAction = null;
-  const confirmButton = document.getElementById('modalConfirmBtn');
-  confirmButton.disabled = false;
-  confirmButton.onclick = executeAction;
-};
-
-document.addEventListener('DOMContentLoaded', loadReturns);
-</script>
-
-
-<script>
 function toggleProfilePopover(e) {
   if (e) e.stopPropagation();
   const popover = document.getElementById('profilePopover');
-  if (popover) {
-    popover.classList.toggle('open');
-    if (popover.classList.contains('open')) {
-      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
-      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
-      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
-      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
-      let initials = 'RS';
-      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
-      const topAvatar = document.getElementById('topbarAvatar');
-      if (topAvatar) topAvatar.textContent = initials;
-      const popAvatar = document.getElementById('profilePopoverAvatar');
-      if (popAvatar) popAvatar.textContent = initials;
-    }
-  }
+  if (popover) popover.classList.toggle('open');
 }
+
+function logout() {
+  if (window.RetailerApi && typeof window.RetailerApi.clearSession === 'function') {
+    window.RetailerApi.clearSession();
+  } else {
+    localStorage.removeItem('so_session');
+  }
+  window.location.href = 'Retailer-page.html';
+}
+
 document.addEventListener('click', function(e) {
   const popover = document.getElementById('profilePopover');
   const avatar = document.getElementById('topbarAvatar');
-  if (popover && popover.classList.contains('open')) {
-    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
-      popover.classList.remove('open');
-    }
+  if (popover && popover.classList.contains('open') && !popover.contains(e.target) && !avatar.contains(e.target)) {
+    popover.classList.remove('open');
   }
 });
-</script>
 
+document.addEventListener('DOMContentLoaded', function() {
+  loadReturns();
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(loadReturns, 4000);
+});
+</script>
 </body>
 </html>
