@@ -11,9 +11,6 @@ import { CreateRetailerSetupDto } from './dto/create-retailer-setup.dto';
 import { UpdateRetailerSetupDto } from './dto/update-retailer-setup.dto';
 import { RetailerDirectoryEntry } from './retailer-directory-entry.interface';
 import { RetailerRecord } from './retailer-record.interface';
-import { UsersService } from '../users/users.service';
-
-type ValidationStatus = 'pending' | 'approved' | 'rejected';
 
 @Injectable()
 export class RetailersService {
@@ -21,46 +18,20 @@ export class RetailersService {
   private readonly dataDirectory = join(__dirname, '..', '..', 'data');
   private readonly dataFile = join(this.dataDirectory, 'retailers.json');
 
-  constructor(private readonly usersService: UsersService) {
+  constructor() {
     this.loadFromDisk();
   }
 
   create(createRetailerSetupDto: CreateRetailerSetupDto): RetailerRecord {
     const now = new Date().toISOString();
-    const profileAssignment = this.usersService.getNextEmployeeId(
-      this.findAll().map((retailer) => retailer.assignedEmployeeId),
-    );
-    const storeAssignments = this.collectStoreAssignmentIds();
-    const stores = (createRetailerSetupDto.stores ?? []).map((store, index) => {
-      const assignedEmployeeId = this.usersService.getNextEmployeeId(
-        storeAssignments,
-      );
-      if (assignedEmployeeId) {
-        storeAssignments.push(assignedEmployeeId);
-      }
-
-      return {
-        ...store,
-        code: store.code || `STORE-${index + 1}`,
-        status: store.status || 'active',
-        validationStatus: store.validationStatus ?? 'pending',
-        assignedEmployeeId: store.assignedEmployeeId || assignedEmployeeId,
-        assignedAt: store.assignedAt || (assignedEmployeeId ? now : ''),
-      };
-    });
     const retailer: RetailerRecord = {
       ...createRetailerSetupDto,
-      stores,
+      stores: createRetailerSetupDto.stores ?? [],
       suppliers: createRetailerSetupDto.suppliers ?? [],
       products: createRetailerSetupDto.products ?? [],
       id: randomUUID(),
       status: 'completed',
       profileStatus: createRetailerSetupDto.profileStatus ?? 'active',
-      validationStatus: createRetailerSetupDto.validationStatus ?? 'pending',
-      assignedEmployeeId:
-        createRetailerSetupDto.assignedEmployeeId || profileAssignment,
-      assignedAt:
-        createRetailerSetupDto.assignedAt || (profileAssignment ? now : ''),
       createdAt: now,
       updatedAt: now,
     };
@@ -74,43 +45,6 @@ export class RetailersService {
     return Array.from(this.retailers.values()).sort((a, b) =>
       b.updatedAt.localeCompare(a.updatedAt),
     );
-  }
-
-  findAssignedValidations(employeeId: string): RetailerRecord[] {
-    this.ensurePendingAssignments();
-    const normalizedEmployeeId = this.normalizeText(employeeId);
-    return this.findAll().filter((retailer) => {
-      return this.normalizeText(retailer.assignedEmployeeId) === normalizedEmployeeId;
-    });
-  }
-
-  findAssignedStoreValidations(employeeId: string) {
-    this.ensurePendingAssignments();
-    const normalizedEmployeeId = this.normalizeText(employeeId);
-    return this.findAll().flatMap((retailer) => {
-      return (retailer.stores || [])
-        .map((store, index) => ({
-          id: `${retailer.id}:${store.code || index + 1}`,
-          retailerId: retailer.id,
-          retailerName: retailer.business.businessName,
-          businessEmail: retailer.business.businessEmail,
-          storeCode: store.code || `STORE-${index + 1}`,
-          storeName: store.name,
-          contactPerson: store.contactPerson || retailer.primaryContact.fullName,
-          phone: store.phone || '',
-          address: store.address || '',
-          status: store.status || 'active',
-          validationStatus: store.validationStatus || 'approved',
-          assignedEmployeeId: store.assignedEmployeeId || '',
-          assignedAt: store.assignedAt || '',
-          validatedBy: store.validatedBy || '',
-          validatedAt: store.validatedAt || '',
-          rejectionReason: store.rejectionReason || '',
-          createdAt: retailer.createdAt,
-          updatedAt: retailer.updatedAt,
-        }))
-        .filter((store) => store.assignedEmployeeId === normalizedEmployeeId);
-    });
   }
 
   findOne(id: string): RetailerRecord {
@@ -184,59 +118,12 @@ export class RetailersService {
       products: updateRetailerSetupDto.products ?? retailer.products,
       profileStatus:
         updateRetailerSetupDto.profileStatus ?? retailer.profileStatus ?? 'active',
-      validationStatus:
-        updateRetailerSetupDto.validationStatus ??
-        retailer.validationStatus ??
-        'approved',
-      assignedEmployeeId:
-        updateRetailerSetupDto.assignedEmployeeId ?? retailer.assignedEmployeeId,
-      assignedAt: updateRetailerSetupDto.assignedAt ?? retailer.assignedAt,
-      validatedBy: updateRetailerSetupDto.validatedBy ?? retailer.validatedBy,
-      validatedAt: updateRetailerSetupDto.validatedAt ?? retailer.validatedAt,
-      rejectionReason:
-        updateRetailerSetupDto.rejectionReason ?? retailer.rejectionReason,
       updatedAt: new Date().toISOString(),
     };
 
     this.retailers.set(id, updatedRetailer);
     this.persistToDisk();
     return updatedRetailer;
-  }
-
-  approveValidation(id: string, employeeId: string): RetailerRecord {
-    return this.updateValidation(id, employeeId, 'approved');
-  }
-
-  rejectValidation(
-    id: string,
-    employeeId: string,
-    rejectionReason?: string,
-  ): RetailerRecord {
-    return this.updateValidation(id, employeeId, 'rejected', rejectionReason);
-  }
-
-  approveStoreValidation(retailerId: string, storeCode: string, employeeId: string) {
-    return this.updateStoreValidation(
-      retailerId,
-      storeCode,
-      employeeId,
-      'approved',
-    );
-  }
-
-  rejectStoreValidation(
-    retailerId: string,
-    storeCode: string,
-    employeeId: string,
-    rejectionReason?: string,
-  ) {
-    return this.updateStoreValidation(
-      retailerId,
-      storeCode,
-      employeeId,
-      'rejected',
-      rejectionReason,
-    );
   }
 
   remove(id: string): void {
@@ -269,25 +156,10 @@ export class RetailersService {
       retailers.forEach((retailer) => {
         this.retailers.set(retailer.id, {
           ...retailer,
-          stores: (retailer.stores ?? []).map((store, index) => ({
-            ...store,
-            code: store.code || `STORE-${index + 1}`,
-            validationStatus: store.validationStatus || 'approved',
-            assignedEmployeeId: store.assignedEmployeeId || '',
-            assignedAt: store.assignedAt || '',
-            validatedBy: store.validatedBy || '',
-            validatedAt: store.validatedAt || '',
-            rejectionReason: store.rejectionReason || '',
-          })),
+          stores: retailer.stores ?? [],
           suppliers: retailer.suppliers ?? [],
           products: retailer.products ?? [],
           profileStatus: retailer.profileStatus ?? 'active',
-          validationStatus: retailer.validationStatus ?? 'approved',
-          assignedEmployeeId: retailer.assignedEmployeeId ?? '',
-          assignedAt: retailer.assignedAt ?? '',
-          validatedBy: retailer.validatedBy ?? '',
-          validatedAt: retailer.validatedAt ?? '',
-          rejectionReason: retailer.rejectionReason ?? '',
         });
       });
     } catch {
@@ -298,169 +170,5 @@ export class RetailersService {
   private persistToDisk(): void {
     const retailers = this.findAll();
     writeFileSync(this.dataFile, JSON.stringify(retailers, null, 2), 'utf-8');
-  }
-
-  private updateValidation(
-    id: string,
-    employeeId: string,
-    validationStatus: ValidationStatus,
-    rejectionReason = '',
-  ) {
-    const retailer = this.findOne(id);
-    this.ensureAssignedToEmployee(retailer.assignedEmployeeId, employeeId);
-    const now = new Date().toISOString();
-    const updatedRetailer: RetailerRecord = {
-      ...retailer,
-      validationStatus,
-      profileStatus: validationStatus === 'rejected' ? 'inactive' : 'active',
-      validatedBy: employeeId,
-      validatedAt: now,
-      rejectionReason: validationStatus === 'rejected' ? rejectionReason : '',
-      updatedAt: now,
-    };
-
-    this.retailers.set(id, updatedRetailer);
-    this.persistToDisk();
-    return updatedRetailer;
-  }
-
-  private updateStoreValidation(
-    retailerId: string,
-    storeCode: string,
-    employeeId: string,
-    validationStatus: ValidationStatus,
-    rejectionReason = '',
-  ) {
-    const retailer = this.findOne(retailerId);
-    const normalizedStoreCode = this.normalizeText(storeCode).toLowerCase();
-    const storeIndex = (retailer.stores || []).findIndex((store, index) => {
-      const code = this.normalizeText(store.code, `STORE-${index + 1}`).toLowerCase();
-      return code === normalizedStoreCode;
-    });
-
-    if (storeIndex === -1) {
-      throw new NotFoundException('Store validation not found');
-    }
-
-    const store = retailer.stores[storeIndex];
-    this.ensureAssignedToEmployee(store.assignedEmployeeId, employeeId);
-    const now = new Date().toISOString();
-    const stores = retailer.stores.map((entry, index) => {
-      if (index !== storeIndex) {
-        return entry;
-      }
-
-      return {
-        ...entry,
-        validationStatus,
-        status:
-          validationStatus === 'rejected'
-            ? ('inactive' as const)
-            : ('active' as const),
-        validatedBy: employeeId,
-        validatedAt: now,
-        rejectionReason: validationStatus === 'rejected' ? rejectionReason : '',
-      };
-    });
-
-    const updatedRetailer: RetailerRecord = {
-      ...retailer,
-      stores,
-      updatedAt: now,
-    };
-
-    this.retailers.set(retailerId, updatedRetailer);
-    this.persistToDisk();
-    return this.findAssignedStoreValidations(employeeId).find((entry) => {
-      return (
-        entry.retailerId === retailerId &&
-        entry.storeCode.toLowerCase() === normalizedStoreCode
-      );
-    });
-  }
-
-  private ensurePendingAssignments() {
-    const retailers = this.findAll();
-    const profileAssignments = retailers
-      .map((retailer) => retailer.assignedEmployeeId)
-      .filter(Boolean);
-    const storeAssignments = this.collectStoreAssignmentIds();
-    let changed = false;
-    const now = new Date().toISOString();
-
-    retailers.forEach((retailer) => {
-      if (
-        (retailer.validationStatus || 'approved') === 'pending' &&
-        !this.normalizeText(retailer.assignedEmployeeId)
-      ) {
-        const assignedEmployeeId =
-          this.usersService.getNextEmployeeId(profileAssignments);
-        if (assignedEmployeeId) {
-          retailer.assignedEmployeeId = assignedEmployeeId;
-          retailer.assignedAt = now;
-          profileAssignments.push(assignedEmployeeId);
-          changed = true;
-        }
-      }
-
-      retailer.stores = (retailer.stores || []).map((store, index) => {
-        if (
-          (store.validationStatus || 'approved') !== 'pending' ||
-          this.normalizeText(store.assignedEmployeeId)
-        ) {
-          return store;
-        }
-
-        const assignedEmployeeId =
-          this.usersService.getNextEmployeeId(storeAssignments);
-        if (!assignedEmployeeId) {
-          return store;
-        }
-
-        storeAssignments.push(assignedEmployeeId);
-        changed = true;
-        return {
-          ...store,
-          code: store.code || `STORE-${index + 1}`,
-          assignedEmployeeId,
-          assignedAt: now,
-        };
-      });
-
-      this.retailers.set(retailer.id, retailer);
-    });
-
-    if (changed) {
-      this.persistToDisk();
-    }
-  }
-
-  private collectStoreAssignmentIds() {
-    return this.findAll().flatMap((retailer) => {
-      return (retailer.stores || [])
-        .map((store) => store.assignedEmployeeId)
-        .filter(Boolean);
-    });
-  }
-
-  private ensureAssignedToEmployee(
-    assignedEmployeeId: string | undefined,
-    employeeId: string,
-  ) {
-    if (
-      !this.normalizeText(assignedEmployeeId) ||
-      this.normalizeText(assignedEmployeeId) !== this.normalizeText(employeeId)
-    ) {
-      throw new NotFoundException('Assigned validation not found');
-    }
-  }
-
-  private normalizeText(...values: unknown[]) {
-    for (const value of values) {
-      if (typeof value === 'string' && value.trim()) {
-        return value.trim();
-      }
-    }
-    return '';
   }
 }

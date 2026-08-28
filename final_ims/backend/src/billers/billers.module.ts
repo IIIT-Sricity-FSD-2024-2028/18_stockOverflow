@@ -9,6 +9,5 @@ import { StoresModule } from '../stores/stores.module';
   imports: [CommonModule, UsersModule, StoresModule],
   controllers: [BillersController],
   providers: [BillersService],
-  exports: [BillersService],
 })
 export class BillersModule {}

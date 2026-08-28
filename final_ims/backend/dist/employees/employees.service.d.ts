@@ -11,12 +11,12 @@ export declare class EmployeesService {
     constructor(usersService: UsersService, retailersService: RetailersService, suppliersService: SuppliersService, billersService: BillersService);
     getWork(employeeId: string): {
         employee: {
-            name: string;
-            store?: string;
             id: string;
+            name: string;
             email: string;
             role: string;
             status: string;
+            store?: string;
             storeId?: string;
             currentStoreId?: string;
             accessibleStoreIds?: string[];
@@ -32,78 +32,34 @@ export declare class EmployeesService {
             billerRequests: number;
             pending: number;
         };
-        retailerRegistrations: import("../retailers/retailer-record.interface").RetailerRecord[];
-        retailerStores: {
-            id: string;
-            retailerId: string;
-            retailerName: string;
-            businessEmail: string;
-            storeCode: string;
-            storeName: string;
-            contactPerson: string;
-            phone: string;
-            address: string;
-            status: "active" | "inactive";
-            validationStatus: "pending" | "approved" | "rejected";
-            assignedEmployeeId: string;
-            assignedAt: string;
-            validatedBy: string;
-            validatedAt: string;
-            rejectionReason: string;
-            createdAt: string;
-            updatedAt: string;
-        }[];
-        suppliers: import("../suppliers/supplier-record.interface").SupplierRecord[];
-        billerRequests: import("../common/database.types").BillerRequest[];
+        retailerRegistrations: any[];
+        retailerStores: any[];
+        suppliers: any[];
+        billerRequests: any[];
     };
-    approveRetailer(employeeId: string, retailerId: string): import("../retailers/retailer-record.interface").RetailerRecord;
-    rejectRetailer(employeeId: string, retailerId: string, actionDto?: EmployeeActionDto): import("../retailers/retailer-record.interface").RetailerRecord;
+    approveRetailer(employeeId: string, retailerId: string): {
+        status: string;
+    };
+    rejectRetailer(employeeId: string, retailerId: string, actionDto?: EmployeeActionDto): {
+        status: string;
+    };
     approveRetailerStore(employeeId: string, retailerId: string, storeCode: string): {
-        id: string;
-        retailerId: string;
-        retailerName: string;
-        businessEmail: string;
-        storeCode: string;
-        storeName: string;
-        contactPerson: string;
-        phone: string;
-        address: string;
-        status: "active" | "inactive";
-        validationStatus: "pending" | "approved" | "rejected";
-        assignedEmployeeId: string;
-        assignedAt: string;
-        validatedBy: string;
-        validatedAt: string;
-        rejectionReason: string;
-        createdAt: string;
-        updatedAt: string;
+        status: string;
     };
     rejectRetailerStore(employeeId: string, retailerId: string, storeCode: string, actionDto?: EmployeeActionDto): {
-        id: string;
-        retailerId: string;
-        retailerName: string;
-        businessEmail: string;
-        storeCode: string;
-        storeName: string;
-        contactPerson: string;
-        phone: string;
-        address: string;
-        status: "active" | "inactive";
-        validationStatus: "pending" | "approved" | "rejected";
-        assignedEmployeeId: string;
-        assignedAt: string;
-        validatedBy: string;
-        validatedAt: string;
-        rejectionReason: string;
-        createdAt: string;
-        updatedAt: string;
+        status: string;
     };
-    approveSupplier(employeeId: string, supplierId: string): import("../suppliers/supplier-record.interface").SupplierRecord;
-    rejectSupplier(employeeId: string, supplierId: string, actionDto?: EmployeeActionDto): import("../suppliers/supplier-record.interface").SupplierRecord;
+    approveSupplier(employeeId: string, supplierId: string): {
+        status: string;
+    };
+    rejectSupplier(employeeId: string, supplierId: string, actionDto?: EmployeeActionDto): {
+        status: string;
+    };
     approveBillerRequest(employeeId: string, requestId: string, actionDto?: EmployeeActionDto): {
-        request: import("../common/database.types").BillerRequest;
-        biller: import("../common/database.types").BillerRecord;
+        status: string;
     };
-    rejectBillerRequest(employeeId: string, requestId: string, actionDto?: EmployeeActionDto): import("../common/database.types").BillerRequest;
+    rejectBillerRequest(employeeId: string, requestId: string, actionDto?: EmployeeActionDto): {
+        status: string;
+    };
     private requireEmployee;
 }

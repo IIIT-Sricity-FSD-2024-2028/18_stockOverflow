@@ -13,21 +13,19 @@ exports.ReturnsService = void 0;
 const common_1 = require("@nestjs/common");
 const json_db_service_1 = require("../common/json-db.service");
 const products_service_1 = require("../products/products.service");
-const suppliers_service_1 = require("../suppliers/suppliers.service");
 let ReturnsService = class ReturnsService {
-    constructor(db, productsService, suppliersService) {
+    constructor(db, productsService) {
         this.db = db;
         this.productsService = productsService;
-        this.suppliersService = suppliersService;
     }
-    findAll(retailerId, storeId, customerLookup, supplierId, source) {
+    findAll(retailerId, storeId, customerLookup) {
         return this.db.getCollection('returns')
             .map((entry) => this.normalizeReturnRecord(entry))
-            .filter((entry) => this.matchesScope(entry, retailerId, storeId, customerLookup, supplierId, source))
+            .filter((entry) => this.matchesScope(entry, retailerId, storeId, customerLookup))
             .sort((a, b) => b.dateN - a.dateN);
     }
-    findOne(id, retailerId, storeId, customerLookup, supplierId, source) {
-        const entry = this.findAll(retailerId, storeId, customerLookup, supplierId, source).find((item) => item.id === id);
+    findOne(id, retailerId, storeId, customerLookup) {
+        const entry = this.findAll(retailerId, storeId, customerLookup).find((item) => item.id === id);
         if (!entry) {
             throw new common_1.NotFoundException('Return request not found');
         }
@@ -42,39 +40,6 @@ let ReturnsService = class ReturnsService {
         const created = this.buildReturnRecord(createReturnDto, {
             id: `RET-${String(nextNumber).padStart(3, '0')}`,
         });
-        const duplicate = items.find((entry) => {
-            if (entry.status === 'Rejected') {
-                return false;
-            }
-            const createdSku = (created.sku || '').trim().toLowerCase();
-            const entrySku = (entry.sku || '').trim().toLowerCase();
-            const createdProd = (created.productName || created.product || '').trim().toLowerCase();
-            const entryProd = (entry.productName || entry.product || '').trim().toLowerCase();
-            const skuMatch = Boolean(createdSku && entrySku && createdSku === entrySku);
-            const prodMatch = Boolean(createdProd && entryProd && createdProd === entryProd);
-            if (!skuMatch && !prodMatch) {
-                return false;
-            }
-            const createdOrder = (created.orderId || '').trim().toLowerCase();
-            const entryOrder = (entry.orderId || '').trim().toLowerCase();
-            if (createdOrder && entryOrder && createdOrder !== entryOrder) {
-                return false;
-            }
-            const createdCust = (created.customer || '').trim().toLowerCase();
-            const entryCust = (entry.customer || '').trim().toLowerCase();
-            const createdEmail = (created.email || '').trim().toLowerCase();
-            const entryEmail = (entry.email || '').trim().toLowerCase();
-            if (createdCust && entryCust && createdCust === entryCust) {
-                return true;
-            }
-            if (createdEmail && entryEmail && createdEmail === entryEmail) {
-                return true;
-            }
-            return !createdCust && !createdEmail;
-        });
-        if (duplicate) {
-            throw new common_1.BadRequestException('A return request has already been submitted for this item.');
-        }
         items.unshift(created);
         this.saveReturns(items);
         return created;
@@ -91,18 +56,18 @@ let ReturnsService = class ReturnsService {
             id: items[index].id,
         });
         const nextStatus = this.normalizeStatus(updateReturnDto.status, existing.status);
-        const shouldProcessInventory = !existing.inventoryProcessedAt &&
+        const shouldRestock = !existing.inventoryProcessedAt &&
             (nextStatus === 'Approved' || nextStatus === 'Exchanged');
         items[index] = this.normalizeReturnRecord({
             ...updated,
             retailerActionAt: nextStatus !== existing.status
                 ? new Date().toISOString()
                 : existing.retailerActionAt,
-            inventoryProcessedAt: shouldProcessInventory
+            inventoryProcessedAt: shouldRestock
                 ? new Date().toISOString()
                 : existing.inventoryProcessedAt,
         });
-        if (shouldProcessInventory) {
+        if (shouldRestock) {
             this.applyApprovedReturnInventory(items[index]);
         }
         this.saveReturns(items);
@@ -125,19 +90,11 @@ let ReturnsService = class ReturnsService {
         const refundMethod = this.normalizeText(payload.refundMethod, payload.method, existing?.refundMethod, existing?.method, 'Original Payment Method');
         const emoji = this.normalizeText(payload.emoji, existing?.emoji, product?.emoji, String.fromCodePoint(0x1f4e6));
         const date = existing?.date || new Date().toISOString();
-        const source = this.normalizeSource(payload.source, existing?.source);
-        const quantity = this.normalizeQuantity(payload.quantity, existing?.quantity, transactionContext.item?.quantity, 1);
-        const retailerName = this.normalizeText(payload.retailerName, existing?.retailerName, transactionContext.transaction?.customer);
-        const supplierId = this.normalizeText(payload.supplierId, existing?.supplierId);
-        const supplierName = this.normalizeText(payload.supplierName, existing?.supplierName, product?.supplier);
         return this.normalizeReturnRecord({
             id: options.id,
-            retailerId: this.normalizeText(payload.retailerId, existing?.retailerId, transactionContext.transaction?.retailerId, product?.retailerId),
-            retailerName,
-            supplierId,
-            supplierName,
+            retailerId: this.normalizeText(payload.retailerId, existing?.retailerId, transactionContext.transaction?.retailerId),
             orderId: this.normalizeText(payload.orderId, existing?.orderId, transactionContext.transaction?.orderId),
-            customer: this.normalizeText(payload.customer, existing?.customer, source === 'retailer' ? retailerName : '', transactionContext.transaction?.customer, transactionContext.customer?.name, 'Recent Customer'),
+            customer: this.normalizeText(payload.customer, existing?.customer, transactionContext.transaction?.customer, transactionContext.customer?.name, 'Recent Customer'),
             customerId: this.normalizeText(payload.customerId, existing?.customerId, transactionContext.customer?.id != null
                 ? String(transactionContext.customer.id)
                 : ''),
@@ -156,11 +113,10 @@ let ReturnsService = class ReturnsService {
             date: existing?.date || date,
             dateN: existing?.dateN || this.toDateNumber(existing?.date || date),
             amount,
-            quantity,
             priority: this.normalizePriority(payload.priority, existing?.priority, this.inferPriority(this.normalizeText(payload.reason, existing?.reason), amount, this.normalizeText(payload.condition, existing?.condition))),
             storeId: this.normalizeText(payload.storeId, existing?.storeId, transactionContext.transaction?.storeId),
             store: this.normalizeText(payload.store, existing?.store, transactionContext.transaction?.store),
-            source,
+            source: this.normalizeText(payload.source, existing?.source, 'customer'),
             retailerActionAt: this.normalizeText(existing?.retailerActionAt),
             inventoryProcessedAt: this.normalizeText(existing?.inventoryProcessedAt),
         });
@@ -177,9 +133,6 @@ let ReturnsService = class ReturnsService {
         return {
             id: this.normalizeText(entry.id),
             retailerId: this.normalizeText(entry.retailerId),
-            retailerName: this.normalizeText(entry.retailerName),
-            supplierId: this.normalizeText(entry.supplierId),
-            supplierName: this.normalizeText(entry.supplierName),
             orderId: this.normalizeText(entry.orderId),
             customer: this.normalizeText(entry.customer, 'Recent Customer'),
             customerId: this.normalizeText(entry.customerId),
@@ -198,11 +151,10 @@ let ReturnsService = class ReturnsService {
             date,
             dateN: this.toDateNumber(entry.date, entry.dateN),
             amount,
-            quantity: this.normalizeQuantity(entry.quantity, 1),
             priority: this.normalizePriority(entry.priority, this.inferPriority(entry.reason, amount, entry.condition)),
             storeId: this.normalizeText(entry.storeId),
             store: this.normalizeText(entry.store),
-            source: this.normalizeSource(entry.source),
+            source: this.normalizeText(entry.source, 'customer'),
             retailerActionAt: this.normalizeText(entry.retailerActionAt),
             inventoryProcessedAt: this.normalizeText(entry.inventoryProcessedAt),
         };
@@ -211,17 +163,8 @@ let ReturnsService = class ReturnsService {
         if (!entry.sku) {
             return;
         }
-        const quantity = this.normalizeQuantity(entry.quantity, 1);
-        const source = this.normalizeSource(entry.source);
         try {
-            if (source === 'retailer') {
-                this.productsService.applyInventoryAdjustment(entry.sku, -quantity, this.normalizeText(entry.storeId), this.normalizeText(entry.retailerId));
-                if (entry.supplierId) {
-                    this.suppliersService.adjustProductStock(entry.supplierId, entry.sku, quantity);
-                }
-                return;
-            }
-            this.productsService.applyInventoryAdjustment(entry.sku, quantity, this.normalizeText(entry.storeId), this.normalizeText(entry.retailerId));
+            this.productsService.applyInventoryAdjustment(entry.sku, 1, this.normalizeText(entry.storeId), this.normalizeText(entry.retailerId));
         }
         catch {
         }
@@ -393,60 +336,25 @@ let ReturnsService = class ReturnsService {
         }
         return '';
     }
-    normalizeSource(...values) {
-        const normalized = this.normalizeText(...values).toLowerCase();
-        if (normalized === 'retailer' || normalized === 'supplier') {
-            return 'retailer';
-        }
-        return 'customer';
-    }
-    normalizeQuantity(...values) {
-        for (const value of values) {
-            const num = Math.trunc(Number(value));
-            if (Number.isFinite(num) && num > 0) {
-                return num;
-            }
-        }
-        return 1;
-    }
-    matchesScope(entry, retailerId, storeId, customerLookup, supplierId, source) {
+    matchesScope(entry, retailerId, storeId, customerLookup) {
         const normalizedRetailerId = this.normalizeText(retailerId);
         const normalizedStoreId = this.normalizeText(storeId);
-        const normalizedSupplierId = this.normalizeText(supplierId);
-        const normalizedSource = this.normalizeText(source).toLowerCase();
-        const entryRetailerId = this.normalizeText(entry.retailerId);
+        const normalizedCustomerLookup = this.normalizeText(customerLookup).toLowerCase();
         if (normalizedRetailerId &&
-            entryRetailerId &&
-            entryRetailerId !== normalizedRetailerId) {
+            this.normalizeText(entry.retailerId) !== normalizedRetailerId) {
             return false;
         }
         const entryStoreId = this.normalizeText(entry.storeId);
-        if (normalizedStoreId &&
-            entryStoreId &&
-            entryStoreId !== normalizedStoreId &&
-            !normalizedRetailerId) {
+        if (normalizedStoreId && entryStoreId && entryStoreId !== normalizedStoreId) {
             return false;
         }
-        if (normalizedSupplierId &&
-            this.normalizeText(entry.supplierId) !== normalizedSupplierId) {
-            return false;
-        }
-        if (normalizedSource &&
-            this.normalizeSource(entry.source) !== this.normalizeSource(normalizedSource)) {
-            return false;
-        }
-        const lookups = (Array.isArray(customerLookup) ? customerLookup : [customerLookup])
-            .map((item) => this.normalizeText(item).toLowerCase())
-            .filter(Boolean);
-        if (lookups.length > 0) {
+        if (normalizedCustomerLookup) {
             const customerName = this.normalizeText(entry.customer).toLowerCase();
             const customerEmail = this.normalizeText(entry.email).toLowerCase();
             const customerId = this.normalizeText(entry.customerId).toLowerCase();
-            const matched = lookups.some((lookup) => customerName === lookup ||
-                customerEmail === lookup ||
-                customerId === lookup ||
-                (customerName && customerName.includes(lookup)));
-            if (!matched) {
+            if (normalizedCustomerLookup !== customerName &&
+                normalizedCustomerLookup !== customerEmail &&
+                normalizedCustomerLookup !== customerId) {
                 return false;
             }
         }
@@ -457,7 +365,6 @@ exports.ReturnsService = ReturnsService;
 exports.ReturnsService = ReturnsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [json_db_service_1.JsonDbService,
-        products_service_1.ProductsService,
-        suppliers_service_1.SuppliersService])
+        products_service_1.ProductsService])
 ], ReturnsService);
 //# sourceMappingURL=returns.service.js.map

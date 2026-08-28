@@ -14,7 +14,6 @@ const class_validator_1 = require("class-validator");
 var UserRole;
 (function (UserRole) {
     UserRole["ADMIN"] = "admin";
-    UserRole["EMPLOYEE"] = "employee";
     UserRole["RETAILER"] = "retailer";
     UserRole["SUPPLIER"] = "supplier";
     UserRole["CONSUMER"] = "consumer";

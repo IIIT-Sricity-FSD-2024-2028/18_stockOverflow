@@ -1,6 +1,98 @@
 {
   "products": [
     {
+      "id": "37102d1c-32f8-4309-8e0e-a98e1c5a65dc",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "sku": "PT001",
+      "name": "ho",
+      "category": "Electronics",
+      "subcategory": "General",
+      "subCategory": "General",
+      "brand": "The North Face",
+      "priceUSD": 100,
+      "price": 100,
+      "cost": 0,
+      "discountType": "none",
+      "discountValue": 0,
+      "finalPrice": 100,
+      "taxRate": 0,
+      "taxType": "Inclusive",
+      "unit": "Pc",
+      "qty": 100,
+      "initialQty": 100,
+      "min": 10,
+      "max": 100,
+      "creator": "Retail Manager",
+      "creatorImg": "https://www.figma.com/api/mcp/asset/70e2ee73-c607-4c1f-9c9a-0cbe445512f4",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eho%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eho%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eho%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eho%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eho%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eho%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eho%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 0,
+      "trend": "up",
+      "description": "",
+      "descriptionHtml": "",
+      "supplier": "StockOverflow Supply",
+      "supplierSku": "",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 0,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "weightKg": 0,
+      "lengthCm": 0,
+      "widthCm": 0,
+      "heightCm": 0,
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "JOHN-S-STORE",
+          "qty": 100
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "JOHN-S-STORE",
+          "qty": 100
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 0,
+      "status": "active",
+      "visibility": "published",
+      "createdAt": "2026-08-28T04:42:56.977Z",
+      "updatedAt": "2026-08-28T04:42:56.977Z",
+      "restockedAt": "2026-08-28T04:42:56.977Z",
+      "lastStockChangeAt": "2026-08-28T04:42:56.977Z"
+    },
+    {
       "id": "4e1ddbf2-4c90-4c2d-b734-82913efce71f",
       "retailerId": "8d4dc914-32fc-4b4d-a06d-c8b725a36b92",
       "sku": "SP001",
@@ -1269,6 +1361,91 @@
       "updatedAt": "2026-05-03T14:50:10.643Z",
       "restockedAt": "2026-05-03T14:39:09.843Z",
       "lastStockChangeAt": "2026-05-03T14:50:10.643Z"
+    },
+    {
+      "id": "op3-hans-sku-001",
+      "retailerId": "",
+      "sku": "OP3-BLK-2026",
+      "name": "op3",
+      "category": "Electronics",
+      "subcategory": "Electronics",
+      "subCategory": "Electronics",
+      "brand": "Hans Tech",
+      "priceUSD": 0,
+      "price": 0,
+      "discountType": "none",
+      "finalPrice": 0,
+      "taxType": "Inclusive",
+      "unit": "Piece",
+      "qty": 3,
+      "initialQty": 3,
+      "min": 0,
+      "max": 3,
+      "creator": "Retail Manager",
+      "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20OP3-BLK-2026%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20OP3-BLK-2026%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20OP3-BLK-2026%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 0,
+      "trend": "up",
+      "description": "",
+      "descriptionHtml": "",
+      "supplier": "Hans Tech",
+      "supplierSku": "",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 1,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 3
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 3
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 0,
+      "status": "Active",
+      "visibility": "published",
+      "createdAt": "2026-08-28T04:20:53.457Z",
+      "updatedAt": "2026-08-28T04:54:45.050Z",
+      "restockedAt": "2026-08-28T04:54:45.050Z",
+      "lastStockChangeAt": "2026-08-28T04:54:45.050Z"
     }
   ],
   "stores": [],
@@ -1620,6 +1797,68 @@
   "warehouses": [],
   "purchaseOrders": [
     {
+      "id": "PO-2026-0101",
+      "supplierId": "0ccceb67-958d-4957-9728-e023994a8e8d",
+      "supplierName": "Hans",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John",
+      "storeId": "JOHN-S-STORE",
+      "items": [
+        {
+          "id": "OP3-BLK-2026",
+          "name": "op3",
+          "emoji": "📦",
+          "sku": "OP3-BLK-2026",
+          "cat": "Electronics",
+          "price": 525,
+          "qty": 1,
+          "stock": 148,
+          "stockStatus": "ok"
+        }
+      ],
+      "deliveryDate": "2026-08-29",
+      "paymentTerms": "Net 30",
+      "notes": "",
+      "shippingAddress": "",
+      "subtotal": 525,
+      "tax": 26,
+      "total": 551,
+      "units": 1,
+      "status": "Delivered",
+      "createdAt": "2026-08-28T04:49:59.620Z"
+    },
+    {
+      "id": "PO-2026-0100",
+      "supplierId": "0ccceb67-958d-4957-9728-e023994a8e8d",
+      "supplierName": "Hans",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John",
+      "storeId": "JOHN-S-STORE",
+      "items": [
+        {
+          "id": "OP3-BLK-2026",
+          "name": "op3",
+          "emoji": "📦",
+          "sku": "OP3-BLK-2026",
+          "cat": "Electronics",
+          "price": 525,
+          "qty": 1,
+          "stock": 150,
+          "stockStatus": "ok"
+        }
+      ],
+      "deliveryDate": "2026-08-29",
+      "paymentTerms": "Net 30",
+      "notes": "",
+      "shippingAddress": "",
+      "subtotal": 525,
+      "tax": 26,
+      "total": 551,
+      "units": 1,
+      "status": "Delivered",
+      "createdAt": "2026-08-28T04:09:58.783Z"
+    },
+    {
       "id": "PO-2026-0099",
       "supplierId": "0ccceb67-958d-4957-9728-e023994a8e8d",
       "supplierName": "Hans",
@@ -1647,7 +1886,7 @@
       "tax": 26,
       "total": 551,
       "units": 1,
-      "status": "Pending",
+      "status": "Delivered",
       "createdAt": "2026-08-27T20:45:23.236Z"
     },
     {
@@ -1706,10 +1945,10 @@
       "notes": "Urgent restock for holiday sale",
       "shippingAddress": "123 Tech Park, Store A",
       "subtotal": 2250,
-      "tax": 112.5,
-      "total": 2362.5,
+      "tax": 113,
+      "total": 2363,
       "units": 5,
-      "status": "Pending",
+      "status": "Cancelled",
       "createdAt": "2026-08-27T18:51:49.970Z"
     },
     {
@@ -1771,7 +2010,7 @@
       "tax": 80,
       "total": 1680,
       "units": 20,
-      "status": "Shipped",
+      "status": "Cancelled",
       "createdAt": "2026-08-26T18:51:49.971Z"
     },
     {
@@ -2474,6 +2713,23 @@
   ],
   "stockAdjustments": [],
   "users": [
+    {
+      "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "name": "John",
+      "email": "john@gmail.com",
+      "password": "pass1234",
+      "role": "retailer",
+      "status": "Active",
+      "store": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "currentStoreId": "JOHN-S-STORE",
+      "accessibleStoreIds": [
+        "JOHN-S-STORE"
+      ],
+      "profileId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-08-28T04:00:00.000Z"
+    },
     {
       "id": "898efafb-c17f-4d17-a9a0-397cbe8f2592",
       "name": "Hans",

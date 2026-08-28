@@ -65,6 +65,9 @@ let SuppliersController = class SuppliersController {
     constructor(suppliersService) {
         this.suppliersService = suppliersService;
     }
+    createSupplier(dto) {
+        return this.suppliersService.create(dto);
+    }
     create(createSupplierSetupDto) {
         return this.suppliersService.create(createSupplierSetupDto);
     }
@@ -95,6 +98,9 @@ let SuppliersController = class SuppliersController {
     findOne(id) {
         return this.suppliersService.findOne(id);
     }
+    updatePut(id, dto) {
+        return this.suppliersService.update(id, dto);
+    }
     update(id, updateSupplierSetupDto) {
         return this.suppliersService.update(id, updateSupplierSetupDto);
     }
@@ -103,6 +109,13 @@ let SuppliersController = class SuppliersController {
     }
 };
 exports.SuppliersController = SuppliersController;
+__decorate([
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Object)
+], SuppliersController.prototype, "createSupplier", null);
 __decorate([
     (0, common_1.Post)('setup'),
     __param(0, (0, common_1.Body)()),
@@ -168,6 +181,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Object)
 ], SuppliersController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Object)
+], SuppliersController.prototype, "updatePut", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),

@@ -38,7 +38,6 @@ export declare class AdminService {
         totalSuppliers: number;
         totalConsumers: number;
         totalBillers: number;
-        totalEmployees: number;
         totalStores: number;
         totalProducts: number;
         totalTransactions: number;
@@ -50,7 +49,6 @@ export declare class AdminService {
             suppliers: number;
             consumers: number;
             billers: number;
-            employees: number;
             admins: number;
         };
     };

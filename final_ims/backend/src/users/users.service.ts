@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -18,12 +17,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 type PublicUser = Omit<User, 'password'>;
-type CreateUserOptions = {
-  allowPrivilegedRoles?: boolean;
-};
-type UpdateUserOptions = {
-  allowPrivilegedRoles?: boolean;
-};
 type RetailerProfileRecord = {
   id: string;
   profileStatus?: string;
@@ -99,20 +92,18 @@ type BillerProfileRecord = {
   status?: string;
 };
 
-const SYSTEM_ADMIN_USER: User = {
-  id: 'u-admin-1',
-  name: 'System Administrator',
-  email: 'admin@stockoverflow.com',
-  password: 'pass1234',
-  role: 'admin',
-  status: 'Active',
-  store: 'Global Hub',
-  createdAt: '2026-01-01T00:00:00.000Z',
-  updatedAt: '2026-01-01T00:00:00.000Z',
-};
-
 const DEFAULT_USERS: User[] = [
-  SYSTEM_ADMIN_USER,
+  {
+    id: 'u-admin-1',
+    name: 'System Administrator',
+    email: 'admin@stockoverflow.com',
+    password: 'pass1234',
+    role: 'admin',
+    status: 'Active',
+    store: 'Global Hub',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
   {
     id: 'u-retailer-1',
     name: 'Primary Retailer',
@@ -190,14 +181,10 @@ export class UsersService {
     return this.toPublicUser(this.syncLinkedProfileForUserId(id));
   }
 
-  create(
-    createUserDto: CreateUserDto,
-    options: CreateUserOptions = {},
-  ): PublicUser {
+  create(createUserDto: CreateUserDto): PublicUser {
     const users = this.readAll();
     const email = this.normalizeEmail(createUserDto.email);
     const role = this.normalizeRole(createUserDto.role);
-    this.ensureRoleCanBeAssigned(role, options);
 
     if (
       users.some((entry) => this.normalizeEmail(entry.email) === email)
@@ -234,11 +221,7 @@ export class UsersService {
     return this.toPublicUser(hydrated);
   }
 
-  update(
-    id: string,
-    updateUserDto: UpdateUserDto,
-    options: UpdateUserOptions = {},
-  ): PublicUser {
+  update(id: string, updateUserDto: UpdateUserDto): PublicUser {
     const users = this.readAll();
     const index = users.findIndex((user) => user.id === id);
 
@@ -248,10 +231,6 @@ export class UsersService {
 
     const existing = users[index];
     const nextEmail = this.normalizeEmail(updateUserDto.email || existing.email);
-    const nextRole = this.normalizeRole(updateUserDto.role || existing.role);
-
-    this.ensureRoleCanBeAssigned(nextRole, options, existing);
-    this.ensureSystemAdminInvariant(existing, nextEmail, nextRole);
 
     if (
       users.some(
@@ -268,7 +247,7 @@ export class UsersService {
       name: this.normalizeText(updateUserDto.name, existing.name),
       email: nextEmail,
       password: this.normalizeText(updateUserDto.password, existing.password),
-      role: nextRole,
+      role: this.normalizeRole(updateUserDto.role || existing.role),
       status: this.normalizeText(updateUserDto.status, existing.status || 'Active'),
       store: this.normalizeText(updateUserDto.store, existing.store),
       storeId: this.normalizeText(updateUserDto.storeId, existing.storeId),
@@ -308,50 +287,9 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    if (this.isSystemAdmin(users[index])) {
-      throw new BadRequestException('The system administrator account cannot be deleted');
-    }
-
     users.splice(index, 1);
     this.writeAll(users);
     return true;
-  }
-
-  getNextEmployeeId(currentAssignments: Array<string | undefined | null>) {
-    const employees = this.readAll()
-      .filter((user) => user.role === 'employee')
-      .filter(
-        (user) =>
-          this.normalizeText(user.status, 'Active').toLowerCase() === 'active',
-      )
-      .sort((left, right) => {
-        return String(left.createdAt || '').localeCompare(
-          String(right.createdAt || ''),
-        ) || left.id.localeCompare(right.id);
-      });
-
-    if (!employees.length) {
-      return '';
-    }
-
-    const counts = new Map<string, number>();
-    employees.forEach((employee) => counts.set(employee.id, 0));
-    currentAssignments.forEach((employeeId) => {
-      const normalized = this.normalizeText(employeeId);
-      if (counts.has(normalized)) {
-        counts.set(normalized, (counts.get(normalized) || 0) + 1);
-      }
-    });
-
-    return employees
-      .slice()
-      .sort((left, right) => {
-        return (
-          (counts.get(left.id) || 0) - (counts.get(right.id) || 0) ||
-          String(left.createdAt || '').localeCompare(String(right.createdAt || '')) ||
-          left.id.localeCompare(right.id)
-        );
-      })[0].id;
   }
 
   login(email: string, password: string): PublicUser {
@@ -713,14 +651,14 @@ export class UsersService {
       const raw = readFileSync(this.dataFile, 'utf-8').trim();
       const parsed = raw ? (JSON.parse(raw) as User[]) : DEFAULT_USERS;
       const source = Array.isArray(parsed) && parsed.length ? parsed : DEFAULT_USERS;
-      this.withCanonicalSystemAdmin(source).forEach((user) => {
+      source.forEach((user) => {
         const normalized = this.normalizeStoredUser(user);
         this.users.set(normalized.id, normalized);
       });
       this.persistToDisk();
     } catch {
       this.users.clear();
-      this.withCanonicalSystemAdmin(DEFAULT_USERS).forEach((user) => {
+      DEFAULT_USERS.forEach((user) => {
         this.users.set(user.id, this.normalizeStoredUser(user));
       });
       this.persistToDisk();
@@ -767,96 +705,6 @@ export class UsersService {
       return 'consumer';
     }
     return role;
-  }
-
-  private ensureRoleCanBeAssigned(
-    role: string,
-    options: CreateUserOptions | UpdateUserOptions,
-    existing?: User,
-  ) {
-    const allowedRoles = [
-      'retailer',
-      'supplier',
-      'consumer',
-      'biller',
-      'employee',
-      'admin',
-    ];
-    if (!allowedRoles.includes(role)) {
-      throw new BadRequestException('Unsupported user role');
-    }
-
-    if (role === 'admin' && !this.isSystemAdmin(existing)) {
-      throw new BadRequestException(
-        'Admin signup is disabled. Use the system administrator account.',
-      );
-    }
-
-    if (role === 'employee' && !options.allowPrivilegedRoles) {
-      throw new BadRequestException(
-        'Employee accounts can only be created by the administrator.',
-      );
-    }
-  }
-
-  private ensureSystemAdminInvariant(
-    existing: User,
-    nextEmail: string,
-    nextRole: string,
-  ) {
-    if (!this.isSystemAdmin(existing)) {
-      return;
-    }
-
-    if (nextRole !== 'admin') {
-      throw new BadRequestException('The system administrator role cannot be changed');
-    }
-
-    if (nextEmail !== this.normalizeEmail(SYSTEM_ADMIN_USER.email)) {
-      throw new BadRequestException('The system administrator email cannot be changed');
-    }
-  }
-
-  private isSystemAdmin(user?: Partial<User>) {
-    if (!user) {
-      return false;
-    }
-
-    return (
-      this.normalizeText(user.id) === SYSTEM_ADMIN_USER.id ||
-      (this.normalizeRole(user.role || '') === 'admin' &&
-        this.normalizeEmail(user.email || '') ===
-          this.normalizeEmail(SYSTEM_ADMIN_USER.email))
-    );
-  }
-
-  private withCanonicalSystemAdmin(source: User[]) {
-    const savedAdmin =
-      source.find(
-        (user) =>
-          this.normalizeRole(user.role || '') === 'admin' &&
-          this.normalizeEmail(user.email || '') ===
-            this.normalizeEmail(SYSTEM_ADMIN_USER.email),
-      ) ||
-      source.find((user) => this.normalizeRole(user.role || '') === 'admin');
-
-    const canonicalAdmin = this.normalizeStoredUser({
-      ...SYSTEM_ADMIN_USER,
-      password: this.normalizeText(savedAdmin?.password, SYSTEM_ADMIN_USER.password),
-      createdAt: this.normalizeText(
-        savedAdmin?.createdAt,
-        SYSTEM_ADMIN_USER.createdAt,
-      ),
-      updatedAt: this.normalizeText(
-        savedAdmin?.updatedAt,
-        SYSTEM_ADMIN_USER.updatedAt,
-      ),
-    });
-
-    return [
-      canonicalAdmin,
-      ...source.filter((user) => this.normalizeRole(user.role || '') !== 'admin'),
-    ];
   }
 
   private normalizeEmail(value: string) {

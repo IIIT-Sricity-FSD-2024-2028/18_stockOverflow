@@ -18,19 +18,12 @@ export declare class BillersService extends JsonCollectionService<Biller, 'bille
     create(createBillerDto: CreateBillerDto): import("../common/database.types").BillerRecord;
     update(id: number, updateBillerDto: UpdateBillerDto): import("../common/database.types").BillerRecord;
     createRequest(requestData: CreateBillerRequestDto): BillerRequest;
-    getRequests(employeeId?: string): BillerRequest[];
-    approveRequest(id: string, approvalScope?: ApproveBillerRequestDto, resolvedBy?: string): {
+    getRequests(): BillerRequest[];
+    approveRequest(id: string, approvalScope?: ApproveBillerRequestDto): {
         request: BillerRequest;
         biller: import("../common/database.types").BillerRecord;
     };
-    rejectRequest(id: string, resolvedBy?: string, rejectionReason?: string): BillerRequest;
-    approveAssignedRequest(id: string, employeeId: string, approvalScope?: ApproveBillerRequestDto): {
-        request: BillerRequest;
-        biller: import("../common/database.types").BillerRecord;
-    };
-    rejectAssignedRequest(id: string, employeeId: string, rejectionReason?: string): BillerRequest;
-    private findAssignedRequest;
-    private ensurePendingRequestAssignments;
+    rejectRequest(id: string): BillerRequest;
     private matchesScope;
     private upsertApprovedBiller;
     private ensureBillerUserExists;

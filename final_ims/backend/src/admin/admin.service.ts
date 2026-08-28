@@ -73,7 +73,7 @@ export class AdminService {
       status: createUserDto.status as string,
       store: createUserDto.store,
       storeId: createUserDto.storeId,
-    }, { allowPrivilegedRoles: true }) as any;
+    }) as any;
     return this.getUserById(created.id);
   }
 
@@ -86,7 +86,7 @@ export class AdminService {
       status: updateUserDto.status as string,
       store: updateUserDto.store,
       storeId: updateUserDto.storeId,
-    }, { allowPrivilegedRoles: true });
+    });
     return this.getUserById(id);
   }
 
@@ -278,7 +278,6 @@ export class AdminService {
     const suppliers = allUsers.filter((u) => String(u.role).toLowerCase() === 'supplier').length;
     const consumers = allUsers.filter((u) => String(u.role).toLowerCase() === 'consumer').length;
     const billers = allUsers.filter((u) => String(u.role).toLowerCase() === 'biller').length;
-    const employees = allUsers.filter((u) => String(u.role).toLowerCase() === 'employee').length;
 
     const lowStockProducts = products.filter((p: any) => {
       const qty = Number(p.qty || 0);
@@ -298,7 +297,6 @@ export class AdminService {
       suppliers,
       consumers,
       billers,
-      employees,
       admins: allUsers.filter((u) => String(u.role).toLowerCase() === 'admin').length,
     };
 
@@ -307,7 +305,6 @@ export class AdminService {
       totalSuppliers: suppliers,
       totalConsumers: consumers,
       totalBillers: billers,
-      totalEmployees: employees,
       totalStores: stores.length,
       totalProducts: products.length,
       totalTransactions: transactions.length,
@@ -445,21 +442,6 @@ export class AdminService {
           manageOrders: true,
           updateDeliveryStatus: true,
           viewReports: true,
-          manageUsers: false,
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: 'role-employee',
-        name: 'Employee',
-        description: 'Assigned operations and validation work',
-        permissions: {
-          viewInventory: true,
-          editInventory: false,
-          manageOrders: true,
-          updateDeliveryStatus: true,
-          viewReports: false,
           manageUsers: false,
         },
         createdAt: new Date().toISOString(),

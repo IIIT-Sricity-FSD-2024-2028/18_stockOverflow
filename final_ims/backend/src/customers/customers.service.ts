@@ -234,22 +234,14 @@ export class CustomersService {
     const normalizedRetailerId = this.normalizeText(retailerId);
     const normalizedStoreId = this.normalizeText(storeId);
 
-    const custRetailerId = this.normalizeText(customer.retailerId);
     if (
       normalizedRetailerId &&
-      custRetailerId &&
-      custRetailerId !== normalizedRetailerId
+      this.normalizeText(customer.retailerId) !== normalizedRetailerId
     ) {
       return false;
     }
 
-    const custStoreId = this.normalizeText(customer.storeId);
-    if (
-      normalizedStoreId &&
-      custStoreId &&
-      custStoreId !== normalizedStoreId &&
-      !normalizedRetailerId
-    ) {
+    if (normalizedStoreId && this.normalizeText(customer.storeId) !== normalizedStoreId) {
       return false;
     }
 

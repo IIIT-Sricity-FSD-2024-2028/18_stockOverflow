@@ -18,7 +18,6 @@ export class JsonDbService implements OnModuleInit {
   }
 
   getCollection<K extends DatabaseCollectionKey>(key: K): DatabaseSchema[K] {
-    this.db = this.readFromDisk();
     return structuredClone(this.db[key]);
   }
 

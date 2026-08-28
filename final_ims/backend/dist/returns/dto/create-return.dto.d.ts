@@ -1,8 +1,5 @@
 export declare class CreateReturnDto {
     retailerId?: string;
-    retailerName?: string;
-    supplierId?: string;
-    supplierName?: string;
     orderId?: string;
     customer?: string;
     customerId?: string;
@@ -19,7 +16,6 @@ export declare class CreateReturnDto {
     notes?: string;
     status?: string;
     amount?: number;
-    quantity?: number;
     priority?: string;
     storeId?: string;
     store?: string;

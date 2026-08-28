@@ -11,11 +11,7 @@ const common_1 = require("@nestjs/common");
 const suppliers_controller_1 = require("./suppliers.controller");
 const suppliers_service_1 = require("./suppliers.service");
 const products_module_1 = require("../products/products.module");
-<<<<<<< Updated upstream
 const router_middleware_1 = require("../common/router.middleware");
-=======
-const users_module_1 = require("../users/users.module");
->>>>>>> Stashed changes
 let SuppliersModule = class SuppliersModule {
     configure(consumer) {
         consumer
@@ -26,7 +22,7 @@ let SuppliersModule = class SuppliersModule {
 exports.SuppliersModule = SuppliersModule;
 exports.SuppliersModule = SuppliersModule = __decorate([
     (0, common_1.Module)({
-        imports: [products_module_1.ProductsModule, users_module_1.UsersModule],
+        imports: [products_module_1.ProductsModule],
         controllers: [suppliers_controller_1.SuppliersController],
         providers: [suppliers_service_1.SuppliersService],
         exports: [suppliers_service_1.SuppliersService],

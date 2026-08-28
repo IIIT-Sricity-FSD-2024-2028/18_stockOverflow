@@ -21,7 +21,6 @@ let JsonDbService = class JsonDbService {
         this.db = this.readFromDisk();
     }
     getCollection(key) {
-        this.db = this.readFromDisk();
         return structuredClone(this.db[key]);
     }
     saveCollection(key, value) {

@@ -136,31 +136,6 @@ export class RetailerStoreDto {
   @IsOptional()
   @IsIn(['active', 'inactive'])
   status?: 'active' | 'inactive';
-
-  @IsOptional()
-  @IsIn(['pending', 'approved', 'rejected'])
-  validationStatus?: 'pending' | 'approved' | 'rejected';
-
-  @IsOptional()
-  @IsString()
-  assignedEmployeeId?: string;
-
-  @IsOptional()
-  @IsString()
-  assignedAt?: string;
-
-  @IsOptional()
-  @IsString()
-  validatedBy?: string;
-
-  @IsOptional()
-  @IsString()
-  validatedAt?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(600)
-  rejectionReason?: string;
 }
 
 export class RetailerSupplierDto {
@@ -282,31 +257,6 @@ export class CreateRetailerSetupDto {
   @IsOptional()
   @IsIn(['active', 'inactive'])
   profileStatus?: 'active' | 'inactive';
-
-  @IsOptional()
-  @IsIn(['pending', 'approved', 'rejected'])
-  validationStatus?: 'pending' | 'approved' | 'rejected';
-
-  @IsOptional()
-  @IsString()
-  assignedEmployeeId?: string;
-
-  @IsOptional()
-  @IsString()
-  assignedAt?: string;
-
-  @IsOptional()
-  @IsString()
-  validatedBy?: string;
-
-  @IsOptional()
-  @IsString()
-  validatedAt?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(600)
-  rejectionReason?: string;
 
   @IsOptional()
   @IsArray()

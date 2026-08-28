@@ -2,12 +2,6 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 type PublicUser = Omit<User, 'password'>;
-type CreateUserOptions = {
-    allowPrivilegedRoles?: boolean;
-};
-type UpdateUserOptions = {
-    allowPrivilegedRoles?: boolean;
-};
 export declare class UsersService {
     private readonly users;
     private readonly dataDirectory;
@@ -19,11 +13,10 @@ export declare class UsersService {
     constructor();
     findAll(role?: string, email?: string): PublicUser[];
     findOne(id: string): PublicUser;
-    create(createUserDto: CreateUserDto, options?: CreateUserOptions): PublicUser;
-    update(id: string, updateUserDto: UpdateUserDto, options?: UpdateUserOptions): PublicUser;
+    create(createUserDto: CreateUserDto): PublicUser;
+    update(id: string, updateUserDto: UpdateUserDto): PublicUser;
     updateProfile(id: string, profile: Record<string, unknown>): PublicUser;
     remove(id: string): boolean;
-    getNextEmployeeId(currentAssignments: Array<string | undefined | null>): string;
     login(email: string, password: string): PublicUser;
     private syncLinkedProfileForUserId;
     private hydrateLinkedProfile;
@@ -47,10 +40,6 @@ export declare class UsersService {
     private normalizeStoredUser;
     private toPublicUser;
     private normalizeRole;
-    private ensureRoleCanBeAssigned;
-    private ensureSystemAdminInvariant;
-    private isSystemAdmin;
-    private withCanonicalSystemAdmin;
     private normalizeEmail;
     private normalizeStringList;
     private normalizeProfile;

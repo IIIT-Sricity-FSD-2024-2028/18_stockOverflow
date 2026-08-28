@@ -30,42 +30,6 @@ __decorate([
 ], UpdateSupplierSetupDto.prototype, "primaryContact", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(['active', 'inactive']),
-    __metadata("design:type", String)
-], UpdateSupplierSetupDto.prototype, "profileStatus", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(['pending', 'approved', 'rejected']),
-    __metadata("design:type", String)
-], UpdateSupplierSetupDto.prototype, "validationStatus", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateSupplierSetupDto.prototype, "assignedEmployeeId", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateSupplierSetupDto.prototype, "assignedAt", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateSupplierSetupDto.prototype, "validatedBy", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateSupplierSetupDto.prototype, "validatedAt", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(600),
-    __metadata("design:type", String)
-], UpdateSupplierSetupDto.prototype, "rejectionReason", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.ArrayMaxSize)(200),
     (0, class_validator_1.ValidateNested)({ each: true }),

@@ -7,7 +7,7 @@
     "assignedEmployeeId": "EMP-1001",
     "assignedAt": "2026-08-27T19:26:09.950Z",
     "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-27T19:26:09.950Z",
+    "updatedAt": "2026-08-28T04:54:45.055Z",
     "business": {
       "companyName": "Hans",
       "businessType": "Distributor",
@@ -40,13 +40,16 @@
         "category": "Electronics",
         "unitPrice": 525,
         "minOrderQty": 1,
-        "stockAvailable": 150,
+        "stockAvailable": 147,
         "unit": "Piece",
         "description": "Product op3 supplied by Hans"
       }
     ],
     "pricingPolicies": [],
-    "bankDetails": []
+    "bankDetails": [],
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "id": "50c1c24d-9efa-4fd6-acdb-137f8cc8936f",
@@ -82,7 +85,10 @@
     "retailers": [],
     "products": [],
     "pricingPolicies": [],
-    "bankDetails": []
+    "bankDetails": [],
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {
@@ -115,7 +121,10 @@
     "assignedEmployeeId": "186f3595-a91e-47fc-81dc-398b392a20b5",
     "assignedAt": "2026-08-27T16:57:44.772Z",
     "createdAt": "2026-08-27T16:57:44.772Z",
-    "updatedAt": "2026-08-27T16:58:35.358Z"
+    "updatedAt": "2026-08-27T16:58:35.358Z",
+    "validatedBy": "",
+    "validatedAt": "",
+    "rejectionReason": ""
   },
   {
     "business": {

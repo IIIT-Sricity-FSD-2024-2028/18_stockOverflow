@@ -1,16 +1,14 @@
 import { JsonDbService } from '../common/json-db.service';
 import { ProductsService } from '../products/products.service';
 import { ReturnRecord } from '../common/database.types';
-import { SuppliersService } from '../suppliers/suppliers.service';
 import { CreateReturnDto } from './dto/create-return.dto';
 import { UpdateReturnDto } from './dto/update-return.dto';
 export declare class ReturnsService {
     private readonly db;
     private readonly productsService;
-    private readonly suppliersService;
-    constructor(db: JsonDbService, productsService: ProductsService, suppliersService: SuppliersService);
-    findAll(retailerId?: string, storeId?: string, customerLookup?: string | string[], supplierId?: string, source?: string): ReturnRecord[];
-    findOne(id: string, retailerId?: string, storeId?: string, customerLookup?: string | string[], supplierId?: string, source?: string): ReturnRecord;
+    constructor(db: JsonDbService, productsService: ProductsService);
+    findAll(retailerId?: string, storeId?: string, customerLookup?: string): ReturnRecord[];
+    findOne(id: string, retailerId?: string, storeId?: string, customerLookup?: string): ReturnRecord;
     create(createReturnDto: CreateReturnDto): ReturnRecord;
     update(id: string, updateReturnDto: UpdateReturnDto): ReturnRecord;
     private buildReturnRecord;
@@ -30,7 +28,5 @@ export declare class ReturnsService {
     private toMoney;
     private buildFallbackImage;
     private normalizeText;
-    private normalizeSource;
-    private normalizeQuantity;
     private matchesScope;
 }

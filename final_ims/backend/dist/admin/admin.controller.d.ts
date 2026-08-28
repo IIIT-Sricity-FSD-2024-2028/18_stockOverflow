@@ -8,7 +8,6 @@ export declare class AdminController {
         totalSuppliers: number;
         totalConsumers: number;
         totalBillers: number;
-        totalEmployees: number;
         totalStores: number;
         totalProducts: number;
         totalTransactions: number;
@@ -20,7 +19,6 @@ export declare class AdminController {
             suppliers: number;
             consumers: number;
             billers: number;
-            employees: number;
             admins: number;
         };
     };

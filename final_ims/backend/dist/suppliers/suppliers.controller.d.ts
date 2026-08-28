@@ -6,6 +6,7 @@ import { SuppliersService } from './suppliers.service';
 export declare class SuppliersController {
     private readonly suppliersService;
     constructor(suppliersService: SuppliersService);
+    createSupplier(dto: any): SupplierRecord;
     create(createSupplierSetupDto: CreateSupplierSetupDto): SupplierRecord;
     findAll(): SupplierRecord[];
     getDirectory(): SupplierDirectoryEntry[];
@@ -15,6 +16,7 @@ export declare class SuppliersController {
     getDocuments(id: string): SupplierDocument[];
     removeDocument(id: string, docId: string): void;
     findOne(id: string): SupplierRecord;
+    updatePut(id: string, dto: any): SupplierRecord;
     update(id: string, updateSupplierSetupDto: UpdateSupplierSetupDto): SupplierRecord;
     remove(id: string): void;
 }

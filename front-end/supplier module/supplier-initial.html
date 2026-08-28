@@ -1337,8 +1337,7 @@ completeSetup = async function() {
     document.getElementById('finishHero').style.display='block';
     document.getElementById('btnNext').style.display='none';
     document.getElementById('btnBack').style.visibility='hidden';
-    showToast('Setup complete! Redirecting to login page...');
-    setTimeout(goToLogin, 2000);
+    showToast('Setup saved to backend.');
   } catch (error) {
     showToast(error.message || 'Unable to save setup.', 'err');
   }

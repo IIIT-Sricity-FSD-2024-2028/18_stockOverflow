@@ -2,11 +2,7 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { SuppliersController } from './suppliers.controller';
 import { SuppliersService } from './suppliers.service';
 import { ProductsModule } from '../products/products.module';
-<<<<<<< Updated upstream
 import { SupplierAuditMiddleware } from '../common/router.middleware';
-=======
-import { UsersModule } from '../users/users.module';
->>>>>>> Stashed changes
 
 /**
  * IMPLEMENTATION DETAIL (Evaluation Criteria):
@@ -14,7 +10,7 @@ import { UsersModule } from '../users/users.module';
  * to apply SupplierAuditMiddleware directly to all routes handled by SuppliersController.
  */
 @Module({
-  imports: [ProductsModule, UsersModule],
+  imports: [ProductsModule],
   controllers: [SuppliersController],
   providers: [SuppliersService],
   exports: [SuppliersService],

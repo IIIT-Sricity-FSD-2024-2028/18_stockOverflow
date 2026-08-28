@@ -78,33 +78,22 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
     createRequest(requestData) {
         const requests = this.getRequests();
         const scope = this.resolveRequestScope(requestData);
-        const assignedEmployeeId = this.usersService.getNextEmployeeId(requests.map((request) => request.assignedEmployeeId));
         const newRequest = {
             id: Date.now().toString(),
             ...requestData,
             retailerId: scope.retailerId,
             storeId: scope.storeId,
             status: 'pending',
-            assignedEmployeeId,
-            assignedAt: assignedEmployeeId ? new Date().toISOString() : '',
             createdAt: new Date().toISOString(),
         };
         requests.push(newRequest);
         this.db.saveCollection('biller_requests', requests);
         return newRequest;
     }
-    getRequests(employeeId) {
-        this.ensurePendingRequestAssignments();
-        const requests = this.db.getCollection('biller_requests') || [];
-        const normalizedEmployeeId = this.normalizeText(employeeId);
-        if (!normalizedEmployeeId) {
-            return requests;
-        }
-        return requests.filter((request) => {
-            return this.normalizeText(request.assignedEmployeeId) === normalizedEmployeeId;
-        });
+    getRequests() {
+        return this.db.getCollection('biller_requests') || [];
     }
-    approveRequest(id, approvalScope, resolvedBy) {
+    approveRequest(id, approvalScope) {
         const requests = this.getRequests();
         const requestIndex = requests.findIndex((r) => r.id === id);
         if (requestIndex === -1) {
@@ -117,18 +106,17 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
             storeId: this.normalizeText(approvalScope?.storeId, request.storeId),
         });
         const biller = this.upsertApprovedBiller(request, scope);
-        this.ensureBillerUserExists(request, biller);
+        this.ensureBillerUserExists(request);
         request.retailerId = scope.retailerId;
         if (scope.storeId) {
             request.storeId = scope.storeId;
         }
         request.status = 'approved';
         request.approvedAt = new Date().toISOString();
-        request.resolvedBy = this.normalizeText(resolvedBy, request.resolvedBy);
         this.db.saveCollection('biller_requests', requests);
         return { request, biller };
     }
-    rejectRequest(id, resolvedBy, rejectionReason) {
+    rejectRequest(id) {
         const requests = this.getRequests();
         const requestIndex = requests.findIndex((r) => r.id === id);
         if (requestIndex === -1) {
@@ -137,69 +125,25 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
         const request = requests[requestIndex];
         request.status = 'rejected';
         request.rejectedAt = new Date().toISOString();
-        request.resolvedBy = this.normalizeText(resolvedBy, request.resolvedBy);
-        request.rejectionReason = this.normalizeText(rejectionReason, request.rejectionReason);
         this.db.saveCollection('biller_requests', requests);
         return request;
-    }
-    approveAssignedRequest(id, employeeId, approvalScope) {
-        const request = this.findAssignedRequest(id, employeeId);
-        return this.approveRequest(request.id, approvalScope, employeeId);
-    }
-    rejectAssignedRequest(id, employeeId, rejectionReason) {
-        const request = this.findAssignedRequest(id, employeeId);
-        return this.rejectRequest(request.id, employeeId, rejectionReason);
-    }
-    findAssignedRequest(id, employeeId) {
-        const request = this.getRequests().find((entry) => entry.id === id);
-        if (!request) {
-            throw new common_1.NotFoundException('Biller request not found');
-        }
-        if (this.normalizeText(request.assignedEmployeeId) !==
-            this.normalizeText(employeeId)) {
-            throw new common_1.NotFoundException('Assigned request not found');
-        }
-        return request;
-    }
-    ensurePendingRequestAssignments() {
-        const requests = this.db.getCollection('biller_requests') || [];
-        const assignments = requests
-            .map((request) => request.assignedEmployeeId)
-            .filter(Boolean);
-        let changed = false;
-        const now = new Date().toISOString();
-        requests.forEach((request) => {
-            if (request.status !== 'pending' ||
-                this.normalizeText(request.assignedEmployeeId)) {
-                return;
-            }
-            const assignedEmployeeId = this.usersService.getNextEmployeeId(assignments);
-            if (!assignedEmployeeId) {
-                return;
-            }
-            request.assignedEmployeeId = assignedEmployeeId;
-            request.assignedAt = now;
-            assignments.push(assignedEmployeeId);
-            changed = true;
-        });
-        if (changed) {
-            this.db.saveCollection('biller_requests', requests);
-        }
     }
     matchesScope(biller, retailerId, storeId) {
         const normalizedRetailerId = this.normalizeText(retailerId);
         const normalizedStoreId = this.normalizeText(storeId);
-        const bRetailerId = this.normalizeText(biller.retailerId);
         if (normalizedRetailerId &&
-            bRetailerId &&
-            bRetailerId !== normalizedRetailerId) {
+            this.normalizeText(biller.retailerId) &&
+            this.normalizeText(biller.retailerId) !== normalizedRetailerId) {
             return false;
         }
-        const bStoreId = this.normalizeText(biller.storeId);
+        if (normalizedRetailerId &&
+            !this.normalizeText(biller.retailerId) &&
+            !this.normalizeText(biller.storeId)) {
+            return false;
+        }
         if (normalizedStoreId &&
-            bStoreId &&
-            bStoreId !== normalizedStoreId &&
-            !normalizedRetailerId) {
+            this.normalizeText(biller.storeId) &&
+            this.normalizeText(biller.storeId) !== normalizedStoreId) {
             return false;
         }
         return true;
@@ -233,14 +177,6 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
         if (scope.storeId && existingStoreId && existingStoreId !== scope.storeId) {
             throw new common_1.ConflictException('This biller email is already linked to another store.');
         }
-        if (scope.storeId) {
-            const existingStoreBiller = billers.find((b) => b.storeId === scope.storeId &&
-                b.status === 'active' &&
-                this.normalizeEmail(b.email) !== normalizedEmail);
-            if (existingStoreBiller) {
-                throw new common_1.ConflictException(`This store already has an active biller assigned (${existingStoreBiller.name}). Only one biller is allowed per store.`);
-            }
-        }
         const updated = {
             ...existing,
             retailerId: this.normalizeText(existingRetailerId, scope.retailerId),
@@ -255,7 +191,7 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
         this.write(billers);
         return updated;
     }
-    ensureBillerUserExists(request, biller) {
+    ensureBillerUserExists(request) {
         const existingUsers = this.usersService.findAll(undefined, request.email);
         if (!existingUsers.length) {
             this.usersService.create({
@@ -263,22 +199,13 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
                 email: request.email,
                 password: 'temp123',
                 role: 'biller',
-                store: biller?.storeId || request.storeId || '',
+                store: '',
             });
+            return;
         }
-        const users = this.usersService.findAll(undefined, request.email);
-        if (users.length && biller) {
-            const user = users[0];
-            if (String(user.role || '').toLowerCase() !== 'biller') {
-                throw new common_1.ConflictException('A non-biller user already exists with this email address.');
-            }
-            this.usersService.update(user.id, {
-                profileId: String(biller.id),
-                storeId: biller.storeId,
-                currentStoreId: biller.storeId,
-                accessibleStoreIds: biller.storeId ? [biller.storeId] : [],
-                retailerId: biller.retailerId,
-            });
+        const existingUser = existingUsers[0];
+        if (String(existingUser.role || '').toLowerCase() !== 'biller') {
+            throw new common_1.ConflictException('A non-biller user already exists with this email address.');
         }
     }
     resolveRequestScope(payload) {
