@@ -48,4 +48,13 @@ export class UpdateSupplierSetupDto {
   @ValidateNested()
   @Type(() => BankDetailsDto)
   bankDetails?: BankDetailsDto;
+
+  @IsOptional()
+  rating?: number;
+
+  @IsOptional()
+  avgRating?: number;
+
+  @IsOptional()
+  feedback?: any;
 }

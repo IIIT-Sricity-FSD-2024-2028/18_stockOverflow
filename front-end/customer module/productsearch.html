@@ -110,7 +110,7 @@
 </head>
 <body>
   <aside class="sidebar">
-    <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"></div>
+    <div class="sidebar-logo"><img src="Logo.png" alt="StockOverflow"></div>
     <nav style="flex:1;padding:12px 0;">
       <div class="nav-group-label">Main Menu</div>
       <div class="nav-item">Dashboard</div>
@@ -120,7 +120,7 @@
       <div class="nav-item">Restock Alerts</div>
     </nav>
       <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
-      <button type="button" class="sidebar-logout-btn" onclick="window.location.href='../biller module/index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+      <button type="button" class="sidebar-logout-btn" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
     </div>
   </aside>
 
@@ -131,6 +131,13 @@
         <div class="header-sub">Browse all products from retailer inventory</div>
       </div>
       <div class="header-right">
+        <!-- [Shopping Cart] -->
+        <a href="cart.html" class="icon-btn2" style="position:relative;text-decoration:none;" title="View Cart">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <div class="cart-badge" style="position:absolute;top:-4px;right:-4px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;">0</div>
+        </a>
         <div class="icon-btn2">🔔</div>
         <div class="avatar">AK</div>
       </div>
@@ -139,6 +146,17 @@
     <div class="page-content">
       <div class="filter-bar">
         <div class="search-box">🔍 <input id="searchInput" type="text" placeholder="Search product name, SKU, brand..." /></div>
+        <!-- [Location-based Scaling] Store location selector for fetching specific store inventory -->
+        <div class="filter-select">
+          <select id="storeLocationFilter" style="font-weight: 500;">
+            <option value="">Global (All Stores)</option>
+            <option value="auto">Auto-detect Nearest Store</option>
+            <option disabled>──────────</option>
+            <option value="S001">Downtown Flagship (S001)</option>
+            <option value="S002">Uptown Hub (S002)</option>
+            <option value="S003">Suburban Outlet (S003)</option>
+          </select>
+        </div>
         <div class="filter-select"><select id="categoryFilter"><option value="">All Categories</option></select></div>
         <div class="filter-select"><select id="brandFilter"><option value="">All Brands</option></select></div>
         <div class="filter-select"><select id="stockFilter">
@@ -153,9 +171,9 @@
     </div>
   </div>
 
-  <script src="../js/mockData.js"></script>
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
   <script src="app-flow.js"></script>
-  <script src="../retailer module/common-products.js"></script>
   <script>
     let allProducts = [];
 
@@ -169,12 +187,20 @@
       return { key: 'in', chipClass: 'in-stock', label: 'In Stock' };
     }
 
+    function openProductDetailBySku(sku, name) {
+      if (!sku) return;
+      localStorage.setItem('imsSelectedSku', sku);
+      if (name) localStorage.setItem('imsSelectedProduct', name);
+      window.location.href = 'product-detail.html?sku=' + encodeURIComponent(sku);
+    }
+
     function renderProducts(products) {
       const container = document.getElementById('productsContainer');
       container.innerHTML = products.map(function(product) {
         const stock = getStockMeta(product);
+        const escapedName = (product.name || '').replace(/'/g, "\\'");
         return `
-          <div class="prod-card" data-sku="${product.sku}">
+          <div class="prod-card" data-sku="${product.sku}" onclick="openProductDetailBySku('${product.sku}', '${escapedName}')" style="cursor:pointer;">
             <div class="prod-img">
               <img class="prod-img-photo" src="${product.productImg}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
               <div class="prod-img-fallback" style="display:none;">${product.emoji || '📦'}</div>
@@ -188,7 +214,7 @@
                 <div class="prod-price">$${product.priceUSD.toLocaleString()}</div>
                 ${stock.key === 'low' ? '<div class="low-stock-label">Low stock</div>' : ''}
               </div>
-              <button class="view-btn" data-sku="${product.sku}">View Details →</button>
+              <button class="view-btn" data-sku="${product.sku}" onclick="event.stopPropagation();openProductDetailBySku('${product.sku}', '${escapedName}')">View Details →</button>
             </div>
           </div>
         `;
@@ -226,14 +252,19 @@
       renderProducts(filtered);
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const source = window.RetailerProductsData && window.RetailerProductsData.masterProducts;
-      if (!source || !Array.isArray(source)) {
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        allProducts = await window.ImsApi.getProducts();
+      } catch (_error) {
         document.getElementById('productsContainer').innerHTML = '<p>Unable to load product data.</p>';
         return;
       }
 
-      allProducts = source.slice();
+      if (!Array.isArray(allProducts) || !allProducts.length) {
+        document.getElementById('productsContainer').innerHTML = '<p>No products available right now.</p>';
+        return;
+      }
+
       hydrateFilters(allProducts);
       renderProducts(allProducts);
 

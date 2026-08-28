@@ -85,7 +85,7 @@ let SuppliersService = class SuppliersService {
         return supplier;
     }
     findAll() {
-        return Array.from(this.suppliers.values()).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+        return Array.from(this.suppliers.values()).sort((a, b) => String(b?.updatedAt || '').localeCompare(String(a?.updatedAt || '')));
     }
     findOne(id) {
         const supplier = this.suppliers.get(id);
@@ -127,6 +127,10 @@ let SuppliersService = class SuppliersService {
         if (updateSupplierSetupDto.contactPerson) {
             primaryContact.fullName = updateSupplierSetupDto.contactPerson;
         }
+        const existingFeedbacks = Array.isArray(supplier.feedbacks) ? supplier.feedbacks : [];
+        const nextFeedbacks = updateSupplierSetupDto.feedback
+            ? [updateSupplierSetupDto.feedback, ...existingFeedbacks]
+            : existingFeedbacks;
         const updatedSupplier = {
             ...supplier,
             ...updateSupplierSetupDto,
@@ -137,6 +141,9 @@ let SuppliersService = class SuppliersService {
             pricingPolicies: updateSupplierSetupDto.pricingPolicies ?? supplier.pricingPolicies,
             bankDetails: updateSupplierSetupDto.bankDetails ?? supplier.bankDetails,
             profileStatus: updateSupplierSetupDto.profileStatus ?? supplier.profileStatus ?? 'active',
+            rating: updateSupplierSetupDto.rating ?? supplier.rating,
+            avgRating: updateSupplierSetupDto.avgRating ?? updateSupplierSetupDto.rating ?? supplier.avgRating,
+            feedbacks: nextFeedbacks,
             updatedAt: new Date().toISOString(),
         };
         this.suppliers.set(id, updatedSupplier);
@@ -223,8 +230,13 @@ let SuppliersService = class SuppliersService {
         return newDoc;
     }
     getDocuments(supplierId) {
-        const supplier = this.findOne(supplierId);
-        return supplier.documents || [];
+        try {
+            const supplier = this.findOne(supplierId);
+            return supplier.documents || [];
+        }
+        catch {
+            return [];
+        }
     }
     removeDocument(supplierId, docId) {
         const supplier = this.findOne(supplierId);

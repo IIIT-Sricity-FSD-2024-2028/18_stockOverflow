@@ -7,6 +7,143 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/landing.css">
+  <style>
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1d2e;
+      margin: 0;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-body {
+      padding: 20px;
+    }
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding: 15px 20px;
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #374151;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary {
+      background: #3b82f6;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+    .tab-button {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      background: none;
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-button.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+    }
+    .tab-button:hover {
+      color: #3b82f6;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
 
@@ -49,6 +186,7 @@
       
       <div class="hero-actions">
         <a href="auth/register.html" class="btn btn-primary" style="padding: 1rem 3rem;">Sign Up &rarr;</a>
+        <button class="btn btn-outline-gray" onclick="openBillerRequestModal()" style="padding: 1rem 2rem;">Become a Biller</button>
         <div class="hero-perks mt-2">
           <span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -398,6 +536,83 @@
     </div>
   </footer>
 
+<!-- Biller Request Modal -->
+<div id="billerModal" class="modal-overlay" onclick="closeBillerModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Biller Portal</h2>
+      <button class="modal-close" onclick="closeBillerModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Tab Navigation -->
+      <div style="display: flex; border-bottom: 1px solid #e5e7eb; margin-bottom: 20px;">
+        <button id="applyTab" class="tab-button active" onclick="switchTab('apply')">Apply to Become Biller</button>
+        <button id="loginTab" class="tab-button" onclick="switchTab('login')">Login as Biller</button>
+      </div>
+
+      <!-- Apply Tab Content -->
+      <div id="applyContent" class="tab-content active">
+        <form id="billerRequestForm">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="billerName" class="form-input" placeholder="Your full name" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="billerEmail" class="form-input" placeholder="your.email@example.com" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="billerPassword" class="form-input" placeholder="••••••••" required minlength="8"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" id="billerConfirmPassword" class="form-input" placeholder="••••••••" required minlength="8"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" id="billerPhone" class="form-input" placeholder="+1 (555) 000-0000" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company Name</label>
+            <input type="text" id="billerCompany" class="form-input" placeholder="Your company name" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Country</label>
+            <input type="text" id="billerCountry" class="form-input" placeholder="Your country" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Select Retailer</label>
+            <select id="billerRetailer" class="form-input" required>
+              <option value="">Choose a retailer...</option>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <!-- Login Tab Content -->
+      <div id="loginContent" class="tab-content">
+        <form id="billerLoginForm">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="billerLoginEmail" class="form-input" placeholder="your.email@example.com" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="billerLoginPassword" class="form-input" placeholder="••••••••" required/>
+          </div>
+          <div id="billerLoginError" class="invalid-feedback" style="display:none; text-align: center; margin-bottom: 1rem;"></div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeBillerModal()">Cancel</button>
+      <button id="applyButton" class="btn btn-primary" onclick="submitBillerRequest()">Submit Request</button>
+      <button id="loginButton" class="btn btn-primary" onclick="loginAsBiller()" style="display: none;">Login</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // --- Scroll Reveal: Intersection Observer ---
 (function() {
@@ -545,130 +760,254 @@
     });
   });
 })();
+
+// ================================
+// BILLER REQUEST MODAL
+// ================================
+function openBillerRequestModal() {
+  loadRetailersForModal();
+  document.getElementById('billerModal').classList.add('active');
+  // Set default tab to apply
+  switchTab('apply');
+}
+
+function loadRetailersForModal() {
+  const select = document.getElementById('billerRetailer');
+  select.innerHTML = '<option value="">Choose a retailer...</option>';
+  
+  // Fetch retailers from backend API
+  fetch('http://localhost:3001/api/stores')
+    .then(response => response.json())
+    .then(stores => {
+      stores.forEach(store => {
+        const option = document.createElement('option');
+        option.value = store.id;
+        option.dataset.retailerId = store.retailerId || '';
+        option.textContent = `${store.name} (${store.location})`;
+        select.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Error loading retailers:', error);
+      // Fallback to localStorage if API fails
+      try {
+        const users = JSON.parse(localStorage.getItem('so_users') || '[]');
+        const retailers = users.filter(u => u.role === 'retailer' && u.status === 'Active');
+        
+        retailers.forEach(retailer => {
+          const option = document.createElement('option');
+          option.value = retailer.id;
+          option.textContent = `${retailer.name} (${retailer.store || 'Store'})`;
+          select.appendChild(option);
+        });
+      } catch (e) {
+        console.error('Error loading retailers from localStorage:', e);
+      }
+    });
+}
+
+function closeBillerModal(event) {
+  if (event && event.target.id !== 'billerModal') return;
+  document.getElementById('billerModal').classList.remove('active');
+}
+
+function submitBillerRequest() {
+  const name = document.getElementById('billerName').value.trim();
+  const email = document.getElementById('billerEmail').value.trim();
+  const password = document.getElementById('billerPassword').value.trim();
+  const confirmPassword = document.getElementById('billerConfirmPassword').value.trim();
+  const phone = document.getElementById('billerPhone').value.trim();
+  const company = document.getElementById('billerCompany').value.trim();
+  const country = document.getElementById('billerCountry').value.trim();
+  const retailerSelect = document.getElementById('billerRetailer');
+  const storeId = retailerSelect.value;
+  const selectedStoreOption = retailerSelect.options[retailerSelect.selectedIndex];
+  const retailerId = selectedStoreOption
+    ? (selectedStoreOption.dataset.retailerId || '').trim()
+    : '';
+
+  if (!name || !email || !password || !confirmPassword || !phone || !company || !country || !storeId) {
+    alert('Please fill in all fields');
+    return;
+  }
+
+  // Validate email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert('Please enter a valid email');
+    return;
+  }
+
+  // Validate password
+  if (password.length < 8) {
+    alert('Password must be at least 8 characters');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert('Passwords do not match');
+    return;
+  }
+
+  // First register the user
+  fetch('http://localhost:3001/api/users', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name,
+      email,
+      password,
+      role: 'biller'
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('User registration failed');
+    }
+    return response.json();
+  })
+  .then(user => {
+    // Then create biller request
+    return fetch('http://localhost:3001/api/billers/requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        company,
+        country,
+        retailerId: retailerId || storeId,
+        storeId
+      })
+    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Store the email for status checking
+    localStorage.setItem('biller_pending_email', email);
+    
+    alert('Your biller account has been created and request submitted! You will be redirected to the validation page.');
+    closeBillerModal();
+    document.getElementById('billerRequestForm').reset();
+    
+    // Redirect to pending page
+    setTimeout(() => {
+      window.location.href = 'auth/biller-pending.html';
+    }, 500);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to submit request. Please try again.');
+  });
+}
+
+function switchTab(tab) {
+  // Update tab buttons
+  document.getElementById('applyTab').classList.toggle('active', tab === 'apply');
+  document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+  
+  // Update tab content
+  document.getElementById('applyContent').classList.toggle('active', tab === 'apply');
+  document.getElementById('loginContent').classList.toggle('active', tab === 'login');
+  
+  // Update footer buttons
+  document.getElementById('applyButton').style.display = tab === 'apply' ? 'inline-block' : 'none';
+  document.getElementById('loginButton').style.display = tab === 'login' ? 'inline-block' : 'none';
+}
+
+function loginAsBiller() {
+  const email = document.getElementById('billerLoginEmail').value;
+  const password = document.getElementById('billerLoginPassword').value;
+  const errorDiv = document.getElementById('billerLoginError');
+  
+  errorDiv.style.display = 'none';
+  
+  fetch('http://localhost:3001/api/users/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+  .then(response => response.json())
+  .then(user => {
+    if (user.role === 'biller') {
+      // Check biller request status
+      return fetch('http://localhost:3001/api/billers/requests')
+        .then(res => res.json())
+        .then(requests => {
+          const userRequest = requests.find(r => r.email === user.email);
+          
+          if (userRequest && userRequest.status === 'rejected') {
+            window.location.href = 'auth/biller-rejected.html';
+            return;
+          } else if (userRequest && userRequest.status === 'pending') {
+            window.location.href = 'auth/biller-pending.html';
+            return;
+          } else if (user.profileId && (user.currentStoreId || user.storeId) && Array.isArray(user.accessibleStoreIds) && user.accessibleStoreIds.length) {
+            // Approved biller
+            localStorage.setItem('so_session', JSON.stringify({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+              status: user.status || 'Active',
+              store: user.store || '',
+              storeId: user.storeId || user.currentStoreId || '',
+              currentStoreId: user.currentStoreId || user.storeId || '',
+              accessibleStoreIds: user.accessibleStoreIds || [],
+              profileId: user.profileId || '',
+              profile: user.profile || null,
+              retailerId: user.retailerId || (user.profile && user.profile.retailerId) || ''
+            }));
+            const storeId = user.currentStoreId || user.storeId || '';
+            window.location.href = 'biller module/pos.html' + (storeId ? '?storeId=' + encodeURIComponent(storeId) : '');
+          } else {
+            window.location.href = 'auth/biller-pending.html';
+          }
+        });
+    } else {
+      errorDiv.textContent = 'Invalid credentials for biller login.';
+      errorDiv.style.display = 'block';
+    }
+  })
+  .catch(error => {
+    console.error('Login error:', error);
+    errorDiv.textContent = 'Login failed. Please try again.';
+    errorDiv.style.display = 'block';
+  });
+}
 </script>
-
-<!-- =============================================
-     WATER RIPPLE MOUSE EFFECT
-     Pure Canvas JS — zero backend impact
-     ============================================= -->
-<style>
-  body { cursor: none; }
-  a, button, [role="button"], input, select, textarea { cursor: none; }
-
-  #cursor-dot {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    background: radial-gradient(circle, #a5b4fc, #6366f1);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 99999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px 3px rgba(99,102,241,0.6);
-    transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
-  }
-  body.cursor-hover #cursor-dot { width: 14px; height: 14px; }
-
-  #ripple-canvas {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9990;
-  }
-</style>
-
-<canvas id="ripple-canvas"></canvas>
-<div id="cursor-dot"></div>
 
 <script>
-(function () {
-  const dot    = document.getElementById('cursor-dot');
-  const canvas = document.getElementById('ripple-canvas');
-  const ctx    = canvas.getContext('2d');
-  let ripples  = [];
-  let hue      = 220;
-
-  function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // Cursor dot
-  document.addEventListener('mousemove', e => {
-    dot.style.left = e.clientX + 'px';
-    dot.style.top  = e.clientY + 'px';
-  });
-  document.addEventListener('mouseleave', () => dot.style.opacity = '0');
-  document.addEventListener('mouseenter', () => dot.style.opacity = '1');
-
-  document.querySelectorAll('a,button,.feature-card,.flow-node,.cmd-float-badge,.floating-metric,.btn')
-    .forEach(el => {
-      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-    });
-
-  // Spawn ripple rings (slowed down)
-  function spawnRipple(x, y, big = false) {
-    const rings = big ? 5 : 3;
-    for (let i = 0; i < rings; i++) {
-      ripples.push({
-        x, y,
-        r:     big ? i * 14 : i * 8,
-        maxR:  big ? 260 + i * 60 : 120 + i * 32,
-        alpha: big ? 0.95 - i * 0.07 : 0.85 - i * 0.1,  // much higher start alpha
-        lineW: big ? 4.0 - i * 0.4   : 3.5 - i * 0.4,   // thicker rings
-        hue:   hue + i * 20,
-        speed: big ? 2.0 + i * 0.3   : 1.1 + i * 0.25,
-      });
-    }
-    hue = (hue + 10) % 360;
+// Check for URL parameters on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('openBillerModal') === 'true') {
+    openBillerRequestModal();
   }
 
-  // Throttled spawn on move
-  let lastT = 0;
-  document.addEventListener('mousemove', e => {
-    const now = Date.now();
-    if (now - lastT > 80) {
-      spawnRipple(e.clientX, e.clientY);
-      lastT = now;
+  // Check if biller is logged in and show access modal
+  const session = localStorage.getItem('so_session');
+  if (session) {
+    const user = JSON.parse(session);
+    if (user.role === 'biller') {
+      document.getElementById('billerAccessModal').classList.add('active');
     }
-  });
-
-  // Big burst on click
-  document.addEventListener('mousedown', e => spawnRipple(e.clientX, e.clientY, true));
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ripples = ripples.filter(r => r.alpha > 0.01);
-
-    for (const rp of ripples) {
-      ctx.beginPath();
-      ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
-
-      // Wider gradient band and higher peak alpha for stronger visibility
-      const band = rp.lineW * 4;
-      const g = ctx.createRadialGradient(rp.x, rp.y, Math.max(0, rp.r - band), rp.x, rp.y, rp.r + band);
-      g.addColorStop(0,    `hsla(${rp.hue}, 95%, 75%, 0)`);
-      g.addColorStop(0.3,  `hsla(${rp.hue}, 100%, 78%, ${rp.alpha})`);
-      g.addColorStop(0.6,  `hsla(${rp.hue}, 95%, 72%, ${rp.alpha * 0.7})`);
-      g.addColorStop(1,    `hsla(${rp.hue}, 90%, 70%, 0)`);
-
-      ctx.strokeStyle = g;
-      ctx.lineWidth   = rp.lineW;
-      ctx.stroke();
-
-      // Physics
-      const prog = rp.r / rp.maxR;
-      rp.r     += rp.speed * (1 - prog * 0.45);
-      rp.alpha *= 0.974;  // gradual fade
-      rp.lineW *= 0.990;  // gradual shrink
-    }
-    requestAnimationFrame(draw);
   }
-  draw();
-})();
+});
+
+function closeBillerAccessModal() {
+  document.getElementById('billerAccessModal').classList.remove('active');
+}
+
+function goToPOS() {
+  window.location.href = 'biller module/pos.html';
+}
 </script>
+
 </body>
 </html>

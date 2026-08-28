@@ -166,12 +166,12 @@
               ${item.storeName ? `<div style="font-size:11px;color:#059669;font-weight:600;margin-top:2px;">📦 Reserving at: ${item.storeName}</div>` : ''}
             </div>
             <div class="qty-control">
-              <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${item.qty - 1}); location.reload()">-</button>
+              <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${item.qty - 1}); renderCart();">-</button>
               <div class="qty-val">${item.qty}</div>
-              <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${item.qty + 1}); location.reload()">+</button>
+              <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${item.qty + 1}); renderCart();">+</button>
             </div>
             <div class="item-price">$${(item.price * item.qty).toFixed(2)}</div>
-            <button class="remove-btn" onclick="window.removeFromCart('${item.sku}'); location.reload()">Remove</button>
+            <button class="remove-btn" onclick="window.removeFromCart('${item.sku}'); renderCart();">Remove</button>
           `;
           container.appendChild(div);
         });

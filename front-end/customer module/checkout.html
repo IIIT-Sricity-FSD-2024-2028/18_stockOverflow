@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow - Finalize Reservation</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --sidebar-bg: #ffffff; --card-bg: #ffffff;
+      --border: #e8e9f0; --text-primary: #000000; --text-muted: #6b7280;
+      --accent: #2563eb; --accent-light: #eef2ff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
+
+    /* Layout framework */
+    .sidebar { width: 240px; min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; border-right: 1px solid var(--border); }
+    .sidebar-logo { padding: 16px 24px; border-bottom: 1px solid #e8e9f0; display: flex; align-items: center; min-height: 66px; }
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; color: #808080; font-size: 13.5px; cursor: pointer; border-left: 3px solid transparent; text-decoration: none; }
+    .nav-item:hover { background: #f0f0f0; color: #000000; }
+    .nav-item.active { background: #e8f1ff; color: #2563eb; border-left-color: var(--accent); }
+    .nav-group-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; color: #6b7280; padding: 16px 24px 6px; text-transform: uppercase; }
+
+    .main-wrap { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .header { height: 60px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 10; }
+    .header-title { font-size: 20px; font-weight: 700; }
+    .header-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .icon-btn2 { width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; color: var(--text-muted); }
+
+    .page-content { padding: 40px 28px; flex: 1; display: flex; justify-content: center; align-items: flex-start; }
+
+    /* Checkout specific */
+    .checkout-container { width: 100%; max-width: 540px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+    input, select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus { border-color: var(--accent); }
+    .row { display: flex; gap: 16px; }
+    .row .form-group { flex: 1; }
+    .section-title { font-size: 16px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .submit-btn { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+    .submit-btn:hover { background: #1d4ed8; }
+    .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted); text-decoration: none; }
+    .back-link:hover { color: var(--accent); }
+    .store-badge { background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 500; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div style="font-weight:800; font-size: 20px; color:#38BDF8;">StockOverflow</div></div>
+    <nav style="flex:1;padding:12px 0;">
+      <div class="nav-group-label">Main Menu</div>
+      <a href="consumer-landingpage.html" class="nav-item">Dashboard</a>
+      <a href="productsearch.html" class="nav-item">Products</a>
+      <a href="orders.html" class="nav-item">Orders</a>
+      <a href="cart.html" class="nav-item active">Reservations</a>
+    </nav>
+    <div class="sidebar-logout-wrap" style="margin-top:auto;padding:14px;">
+      <button type="button" class="sidebar-logout-btn" onclick="window.location.href='../index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Wrap -->
+  <div class="main-wrap">
+    <header class="header">
+      <div>
+        <div class="header-title">Finalize Reservation</div>
+        <div class="header-sub">Provide your contact info to complete your request</div>
+      </div>
+      <div class="header-right">
+        <!-- [Shopping Cart] -->
+        <a href="cart.html" class="icon-btn2" style="position:relative;text-decoration:none;" title="View Cart">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <div class="cart-badge" style="position:absolute;top:-4px;right:-4px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;">0</div>
+        </a>
+        <div class="icon-btn2">🔔</div>
+        <div class="avatar">AK</div>
+      </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockOverflow - Finalize Reservation</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f6fa; --sidebar-bg: #ffffff; --card-bg: #ffffff;
+      --border: #e8e9f0; --text-primary: #000000; --text-muted: #6b7280;
+      --accent: #2563eb; --accent-light: #eef2ff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); display: flex; min-height: 100vh; }
+
+    /* Layout framework */
+    .sidebar { width: 240px; min-height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; border-right: 1px solid var(--border); }
+    .sidebar-logo { padding: 16px 24px; border-bottom: 1px solid #e8e9f0; display: flex; align-items: center; min-height: 66px; }
+    .sidebar-logo img { height: 30px; width: auto; display: block; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; color: #808080; font-size: 13.5px; cursor: pointer; border-left: 3px solid transparent; text-decoration: none; }
+    .nav-item:hover { background: #f0f0f0; color: #000000; }
+    .nav-item.active { background: #e8f1ff; color: #2563eb; border-left-color: var(--accent); }
+    .nav-group-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; color: #6b7280; padding: 16px 24px 6px; text-transform: uppercase; }
+
+    .main-wrap { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .header { height: 60px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 10; }
+    .header-title { font-size: 20px; font-weight: 700; }
+    .header-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .icon-btn2 { width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; color: var(--text-muted); }
+
+    .page-content { padding: 40px 28px; flex: 1; display: flex; justify-content: center; align-items: flex-start; }
+
+    /* Checkout specific */
+    .checkout-container { width: 100%; max-width: 540px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+    input, select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus { border-color: var(--accent); }
+    .row { display: flex; gap: 16px; }
+    .row .form-group { flex: 1; }
+    .section-title { font-size: 16px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .submit-btn { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+    .submit-btn:hover { background: #1d4ed8; }
+    .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted); text-decoration: none; }
+    .back-link:hover { color: var(--accent); }
+    .store-badge { background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 500; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div style="font-weight:800; font-size: 20px; color:#38BDF8;">StockOverflow</div></div>
+    <nav style="flex:1;padding:12px 0;">
+      <div class="nav-group-label">Main Menu</div>
+      <a href="consumer-landingpage.html" class="nav-item">Dashboard</a>
+      <a href="productsearch.html" class="nav-item">Products</a>
+      <a href="orders.html" class="nav-item">Orders</a>
+      <a href="cart.html" class="nav-item active">Reservations</a>
+    </nav>
+    <div class="sidebar-logout-wrap" style="margin-top:auto;padding:14px;">
+      <button type="button" class="sidebar-logout-btn" onclick="window.location.href='../index.html'" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff;color:#374151;font-weight:600;cursor:pointer;">Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Wrap -->
+  <div class="main-wrap">
+    <header class="header">
+      <div>
+        <div class="header-title">Finalize Reservation</div>
+        <div class="header-sub">Provide your contact info to complete your request</div>
+      </div>
+      <div class="header-right">
+        <!-- [Shopping Cart] -->
+        <a href="cart.html" class="icon-btn2" style="position:relative;text-decoration:none;" title="View Cart">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <div class="cart-badge" style="position:absolute;top:-4px;right:-4px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:none;align-items:center;justify-content:center;">0</div>
+        </a>
+        <div class="icon-btn2">🔔</div>
+        <div class="avatar">AK</div>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="checkout-container">
+          <div class="store-badge">
+            📦 Multiple store items in cart
+          </div>
+
+          <form id="checkoutForm">
+            <div class="section-title">Contact Information</div>
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="custName" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="custEmail" placeholder="john@example.com" required>
+            </div>
+
+            <div class="section-title">Payment Preference</div>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Payment will be collected at the store.</p>
+            <div class="form-group">
+              <select id="paymentMethod" required>
+                <option value="Card">Pay with Card at Store</option>
+                <option value="Cash">Pay with Cash at Store</option>
+                <option value="UPI">Pay with UPI at Store</option>
+              </select>
+            </div>
+
+            <button type="submit" class="submit-btn">Confirm Reservation</button>
+          </form>
+          <a href="cart.html" class="back-link">Return to Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="../retailer module/common-products.js"></script>
+    <script src="../js/api-config.js"></script>
+    <script src="../js/commerce-api.js"></script>
+    <script src="app-flow.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        // Pre-fill Customer Details
+        const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+        if (session.name) document.getElementById('custName').value = session.name;
+        if (session.email) document.getElementById('custEmail').value = session.email;
+      });
+
+      document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btn = document.querySelector('.submit-btn');
+        btn.textContent = 'Processing Reservation...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
+
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        
+        const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+        const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
+        const cart = state.cart || [];
+        
+        if (cart.length === 0) {
+          alert('Your cart is empty!');
+          window.location.href = 'cart.html';
+          return;
+        }
+
+        try {
+          // Submit a reservation request for EACH item in the cart
+          for (const item of cart) {
+            await window.ImsApi.createReservationRequest({
+              sku: item.sku,
+              qty: item.qty,
+              customer: document.getElementById('custName').value,
+              customerEmail: document.getElementById('custEmail').value,
+              customerId: session.id || undefined,
+              storeId: item.storeId || 'S001',
+              store: item.storeName || 'Downtown Flagship',
+              paymentMethod: paymentMethod
+            });
+          }
+          
+          // Clear cart
+          window.clearCart();
+          window.location.href = 'orders.html?fromReserve=1';
+        } catch (error) {
+          alert(window.IMS_HTTP.getErrorMessage(error));
+          btn.textContent = 'Confirm Reservation';
+          btn.style.opacity = '1';
+          btn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -513,10 +513,8 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
             <div class="field-error" id="e-bemail">Valid email is required</div>
           </div>
           <div class="field">
-            <label class="field-label">Phone Number <span class="req">*</span></label>
-            <input type="tel" id="b-phone" placeholder="10-digit phone number" maxlength="15"
-              oninput="this.value=this.value.replace(/[^0-9+\-\s()]/g,'')"/>
-            <div class="field-error" id="e-bphone">Enter a valid 10-digit phone number</div>
+            <label class="field-label">Phone Number</label>
+            <input type="tel" id="b-phone" placeholder="+1 (555) 000-0000"/>
           </div>
         </div>
         <div class="fg fg-3">
@@ -643,106 +641,18 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
     </div>
   </div>
 
-  <!-- ── SECTION 3 · SUPPLIERS ────────── -->
+  <!-- ── SECTION 3 · REVIEW ────────────── -->
   <div class="section" id="sec-3">
-    <div class="card">
-      <div class="card-head">
-        <div class="card-title">
-          <div class="card-icon">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="5" width="11" height="7" rx="1"/><path d="M3.5 5V4a3 3 0 016 0v1"/><circle cx="6.5" cy="8.5" r="1.2"/></svg>
-          </div>
-          Supplier List
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-muted)" id="supCount">0 suppliers added</span>
-          <button class="btn btn-primary btn-sm" onclick="openSupModal()">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
-            Add Supplier
-          </button>
-        </div>
-      </div>
-      <div id="supplierList">
-        <div class="empty-state" id="supEmpty">
-          <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="18" width="28" height="18" rx="2"/><path d="M14 18V14a8 8 0 0116 0v4"/><circle cx="22" cy="27" r="3"/></svg>
-          <p>No suppliers added yet</p>
-          <span>Add your first supplier to track products and orders</span>
-        </div>
-        <div class="supplier-list" id="supRows"></div>
-      </div>
-      <div class="add-row-btn" onclick="openSupModal()">
-        <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
-        Add Another Supplier
-      </div>
-    </div>
-  </div>
-
-  <!-- ── SECTION 4 · PRODUCTS ─────────── -->
-  <div class="section" id="sec-4">
-    <div class="card">
-      <div class="card-head">
-        <div class="card-title">
-          <div class="card-icon">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.5 1L12 4.5v4L6.5 12 1 8.5v-4L6.5 1z"/><path d="M1 4.5L6.5 8 12 4.5M6.5 8v4"/></svg>
-          </div>
-          Initial Product Inventory
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-muted)" id="prodCount">0 products</span>
-          <button class="btn btn-outline btn-sm" onclick="addProductRow()">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
-            Add Row
-          </button>
-        </div>
-      </div>
-      <div class="prod-table-wrap">
-        <table class="prod-table" id="prodTable">
-          <thead>
-            <tr>
-              <th style="width:40px"></th>
-              <th style="width:80px">SKU</th>
-              <th>Product Name</th>
-              <th>Category</th>
-              <th style="width:110px">Price ($)</th>
-              <th style="width:90px">Qty</th>
-              <th style="width:100px">Min Alert</th>
-              <th style="width:90px">Unit</th>
-              <th style="width:50px"></th>
-            </tr>
-          </thead>
-          <tbody id="prodBody">
-            <!-- rows -->
-          </tbody>
-        </table>
-        <div class="empty-state" id="prodEmpty" style="padding:32px 20px">
-          <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M22 4L40 13.5v17L22 40 4 30.5v-17L22 4z"/><path d="M4 13.5L22 23l18-9.5M22 23V40"/></svg>
-          <p>No products yet</p>
-          <span>Click "Add Row" to begin adding your product inventory</span>
-        </div>
-      </div>
-      <div style="padding:12px 16px;border-top:1px solid #f0f2f4;display:flex;align-items:center;justify-content:space-between">
-        <div style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-muted)">
-          Tip: Press Tab to move between fields quickly. You can always add more products after setup.
-        </div>
-        <button class="btn btn-outline btn-sm" onclick="addProductRow()">
-          <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
-          Add Row
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── SECTION 5 · REVIEW ────────────── -->
-  <div class="section" id="sec-5">
     <div class="finish-hero" id="finishHero" style="display:none">
       <div class="finish-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20,6 9,17 4,12"/></svg>
       </div>
       <div class="finish-title">You're All Set! 🎉</div>
-      <div class="finish-sub">Your retailer account has been configured. Click "Go to Dashboard" to start managing your inventory.</div>
+      <div class="finish-sub">Your retailer account has been configured. Please log in to access your dashboard.</div>
       <div style="display:flex;gap:10px;justify-content:center">
-        <button class="btn btn-primary" onclick="goToDashboard()">
+        <button class="btn btn-primary" onclick="goToLogin()">
           <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="1.5" width="4" height="4" rx=".8"/><rect x="7.5" y="1.5" width="4" height="4" rx=".8"/><rect x="1.5" y="7.5" width="4" height="4" rx=".8"/><rect x="7.5" y="7.5" width="4" height="4" rx=".8"/></svg>
-          Go to Dashboard
+          Go to Login
         </button>
         <button class="btn btn-outline" onclick="goStep(1)">Edit Setup</button>
       </div>
@@ -756,24 +666,10 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
         </div>
         <div id="revStoreBody"></div>
       </div>
-      <div class="rev-list-card" id="revSuppliers">
-        <div class="rev-list-head">
-          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="6" width="12" height="7" rx="1"/><path d="M4 6V5a4 4 0 018 0v1"/></svg>
-          Suppliers Summary
-        </div>
-        <div id="revSupBody"></div>
-      </div>
-      <div class="rev-list-card" id="revProducts">
-        <div class="rev-list-head">
-          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 1L13 4.5v5L7 13 1 9.5v-5L7 1z"/></svg>
-          Products Summary
-        </div>
-        <div id="revProdBody"></div>
-      </div>
       <div style="display:flex;justify-content:center;margin-top:20px">
         <button class="btn btn-dark" style="padding:12px 32px;font-size:14px" onclick="completeSetup()">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,7 5.5,10.5 12,3.5"/></svg>
-          Complete Setup & Go to Dashboard
+          Complete Setup & Go to Login
         </button>
       </div>
     </div>
@@ -789,7 +685,7 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
   </button>
   <div style="display:flex;align-items:center;gap:14px">
     <div class="bb-dots" id="bbDots"></div>
-    <span class="bb-info">Step <strong id="bbCurrent">1</strong> of <strong>5</strong></span>
+    <span class="bb-info">Step <strong id="bbCurrent">1</strong> of <strong>3</strong></span>
   </div>
   <button class="btn btn-primary" id="btnNext" onclick="nextStep()">
     Continue
@@ -824,17 +720,8 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
         <div class="field-error" id="sm-contact-err">Contact person is required</div>
       </div>
       <div class="field">
-        <label class="field-label">Phone Number <span class="req">*</span></label>
-        <input type="tel" id="sm-phone" placeholder="10-digit phone number" maxlength="15"
-          oninput="this.value=this.value.replace(/[^0-9+\-\s()]/g,'')"/>
-        <div class="field-error" id="sm-phone-err">Enter a valid 10-digit phone number</div>
-      </div>
-    </div>
-    <div class="fg fg-1" style="margin-bottom:16px">
-      <div class="field">
-        <label class="field-label">Store Email <span class="req">*</span></label>
-        <input type="email" id="sm-email" placeholder="store@yourbusiness.com"/>
-        <div class="field-error" id="sm-email-err">Enter a valid email address</div>
+        <label class="field-label">Phone Number</label>
+        <input type="tel" id="sm-phone" placeholder="+1 555 000-0000"/>
       </div>
     </div>
     <div class="fg fg-1" style="margin-bottom:16px">
@@ -961,11 +848,9 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
   <span id="toastMsg">Done!</span>
 </div>
 
-<script src="../js/mockData.js"></script>
 <script>
 /* ── DATA ─────────────────────────────── */
 let stores = [];
-// Note: we always start fresh — the user adds their own stores during onboarding
 let suppliers = [];
 let products = [];
 let currentStep = 1;
@@ -974,21 +859,141 @@ let supRating = 0;
 let editingStoreIdx = null;
 let supIdCounter = 1;
 let prodSkuCounter = 16;
+const API_BASE = window.location.hostname
+  ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+  : 'http://localhost:3001/api';
+
+function readSession(){
+  try{return JSON.parse(localStorage.getItem('so_session') || 'null');}
+  catch(_error){return null;}
+}
+
+function writeSession(session){
+  localStorage.setItem('so_session', JSON.stringify(session));
+  return session;
+}
+
+function requireRetailerSession(){
+  const session = readSession();
+  if(!session || session.role !== 'retailer'){
+    window.location.href = '../auth/login.html';
+    return null;
+  }
+  return session;
+}
+
+async function apiRequest(path, options){
+  const response = await fetch(`${API_BASE}${path}`, options || {});
+  const contentType = response.headers.get('content-type') || '';
+  const payload = contentType.includes('application/json')
+    ? await response.json()
+    : await response.text();
+  if(!response.ok){
+    const message = payload && typeof payload === 'object'
+      ? (Array.isArray(payload.message) ? payload.message.join(', ') : payload.message || payload.error || 'Request failed')
+      : String(payload || 'Request failed');
+    throw new Error(message);
+  }
+  return payload;
+}
+
+function buildStoreCode(name, index){
+  const cleaned = String(name || '')
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 12);
+  return cleaned || `STORE-${String(index + 1).padStart(2,'0')}`;
+}
+
+function buildRetailerCode(name){
+  const numericSeed = String(Date.now()).slice(-3);
+  return `RET-${numericSeed}`;
+}
+
+function normalizeStoresForProfile(){
+  return stores.map((store, index) => ({
+    name: store.name,
+    code: store.code || buildStoreCode(store.name, index),
+    contactPerson: store.contact,
+    phone: store.phone || undefined,
+    address: store.addr || undefined,
+    type: store.type || 'Retail Store',
+    notes: store.notes || undefined,
+    status: store.status || 'active',
+  }));
+}
+
+function normalizeSuppliersForProfile(){
+  return suppliers.map((supplier) => ({
+    supplierId: supplier.linkedSupplierId || undefined,
+    name: supplier.name,
+    code: supplier.id,
+    email: supplier.email || undefined,
+    phone: supplier.phone || undefined,
+    company: supplier.company || undefined,
+    category: supplier.category || undefined,
+    terms: supplier.terms || undefined,
+    status: 'active',
+    rating: Number(supplier.rating || 0),
+    comment: supplier.comment || undefined,
+  }));
+}
+
+function buildDistributedStoreInventory(storeList, totalQty){
+  if(!storeList.length){
+    return [{ storeId:'default-store', qty:Math.max(0, Number(totalQty) || 0) }];
+  }
+  const safeQty = Math.max(0, parseInt(totalQty || 0, 10) || 0);
+  const base = Math.floor(safeQty / storeList.length);
+  let remainder = safeQty - (base * storeList.length);
+  return storeList.map((store) => {
+    const extra = remainder > 0 ? 1 : 0;
+    remainder = Math.max(0, remainder - 1);
+    return { storeId: store.code, qty: base + extra };
+  });
+}
+
+function buildProfileSummary(session, normalizedStores, normalizedSuppliers){
+  return {
+    businessName: document.getElementById('b-name').value.trim(),
+    businessEmail: document.getElementById('b-email').value.trim(),
+    businessPhone: document.getElementById('b-phone').value.trim(),
+    taxId: document.getElementById('b-tax').value.trim(),
+    address: document.getElementById('b-addr').value.trim(),
+    website: document.getElementById('b-web').value.trim(),
+    businessType: document.getElementById('b-type').value,
+    currency: document.getElementById('b-currency').value,
+    fiscalYear: document.getElementById('b-fiscal').value,
+    primaryIndustry: document.getElementById('b-industry').value,
+    ownerName: document.getElementById('o-name').value.trim(),
+    ownerTitle: document.getElementById('o-title').value.trim(),
+    ownerEmail: document.getElementById('o-email').value.trim(),
+    stores: normalizedStores,
+    suppliers: normalizedSuppliers,
+    userName: session.name,
+  };
+}
+
+function prefillFromSession(){
+  const session = requireRetailerSession();
+  if(!session) return;
+  if(!document.getElementById('b-email').value) document.getElementById('b-email').value = session.email || '';
+  if(!document.getElementById('o-name').value) document.getElementById('o-name').value = session.name || '';
+  if(!document.getElementById('o-email').value) document.getElementById('o-email').value = session.email || '';
+}
 
 const STEP_META = [
   { label:'Business', sub:'Profile' },
   { label:'Stores', sub:'Locations' },
-  { label:'Suppliers', sub:'Vendors' },
-  { label:'Products', sub:'Inventory' },
   { label:'Review', sub:'& Launch' },
 ];
 
 const HERO_META = [
   { pill:'Step 1', title:'Set Up Your Business Profile', sub:'Start with the basics — your business name, contact info, and owner details.' },
   { pill:'Step 2', title:'Add Your Store Locations', sub:'Configure each physical or online store. You can manage all of them from one dashboard.' },
-  { pill:'Step 3', title:'Add Your Suppliers', sub:'List the vendors and suppliers you work with. This powers smart reorder recommendations.' },
-  { pill:'Step 4', title:'Add Your Initial Inventory', sub:'Enter your starting products. You can always add more after setup is complete.' },
-  { pill:'Step 5', title:'Review & Complete Setup', sub:'Everything looks good? Launch your StockOverflow dashboard and start selling.' },
+  { pill:'Step 3', title:'Review & Complete Setup', sub:'Everything looks good? Launch your StockOverflow dashboard and start selling.' },
 ];
 
 const SUP_COLORS = ['#5b67ca','#10b981','#f59e0b','#ef4444','#8b5cf6','#2e6bc5','#ec4899','#14b8a6'];
@@ -1034,7 +1039,7 @@ function updateHero(){
 function updateBottomBar(){
   const dots = document.getElementById('bbDots');
   dots.innerHTML = '';
-  for(let i=1;i<=5;i++){
+  for(let i=1;i<=3;i++){
     const d = document.createElement('div');
     d.className = 'bb-dot' + (i===currentStep?' active':'');
     dots.appendChild(d);
@@ -1042,7 +1047,7 @@ function updateBottomBar(){
   document.getElementById('bbCurrent').textContent = currentStep;
   document.getElementById('btnBack').style.visibility = currentStep>1 ? 'visible':'hidden';
   const btnNext = document.getElementById('btnNext');
-  if(currentStep===5){
+  if(currentStep===3){
     btnNext.innerHTML = `<svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="2,7 5.5,10.5 11,3.5"/></svg> Complete Setup`;
     btnNext.onclick = completeSetup;
   } else {
@@ -1059,12 +1064,12 @@ function goStep(n){
   updateHero();
   updateBottomBar();
   window.scrollTo({top:0,behavior:'smooth'});
-  if(currentStep===5) buildReview();
+  if(currentStep===3) buildReview();
 }
 
 function nextStep(){
   if(!validateStep()) return;
-  if(currentStep<5) goStep(currentStep+1);
+  if(currentStep<3) goStep(currentStep+1);
 }
 function prevStep(){
   if(currentStep>1) goStep(currentStep-1);
@@ -1084,22 +1089,11 @@ function validateStep(){
     const oname = document.getElementById('o-name');
     if(!oname.value.trim()){oname.classList.add('err');document.getElementById('e-oname').classList.add('show');ok=false;}
     else{oname.classList.remove('err');document.getElementById('e-oname').classList.remove('show');}
-    const bphone = document.getElementById('b-phone');
-    const phoneDigits = bphone.value.replace(/\D/g,'');
-    if(phoneDigits.length < 10){bphone.classList.add('err');document.getElementById('e-bphone').classList.add('show');ok=false;}
-    else{bphone.classList.remove('err');document.getElementById('e-bphone').classList.remove('show');}
     if(!ok) toast('Please fill in all required fields.','err');
     return ok;
   }
   if(currentStep===2){
     if(stores.length===0){toast('Please add at least one store to continue.','err');return false;}
-    return true;
-  }
-  if(currentStep===3){
-    // suppliers optional
-    return true;
-  }
-  if(currentStep===4){
     return true;
   }
   return true;
@@ -1110,7 +1104,7 @@ function openStoreModal(idx){
   editingStoreIdx = idx !== undefined ? idx : null;
   document.getElementById('storeModalTitle').textContent = editingStoreIdx!==null ? 'Edit Store' : 'Add Store Location';
   // reset
-  ['sm-name','sm-code','sm-contact','sm-phone','sm-email','sm-addr','sm-notes'].forEach(id=>document.getElementById(id).value='');
+  ['sm-name','sm-code','sm-contact','sm-phone','sm-addr','sm-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('sm-type').value = 'Retail Store';
   smStatus = 'active';
   updateStatusToggles('sm');
@@ -1121,7 +1115,6 @@ function openStoreModal(idx){
     document.getElementById('sm-code').value = s.code||'';
     document.getElementById('sm-contact').value = s.contact;
     document.getElementById('sm-phone').value = s.phone||'';
-    document.getElementById('sm-email').value = s.email||'';
     document.getElementById('sm-addr').value = s.addr||'';
     document.getElementById('sm-notes').value = s.notes||'';
     document.getElementById('sm-type').value = s.type||'Retail Store';
@@ -1139,31 +1132,10 @@ function saveStore(){
   else{document.getElementById('sm-name').classList.remove('err');document.getElementById('sm-name-err').classList.remove('show');}
   if(!contact){document.getElementById('sm-contact').classList.add('err');document.getElementById('sm-contact-err').classList.add('show');ok=false;}
   else{document.getElementById('sm-contact').classList.remove('err');document.getElementById('sm-contact-err').classList.remove('show');}
-  const smPhone = document.getElementById('sm-phone');
-  const smPhoneDigits = smPhone.value.replace(/\D/g,'');
-  if(smPhoneDigits.length < 10){
-    smPhone.classList.add('err');
-    document.getElementById('sm-phone-err').classList.add('show');
-    ok=false;
-  } else {
-    smPhone.classList.remove('err');
-    document.getElementById('sm-phone-err').classList.remove('show');
-  }
-  const smEmailEl = document.getElementById('sm-email');
-  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailRe.test(smEmailEl.value.trim())){
-    smEmailEl.classList.add('err');
-    document.getElementById('sm-email-err').classList.add('show');
-    ok=false;
-  } else {
-    smEmailEl.classList.remove('err');
-    document.getElementById('sm-email-err').classList.remove('show');
-  }
   if(!ok) return;
   const store = {
     name, contact,
-    email: smEmailEl.value.trim(),
-    code: document.getElementById('sm-code').value.trim(),
+    code: document.getElementById('sm-code').value.trim() || buildStoreCode(name, editingStoreIdx!==null ? editingStoreIdx : stores.length),
     phone: document.getElementById('sm-phone').value.trim(),
     addr: document.getElementById('sm-addr').value.trim(),
     type: document.getElementById('sm-type').value,
@@ -1205,8 +1177,8 @@ function renderStores(){
           ${s.type}
         </div>
       </div>
-      <div class="store-del" onclick="event.stopPropagation();deleteStore(${i})" title="Remove store">
-        <svg viewBox="0 0 12 12" fill="none" stroke="#ef4444" stroke-width="1.6"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
+      <div class="store-del" onclick="event.stopPropagation();deleteStore(${i})">
+        <svg viewBox="0 0 12 12" fill="none" stroke-width="1.6"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
       </div>
     `;
     card.ondblclick = ()=>openStoreModal(i);
@@ -1218,7 +1190,7 @@ function renderStores(){
 
 function deleteStore(i){
   if(!confirm('Remove this store?')) return;
-  stores.splice(i, 1);
+  stores.splice(i,1);
   renderStores();
   toast('Store removed.');
 }
@@ -1306,79 +1278,8 @@ function renderStars(){
   document.getElementById('ratingVal').textContent = supRating>0 ? supRating+'.0':'Not rated';
 }
 
-/* ── PRODUCT TABLE ────────────────────── */
-function addProductRow(prefill){
-  const sku = 'PT' + String(prodSkuCounter).padStart(3,'0');
-  prodSkuCounter++;
-  const r = prefill || {sku, name:'', cat:'', price:'', qty:0, min:10, unit:'Pc'};
-  const tbody = document.getElementById('prodBody');
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td class="emoji-cell" id="em-${sku}">${EMOJIS['']}</td>
-    <td class="sku-cell">${r.sku||sku}</td>
-    <td><input type="text" value="${r.name||''}" placeholder="Product name…" oninput="prodChanged(this)"/></td>
-    <td>
-      <div class="sel-wrap" style="position:relative">
-        <select onchange="catChanged(this,'em-${sku}')">
-          <option value="">Category</option>
-          ${CATEGORIES.map(c=>`<option ${r.cat===c?'selected':''}>${c}</option>`).join('')}
-        </select>
-      </div>
-    </td>
-    <td><input type="number" min="0" step="0.01" value="${r.price||''}" placeholder="0.00"/></td>
-    <td><input type="number" min="0" value="${r.qty||0}"/></td>
-    <td><input type="number" min="0" value="${r.min||10}"/></td>
-    <td>
-      <div class="sel-wrap">
-        <select>
-          ${['Pc','Box','Kg','Set','Pair','Meter','Ltr'].map(u=>`<option ${r.unit===u?'selected':''}>${u}</option>`).join('')}
-        </select>
-      </div>
-    </td>
-    <td class="del-td">
-      <button onclick="this.closest('tr').remove();updateProdCount()">
-        <svg viewBox="0 0 12 12" fill="none" stroke-width="1.6"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
-      </button>
-    </td>`;
-  if(r.cat) tr.querySelector('select').value = r.cat;
-  tbody.appendChild(tr);
-  updateProdCount();
-}
-
-function catChanged(sel,emId){
-  document.getElementById(emId).textContent = EMOJIS[sel.value]||'📦';
-}
-function prodChanged(){updateProdCount();}
-function updateProdCount(){
-  const cnt = document.getElementById('prodBody').querySelectorAll('tr').length;
-  document.getElementById('prodCount').textContent = cnt + ' product' + (cnt!==1?'s':'');
-  document.getElementById('prodEmpty').style.display = cnt>0 ? 'none':'block';
-}
-
-function getProducts(){
-  const rows = document.getElementById('prodBody').querySelectorAll('tr');
-  return Array.from(rows).map(tr=>{
-    const cells = tr.querySelectorAll('td');
-    const inputs = tr.querySelectorAll('input,select');
-    return {
-      emoji: cells[0].textContent.trim(),
-      sku: cells[1].textContent.trim(),
-      name: inputs[0].value.trim(),
-      cat: inputs[1].value,
-      price: inputs[2].value,
-      qty: inputs[3].value,
-      min: inputs[4].value,
-      unit: inputs[5].value,
-    };
-  }).filter(p=>p.name);
-}
-
 /* ── REVIEW ──────────────────────────── */
 function buildReview(){
-  const prods = getProducts();
-  const totalStock = prods.reduce((a,p)=>a+parseInt(p.qty||0),0);
-  const totalValue = prods.reduce((a,p)=>a+(parseFloat(p.price||0)*parseInt(p.qty||0)),0);
-
   document.getElementById('reviewCards').innerHTML = `
     <div class="rev-card">
       <div class="rev-card-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="4" y1="1" x2="4" y2="15"/><line x1="1" y1="8" x2="15" y2="8"/></svg></div>
@@ -1387,16 +1288,16 @@ function buildReview(){
       <div class="rev-card-sub">${stores.filter(s=>s.status==='active').length} active</div>
     </div>
     <div class="rev-card">
-      <div class="rev-card-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="6" width="14" height="9" rx="1.5"/><path d="M4 6V5a5 5 0 0110 0v1"/></svg></div>
-      <div class="rev-card-label">Suppliers</div>
-      <div class="rev-card-value">${suppliers.length}</div>
-      <div class="rev-card-sub">Vendors registered</div>
+      <div class="rev-card-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5.5" r="3"/><path d="M2 14c0-3.31 2.69-5 6-5s6 1.69 6 5"/></svg></div>
+      <div class="rev-card-label">Company</div>
+      <div class="rev-card-value">${document.getElementById('b-name').value.trim()||'—'}</div>
+      <div class="rev-card-sub">${document.getElementById('b-type').value||'Retailer'}</div>
     </div>
     <div class="rev-card">
-      <div class="rev-card-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1L15 4.5v7L8 15 1 11.5v-7L8 1z"/></svg></div>
-      <div class="rev-card-label">Products</div>
-      <div class="rev-card-value">${prods.length}</div>
-      <div class="rev-card-sub">${totalStock} units · $${totalValue.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})} value</div>
+      <div class="rev-card-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="3" width="14" height="10" rx="1.5"/><line x1="1" y1="7" x2="15" y2="7"/></svg></div>
+      <div class="rev-card-label">Contact</div>
+      <div class="rev-card-value" style="font-size:15px">${document.getElementById('o-name').value.trim()||'—'}</div>
+      <div class="rev-card-sub">${document.getElementById('b-email').value.trim()||''}</div>
     </div>
   `;
 
@@ -1409,42 +1310,6 @@ function buildReview(){
         <div class="sup-info"><div class="sup-name">${s.name}</div><div class="sup-email">${s.type} · ${s.contact}</div></div>
         <span class="store-card-badge ${s.status==='inactive'?'inactive':''}">${s.status==='active'?'Active':'Inactive'}</span>
       </div>`).join('');
-
-  // Suppliers list
-  document.getElementById('revSupBody').innerHTML = suppliers.length===0
-    ? `<div class="empty-state" style="padding:20px"><p>No suppliers added</p></div>`
-    : suppliers.map(s=>{
-        const init=s.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
-        return `<div class="supplier-row">
-          <div class="sup-avatar" style="background:${SUP_COLORS[s.colorIdx]}">${init}</div>
-          <div class="sup-info"><div class="sup-name">${s.name} <span style="color:var(--text-muted);font-weight:400;font-size:11px">${s.id}</span></div><div class="sup-email">${s.email}</div></div>
-          <div style="font-family:'Nunito Sans',sans-serif;font-size:13px;color:#f59e0b">${'★'.repeat(s.rating)+'☆'.repeat(5-s.rating)}</div>
-          <div class="sup-products" style="color:var(--text-muted)">${s.terms}</div>
-        </div>`;
-      }).join('');
-
-  // Products list
-  document.getElementById('revProdBody').innerHTML = prods.length===0
-    ? `<div class="empty-state" style="padding:20px"><p>No products added</p></div>`
-    : `<table style="width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:12.5px">
-        <thead><tr style="background:#f5f6fa">
-          <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);border-bottom:1px solid var(--border)">SKU</th>
-          <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);border-bottom:1px solid var(--border)">Product</th>
-          <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-secondary);border-bottom:1px solid var(--border)">Category</th>
-          <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:700;color:var(--text-secondary);border-bottom:1px solid var(--border)">Price</th>
-          <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:700;color:var(--text-secondary);border-bottom:1px solid var(--border)">Qty</th>
-        </tr></thead>
-        <tbody>
-          ${prods.map((p,i)=>`
-          <tr style="${i%2===0?'':'background:#fafbfc'}">
-            <td style="padding:8px 14px;border-bottom:1px solid #f0f2f4;color:var(--text-secondary);font-weight:700">${p.sku}</td>
-            <td style="padding:8px 14px;border-bottom:1px solid #f0f2f4">${p.emoji} ${p.name}</td>
-            <td style="padding:8px 14px;border-bottom:1px solid #f0f2f4;color:var(--text-secondary)">${p.cat||'—'}</td>
-            <td style="padding:8px 14px;border-bottom:1px solid #f0f2f4;text-align:right">$${parseFloat(p.price||0).toFixed(2)}</td>
-            <td style="padding:8px 14px;border-bottom:1px solid #f0f2f4;text-align:right;font-weight:700">${p.qty}</td>
-          </tr>`).join('')}
-        </tbody>
-      </table>`;
 }
 
 /* ── STATUS TOGGLE ───────────────────── */
@@ -1471,64 +1336,106 @@ document.querySelectorAll('.modal-bg').forEach(bg=>{
 });
 
 /* ── COMPLETE SETUP ──────────────────── */
+
+
 function completeSetup(){
-  // Extract products and save to Inventory DB
-  const prods = getProducts();
-  if (prods.length > 0 && window.DB) {
-    const inventory = DB.getInventory();
-    prods.forEach(p => {
-      // Check if sku exists to avoid duplicate
-      if(!inventory.find(i => i.sku === p.sku)) {
-        inventory.push({
-          id: 'INV' + Date.now().toString() + Math.floor(Math.random()*100),
-          productName: p.name,
-          sku: p.sku,
-          category: p.cat,
-          price: parseFloat(p.price || 0),
-          stockLevel: parseInt(p.qty || 0),
-          status: parseInt(p.qty || 0) > parseInt(p.min || 10) ? 'In Stock' : 'Low Stock',
-          store: 'Primary Store'
-        });
-      }
-    });
-    DB.saveInventory(inventory);
+  const session = requireRetailerSession();
+  if (!session) {
+    toast('Session expired. Please login again.', 'err');
+    return;
   }
 
-  if (window.DB) {
-    // Save updated stores
-    if (stores && stores.length > 0) {
-      let existingStores = DB.getStores();
-      // Simple merge mock
-      stores.forEach(s => {
-        if(!existingStores.find(es => es.id === s.code || es.name === s.name)) {
-          existingStores.push({ id: s.code || Date.now().toString(), name: s.name, location: s.addr, manager: s.contact });
-        }
+  const normalizedStores = normalizeStoresForProfile();
+  const businessName = document.getElementById('b-name').value.trim();
+  const retailerCode = buildRetailerCode(businessName);
+  const currentStore = normalizedStores[0] || null;
+  const submitButton = document.getElementById('btnNext');
+
+  submitButton.disabled = true;
+  submitButton.style.opacity = '.7';
+
+  Promise.resolve()
+    .then(async () => {
+      const retailerPayload = {
+        business: {
+          businessName: businessName,
+          businessType: document.getElementById('b-type').value || undefined,
+          businessEmail: document.getElementById('b-email').value.trim(),
+          phoneNumber: document.getElementById('b-phone').value.trim() || undefined,
+          taxId: document.getElementById('b-tax').value.trim() || undefined,
+          retailerCode: retailerCode,
+          currency: document.getElementById('b-currency').value || 'USD',
+          fiscalYear: document.getElementById('b-fiscal').value || undefined,
+          businessAddress: document.getElementById('b-addr').value.trim() || undefined,
+          website: document.getElementById('b-web').value.trim() || undefined,
+          primaryIndustry: document.getElementById('b-industry').value || undefined,
+        },
+        primaryContact: {
+          fullName: document.getElementById('o-name').value.trim(),
+          designation: document.getElementById('o-title').value.trim() || undefined,
+          directEmail: document.getElementById('o-email').value.trim() || undefined,
+        },
+        profileStatus: 'active',
+        stores: normalizedStores,
+        suppliers: [],
+        products: [],
+      };
+
+      const retailerRecord = session.profileId
+        ? await apiRequest(`/retailers/${encodeURIComponent(session.profileId)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(retailerPayload)
+          })
+        : await apiRequest('/retailers/setup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(retailerPayload)
+          });
+
+      const profileSummary = buildProfileSummary(session, normalizedStores, []);
+
+      const updatedUser = await apiRequest(`/users/${encodeURIComponent(session.id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profileId: retailerRecord.id,
+          profile: profileSummary,
+          store: currentStore ? currentStore.name : '',
+          storeId: currentStore ? currentStore.code : '',
+          currentStoreId: currentStore ? currentStore.code : '',
+          accessibleStoreIds: normalizedStores.map((store) => store.code)
+        })
       });
-      DB.saveStores(existingStores);
-    }
 
-    // Clear isFirstTime from user profile
-    const session = DB.getCurrentSession();
-    if(session) {
-      const users = DB.getUsers();
-      const me = users.find(u => u.email === session.email);
-      if(me) {
-        me.isFirstTime = false;
-        DB.saveUsers(users);
-      }
-    }
-  }
+      writeSession({
+        ...session,
+        ...updatedUser,
+        role: 'retailer',
+        profileId: retailerRecord.id,
+        profile: profileSummary,
+        store: currentStore ? currentStore.name : '',
+        storeId: currentStore ? currentStore.code : '',
+        currentStoreId: currentStore ? currentStore.code : '',
+        accessibleStoreIds: normalizedStores.map((store) => store.code)
+      });
 
-  document.getElementById('reviewContent').style.display='none';
-  document.getElementById('finishHero').style.display='block';
-  document.getElementById('btnNext').style.display='none';
-  document.getElementById('btnBack').style.visibility='hidden';
-  toast('Setup complete! Welcome to StockOverflow. 🎉');
+      document.getElementById('reviewContent').style.display='none';
+      document.getElementById('finishHero').style.display='block';
+      document.getElementById('btnNext').style.display='none';
+      document.getElementById('btnBack').style.visibility='hidden';
+      toast('Setup complete! Welcome to StockOverflow.');
+    })
+    .catch(error => {
+      submitButton.disabled = false;
+      submitButton.style.opacity = '1';
+      toast('Error saving profile: ' + error.message, 'err');
+    });
 }
 
-function goToDashboard(){
-  toast('Redirecting to dashboard…');
-  setTimeout(()=>{ window.location.href='Inventory_Overview.html'; },900);
+function goToLogin(){
+  localStorage.removeItem('so_session');
+  window.location.href='../auth/login.html';
 }
 
 /* ── TOAST ────────────────────────────── */
@@ -1551,11 +1458,7 @@ updateBottomBar();
 updateProdCount();
 renderStores();
 renderSuppliers();
-
-// Pre-populate a demo product row for UX guidance
-setTimeout(()=>{
-  addProductRow({sku:'PT001',name:'Sample Product',cat:'Electronics',price:'99.00',qty:50,min:10,unit:'Pc'});
-},200);
+prefillFromSession();
 </script>
 </body>
 </html>

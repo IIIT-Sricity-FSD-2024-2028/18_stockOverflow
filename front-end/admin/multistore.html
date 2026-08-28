@@ -227,11 +227,17 @@
     </div>
   </div>
 
+  <script src="../js/api-config.js"></script>
+  <script src="../js/admin-api.js"></script>
   <script src="../js/mockData.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Auth guard
+      const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+      if (!session || session.role !== 'admin') { window.location.href = '../index.html'; }
+
       if(document.getElementById('logoutBtn'))
-        document.getElementById('logoutBtn').addEventListener('click', () => { DB.logout(); window.location.href='../index.html'; });
+        document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.removeItem('so_session'); window.location.href='../index.html'; });
 
       const container = document.getElementById('retailersContainer');
       const badgeClass = (s) => ({
@@ -241,25 +247,38 @@
         Suspended: 'badge-suspended'
       }[s] || 'badge-inactive');
 
+      let USERS_DATA = [];
+      let STORES_DATA = [];
+
+      async function fetchData() {
+        try {
+          USERS_DATA = await window.AdminApi.getAllUsers();
+          STORES_DATA = await window.AdminApi.getAllStores();
+        } catch (e) {
+          console.error('Failed to load multistore data', e);
+        }
+        render();
+      }
+
       function getRetailersWithStores() {
-        const stores = DB.getStores();
-        const users = DB.getUsers();
-        const retailers = users.filter(u => u.role === 'retailer');
-        
+        const retailers = USERS_DATA.filter(u => String(u.role).toLowerCase() === 'retailer');
         return retailers.map(r => {
           return {
+            id: r.id,
             name: r.name,
             email: r.email,
             status: r.status,
-            stores: stores.filter(s => s.manager === r.name || s.retailerName === r.name)
+            stores: STORES_DATA.filter(s => String(s.retailerId) === String(r.id) || s.manager === r.name || s.retailerName === r.name)
           };
         });
       }
 
       function render() {
         const retailers = getRetailersWithStores();
-        const q = document.getElementById('msSearch').value.toLowerCase();
-        const status = document.getElementById('msStatusFilter').value;
+        const searchEl = document.getElementById('msSearch');
+        const statusEl = document.getElementById('msStatusFilter');
+        const q = searchEl ? searchEl.value.toLowerCase() : '';
+        const status = statusEl ? statusEl.value : '';
 
         container.innerHTML = '';
         
@@ -283,7 +302,7 @@
               <div>
                 <div style="display:flex;align-items:center;gap:8px;">
                   <span class="retailer-name">${r.name}</span>
-                  <span class="status-badge ${badgeClass(r.status)}">${r.status}</span>
+                  <span class="status-badge ${badgeClass(r.status)}">${r.status || 'Active'}</span>
                 </div>
                 <div class="retailer-meta">
                   <span>✉ ${r.email}</span>
@@ -294,12 +313,11 @@
             <div class="store-cards-grid">
               ${r.stores.map(s=>`
                 <div class="ms-store-card">
-                  <div class="ms-store-name">${s.name} <span class="status-badge ${badgeClass(s.status)}" style="font-size:0.7rem;margin-left:4px;">${s.status}</span></div>
-                  <div class="ms-store-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 0 1 8-8z"/></svg>${s.location}</div>
-                  <div class="ms-store-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>${s.manager}</div>
-                  <div class="ms-products-row">
-                    <span class="ms-products-label">Products</span>
-                    <span class="ms-products-val">${(s.products || 0).toLocaleString()}</span>
+                  <div class="ms-store-name">${s.name} <span class="status-badge ${badgeClass(s.status || 'Active')}" style="font-size:0.7rem;margin-left:4px;">${s.status || 'Active'}</span></div>
+                  <div class="ms-store-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 0 1 8-8z"/></svg>${s.location || '—'}</div>
+                  <div class="ms-store-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>${s.manager || '—'}</div>
+                  <div class="ms-products-row" style="margin-top: 0.5rem;">
+                    <span class="ms-products-val" style="font-size: 0.85rem; color: var(--text-muted);">ID: ${s.id}</span>
                   </div>
                   <div class="ms-actions">
                     <button class="ms-btn-view" onclick="viewMSStore('${s.id}')">
@@ -325,25 +343,15 @@
       }
 
       window.viewMSStore = (id) => {
-        const store = DB.getStores().find(x => x.id === id);
+        const store = STORES_DATA.find(x => String(x.id) === String(id));
         if (!store) return;
         const body = document.getElementById('msViewBody');
         body.innerHTML = `
           <div style="background:var(--bg-light); padding:1rem; border-radius:8px;">
             <p><strong>Name:</strong> ${store.name}</p>
-            <p><strong>Location:</strong> ${store.location}</p>
-            <p><strong>Manager:</strong> ${store.manager}</p>
-            <p><strong>Status:</strong> <span class="status-badge ${badgeClass(store.status)}">${store.status}</span></p>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-            <div style="background:#f0f9ff; padding:1rem; border-radius:8px; text-align:center;">
-              <div style="font-size:1.5rem; font-weight:700; color:var(--primary-color);">${(store.products || 0)}</div>
-              <div style="font-size:0.75rem; color:var(--text-muted);">Products</div>
-            </div>
-            <div style="background:#f0fdf4; padding:1rem; border-radius:8px; text-align:center;">
-              <div style="font-size:1.5rem; font-weight:700; color:var(--success-color);">${(store.orders || 0)}</div>
-              <div style="font-size:0.75rem; color:var(--text-muted);">Orders</div>
-            </div>
+            <p><strong>Location:</strong> ${store.location || '—'}</p>
+            <p><strong>Manager:</strong> ${store.manager || '—'}</p>
+            <p><strong>Status:</strong> <span class="status-badge ${badgeClass(store.status || 'Active')}">${store.status || 'Active'}</span></p>
           </div>
         `;
         document.getElementById('msViewModal').classList.add('active');
@@ -352,12 +360,12 @@
       window.closeMSView = () => document.getElementById('msViewModal').classList.remove('active');
 
       window.editMSStore = (id) => {
-        const store = DB.getStores().find(x => x.id === id);
+        const store = STORES_DATA.find(x => String(x.id) === String(id));
         if (!store) return;
         document.getElementById('ms_edit_id').value = store.id;
         document.getElementById('ms_edit_name').value = store.name;
-        document.getElementById('ms_edit_location').value = store.location;
-        document.getElementById('ms_edit_manager').value = store.manager;
+        document.getElementById('ms_edit_location').value = store.location || '';
+        document.getElementById('ms_edit_manager').value = store.manager || '';
         document.getElementById('ms_edit_phone').value = store.phone || '';
         document.getElementById('msEditModal').classList.add('active');
       };
@@ -367,143 +375,96 @@
         document.getElementById('msEditForm').reset();
       };
 
-      document.getElementById('msEditForm').addEventListener('submit', (e) => {
+      document.getElementById('msEditForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('ms_edit_id').value;
-        const stores = DB.getStores();
-        const idx = stores.findIndex(x => x.id === id);
-        if (idx !== -1) {
-          stores[idx].name = document.getElementById('ms_edit_name').value;
-          stores[idx].location = document.getElementById('ms_edit_location').value;
-          stores[idx].manager = document.getElementById('ms_edit_manager').value;
-          stores[idx].phone = document.getElementById('ms_edit_phone').value;
-          DB.saveStores(stores);
-          render();
+        const payload = {
+          name: document.getElementById('ms_edit_name').value,
+          location: document.getElementById('ms_edit_location').value,
+          manager: document.getElementById('ms_edit_manager').value,
+          phone: document.getElementById('ms_edit_phone').value,
+        };
+        try {
+          await window.AdminApi.updateStore(id, payload);
+          fetchData(); // reload
           closeMSEdit();
+        } catch (error) {
+          alert('Error: ' + (window.IMS_HTTP ? window.IMS_HTTP.getErrorMessage(error) : error.message));
         }
       });
 
-      window.toggleStoreStatus = (id) => {
-        const stores = DB.getStores();
-        const idx = stores.findIndex(x => x.id === id);
-        if (idx !== -1) {
-          const current = stores[idx].status;
-          stores[idx].status = current === 'Suspended' ? 'Active' : 'Suspended';
-          DB.saveStores(stores);
-          render();
+      window.toggleStoreStatus = async (id) => {
+        const store = STORES_DATA.find(x => String(x.id) === String(id));
+        if (!store) return;
+        const newStatus = store.status === 'Suspended' ? 'Active' : 'Suspended';
+        try {
+          await window.AdminApi.updateStore(id, { status: newStatus });
+          fetchData(); // reload
+        } catch (error) {
+          alert('Error: ' + (window.IMS_HTTP ? window.IMS_HTTP.getErrorMessage(error) : error.message));
         }
       };
 
-      document.getElementById('msSearch').addEventListener('input', render);
-      document.getElementById('msStatusFilter').addEventListener('change', render);
+      const searchEl = document.getElementById('msSearch');
+      if (searchEl) searchEl.addEventListener('input', render);
+      const statusEl = document.getElementById('msStatusFilter');
+      if (statusEl) statusEl.addEventListener('change', render);
 
       // Add Retailer Modal Logic
       window.openAddRetailerModal = () => document.getElementById('addRetailerModal').classList.add('active');
       window.closeAddRetailerModal = () => document.getElementById('addRetailerModal').classList.remove('active');
       
-      document.getElementById('addRetailerForm').addEventListener('submit', (e) => {
+      document.getElementById('addRetailerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const users = DB.getUsers();
-        const newUser = {
-          id: Date.now().toString(),
+        const payload = {
           name: document.getElementById('ar_name').value,
           email: document.getElementById('ar_email').value,
           password: document.getElementById('ar_password').value,
           role: 'retailer',
           status: 'Active'
         };
-        users.push(newUser);
-        DB.saveUsers(users);
-        closeAddRetailerModal();
-        render();
+        try {
+          await window.AdminApi.createUser(payload);
+          fetchData();
+          closeAddRetailerModal();
+          document.getElementById('addRetailerForm').reset();
+        } catch (error) {
+          alert('Error: ' + (window.IMS_HTTP ? window.IMS_HTTP.getErrorMessage(error) : error.message));
+        }
       });
 
       // Add Store Modal Logic
       window.openAddStoreModal = () => {
-        const users = DB.getUsers();
-        const retailers = users.filter(u => u.role === 'retailer');
+        const retailers = USERS_DATA.filter(u => String(u.role).toLowerCase() === 'retailer');
         const select = document.getElementById('as_retailer_id');
         select.innerHTML = '<option value="">Select Retailer...</option>' + 
-          retailers.map(r => `<option value="${r.name}">${r.name}</option>`).join('');
+          retailers.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
         document.getElementById('addStoreModalMS').classList.add('active');
       };
       window.closeAddStoreModal = () => document.getElementById('addStoreModalMS').classList.remove('active');
 
-      document.getElementById('addStoreFormMS').addEventListener('submit', (e) => {
+      document.getElementById('addStoreFormMS').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const stores = DB.getStores();
-        const newStore = {
-          id: 's' + Date.now().toString(),
+        const payload = {
           name: document.getElementById('as_name').value,
-          manager: document.getElementById('as_retailer_id').value,
+          retailerId: document.getElementById('as_retailer_id').value,
           location: document.getElementById('as_location').value,
           phone: document.getElementById('as_phone').value,
-          products: 0,
-          orders: 0,
-          revenue: '$0',
+          manager: document.getElementById('as_retailer_id').options[document.getElementById('as_retailer_id').selectedIndex].text,
           status: 'Active'
         };
-        stores.push(newStore);
-        DB.saveStores(stores);
-        closeAddStoreModal();
-        render();
+        try {
+          await window.AdminApi.createStore(payload);
+          fetchData();
+          closeAddStoreModal();
+          document.getElementById('addStoreFormMS').reset();
+        } catch (error) {
+          alert('Error: ' + (window.IMS_HTTP ? window.IMS_HTTP.getErrorMessage(error) : error.message));
+        }
       });
 
-      // Add Retailer Modal Logic
-      window.openAddRetailerModal = () => document.getElementById('addRetailerModal').classList.add('active');
-      window.closeAddRetailerModal = () => document.getElementById('addRetailerModal').classList.remove('active');
-      
-      document.getElementById('addRetailerForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const users = DB.getUsers();
-        const newUser = {
-          id: Date.now().toString(),
-          name: document.getElementById('ar_name').value,
-          email: document.getElementById('ar_email').value,
-          password: document.getElementById('ar_password').value,
-          role: 'retailer',
-          status: 'Active'
-        };
-        users.push(newUser);
-        DB.saveUsers(users);
-        closeAddRetailerModal();
-        render();
-        document.getElementById('addRetailerForm').reset();
-      });
-
-      // Add Store Modal Logic
-      window.openAddStoreModal = () => {
-        const users = DB.getUsers();
-        const retailers = users.filter(u => u.role === 'retailer');
-        const select = document.getElementById('as_retailer_id');
-        select.innerHTML = '<option value="">Select Retailer...</option>' + 
-          retailers.map(r => `<option value="${r.name}">${r.name}</option>`).join('');
-        document.getElementById('addStoreModalMS').classList.add('active');
-      };
-      window.closeAddStoreModal = () => document.getElementById('addStoreModalMS').classList.remove('active');
-
-      document.getElementById('addStoreFormMS').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const stores = DB.getStores();
-        const newStore = {
-          id: 's' + Date.now().toString(),
-          name: document.getElementById('as_name').value,
-          manager: document.getElementById('as_retailer_id').value,
-          location: document.getElementById('as_location').value,
-          phone: document.getElementById('as_phone').value,
-          products: 45,
-          orders: 12,
-          revenue: '$1,200',
-          status: 'Active'
-        };
-        stores.push(newStore);
-        DB.saveStores(stores);
-        closeAddStoreModal();
-        render();
-        document.getElementById('addStoreFormMS').reset();
-      });
-
-      render();
+      // Initial Load
+      fetchData();
     });
   </script>
 </body>

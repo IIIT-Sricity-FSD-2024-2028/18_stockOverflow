@@ -121,7 +121,6 @@ body.page-exit {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-  #ripple-canvas { display: none; }
 }
 
 /* Hero Section */

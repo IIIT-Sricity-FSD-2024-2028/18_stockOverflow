@@ -95,7 +95,7 @@ export class SuppliersService {
 
   findAll(): SupplierRecord[] {
     return Array.from(this.suppliers.values()).sort((a, b) =>
-      b.updatedAt.localeCompare(a.updatedAt),
+      String(b?.updatedAt || '').localeCompare(String(a?.updatedAt || '')),
     );
   }
 
@@ -129,7 +129,7 @@ export class SuppliersService {
   }
 
   update(id: string, updateSupplierSetupDto: any): SupplierRecord {
-    const supplier = this.findOne(id);
+    const supplier: any = this.findOne(id);
 
     const business = {
       ...supplier.business,
@@ -153,7 +153,12 @@ export class SuppliersService {
       primaryContact.fullName = updateSupplierSetupDto.contactPerson;
     }
 
-    const updatedSupplier: SupplierRecord = {
+    const existingFeedbacks = Array.isArray(supplier.feedbacks) ? supplier.feedbacks : [];
+    const nextFeedbacks = updateSupplierSetupDto.feedback
+      ? [updateSupplierSetupDto.feedback, ...existingFeedbacks]
+      : existingFeedbacks;
+
+    const updatedSupplier: any = {
       ...supplier,
       ...updateSupplierSetupDto,
       business,
@@ -165,6 +170,9 @@ export class SuppliersService {
       bankDetails: updateSupplierSetupDto.bankDetails ?? supplier.bankDetails,
       profileStatus:
         updateSupplierSetupDto.profileStatus ?? supplier.profileStatus ?? 'active',
+      rating: updateSupplierSetupDto.rating ?? supplier.rating,
+      avgRating: updateSupplierSetupDto.avgRating ?? updateSupplierSetupDto.rating ?? supplier.avgRating,
+      feedbacks: nextFeedbacks,
       updatedAt: new Date().toISOString(),
     };
 
@@ -278,8 +286,12 @@ export class SuppliersService {
   }
 
   getDocuments(supplierId: string): SupplierDocument[] {
-    const supplier = this.findOne(supplierId);
-    return supplier.documents || [];
+    try {
+      const supplier = this.findOne(supplierId);
+      return supplier.documents || [];
+    } catch {
+      return [];
+    }
   }
 
   removeDocument(supplierId: string, docId: string): void {

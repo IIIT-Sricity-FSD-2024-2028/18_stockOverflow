@@ -314,6 +314,10 @@ tr:hover td{background:rgba(91,103,202,.03)}
         <h1 class="page-title">Suppliers</h1>
         <p class="page-subtitle">Manage and view supplier information</p>
       </div>
+      <button onclick="openSupplierModal()" style="padding:9px 16px;border-radius:8px;background:var(--primary);color:#fff;border:none;font-weight:700;font-family:'Nunito Sans',sans-serif;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Supplier
+      </button>
     </div>
 
     <!-- SUPPLIERS TABLE -->
@@ -330,7 +334,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
               <th>Products</th>
               <th>Rating</th>
               <th>Status</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="supplierTableBody">
@@ -344,10 +348,69 @@ tr:hover td{background:rgba(91,103,202,.03)}
   </div>
 </div>
 
-<script src="../js/so-toast.js"></script>
-<script src="api-config.js"></script>
+<!-- SUPPLIER MODAL (ADD / EDIT) -->
+<div id="supplierModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(2px);">
+  <div style="background:#fff;border-radius:12px;width:480px;max-width:calc(100vw - 32px);box-shadow:0 20px 50px rgba(0,0,0,0.2);overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#f9fafb;">
+      <div style="font-weight:700;font-size:15px;color:var(--text-primary);" id="supplierModalTitle">Add New Supplier</div>
+      <button onclick="closeSupplierModal()" style="border:none;background:transparent;font-size:18px;cursor:pointer;color:var(--text-muted);">&times;</button>
+    </div>
+    <form id="supplierForm" onsubmit="handleSupplierSubmit(event)" style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+      <input type="hidden" id="suppId" />
+      <div>
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Company Name <span style="color:#ef4444">*</span></label>
+        <input type="text" id="suppName" required placeholder="e.g. Acme Supplies Ltd" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Email <span style="color:#ef4444">*</span></label>
+          <input type="email" id="suppEmail" required placeholder="supplier@example.com" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;" />
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Phone</label>
+          <input type="text" id="suppPhone" placeholder="+91 98765 43210" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;" />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Contact Person</label>
+          <input type="text" id="suppContact" placeholder="Contact Manager" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;" />
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Category</label>
+          <select id="suppCategory" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;background:#fff;">
+            <option value="General">General</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Apparel">Apparel</option>
+            <option value="Footwear">Footwear</option>
+            <option value="Accessories">Accessories</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Payment Terms</label>
+        <select id="suppPaymentTerms" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;background:#fff;">
+          <option value="Net 30">Net 30</option>
+          <option value="Net 15">Net 15</option>
+          <option value="Net 60">Net 60</option>
+          <option value="Cash on Delivery">Cash on Delivery</option>
+          <option value="Advance Payment">Advance Payment</option>
+        </select>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px;">
+        <button type="button" onclick="closeSupplierModal()" style="padding:8px 16px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:13px;font-weight:700;cursor:pointer;color:var(--text-secondary);">Cancel</button>
+        <button type="submit" style="padding:8px 18px;border:none;border-radius:6px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Save Supplier</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="./api-config.js"></script>
+<script src="./so-toast.js"></script>
 
 <script>
+let cachedSuppliers = [];
+
 function escapeSupplierHtml(value) {
   return String(value == null ? '' : value)
     .replace(/&/g, '&amp;')
@@ -378,6 +441,16 @@ function getSupplierEmail(supplier) {
   );
 }
 
+function getSupplierPhone(supplier) {
+  return (
+    supplier?.business?.phoneNumber ||
+    supplier?.phoneNumber ||
+    supplier?.phone ||
+    supplier?.primaryContact?.directPhone ||
+    '-'
+  );
+}
+
 function getSupplierCode(supplier, index) {
   return (
     supplier?.business?.supplierCode ||
@@ -398,14 +471,48 @@ function getSupplierInitials(name) {
   return initials || 'SP';
 }
 
-function renderSupplierStars(value) {
+function renderSupplierStars(value, supplierId) {
   const rating = Math.max(0, Math.min(5, Number(value) || 0));
-  let html = '<div class="rating-cell">';
+  let html = '<div class="rating-cell" style="display:flex;align-items:center;gap:2px;">';
   for (let i = 1; i <= 5; i += 1) {
-    html += '<span class="star" style="' + (i <= Math.round(rating) ? '' : 'color:#d1d5db') + '">★</span>';
+    const isFilled = i <= Math.round(rating);
+    const colorStyle = isFilled ? 'color:#f59e0b;cursor:pointer;' : 'color:#d1d5db;cursor:pointer;';
+    html += `<span class="star" style="${colorStyle}font-size:14px;" onclick="event.stopPropagation(); rateSupplier('${supplierId}', ${i})" title="Rate ${i} Star${i > 1 ? 's' : ''}">★</span>`;
   }
-  html += '<span style="font-size:11px;color:var(--text-secondary);margin-left:4px">' + rating.toFixed(1) + '</span></div>';
+  html += `<span style="font-size:11px;color:var(--text-secondary);margin-left:4px;font-weight:600;">${rating.toFixed(1)}</span></div>`;
   return html;
+}
+
+async function rateSupplier(id, newRating) {
+  try {
+    const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+    const feedbackObj = {
+      retailerId: 'cedc0064-0c9e-445e-9649-d344d6fe094d',
+      retailerName: "John's Retail Store",
+      rating: Number(newRating),
+      comment: `Rated ${newRating} stars by John's Retail Store`,
+      createdAt: new Date().toISOString()
+    };
+    const response = await fetch(`${apiBase}/api/suppliers/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rating: Number(newRating), avgRating: Number(newRating), feedback: feedbackObj }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update rating');
+    }
+
+    if (window.RetailerUi) {
+      window.RetailerUi.showToast(`Supplier rated ${newRating} star${newRating > 1 ? 's' : ''}!`, 'success');
+    }
+    await loadSupplierTable();
+  } catch (error) {
+    console.error('Error rating supplier:', error);
+    if (window.RetailerUi) {
+      window.RetailerUi.showToast('Could not save rating.', 'error');
+    }
+  }
 }
 
 async function loadSupplierTable() {
@@ -414,15 +521,15 @@ async function loadSupplierTable() {
 
   try {
     const suppliers = await window.RetailerApi.getSuppliers();
-    const liveSuppliers = Array.isArray(suppliers) ? suppliers : [];
+    cachedSuppliers = Array.isArray(suppliers) ? suppliers : [];
 
-    if (!liveSuppliers.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-muted);font-size:13px;">No suppliers have completed setup yet.</td></tr>';
+    if (!cachedSuppliers.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-muted);font-size:13px;">No suppliers configured yet. Click "Add Supplier" to create one.</td></tr>';
       return;
     }
 
     const colors = ['#2e6bc5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
-    tbody.innerHTML = liveSuppliers.map(function (supplier, index) {
+    tbody.innerHTML = cachedSuppliers.map(function (supplier, index) {
       const name = getSupplierDisplayName(supplier);
       const code = getSupplierCode(supplier, index);
       const email = getSupplierEmail(supplier);
@@ -431,7 +538,7 @@ async function loadSupplierTable() {
         : Number(supplier.productCount || 0);
       const status = supplier.profileStatus || supplier.status || 'active';
       const rating = Number(supplier.rating || supplier.avgRating || 0);
-      const performanceUrl = 'supplier-performance.html?supplier=' + encodeURIComponent(name);
+      const performanceUrl = `supplier-performance.html?supplierId=${encodeURIComponent(supplier.id)}&supplier=${encodeURIComponent(name)}`;
 
       return `
         <tr>
@@ -446,12 +553,20 @@ async function loadSupplierTable() {
           </td>
           <td>${escapeSupplierHtml(email)}</td>
           <td>${productCount} product${productCount === 1 ? '' : 's'}</td>
-          <td>${renderSupplierStars(rating)}</td>
+          <td>${renderSupplierStars(rating, supplier.id)}</td>
           <td><span class="status-pill">${escapeSupplierHtml(String(status).charAt(0).toUpperCase() + String(status).slice(1))}</span></td>
           <td>
-            <a href="${performanceUrl}" class="action-btn" title="View Performance">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </a>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <a href="${performanceUrl}" class="action-btn" title="View Performance">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </a>
+              <button onclick="editSupplier('${supplier.id}')" class="action-btn" title="Edit Supplier">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button onclick="deleteSupplier('${supplier.id}', '${escapeSupplierHtml(name)}')" class="action-btn" title="Delete Supplier" style="color:#ef4444;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
           </td>
         </tr>
       `;
@@ -464,6 +579,115 @@ async function loadSupplierTable() {
         'error',
       );
     }
+  }
+}
+
+function openSupplierModal(supplier) {
+  const modal = document.getElementById('supplierModal');
+  const title = document.getElementById('supplierModalTitle');
+  const form = document.getElementById('supplierForm');
+  form.reset();
+
+  if (supplier) {
+    title.textContent = 'Edit Supplier';
+    document.getElementById('suppId').value = supplier.id || '';
+    document.getElementById('suppName').value = getSupplierDisplayName(supplier);
+    document.getElementById('suppEmail').value = getSupplierEmail(supplier);
+    document.getElementById('suppPhone').value = getSupplierPhone(supplier);
+    document.getElementById('suppContact').value = supplier.primaryContact?.fullName || '';
+    document.getElementById('suppCategory').value = supplier.business?.primaryCategory || 'General';
+    document.getElementById('suppPaymentTerms').value = supplier.business?.paymentTerms || 'Net 30';
+  } else {
+    title.textContent = 'Add New Supplier';
+    document.getElementById('suppId').value = '';
+  }
+  modal.style.display = 'flex';
+}
+
+function closeSupplierModal() {
+  document.getElementById('supplierModal').style.display = 'none';
+}
+
+async function handleSupplierSubmit(event) {
+  event.preventDefault();
+  const id = document.getElementById('suppId').value;
+  const companyName = document.getElementById('suppName').value.trim();
+  const email = document.getElementById('suppEmail').value.trim();
+  const phone = document.getElementById('suppPhone').value.trim();
+  const contactPerson = document.getElementById('suppContact').value.trim();
+  const primaryCategory = document.getElementById('suppCategory').value;
+  const paymentTerms = document.getElementById('suppPaymentTerms').value;
+
+  if (!companyName || !email) {
+    if (window.RetailerUi) window.RetailerUi.showToast('Please fill in required fields.', 'error');
+    return;
+  }
+
+  const payload = {
+    business: {
+      companyName,
+      businessEmail: email,
+      phoneNumber: phone,
+      primaryCategory,
+      paymentTerms,
+    },
+    primaryContact: {
+      fullName: contactPerson || companyName,
+      directEmail: email,
+      directPhone: phone,
+    },
+  };
+
+  try {
+    const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+    const url = id ? `${apiBase}/api/suppliers/${id}` : `${apiBase}/api/suppliers`;
+    const method = id ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errPayload = await response.json().catch(() => ({}));
+      throw new Error(errPayload.message || 'Failed to save supplier');
+    }
+
+    closeSupplierModal();
+    if (window.RetailerUi) window.RetailerUi.showToast(`Supplier ${id ? 'updated' : 'created'} successfully!`, 'success');
+    await loadSupplierTable();
+  } catch (error) {
+    console.error('Error saving supplier:', error);
+    if (window.RetailerUi) window.RetailerUi.showToast(error.message || 'Error saving supplier', 'error');
+  }
+}
+
+function editSupplier(id) {
+  const supplier = cachedSuppliers.find(s => s.id === id);
+  if (supplier) {
+    openSupplierModal(supplier);
+  }
+}
+
+async function deleteSupplier(id, name) {
+  if (!confirm(`Are you sure you want to delete supplier "${name}"?`)) return;
+
+  try {
+    const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+    const response = await fetch(`${apiBase}/api/suppliers/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok && response.status !== 204) {
+      throw new Error('Failed to delete supplier');
+    }
+
+    if (window.RetailerUi) window.RetailerUi.showToast('Supplier deleted successfully!', 'success');
+    await loadSupplierTable();
+  } catch (error) {
+    console.error('Error deleting supplier:', error);
+    if (window.RetailerUi) window.RetailerUi.showToast(error.message || 'Error deleting supplier', 'error');
   }
 }
 
@@ -499,3 +723,4 @@ document.addEventListener('click', function(e) {
 
 </body>
 </html>
+

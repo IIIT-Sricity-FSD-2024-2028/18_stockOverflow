@@ -8824,6 +8824,9 @@
       },
       "suppliers_dto_update_supplier_setup_dto_UpdateSupplierSetupDto": {
         "properties": {
+          "avgRating": {
+            "type": "number"
+          },
           "bankDetails": {
             "properties": {
               "accountHolderName": {
@@ -8947,6 +8950,7 @@
             ],
             "type": "object"
           },
+          "feedback": {},
           "pricingPolicies": {
             "properties": {
               "averageLeadTimeDays": {
@@ -9105,6 +9109,9 @@
             },
             "maxItems": 500,
             "type": "array"
+          },
+          "rating": {
+            "type": "number"
           },
           "retailers": {
             "items": {

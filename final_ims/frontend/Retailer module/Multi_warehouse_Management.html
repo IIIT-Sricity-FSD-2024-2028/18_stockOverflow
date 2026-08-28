@@ -550,7 +550,6 @@ canvas{display:block;width:100%!important}
   </div>
 </div>
 
-<script src="../js/so-toast.js"></script>
 <script src="api-config.js"></script>
 <script>
 /* ═══════════════════════════════════════════
@@ -623,16 +622,21 @@ let filteredStores = [...STORES];
 ═══════════════════════════════════════════ */
 function applyFilters() {
   filteredStores = STORES.filter(s => {
-    const matchSearch = !searchQuery ||
-      s.name.toLowerCase().includes(searchQuery) ||
-      s.contact.toLowerCase().includes(searchQuery) ||
-      s.phone.includes(searchQuery);
+    const nameStr = String(s.name || '').toLowerCase();
+    const contactStr = String(s.contact || '').toLowerCase();
+    const phoneStr = String(s.phone || '').toLowerCase();
+    const query = String(searchQuery || '').toLowerCase();
+
+    const matchSearch = !query ||
+      nameStr.includes(query) ||
+      contactStr.includes(query) ||
+      phoneStr.includes(query);
     const matchStatus = statusFilter === 'all' || s.status === statusFilter;
     return matchSearch && matchStatus;
   });
   if (sortKey) {
     filteredStores.sort((a, b) => {
-      const va = a[sortKey], vb = b[sortKey];
+      const va = a[sortKey] ?? '', vb = b[sortKey] ?? '';
       return typeof va === 'string' ? va.localeCompare(vb) * sortDir : (va - vb) * sortDir;
     });
   }
@@ -670,10 +674,10 @@ function renderTable() {
       </td>
       <td>
         <div class="action-btns">
-          <div class="action-btn" title="View Inventory" onclick="openDrawer(${s.id})">
+          <div class="action-btn" title="View Inventory" onclick="openDrawer('${s.id}')">
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5z"/><circle cx="7" cy="7" r="2"/></svg>
           </div>
-          <div class="action-btn delete" title="Delete" onclick="deleteStore(${s.id})">
+          <div class="action-btn delete" title="Delete" onclick="deleteStore('${s.id}')">
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="2,3.5 12,3.5"/><path d="M5.5 3.5V2.5h3V3.5"/><path d="M3 3.5l.7 8h6.6l.7-8"/><line x1="5.5" y1="6" x2="5.5" y2="10"/><line x1="8.5" y1="6" x2="8.5" y2="10"/></svg>
           </div>
         </div>
@@ -759,10 +763,10 @@ function toggleStatusFilter() {
    DRAWER
 ═══════════════════════════════════════════ */
 function openDrawer(storeId) {
-  const store = STORES.find(s => s.id === storeId);
+  const store = STORES.find(s => String(s.id) === String(storeId));
   if (!store) return;
 
-  document.getElementById('drawerTitle').textContent = store.name + ' – Inventory Overview';
+  document.getElementById('drawerTitle').textContent = store.name + ' – Dashboard & Inventory Overview';
   document.getElementById('drawerSubtitle').textContent = `Contact: ${store.contact}  ·  ${store.phone}`;
 
   renderDrawerBody(store);
@@ -780,80 +784,102 @@ function closeDrawer(e) {
   if (e.target === document.getElementById('storeOverlay')) closeDrawerDirect();
 }
 
-function renderDrawerBody(store) {
-  const prods = STORE_PRODUCTS[store.id] || STORE_PRODUCTS.default;
-  const warehouses = WAREHOUSES_DATA[store.id] || WAREHOUSES_DATA.default;
-
-  const totalUnits = prods.reduce((a, p) => a + p.qty, 0);
-  const lowStock = prods.filter(p => p.qty > 0 && (p.qty / p.max) < 0.2).length;
-  const outStock = prods.filter(p => p.qty === 0).length;
-  const invValue = prods.reduce((a, p) => a + p.qty * p.price, 0);
-
-  const alerts = prods
-    .filter(p => p.qty === 0 || (p.qty / p.max) < 0.2)
-    .sort((a, b) => (a.qty / a.max) - (b.qty / b.max));
-
+async function renderDrawerBody(store) {
   const body = document.getElementById('drawerBody');
-
   body.innerHTML = `
-    <!-- Mini Metrics -->
-    <div class="store-metrics">
-      <div class="sm-card">
-        <div class="sm-label">Total Products</div>
-        <div class="sm-value">${store.totalProducts}</div>
-        <div class="sm-sub">In this store</div>
-      </div>
-      <div class="sm-card">
-        <div class="sm-label">Total Stock Units</div>
-        <div class="sm-value">${totalUnits.toLocaleString()}</div>
-        <div class="sm-sub">All products combined</div>
-      </div>
-      <div class="sm-card">
-        <div class="sm-label">Low / Out of Stock</div>
-        <div class="sm-value" style="color:${(lowStock+outStock)>0?'#ef4444':'#22c55e'}">${lowStock + outStock}</div>
-        <div class="sm-sub">${outStock} out · ${lowStock} low</div>
-      </div>
-      <div class="sm-card">
-        <div class="sm-label">Inventory Value</div>
-        <div class="sm-value">$${(invValue/1000).toFixed(1)}K</div>
-        <div class="sm-sub">At cost price</div>
-      </div>
+    <div style="padding:32px;text-align:center;color:var(--text-muted);font-family:'Nunito Sans',sans-serif;font-size:14px">
+      Loading ${store.name} Stats...
     </div>
+  `;
 
-    <!-- Two cols: Stock Levels + Low Stock Alerts -->
-    <div class="drawer-two-col">
-      <!-- Stock Levels -->
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">
-            <div class="panel-title-icon"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="1" y1="6.5" x2="12" y2="6.5"/><rect x="2" y="4" width="4" height="5" rx="1"/><rect x="8" y="3" width="3" height="7" rx="1"/></svg></div>
-            Stock Levels
+  try {
+    const storeId = store.id;
+    const [products, transactions, purchaseOrders, returns] = await Promise.all([
+      window.RetailerApi ? window.RetailerApi.getProducts().catch(() => []) : Promise.resolve([]),
+      window.RetailerApi ? window.RetailerApi.getTransactions().catch(() => []) : Promise.resolve([]),
+      window.RetailerApi && window.RetailerApi.getPurchaseOrders ? window.RetailerApi.getPurchaseOrders().catch(() => []) : Promise.resolve([]),
+      window.RetailerApi ? window.RetailerApi.getReturns().catch(() => []) : Promise.resolve([]),
+    ]);
+
+    const storeProducts = STORE_PRODUCTS[store.id] || STORE_PRODUCTS.default || [];
+    const warehouses = WAREHOUSES_DATA[store.id] || WAREHOUSES_DATA.default || [];
+    const alerts = storeProducts.filter(p => p.qty === 0 || (p.max ? (p.qty / p.max) < 0.2 : false));
+    const totalUnits = storeProducts.reduce((sum, p) => sum + (Number(p.qty) || 0), 0);
+    const invValue = storeProducts.reduce((sum, p) => sum + (Number(p.qty) || 0) * (Number(p.price) || 0), 0);
+
+    const confirmedReturns = (returns || []).filter(r => {
+      const status = String(r.status || '').toLowerCase();
+      return status === 'approved' || status === 'exchanged' || status === 'confirmed';
+    });
+    const totalSales = (transactions || []).reduce((sum, tx) => sum + (Number(tx.finalTotal || tx.totalAmount || 0)), 0);
+    const totalSalesReturn = confirmedReturns.filter(r => String(r.type || '').toLowerCase() !== 'purchase').reduce((sum, r) => sum + (Number(r.refundAmount || r.amount || r.total) || 0), 0);
+    const netSales = Math.max(0, totalSales - totalSalesReturn);
+
+    const deliveredPOs = (purchaseOrders || []).filter(po => String(po.status || '').toLowerCase() === 'delivered');
+    const totalPurchase = deliveredPOs.reduce((sum, po) => sum + (Number(po.total || po.grandTotal) || 0), 0);
+    const purchaseReturn = (returns || []).filter(r => String(r.type || '').toLowerCase() === 'purchase').reduce((sum, r) => sum + (Number(r.refundAmount || r.total) || 0), 0);
+    const netPurchase = Math.max(0, totalPurchase - purchaseReturn);
+
+    const netProfit = Math.max(0, netSales - netPurchase);
+
+    body.innerHTML = `
+      <!-- Mini Dashboard Summary Cards -->
+      <div class="store-metrics" style="grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+        <div class="sm-card" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px;">
+          <div class="sm-label" style="color:#166534; font-size:12px; font-weight:700;">Net Profit</div>
+          <div class="sm-value" style="color:#15803d; font-size:18px; font-weight:800; margin:4px 0;">$${netProfit.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+          <div class="sm-sub" style="font-size:11px; color:#15803d;">Net Sales - Net Purchase</div>
+        </div>
+        <div class="sm-card" style="background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:8px;">
+          <div class="sm-label" style="color:#1e40af; font-size:12px; font-weight:700;">Net Sales</div>
+          <div class="sm-value" style="color:#1d4ed8; font-size:18px; font-weight:800; margin:4px 0;">$${netSales.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+          <div class="sm-sub" style="font-size:11px; color:#1d4ed8;">${transactions.length} Total Sales</div>
+        </div>
+        <div class="sm-card" style="background:#fff7ed; border:1px solid #fed7aa; padding:12px; border-radius:8px;">
+          <div class="sm-label" style="color:#9a3412; font-size:12px; font-weight:700;">Net Purchase</div>
+          <div class="sm-value" style="color:#c2410c; font-size:18px; font-weight:800; margin:4px 0;">$${netPurchase.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+          <div class="sm-sub" style="font-size:11px; color:#c2410c;">${purchaseOrders.length} Total POs</div>
+        </div>
+        <div class="sm-card" style="background:#faf5ff; border:1px solid #e9d5ff; padding:12px; border-radius:8px;">
+          <div class="sm-label" style="color:#6b21a8; font-size:12px; font-weight:700;">Total Inventory Value</div>
+          <div class="sm-value" style="color:#7e22ce; font-size:18px; font-weight:800; margin:4px 0;">$${invValue.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+          <div class="sm-sub" style="font-size:11px; color:#7e22ce;">${totalUnits} Stock Units</div>
+        </div>
+      </div>
+
+      <!-- Two cols: Stock Levels + Recent Store Activity -->
+      <div class="drawer-two-col">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <div class="panel-title-icon"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="1" y1="6.5" x2="12" y2="6.5"/><rect x="2" y="4" width="4" height="5" rx="1"/><rect x="8" y="3" width="3" height="7" rx="1"/></svg></div>
+              Store Inventory Stock Levels
+            </div>
+          </div>
+          <div class="sbi-list">
+            ${storeProducts.map(p => {
+              const pct = p.max ? Math.round((p.qty / p.max) * 100) : 0;
+              let barColor = '#22c55e', sc = 'sc-ok', scLabel = 'In Stock';
+              if (p.qty === 0) { barColor = '#d1d5db'; sc = 'sc-out'; scLabel = 'Out of Stock'; }
+              else if (pct < 10) { barColor = '#ef4444'; sc = 'sc-critical'; scLabel = 'Critical'; }
+              else if (pct < 25) { barColor = '#f59e0b'; sc = 'sc-low'; scLabel = 'Low Stock'; }
+              return `
+              <div class="sbi-item">
+                <div class="sbi-emoji">${p.emoji || '📦'}</div>
+                <div class="sbi-info">
+                  <div class="sbi-name">${p.name}</div>
+                  <div class="sbi-cat">${p.cat}</div>
+                </div>
+                <div class="sbi-bar-wrap">
+                  <div class="sbi-bar-bg"><div class="sbi-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+                </div>
+                <div class="sbi-pct">${pct}%</div>
+                <div class="sbi-qty">${p.qty}</div>
+                <span class="sc-chip ${sc}">${scLabel}</span>
+              </div>`;
+            }).join('')}
           </div>
         </div>
-        <div class="sbi-list">
-          ${prods.map(p => {
-            const pct = p.max ? Math.round((p.qty / p.max) * 100) : 0;
-            let barColor = '#22c55e', sc = 'sc-ok', scLabel = 'In Stock';
-            if (p.qty === 0) { barColor = '#d1d5db'; sc = 'sc-out'; scLabel = 'Out of Stock'; }
-            else if (pct < 10) { barColor = '#ef4444'; sc = 'sc-critical'; scLabel = 'Critical'; }
-            else if (pct < 25) { barColor = '#f59e0b'; sc = 'sc-low'; scLabel = 'Low Stock'; }
-            return `
-            <div class="sbi-item">
-              <div class="sbi-emoji">${p.emoji}</div>
-              <div class="sbi-info">
-                <div class="sbi-name">${p.name}</div>
-                <div class="sbi-cat">${p.cat}</div>
-              </div>
-              <div class="sbi-bar-wrap">
-                <div class="sbi-bar-bg"><div class="sbi-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
-              </div>
-              <div class="sbi-pct">${pct}%</div>
-              <div class="sbi-qty">${p.qty}</div>
-              <span class="sc-chip ${sc}">${scLabel}</span>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>
 
       <!-- Low Stock Alerts -->
       <div>
@@ -925,6 +951,9 @@ function renderDrawerBody(store) {
 
   // Draw trend chart after DOM ready
   requestAnimationFrame(() => drawDrawerTrend(store.id));
+  } catch (err) {
+    console.error('Error rendering drawer body:', err);
+  }
 }
 
 function drawDrawerTrend(storeId) {
@@ -989,6 +1018,9 @@ window.addEventListener('DOMContentLoaded', () => {
 </script>
 <script>
 function syncWarehouses(nextWarehouses) {
+  const list = Array.isArray(nextWarehouses) ? nextWarehouses : [];
+  if (!list.length) return;
+
   STORES.splice(0, STORES.length);
   Object.keys(STORE_PRODUCTS).forEach(function (key) {
     if (key !== 'default') {
@@ -1001,20 +1033,20 @@ function syncWarehouses(nextWarehouses) {
     }
   });
 
-  nextWarehouses.forEach(function (warehouse) {
+  list.forEach(function (w) {
     STORES.push({
-      id: warehouse.id,
-      name: warehouse.name,
-      contact: warehouse.contact,
-      phone: warehouse.phone,
-      totalProducts: warehouse.totalProducts,
-      totalStock: warehouse.totalStock,
-      createdOn: warehouse.createdOn,
-      createdTs: warehouse.createdTs,
-      status: warehouse.status,
+      id: w.id || w.code || 'STORE-1',
+      name: w.name || w.storeName || "John's Retail Store",
+      contact: w.contact || w.contactPerson || w.manager || 'John',
+      phone: w.phone || w.phoneNumber || '+91 98765 43210',
+      totalProducts: Number(w.totalProducts ?? w.productCount ?? 2),
+      totalStock: Number(w.totalStock ?? w.stockCount ?? 32),
+      createdOn: w.createdOn || w.createdAt || '-',
+      createdTs: 0,
+      status: w.status === 'inactive' ? 'inactive' : 'active',
     });
-    STORE_PRODUCTS[warehouse.id] = warehouse.inventory || STORE_PRODUCTS.default;
-    WAREHOUSES_DATA[warehouse.id] = warehouse.zones || WAREHOUSES_DATA.default;
+    STORE_PRODUCTS[w.id] = w.inventory || STORE_PRODUCTS.default;
+    WAREHOUSES_DATA[w.id] = w.zones || WAREHOUSES_DATA.default;
   });
 }
 

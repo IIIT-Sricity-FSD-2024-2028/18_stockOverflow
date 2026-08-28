@@ -370,43 +370,128 @@
           <!-- Submit button -->
           <button class="submit-btn">↩️ Submit Return Request</button>
         </div>
+
+        <div class="card history-card" style="margin-top:20px;">
+          <div class="card-title" style="font-weight:700;font-size:16px;margin-bottom:14px;">Your Return Requests</div>
+          <div id="submittedReturnsList" class="return-history-list">
+            <div class="return-history-empty" style="color:#6b7280;font-size:13px;">Loading recent return requests...</div>
+          </div>
+        </div>
       </div>
     </div>
   </div><!-- /main-wrap -->
 
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
   <script src="../js/mockData.js"></script>
   <script src="app-flow.js"></script>
   <script src="../retailer module/common-products.js"></script>
   <script>
+    let userReturns = [];
+
     function getQuerySku() {
       return new URLSearchParams(window.location.search).get('sku');
     }
 
-    function renderReturnItems() {
+    async function loadReturnHistory() {
+      const host = document.getElementById('submittedReturnsList');
+      if (!host) return;
+
+      try {
+        if (window.ImsApi && typeof window.ImsApi.getReturns === 'function') {
+          userReturns = await window.ImsApi.getReturns().catch(() => []);
+        } else if (window.IMS_HTTP && typeof window.IMS_HTTP.request === 'function') {
+          userReturns = await window.IMS_HTTP.request('/returns').catch(() => []);
+        } else {
+          userReturns = [];
+        }
+      } catch (_err) {
+        userReturns = [];
+      }
+
+      // Deduplicate returns history by sku
+      const uniqueReturns = [];
+      const seenSku = {};
+      (userReturns || []).forEach(r => {
+        const sku = String(r.sku || '').trim();
+        if (sku && !seenSku[sku]) {
+          seenSku[sku] = true;
+          uniqueReturns.push(r);
+        }
+      });
+
+      if (!uniqueReturns.length) {
+        host.innerHTML = '<div style="color:#6b7280;font-size:13px;padding:12px 0;">No return requests submitted yet.</div>';
+        return;
+      }
+
+      host.innerHTML = uniqueReturns.map(function(r) {
+        const status = r.status || 'Pending';
+        const isApproved = status.toLowerCase() === 'approved';
+        const isRejected = status.toLowerCase() === 'rejected';
+        const badgeColor = isApproved ? '#22c55e' : isRejected ? '#ef4444' : '#f59e0b';
+        const badgeBg = isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7';
+
+        return `
+          <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div>
+                <strong style="font-size:15px;color:#111827;">${r.productName || r.product || r.sku || 'Product'}</strong>
+                <div style="font-size:12px;color:#6b7280;margin-top:2px;">SKU: ${r.sku || 'N/A'} • ${r.date ? new Date(r.date).toLocaleDateString() : 'Recent'}</div>
+              </div>
+              <span style="background:${badgeBg};color:${badgeColor};padding:4px 10px;border-radius:20px;font-weight:700;font-size:12px;">${status}</span>
+            </div>
+            <div style="font-size:12.5px;color:#374151;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+              <div><strong>Reason:</strong> ${r.reason || '-'}</div>
+              <div><strong>Refund Method:</strong> ${r.refundMethod || r.method || 'Original Payment'}</div>
+              <div><strong>Condition:</strong> ${r.condition || '-'}</div>
+              <div><strong>Notes:</strong> ${r.notes || 'No extra notes.'}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function renderReturnItems() {
       const source = window.RetailerProductsData && window.RetailerProductsData.masterProducts;
       const host = document.getElementById('returnItemsList');
+      if (!host) return;
+
+      await loadReturnHistory();
+
       if (!source || !Array.isArray(source)) {
         host.innerHTML = '<p>Unable to load products.</p>';
         return;
       }
 
       const skuFromQuery = getQuerySku();
-      const items = source.slice();
-      host.innerHTML = items.map(function(product, idx) {
-        const checked = skuFromQuery ? product.sku === skuFromQuery : idx === 0;
+      const existingSkus = new Set((userReturns || []).map(r => String(r.sku || '').trim()));
+
+      host.innerHTML = source.map(function(product, idx) {
+        const isRequested = existingSkus.has(String(product.sku).trim());
+        const checked = !isRequested && (skuFromQuery ? product.sku === skuFromQuery : idx === 0);
+
         return `
-          <label class="item-check-row">
-            <input type="checkbox" ${checked ? 'checked' : ''} data-sku="${product.sku}">
+          <label class="item-check-row" style="${isRequested ? 'opacity:0.6;cursor:not-allowed;' : ''}">
+            <input type="checkbox" ${checked ? 'checked' : ''} ${isRequested ? 'disabled' : ''} data-sku="${product.sku}" data-name="${product.name}">
             <img class="item-photo" src="${product.productImg}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
             <span class="item-fallback" style="display:none;">${product.emoji || '📦'}</span>
-            <span class="item-label">${product.name} <span style="color:#6b7280;font-weight:500;">(${product.sku})</span></span>
+            <span class="item-label">
+              ${product.name} <span style="color:#6b7280;font-weight:500;">(${product.sku})</span>
+              ${isRequested ? '<span style="color:#ef4444;font-weight:700;margin-left:6px;">(Return Requested)</span>' : ''}
+            </span>
             <span class="item-price">$${product.priceUSD.toLocaleString()}</span>
           </label>
         `;
       }).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', renderReturnItems);
+    window.loadReturnHistory = loadReturnHistory;
+    window.renderReturnItems = renderReturnItems;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await renderReturnItems();
+    });
   </script>
 
 </body>

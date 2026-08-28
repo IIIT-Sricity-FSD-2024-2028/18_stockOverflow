@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retailer Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#122033;
+      --muted:#667085;
+      --line:#e5e7eb;
+      --primary:#2e6bc5;
+      --primary-soft:#eef4ff;
+      --success:#16a34a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:'Nunito Sans',sans-serif;
+      background:linear-gradient(180deg,#eef4ff 0,#f8fbff 160px,#f5f7fb 160px);
+      color:var(--text);
+    }
+    .page{
+      min-height:100vh;
+      padding:28px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin:0 auto 24px;
+      max-width:1180px;
+    }
+    .topbar-left{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      color:var(--primary);
+      font-weight:800;
+      font-size:13px;
+    }
+    .topbar-avatar{
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      background:var(--primary);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 10px 25px rgba(46,107,197,.22);
+    }
+    .shell{
+      max-width:1180px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:320px minmax(0,1fr);
+      gap:22px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:0 20px 50px rgba(15,23,42,.06);
+    }
+    .hero-card{
+      padding:28px;
+      position:sticky;
+      top:24px;
+      align-self:start;
+    }
+    .avatar-lg{
+      width:78px;
+      height:78px;
+      border-radius:24px;
+      background:linear-gradient(135deg,#2e6bc5,#4f7de2);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      font-weight:800;
+      margin-bottom:18px;
+    }
+    .eyebrow{
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--primary);
+      margin-bottom:8px;
+    }
+    .hero-card h1{
+      margin:0 0 6px;
+      font-size:28px;
+      line-height:1.15;
+    }
+    .hero-card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.55;
+    }
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+    .chip{
+      padding:8px 12px;
+      border-radius:999px;
+      background:var(--primary-soft);
+      color:var(--primary);
+      font-size:12px;
+      font-weight:800;
+    }
+    .content{
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    .section{
+      padding:24px;
+    }
+    .section-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .section-title{
+      font-size:18px;
+      font-weight:800;
+    }
+    .section-sub{
+      color:var(--muted);
+      font-size:13px;
+    }
+    .detail-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .detail{
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fbfcfe;
+    }
+    .detail-label{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+    .detail-value{
+      font-size:14px;
+      font-weight:800;
+      line-height:1.45;
+      word-break:break-word;
+    }
+    .store-list{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:14px;
+    }
+    .store-card{
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+    }
+    .store-name{
+      font-size:15px;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+    .store-meta{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+    .store-status{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      margin-top:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#ecfdf3;
+      color:var(--success);
+      font-size:12px;
+      font-weight:800;
+    }
+    .empty{
+      padding:22px;
+      border:1px dashed var(--line);
+      border-radius:18px;
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+      background:#fbfcfe;
+    }
+    .edit-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .field.full{grid-column:1/-1}
+    .field label{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+    .field input,.field select,.field textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      color:var(--text);
+      font:inherit;
+      font-size:14px;
+      padding:11px 12px;
+      outline:none;
+    }
+    .field textarea{min-height:74px;resize:vertical}
+    .field input:focus,.field select:focus,.field textarea:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(46,107,197,.12);
+    }
+    .form-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-top:18px;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 16px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn.primary{
+      border-color:var(--primary);
+      background:var(--primary);
+      color:#fff;
+    }
+    .btn:disabled{opacity:.65;cursor:not-allowed}
+    .toast{
+      position:fixed;
+      right:24px;
+      bottom:24px;
+      z-index:200;
+      background:#111827;
+      color:#fff;
+      padding:11px 14px;
+      border-radius:12px;
+      font-size:13px;
+      font-weight:800;
+      opacity:0;
+      transform:translateY(8px);
+      transition:opacity .18s ease,transform .18s ease;
+      pointer-events:none;
+    }
+    .toast.show{opacity:1;transform:translateY(0)}
+    @media (max-width: 900px){
+      .page{padding:18px}
+      .shell{grid-template-columns:1fr}
+      .hero-card{position:static}
+      .detail-grid{grid-template-columns:1fr}
+      .edit-grid{grid-template-columns:1fr}
+    }
+  
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div class="topbar-left">
+        <a class="back-link" href="Retialer_Dashboard.html">Back to Dashboard</a>
+      </div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="localStorage.removeItem('so_session');window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="shell">
+      <section class="card hero-card">
+        <div class="avatar-lg" id="profileHeroAvatar">RT</div>
+        <div class="eyebrow">Retailer Profile</div>
+        <h1 id="profileName">Retailer</h1>
+        <p id="profileSubtitle">Your account, business information, and multi-store setup live here.</p>
+        <div class="chips">
+          <span class="chip" id="profileRoleChip">Retailer</span>
+          <span class="chip" id="profileStoreChip">No active store</span>
+        </div>
+      </section>
+
+      <div class="content">
+        <section class="card section">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Business Details</div>
+              <div class="section-sub">Collected from your retailer setup and synced to the backend.</div>
+            </div>
+          </div>
+          <div class="detail-grid" id="businessDetails"></div>
+        </section>
+
+        <section class="card section">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Edit Profile</div>
+              <div class="section-sub">Update the details shown across the retailer module.</div>
+            </div>
+          </div>
+          <form id="profileForm">
+            <div class="edit-grid">
+              <div class="field">
+                <label for="profileBusinessName">Business Name</label>
+                <input id="profileBusinessName" type="text" required />
+              </div>
+              <div class="field">
+                <label for="profileBusinessEmail">Business Email</label>
+                <input id="profileBusinessEmail" type="email" required />
+              </div>
+              <div class="field">
+                <label for="profilePhone">Phone</label>
+                <input id="profilePhone" type="text" placeholder="+91 9876543210" />
+              </div>
+              <div class="field">
+                <label for="profileBusinessType">Business Type</label>
+                <input id="profileBusinessType" type="text" placeholder="Retail, Wholesale, Franchise" />
+              </div>
+              <div class="field">
+                <label for="profileIndustry">Primary Industry</label>
+                <input id="profileIndustry" type="text" placeholder="Electronics, Fashion, Grocery" />
+              </div>
+              <div class="field">
+                <label for="profileCurrency">Currency</label>
+                <select id="profileCurrency">
+                  <option value="INR">INR</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="profileOwnerName">Owner / Contact Name</label>
+                <input id="profileOwnerName" type="text" required />
+              </div>
+              <div class="field">
+                <label for="profileOwnerEmail">Owner / Contact Email</label>
+                <input id="profileOwnerEmail" type="email" />
+              </div>
+              <div class="field">
+                <label for="profileTaxId">Tax ID</label>
+                <input id="profileTaxId" type="text" />
+              </div>
+              <div class="field">
+                <label for="profileWebsite">Website</label>
+                <input id="profileWebsite" type="text" placeholder="https://example.com" />
+              </div>
+              <div class="field full">
+                <label for="profileAddress">Business Address</label>
+                <textarea id="profileAddress"></textarea>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn" type="button" id="profileResetBtn">Reset</button>
+              <button class="btn primary" type="submit" id="profileSaveBtn">Save Changes</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card section">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Stores</div>
+              <div class="section-sub">Store access and switching are scoped from this profile data.</div>
+            </div>
+          </div>
+          <div class="store-list" id="storeList"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="profileToast">Saved</div>
+
+  <script src="api-config.js"></script>
+  <script>
+    let profileSession = null;
+    let retailerRecord = null;
+
+    function escapeHtml(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function normalizeStoreRecord(store, index) {
+      const code = store && (store.code || store.storeId || store.id)
+        ? String(store.code || store.storeId || store.id).trim()
+        : 'STORE-' + (index + 1);
+      return {
+        name: String(store && store.name || 'Store ' + (index + 1)).trim(),
+        code,
+        contactPerson: String(store && store.contactPerson || '').trim(),
+        phone: String(store && store.phone || '').trim(),
+        address: String(store && store.address || '').trim(),
+        type: String(store && store.type || 'Retail Store').trim(),
+        status: String(store && store.status || 'active').trim(),
+      };
+    }
+
+    function buildProfileSummary(record, session) {
+      const business = record && record.business ? record.business : {};
+      const contact = record && record.primaryContact ? record.primaryContact : {};
+      const stores = Array.isArray(record && record.stores)
+        ? record.stores.map(normalizeStoreRecord)
+        : [];
+
+      return {
+        businessName: business.businessName || '',
+        businessEmail: business.businessEmail || '',
+        businessPhone: business.phoneNumber || '',
+        taxId: business.taxId || '',
+        retailerCode: business.retailerCode || '',
+        address: business.businessAddress || '',
+        website: business.website || '',
+        businessType: business.businessType || '',
+        currency: business.currency || 'INR',
+        fiscalYear: business.fiscalYear || '',
+        primaryIndustry: business.primaryIndustry || '',
+        ownerName: contact.fullName || (session && session.name) || '',
+        ownerTitle: contact.designation || '',
+        ownerEmail: contact.directEmail || business.businessEmail || (session && session.email) || '',
+        profileStatus: record && record.profileStatus || 'active',
+        stores,
+        suppliers: Array.isArray(record && record.suppliers) ? record.suppliers : [],
+      };
+    }
+
+    function renderDetailCard(label, value) {
+      return (
+        '<div class="detail">' +
+          '<div class="detail-label">' + escapeHtml(label) + '</div>' +
+          '<div class="detail-value">' + escapeHtml(value || '-') + '</div>' +
+        '</div>'
+      );
+    }
+
+    function showProfileToast(message) {
+      const toast = document.getElementById('profileToast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(function () {
+        toast.classList.remove('show');
+      }, 2200);
+    }
+
+    function normalizeWebsite(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      return /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
+    }
+
+    async function loadRetailerRecord(session) {
+      if (!session || !session.profileId) return null;
+      try {
+        return await window.RetailerApi.request('/api/retailers/' + encodeURIComponent(session.profileId));
+      } catch (_error) {
+        return null;
+      }
+    }
+
+    function populateProfileForm(record, session) {
+      const summary = buildProfileSummary(record || { business: {}, primaryContact: {}, stores: [] }, session);
+      document.getElementById('profileBusinessName').value = summary.businessName;
+      document.getElementById('profileBusinessEmail').value = summary.businessEmail || (session && session.email) || '';
+      document.getElementById('profilePhone').value = summary.businessPhone;
+      document.getElementById('profileBusinessType').value = summary.businessType;
+      document.getElementById('profileIndustry').value = summary.primaryIndustry;
+      document.getElementById('profileCurrency').value = summary.currency || 'INR';
+      document.getElementById('profileOwnerName').value = summary.ownerName;
+      document.getElementById('profileOwnerEmail').value = summary.ownerEmail;
+      document.getElementById('profileTaxId').value = summary.taxId;
+      document.getElementById('profileWebsite').value = summary.website;
+      document.getElementById('profileAddress').value = summary.address;
+    }
+
+    function renderProfile(session, record) {
+      const profile = buildProfileSummary(record || { business: {}, primaryContact: {}, stores: [] }, session);
+      const currentStore = window.RetailerApi.getCurrentStore();
+      const initials = String(session.initials || 'RT').slice(0, 2).toUpperCase();
+
+      document.getElementById('topbarAvatar').textContent = initials;
+      document.getElementById('profileHeroAvatar').textContent = initials;
+      document.getElementById('profileName').textContent = session.name || profile.ownerName || 'Retailer';
+      document.getElementById('profileSubtitle').textContent =
+        (profile.businessName || 'Retail business') +
+        (session.email ? ' - ' + session.email : '');
+      document.getElementById('profileRoleChip').textContent = 'Retailer';
+      document.getElementById('profileStoreChip').textContent =
+        currentStore ? currentStore.name : 'No active store';
+
+      document.getElementById('businessDetails').innerHTML = [
+        renderDetailCard('Business Name', profile.businessName),
+        renderDetailCard('Business Email', profile.businessEmail || session.email),
+        renderDetailCard('Phone', profile.businessPhone),
+        renderDetailCard('Retailer Code', profile.retailerCode),
+        renderDetailCard('Business Type', profile.businessType),
+        renderDetailCard('Primary Industry', profile.primaryIndustry),
+        renderDetailCard('Currency', profile.currency),
+        renderDetailCard('Fiscal Year', profile.fiscalYear),
+        renderDetailCard('Owner Name', profile.ownerName || session.name),
+        renderDetailCard('Owner Email', profile.ownerEmail || session.email),
+        renderDetailCard('Tax ID', profile.taxId),
+        renderDetailCard('Website', profile.website),
+        renderDetailCard('Address', profile.address),
+      ].join('');
+
+      const storeList = document.getElementById('storeList');
+      if (!profile.stores.length) {
+        storeList.innerHTML = '<div class="empty">No stores have been configured yet.</div>';
+        return;
+      }
+
+      storeList.innerHTML = profile.stores.map(function (store) {
+        return (
+          '<div class="store-card">' +
+            '<div class="store-name">' + escapeHtml(store.name) + '</div>' +
+            '<div class="store-meta">' +
+              escapeHtml(store.address || 'No address added') + '<br>' +
+              'Contact: ' + escapeHtml(store.contactPerson || 'Store Manager') + '<br>' +
+              'Phone: ' + escapeHtml(store.phone || '-') + '<br>' +
+              'Type: ' + escapeHtml(store.type || 'Retail Store') +
+            '</div>' +
+            '<div class="store-status">' + escapeHtml(store.status || 'active') + '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function readProfilePayload() {
+      const existing = retailerRecord || { business: {}, primaryContact: {}, stores: [], suppliers: [], products: [] };
+      return {
+        business: {
+          ...(existing.business || {}),
+          businessName: document.getElementById('profileBusinessName').value.trim(),
+          businessEmail: document.getElementById('profileBusinessEmail').value.trim(),
+          phoneNumber: document.getElementById('profilePhone').value.trim() || undefined,
+          businessType: document.getElementById('profileBusinessType').value.trim() || undefined,
+          primaryIndustry: document.getElementById('profileIndustry').value.trim() || undefined,
+          currency: document.getElementById('profileCurrency').value || 'INR',
+          taxId: document.getElementById('profileTaxId').value.trim() || undefined,
+          website: normalizeWebsite(document.getElementById('profileWebsite').value) || undefined,
+          businessAddress: document.getElementById('profileAddress').value.trim() || undefined,
+        },
+        primaryContact: {
+          ...(existing.primaryContact || {}),
+          fullName: document.getElementById('profileOwnerName').value.trim(),
+          directEmail: document.getElementById('profileOwnerEmail').value.trim() || undefined,
+        },
+        stores: Array.isArray(existing.stores) ? existing.stores : [],
+        suppliers: Array.isArray(existing.suppliers) ? existing.suppliers : [],
+        products: Array.isArray(existing.products) ? existing.products : [],
+        profileStatus: existing.profileStatus || 'active',
+      };
+    }
+
+    async function saveProfile(event) {
+      event.preventDefault();
+      if (!profileSession || !profileSession.profileId) {
+        showProfileToast('Complete retailer setup before editing profile.');
+        return;
+      }
+
+      const saveButton = document.getElementById('profileSaveBtn');
+      saveButton.disabled = true;
+      saveButton.textContent = 'Saving...';
+
+      try {
+        const payload = readProfilePayload();
+        retailerRecord = await window.RetailerApi.request(
+          '/api/retailers/' + encodeURIComponent(profileSession.profileId),
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        const summary = buildProfileSummary(retailerRecord, profileSession);
+        await window.RetailerApi.request(
+          '/api/users/' + encodeURIComponent(profileSession.id),
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: summary.ownerName || profileSession.name,
+              profileId: retailerRecord.id,
+              profile: summary,
+              store: profileSession.store,
+              storeId: profileSession.storeId,
+              currentStoreId: profileSession.currentStoreId,
+              accessibleStoreIds: summary.stores.map(function (store) { return store.code; }),
+            }),
+          },
+        );
+
+        profileSession = await window.RetailerApi.refreshSession();
+        retailerRecord = await loadRetailerRecord(profileSession) || retailerRecord;
+        populateProfileForm(retailerRecord, profileSession);
+        renderProfile(profileSession, retailerRecord);
+        showProfileToast('Profile updated.');
+      } catch (error) {
+        showProfileToast('Could not save: ' + (window.RetailerUi ? window.RetailerUi.getErrorMessage(error) : error.message));
+      } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = 'Save Changes';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      profileSession = await window.RetailerApi.refreshSession();
+      if (!profileSession) return;
+
+      retailerRecord = await loadRetailerRecord(profileSession);
+      if (!retailerRecord) {
+        retailerRecord = {
+          business: {
+            businessName: profileSession.profile && profileSession.profile.businessName || '',
+            businessEmail: profileSession.profile && profileSession.profile.businessEmail || profileSession.email || '',
+            phoneNumber: profileSession.profile && profileSession.profile.businessPhone || '',
+          },
+          primaryContact: {
+            fullName: profileSession.profile && profileSession.profile.ownerName || profileSession.name || '',
+            directEmail: profileSession.profile && profileSession.profile.ownerEmail || profileSession.email || '',
+          },
+          stores: profileSession.profile && profileSession.profile.stores || [],
+          suppliers: profileSession.profile && profileSession.profile.suppliers || [],
+          products: [],
+          profileStatus: 'active',
+        };
+      }
+
+      populateProfileForm(retailerRecord, profileSession);
+      renderProfile(profileSession, retailerRecord);
+      document.getElementById('profileForm').addEventListener('submit', saveProfile);
+      document.getElementById('profileResetBtn').addEventListener('click', function () {
+        populateProfileForm(retailerRecord, profileSession);
+        showProfileToast('Changes reset.');
+      });
+    });
+  </script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('topbarAvatar').textContent = initials;
+      document.getElementById('profilePopoverAvatar').textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
+</body>
+</html>

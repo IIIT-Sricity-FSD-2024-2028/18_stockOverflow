@@ -1,0 +1,12 @@
+﻿{
+  "liveServer.settings.ignoreFiles": [
+    "**/backend/**",
+    "**/.git/**",
+    "**/node_modules/**",
+    "**/docs/**",
+    "**/*.json",
+    "**/*.log"
+  ],
+  "liveServer.settings.donotShowInfoMsg": true,
+  "liveServer.settings.donotVerifyTags": true
+}

@@ -56,4 +56,16 @@ __decorate([
     (0, class_transformer_1.Type)(() => create_supplier_setup_dto_1.BankDetailsDto),
     __metadata("design:type", create_supplier_setup_dto_1.BankDetailsDto)
 ], UpdateSupplierSetupDto.prototype, "bankDetails", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateSupplierSetupDto.prototype, "rating", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateSupplierSetupDto.prototype, "avgRating", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], UpdateSupplierSetupDto.prototype, "feedback", void 0);
 //# sourceMappingURL=update-supplier-setup.dto.js.map

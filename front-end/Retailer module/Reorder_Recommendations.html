@@ -228,6 +228,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
   .topbar-search{width:150px}
   .topbar-right{gap:5px}
 }
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
 </style>
 </head>
 <body>
@@ -352,7 +367,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+        <a class="sb-item" href="#" onclick="logout()">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -381,7 +396,32 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <div class="tb-avatar">RS</div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button" style="border:none;">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -448,7 +488,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
   </div>
 </div>
 
-<script src="../js/mockData.js"></script>
+<script src="api-config.js"></script>
 <script src="common-products.js"></script>
 <script>
 const STORE_NAMES = ['YAS Store', 'Central Storage', 'Eastern Branch', 'Western Branch', 'Northern Branch', 'Southern Branch'];
@@ -576,6 +616,371 @@ if(refreshBtn) {
 }
 
 window.addEventListener('DOMContentLoaded', renderReorderTable);
+</script>
+<script>
+let reorderProducts = [];
+
+async function loadReorderProducts() {
+  try {
+    const products = await window.RetailerApi.getProducts();
+    reorderProducts = products.map(function (product) {
+      return window.RetailerApiUtils.toInventoryProduct(product);
+    });
+  } catch (error) {
+    console.error('Error loading reorder products:', error);
+    const shared = window.RetailerProductsData;
+    reorderProducts =
+      shared && Array.isArray(shared.inventoryProducts)
+        ? shared.inventoryProducts.slice()
+        : [];
+    window.RetailerUi.showToast(
+      'Using saved reorder data: ' + window.RetailerUi.getErrorMessage(error),
+      'info',
+    );
+  }
+}
+
+computeReorderRows = function () {
+  return reorderProducts
+    .map(function (product, index) {
+      const demand = Math.max(2, Math.round((product.soldThisMonth || 0) / 7));
+      const safety = Math.max(20, Math.round((product.max || 0) * 0.25));
+      const reorderPoint = Math.max(30, safety + demand * 3);
+      const reorderQty = Math.max(0, reorderPoint + demand * 5 - (product.qty || 0));
+      const ratio = product.max ? product.qty / product.max : 0;
+      const priority = ratio <= 0.05 ? 'Urgent' : ratio <= 0.2 ? 'High' : 'Medium';
+      return {
+        sku: product.sku,
+        name: product.name,
+        emoji: product.emoji || '📦',
+        store: STORE_NAMES[index % STORE_NAMES.length],
+        currentStock: product.qty || 0,
+        avgDemand: demand,
+        safetyStock: safety,
+        reorderPoint: reorderPoint,
+        reorderQty: reorderQty,
+        supplier: SUPPLIERS[index % SUPPLIERS.length],
+        priority: priority,
+      };
+    })
+    .filter(function (row) {
+      return row.reorderQty > 0 || row.priority !== 'Medium';
+    })
+    .sort(function (a, b) {
+      const score = { Urgent: 0, High: 1, Medium: 2 };
+      return score[a.priority] - score[b.priority] || a.currentStock - b.currentStock;
+    });
+};
+
+renderReorderTable = function () {
+  const tbody = document.getElementById('reorderTableBody');
+  const rows = computeReorderRows();
+
+  if (!rows.length) {
+    tbody.innerHTML =
+      '<tr><td colspan="11" style="padding:20px;text-align:center;color:#6b7280">No reorder recommendations at this time.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows
+    .map(function (row) {
+      return `
+        <tr>
+          <td>${row.sku}</td>
+          <td><div class="product-cell"><div class="product-img">${row.emoji}</div><div class="product-name"><strong>${row.name}</strong></div></div></td>
+          <td>${row.store}</td>
+          <td>${row.currentStock}</td>
+          <td>${row.avgDemand}/day</td>
+          <td>${row.safetyStock}</td>
+          <td>${row.reorderPoint}</td>
+          <td><strong>${row.reorderQty}</strong></td>
+          <td>${row.supplier}</td>
+          <td><span class="badge ${getBadgeClass(row.priority)}">${row.priority}</span></td>
+          <td><div class="action-cell"><button type="button" style="border:none;background:#eef2ff;color:#2e6bc5;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer" onclick="createPOFromRecommendation('${row.sku}')">Order</button></div></td>
+        </tr>`;
+    })
+    .join('');
+};
+
+function createPOFromRecommendation(sku) {
+  const product = reorderProducts.find(function (entry) {
+    return entry.sku === sku;
+  });
+
+  if (!product) {
+    return;
+  }
+
+  localStorage.setItem(
+    'po_products',
+    JSON.stringify([
+      {
+        id: sku,
+        name: product.name,
+        emoji: product.emoji || '📦',
+        sku: product.sku,
+        cat: product.cat,
+        price: Number(product.price) || 0,
+        qty: Math.max(1, Math.round((product.max || product.qty || 1) - (product.qty || 0))),
+        stock: Number(product.qty) || 0,
+        stockStatus: window.RetailerApiUtils.getStockStatus(product),
+      },
+    ]),
+  );
+  localStorage.setItem('po_products_ts', String(Date.now()));
+  window.location.href = 'Create_Purchase_Order.html';
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  loadReorderProducts().then(renderReorderTable);
+});
+</script>
+<script>
+(function () {
+  let scopedReorderProducts = [];
+  let scopedReorderTransactions = [];
+  let scopedReorderSuppliers = [];
+
+  async function loadScopedReorderData() {
+    try {
+      const results = await Promise.all([
+        window.RetailerApi.getProducts(),
+        window.RetailerApi.getTransactions(),
+        window.RetailerApi.getSuppliers(),
+      ]);
+      scopedReorderProducts = results[0].map(function (product) {
+        return window.RetailerApiUtils.toInventoryProduct(product);
+      });
+      scopedReorderTransactions = Array.isArray(results[1]) ? results[1] : [];
+      scopedReorderSuppliers = Array.isArray(results[2]) ? results[2] : [];
+    } catch (error) {
+      scopedReorderProducts = [];
+      scopedReorderTransactions = [];
+      scopedReorderSuppliers = [];
+      window.RetailerUi.showToast(window.RetailerUi.getErrorMessage(error), 'error');
+    }
+  }
+
+  function findSupplierProductMatch(product) {
+    var normalizedSku = String(product && product.sku || '').trim().toLowerCase();
+    var normalizedName = String(product && product.name || '').trim().toLowerCase();
+    var normalizedSupplier = String(product && product.supplier || '').trim().toLowerCase();
+
+    for (var i = 0; i < scopedReorderSuppliers.length; i += 1) {
+      var supplier = scopedReorderSuppliers[i];
+      var supplierProducts = Array.isArray(supplier && supplier.products)
+        ? supplier.products
+        : [];
+      var matchedProduct = supplierProducts.find(function (entry) {
+        var entrySku = String(entry && entry.sku || '').trim().toLowerCase();
+        var entryName = String(entry && entry.name || '').trim().toLowerCase();
+        return (
+          (normalizedSku && entrySku === normalizedSku) ||
+          (normalizedName && entryName === normalizedName)
+        );
+      });
+
+      if (matchedProduct) {
+        return {
+          supplier: supplier,
+          supplierProduct: matchedProduct,
+        };
+      }
+    }
+
+    if (!normalizedSupplier) {
+      return null;
+    }
+
+    var fallbackSupplier = scopedReorderSuppliers.find(function (supplier) {
+      var companyName =
+        supplier && supplier.business && supplier.business.companyName
+          ? supplier.business.companyName
+          : supplier.companyName || supplier.name || '';
+      return companyName && companyName.toLowerCase() === normalizedSupplier;
+    }) || null;
+
+    return fallbackSupplier
+      ? { supplier: fallbackSupplier, supplierProduct: null }
+      : null;
+  }
+
+  window.computeReorderRows = function () {
+    const currentStore = window.RetailerApi.getCurrentStore();
+    const salesBySku = {};
+
+    scopedReorderTransactions.forEach(function (transaction) {
+      (transaction.items || []).forEach(function (item) {
+        if (!item.sku) return;
+        if (!salesBySku[item.sku]) {
+          salesBySku[item.sku] = {
+            totalQty: 0,
+            earliest: transaction.timestamp || new Date().toISOString(),
+          };
+        }
+        salesBySku[item.sku].totalQty += Number(item.quantity) || 0;
+        if (new Date(transaction.timestamp || 0).getTime() < new Date(salesBySku[item.sku].earliest).getTime()) {
+          salesBySku[item.sku].earliest = transaction.timestamp || salesBySku[item.sku].earliest;
+        }
+      });
+    });
+
+    return scopedReorderProducts
+      .map(function (product) {
+        const sales = salesBySku[product.sku] || { totalQty: 0, earliest: new Date().toISOString() };
+        const observedDays = Math.max(1, Math.ceil((Date.now() - new Date(sales.earliest).getTime()) / 86400000));
+        const avgDemand = Number((sales.totalQty / observedDays).toFixed(1));
+        const safetyStock = Math.max(Number(product.min || 0), Math.ceil(avgDemand * 3));
+        const reorderPoint = Math.max(Number(product.min || 0), Math.ceil(avgDemand * 7) + safetyStock);
+        const reorderQty = sales.totalQty > 0
+          ? Math.max(0, Math.ceil(avgDemand * 14) + safetyStock - (product.qty || 0))
+          : 0;
+        const supplierMatch = findSupplierProductMatch(product);
+        const priority =
+          (product.qty || 0) <= 0
+            ? 'Urgent'
+            : (product.qty || 0) <= reorderPoint
+              ? 'High'
+              : 'Medium';
+
+        return {
+          sku: product.sku,
+          name: product.name,
+          emoji: product.emoji || 'PKG',
+          store: currentStore ? currentStore.name : '',
+          currentStock: Number(product.qty) || 0,
+          avgDemand: avgDemand,
+          safetyStock: safetyStock,
+          reorderPoint: reorderPoint,
+          reorderQty: reorderQty,
+          supplier: supplierMatch
+            ? (supplierMatch.supplier.business && supplierMatch.supplier.business.companyName
+              ? supplierMatch.supplier.business.companyName
+              : supplierMatch.supplier.companyName || supplierMatch.supplier.name || '')
+            : 'No supplier found',
+          supplierId: supplierMatch ? supplierMatch.supplier.id : '',
+          supplierProduct: supplierMatch ? supplierMatch.supplierProduct : null,
+          priority: priority,
+        };
+      })
+      .filter(function (row) {
+        return row.reorderQty > 0;
+      })
+      .sort(function (a, b) {
+        const score = { Urgent: 0, High: 1, Medium: 2 };
+        return score[a.priority] - score[b.priority] || a.currentStock - b.currentStock;
+      });
+  };
+
+  window.renderReorderTable = function () {
+    const tbody = document.getElementById('reorderTableBody');
+    const rows = window.computeReorderRows();
+
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="11" style="padding:20px;text-align:center;color:#6b7280">No reorder recommendations at this time.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rows.map(function (row) {
+      return `
+        <tr>
+          <td>${row.sku}</td>
+          <td><div class="product-cell"><div class="product-img">${row.emoji}</div><div class="product-name"><strong>${row.name}</strong></div></div></td>
+          <td>${row.store}</td>
+          <td>${row.currentStock}</td>
+          <td>${row.avgDemand}/day</td>
+          <td>${row.safetyStock}</td>
+          <td>${row.reorderPoint}</td>
+          <td><strong>${row.reorderQty}</strong></td>
+          <td>${row.supplier}</td>
+          <td><span class="badge ${getBadgeClass(row.priority)}">${row.priority}</span></td>
+          <td><div class="action-cell"><button type="button" style="border:none;background:#eef2ff;color:#2e6bc5;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer" onclick="createPOFromRecommendation('${row.sku}')">Order</button></div></td>
+        </tr>`;
+    }).join('');
+  };
+
+  window.createPOFromRecommendation = function (sku) {
+    const row = window.computeReorderRows().find(function (entry) {
+      return entry.sku === sku;
+    });
+    const product = scopedReorderProducts.find(function (entry) {
+      return entry.sku === sku;
+    });
+
+    if (!product || !row) {
+      window.RetailerUi.showToast('Unable to find that product in the current product list.', 'error');
+      return;
+    }
+
+    if (!row.supplierId) {
+      window.RetailerUi.showToast("Can't find the product for any supplier.", 'error');
+      return;
+    }
+
+    var supplierProduct = row.supplierProduct || null;
+    localStorage.setItem('po_supplier_id', String(row.supplierId));
+    localStorage.setItem('po_products', JSON.stringify([
+      {
+        id: supplierProduct && (supplierProduct.id || supplierProduct.sku) ? (supplierProduct.id || supplierProduct.sku) : (product.id || product.sku),
+        name: supplierProduct && supplierProduct.name ? supplierProduct.name : product.name,
+        emoji: supplierProduct && supplierProduct.emoji ? supplierProduct.emoji : (product.emoji || 'PKG'),
+        sku: supplierProduct && supplierProduct.sku ? supplierProduct.sku : product.sku,
+        cat: supplierProduct && (supplierProduct.category || supplierProduct.cat) ? (supplierProduct.category || supplierProduct.cat) : product.cat,
+        price: Number(
+          supplierProduct && (supplierProduct.unitPrice || supplierProduct.price)
+            ? (supplierProduct.unitPrice || supplierProduct.price)
+            : product.price,
+        ) || 0,
+        qty: Math.max(1, Number(row.reorderQty) || 1),
+        stock: Number(product.qty) || 0,
+        stockStatus: window.RetailerApiUtils.getStockStatus(product),
+      },
+    ]));
+    localStorage.setItem('po_products_ts', String(Date.now()));
+    window.location.href = 'Create_Purchase_Order.html?supplierId=' + encodeURIComponent(row.supplierId);
+  };
+
+  window.addEventListener('DOMContentLoaded', function () {
+    const refreshBtn = document.querySelector('.action-btn[title="Refresh"]');
+    if (refreshBtn) refreshBtn.style.display = 'none';
+    document.querySelectorAll('.export-btn, .action-btn[title="Export as PDF"], .action-btn[title="Export as Excel"]').forEach(function (button) {
+      button.style.display = 'none';
+    });
+    loadScopedReorderData().then(window.renderReorderTable);
+  });
+})();
+</script>
+
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      const topAvatar = document.getElementById('topbarAvatar');
+      if (topAvatar) topAvatar.textContent = initials;
+      const popAvatar = document.getElementById('profilePopoverAvatar');
+      if (popAvatar) popAvatar.textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
 </script>
 
 </body>

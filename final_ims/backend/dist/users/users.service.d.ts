@@ -18,6 +18,7 @@ export declare class UsersService {
     updateProfile(id: string, profile: Record<string, unknown>): PublicUser;
     remove(id: string): boolean;
     login(email: string, password: string): PublicUser;
+    private tryAutoProvisionUserFromProfiles;
     private syncLinkedProfileForUserId;
     private hydrateLinkedProfile;
     private hydrateRetailerProfile;

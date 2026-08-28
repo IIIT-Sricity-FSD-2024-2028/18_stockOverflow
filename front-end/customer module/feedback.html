@@ -396,11 +396,12 @@
 
   </div><!-- /page-wrap -->
 
-  <script src="../js/mockData.js"></script>
-  <script src="../retailer module/common-products.js"></script>
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
   <script src="app-flow.js"></script>
   <script>
     let selectedProductSku = null;
+    let allProducts = [];
 
     function getSkuFromQuery() {
       return new URLSearchParams(window.location.search).get('sku');
@@ -422,6 +423,8 @@
       document.getElementById('selectedProductStock').textContent = productStockLabel(product);
       document.getElementById('productSearchInput').value = product.name;
       selectedProductSku = product.sku;
+      renderRecentFeedbackFromSubmittedFeedback(selectedProductSku);
+      renderRatingDistributionFromSubmittedFeedback(selectedProductSku);
     }
 
     function renderSearchResults(products, query) {
@@ -465,40 +468,39 @@
       const host = document.getElementById('recentFeedbackList');
       if (!host) return;
 
-      const samples = products
-        .slice()
-        .sort(function(a, b) { return b.soldThisMonth - a.soldThisMonth; })
-        .slice(0, 3);
+      const selected = products.find(function(product) { return product.sku === selectedProductSku; });
+      const fallbackFeedback = selected && Array.isArray(selected.feedback) ? selected.feedback.slice(0, 3) : [];
 
-      host.innerHTML = samples.map(function(product, idx) {
-        const rating = Math.max(3, 5 - idx);
+      if (!fallbackFeedback.length) {
+        host.innerHTML = '<div style="font-size:12px;color:#6b7280;">No submitted feedback yet.</div>';
+        return;
+      }
+
+      host.innerHTML = fallbackFeedback.map(function(item) {
+        const rating = Math.max(1, Math.min(5, Number(item.rating) || 0));
         return `
           <div class="review-card">
             <div class="review-header">
-              <div class="reviewer-name">${product.brand} Buyer</div>
+              <div class="reviewer-name">Recent Buyer</div>
               <div class="review-stars">${'⭐'.repeat(rating)}</div>
             </div>
-            <div class="review-text"><img class="tiny-product-img" src="${product.productImg}" alt="${product.name}" loading="lazy" onerror="this.style.display='none';" />${product.name} (${product.sku}) was rated highly for value and delivery.</div>
+            <div class="review-text">${item.comment || 'No comment provided.'}</div>
           </div>
         `;
       }).join('');
     }
 
-    function renderRecentFeedbackFromSubmittedFeedback() {
+    async function renderRecentFeedbackFromSubmittedFeedback(sku) {
       const host = document.getElementById('recentFeedbackList');
       if (!host) return;
 
-      let appState = { feedback: [] };
+      let latest = [];
       try {
-        appState = JSON.parse(localStorage.getItem('imsAppStateV1') || '{"feedback":[]}');
-      } catch (_err) {
-        appState = { feedback: [] };
+        latest = await window.ImsApi.getProductFeedback(sku);
+      } catch (_error) {
+        latest = [];
       }
-
-      const allFeedback = Array.isArray(appState.feedback) ? appState.feedback : [];
-      const latest = allFeedback.slice().sort(function(a, b) {
-        return new Date(b.date || 0) - new Date(a.date || 0);
-      }).slice(0, 3);
+      latest = latest.slice(0, 3);
 
       if (!latest.length) {
         host.innerHTML = '<div style="font-size:12px;color:#6b7280;">No submitted feedback yet.</div>';
@@ -521,30 +523,16 @@
       }).join('');
     }
 
-    function renderRatingDistributionFromSubmittedFeedback() {
-      let appState = { feedback: [] };
+    async function renderRatingDistributionFromSubmittedFeedback(sku) {
+      let summary = { avg: 0, total: 0, breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } };
       try {
-        appState = JSON.parse(localStorage.getItem('imsAppStateV1') || '{"feedback":[]}');
-      } catch (_err) {
-        appState = { feedback: [] };
+        summary = await window.ImsApi.getRatingSummary(sku);
+      } catch (_error) {
+        summary = summary;
       }
 
-      const allFeedback = Array.isArray(appState.feedback) ? appState.feedback : [];
-      const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-
-      allFeedback.forEach(function(item) {
-        const rating = Math.max(1, Math.min(5, Number(item && item.rating) || 0));
-        if (counts[rating] !== undefined) {
-          counts[rating] += 1;
-        }
-      });
-
-      const total = allFeedback.length;
-      const weighted = (counts[1] * 1) + (counts[2] * 2) + (counts[3] * 3) + (counts[4] * 4) + (counts[5] * 5);
-      const avg = total ? (weighted / total) : 0;
-
       [1, 2, 3, 4, 5].forEach(function(star) {
-        const pct = total ? Math.round((counts[star] / total) * 100) : 0;
+        const pct = summary.total ? Math.round((summary.breakdown[star] / summary.total) * 100) : 0;
         const fill = document.getElementById('feedback-fill-' + star);
         const pctEl = document.getElementById('feedback-pct-' + star);
         if (fill) fill.style.width = pct + '%';
@@ -553,31 +541,35 @@
 
       const avgEl = document.getElementById('feedback-avg');
       const totalEl = document.getElementById('feedback-total');
-      if (avgEl) avgEl.textContent = avg.toFixed(1);
-      if (totalEl) totalEl.textContent = total.toLocaleString();
+      if (avgEl) avgEl.textContent = Number(summary.avg || 0).toFixed(1);
+      if (totalEl) totalEl.textContent = Number(summary.total || 0).toLocaleString();
     }
 
     window.renderRatingDistributionFromSubmittedFeedback = renderRatingDistributionFromSubmittedFeedback;
     window.renderRecentFeedbackFromSubmittedFeedback = renderRecentFeedbackFromSubmittedFeedback;
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const source = window.RetailerProductsData && window.RetailerProductsData.masterProducts;
-      if (!source || !Array.isArray(source)) return;
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        allProducts = await window.ImsApi.getProducts();
+      } catch (_error) {
+        return;
+      }
+      if (!Array.isArray(allProducts) || !allProducts.length) return;
 
       const presetSku = getSkuFromQuery() || localStorage.getItem('imsFeedbackSku');
-      const preset = source.find(function(p) { return p.sku === presetSku; }) || source[0];
+      const preset = allProducts.find(function(p) { return p.sku === presetSku; }) || allProducts[0];
       if (preset) paintSelectedProduct(preset);
 
       const search = document.getElementById('productSearchInput');
       search.addEventListener('input', function() {
-        renderSearchResults(source, search.value.trim());
+        renderSearchResults(allProducts, search.value.trim());
       });
 
-      renderRecentFeedbackFromSubmittedFeedback();
+      renderRecentFeedbackFromSubmittedFeedback(selectedProductSku);
       if (!document.getElementById('recentFeedbackList').innerHTML.trim()) {
-        renderRecentFeedback(source);
+        renderRecentFeedback(allProducts);
       }
-      renderRatingDistributionFromSubmittedFeedback();
+      renderRatingDistributionFromSubmittedFeedback(selectedProductSku);
     });
   </script>
 

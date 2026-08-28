@@ -43,7 +43,7 @@ export class RetailersService {
 
   findAll(): RetailerRecord[] {
     return Array.from(this.retailers.values()).sort((a, b) =>
-      b.updatedAt.localeCompare(a.updatedAt),
+      String(b?.updatedAt || '').localeCompare(String(a?.updatedAt || '')),
     );
   }
 

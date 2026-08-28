@@ -40,6 +40,21 @@ export class ReturnsService {
 
   create(createReturnDto: CreateReturnDto) {
     const items = this.db.getCollection('returns') as ReturnRecord[];
+
+    const existingReturn = items.find((r) => {
+      const sameSku =
+        Boolean(createReturnDto.sku) &&
+        String(r.sku || '').trim().toLowerCase() === String(createReturnDto.sku || '').trim().toLowerCase();
+      const sameOrder =
+        Boolean(createReturnDto.orderId) &&
+        String(r.orderId || '').trim().toLowerCase() === String(createReturnDto.orderId || '').trim().toLowerCase();
+      return sameSku || sameOrder;
+    });
+
+    if (existingReturn) {
+      throw new BadRequestException('A return request has already been submitted for this item.');
+    }
+
     const nextNumber =
       items.reduce((max, entry) => {
         const match = /^RET-(\d+)$/i.exec(entry.id);

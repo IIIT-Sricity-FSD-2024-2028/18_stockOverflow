@@ -128,4 +128,5 @@ export declare class ProductsService {
     private toSafeInteger;
     private toMoney;
     private toOptionalMoney;
+    private ensureInitialProductsForRetailer;
 }

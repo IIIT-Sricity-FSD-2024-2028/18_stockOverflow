@@ -1,250 +1,372 @@
-// Mock Backend Data Manager - Unified
+// Unified browser data engine for interactive modules.
 
-const MOCK_DATA = {
+const APP_SEED = {
   users: [
-    { id: '1', name: 'Admin User', email: 'admin@stockoverflow.com', password: 'pass1234', role: 'admin', status: 'Active', store: 'Global Hub' },
-    { id: '2', name: 'John Smith', email: 'john.smith@stockoverflow.com', password: 'pass1234', role: 'retailer', status: 'Active', store: 'Downtown Store' },
-    { id: '3', name: 'Sarah Johnson', email: 'sarah.j@stockoverflow.com', password: 'pass1234', role: 'supplier', status: 'Active', store: 'Global Hub' },
-    { id: '4', name: 'Michael Brown', email: 'michael.b@stockoverflow.com', password: 'pass1234', role: 'retailer', status: 'Active', store: 'East Coast Hub' },
-    { id: '5', name: 'Emily Davis', email: 'emily.davis@stockoverflow.com', password: 'pass1234', role: 'consumer', status: 'Active', store: 'North Point Outlet' },
-    { id: '6', name: 'David Wilson', email: 'david.w@stockoverflow.com', password: 'pass1234', role: 'retailer', status: 'Warning', store: 'South Plaza Store' }
+    { id: 'u-admin-1', name: 'System Administrator', email: 'admin@stockoverflow.com', password: 'pass1234', role: 'admin', status: 'Active', store: 'Global Hub' },
+    { id: 'u-retailer-1', name: 'Primary Retailer', email: 'retailer@stockoverflow.com', password: 'pass1234', role: 'retailer', status: 'Active', store: 'Downtown Store' },
+    { id: 'u-supplier-1', name: 'Primary Supplier', email: 'supplier@stockoverflow.com', password: 'pass1234', role: 'supplier', status: 'Active', store: 'Global Hub' },
+    { id: 'u-consumer-1', name: 'Primary Consumer', email: 'consumer@stockoverflow.com', password: 'pass1234', role: 'consumer', status: 'Active', store: 'Downtown Store' }
   ],
-  stores: [
-    { id: 's1', name: 'Downtown Store', location: '123 Main St, New York, NY', manager: 'John Smith', products: 1450, orders: 842, revenue: '$124,500', status: 'Active' },
-    { id: 's2', name: 'West Side Branch', location: '456 West Ave, Los Angeles, CA', manager: 'Sarah Johnson', products: 890, orders: 418, revenue: '$72,300', status: 'Active' },
-    { id: 's3', name: 'East Coast Hub', location: '789 Ocean Blvd, Miami, FL', manager: 'Michael Brown', products: 2100, orders: 1107, revenue: '$245,800', status: 'Active' },
-    { id: 's4', name: 'North Point Outlet', location: '321 North Rd, Chicago, IL', manager: 'Emily Davis', products: 1540, orders: 595, revenue: '$69,400', status: 'Active' },
-    { id: 's5', name: 'South Plaza Store', location: '654 South St, Houston, TX', manager: 'David Wilson', products: 1120, orders: 684, revenue: '$93,600', status: 'Pending' },
-    { id: 's6', name: 'Central Market', location: '987 Central Ave, Phoenix, AZ', manager: 'Lisa Martinez', products: 1321, orders: 361, revenue: '$96,100', status: 'Active' },
-    { id: 's7', name: 'Global Hub', location: '888 Broadway, New York, NY', manager: 'Admin User', products: 3200, orders: 1840, revenue: '$412,000', status: 'Active' }
+  roles: [
+    {
+      name: 'Retailer',
+      description: 'Manage store inventory and orders',
+      permissions: { viewInventory: true, editInventory: true, manageOrders: true, updateDeliveryStatus: false, viewReports: true, manageUsers: false }
+    },
+    {
+      name: 'Supplier',
+      description: 'Supply products and manage distribution',
+      permissions: { viewInventory: true, editInventory: false, manageOrders: false, updateDeliveryStatus: true, viewReports: true, manageUsers: false }
+    },
+    {
+      name: 'Consumer',
+      description: 'Browse and purchase products',
+      permissions: { viewInventory: true, editInventory: false, manageOrders: false, updateDeliveryStatus: false, viewReports: false, manageUsers: false }
+    }
   ],
   inventory: [
-    { sku: 'PT001', name: 'Lenovo IdeaPad 3', category: 'Computers', brand: 'Lenovo', priceUSD: 600, unit: 'Pc', qty: 100, max: 300, creator: 'James Kirwin', creatorImg: 'https://www.figma.com/api/mcp/asset/70e2ee73-c607-4c1f-9c9a-0cbe445512f4', productImg: 'https://www.figma.com/api/mcp/asset/735bdaa1-f070-4a7e-821c-e69bbf1186d2', emoji: '💻', soldThisMonth: 22, trend: 'up' },
-    { sku: 'PT002', name: 'Beats Pro', category: 'Electronics', brand: 'Beats', priceUSD: 160, unit: 'Pc', qty: 140, max: 300, creator: 'Francis Chang', creatorImg: 'https://www.figma.com/api/mcp/asset/4875a3a0-18a8-4fb2-9c1f-69b908ec9417', productImg: 'https://www.figma.com/api/mcp/asset/6610a8dc-7159-4241-ae74-5f99b1198ee7', emoji: '🎧', soldThisMonth: 38, trend: 'up' },
-    { sku: 'PT003', name: 'Nike Jordan', category: 'Shoe', brand: 'Nike', priceUSD: 110, unit: 'Pc', qty: 300, max: 500, creator: 'Antonio Engle', creatorImg: 'https://www.figma.com/api/mcp/asset/d5518c84-4bc4-4659-9958-20d59962e84b', productImg: 'https://www.figma.com/api/mcp/asset/0caf812b-4bf5-4855-b63b-1f531c9a1e2d', emoji: '👟', soldThisMonth: 54, trend: 'up' },
-    { sku: 'PT004', name: 'Apple Series 5 Watch', category: 'Electronics', brand: 'Apple', priceUSD: 120, unit: 'Pc', qty: 450, max: 500, creator: 'Leo Kelly', creatorImg: 'https://www.figma.com/api/mcp/asset/e1dadb8b-184f-44fe-bdeb-1a51e1564eeb', productImg: 'https://www.figma.com/api/mcp/asset/5d50ee22-bc47-47b3-b9f4-61a4895fa547', emoji: '⌚', soldThisMonth: 17, trend: 'down' },
-    { sku: 'PT005', name: 'Amazon Echo Dot', category: 'Electronics', brand: 'Amazon', priceUSD: 80, unit: 'Pc', qty: 320, max: 500, creator: 'Annette Walker', creatorImg: 'https://www.figma.com/api/mcp/asset/4de98c98-28bb-46b8-afad-9604e6e36268', productImg: 'https://www.figma.com/api/mcp/asset/c428762c-d427-4fd4-8783-a7ad64ea5b85', emoji: '🔊', soldThisMonth: 29, trend: 'up' },
-    { sku: 'PT006', name: 'Sanford Chair Sofa', category: 'Furniture', brand: 'Modern Wave', priceUSD: 320, unit: 'Pc', qty: 650, max: 800, creator: 'John Weaver', creatorImg: 'https://www.figma.com/api/mcp/asset/d9a7af25-3f15-42c4-9589-96bd63ac9bca', productImg: 'https://www.figma.com/api/mcp/asset/97dece36-1822-41e2-ac5d-abf55c224abd', emoji: '🛋️', soldThisMonth: 8, trend: 'down' },
-    { sku: 'PT007', name: 'Red Premium Satchel', category: 'Bags', brand: 'Dior', priceUSD: 60, unit: 'Pc', qty: 700, max: 800, creator: 'Gary Hennessy', creatorImg: 'https://www.figma.com/api/mcp/asset/38d4ff50-b365-4010-89a3-c4c7970201ca', productImg: 'https://www.figma.com/api/mcp/asset/97044a6f-0f4a-486c-ac45-ad0f2c5a0c62', emoji: '👜', soldThisMonth: 41, trend: 'up' },
-    { sku: 'PT008', name: 'iPhone 14 Pro', category: 'Phone', brand: 'Apple', priceUSD: 540, unit: 'Pc', qty: 630, max: 800, creator: 'Eleanor Panek', creatorImg: 'https://www.figma.com/api/mcp/asset/0ea47749-df36-4768-bff0-50654a1e9123', productImg: 'https://www.figma.com/api/mcp/asset/37ec56a8-ac9e-4371-a973-68a8a931703c', emoji: '📱', soldThisMonth: 63, trend: 'up' },
-    { sku: 'PT009', name: 'Gaming Chair', category: 'Furniture', brand: 'Arlime', priceUSD: 200, unit: 'Pc', qty: 410, max: 500, creator: 'William Levy', creatorImg: 'https://www.figma.com/api/mcp/asset/c443dd72-8038-47b5-9154-94f8138db7d3', productImg: 'https://www.figma.com/api/mcp/asset/8d113917-5b4a-4693-94f4-98177c4d6cc6', emoji: '🪑', soldThisMonth: 12, trend: 'down' },
-    { sku: 'PT010', name: 'Borealis Backpack', category: 'Bags', brand: 'The North Face', priceUSD: 45, unit: 'Pc', qty: 550, max: 800, creator: 'Charlotte Klotz', creatorImg: 'https://www.figma.com/api/mcp/asset/7aa74334-d316-48b9-9833-a00521f5ebc1', productImg: 'https://www.figma.com/api/mcp/asset/3cca4ac4-77e6-416c-9fc3-97d627b98218', emoji: '🎒', soldThisMonth: 33, trend: 'up' },
-    { sku: 'PT011', name: 'Sony WH-1000XM6', category: 'Electronics', brand: 'Sony', priceUSD: 349, unit: 'Pc', qty: 8, max: 300, creator: 'James Kirwin', creatorImg: 'https://www.figma.com/api/mcp/asset/70e2ee73-c607-4c1f-9c9a-0cbe445512f4', productImg: 'https://www.figma.com/api/mcp/asset/6610a8dc-7159-4241-ae74-5f99b1198ee7', emoji: '🎧', soldThisMonth: 55, trend: 'up' },
-    { sku: 'PT012', name: 'MacBook Air M4', category: 'Computers', brand: 'Apple', priceUSD: 1099, unit: 'Pc', qty: 0, max: 200, creator: 'Francis Chang', creatorImg: 'https://www.figma.com/api/mcp/asset/4875a3a0-18a8-4fb2-9c1f-69b908ec9417', productImg: 'https://www.figma.com/api/mcp/asset/735bdaa1-f070-4a7e-821c-e69bbf1186d2', emoji: '💻', soldThisMonth: 19, trend: 'up' },
-    { sku: 'PT013', name: "Levi's 512 Jeans", category: 'Fashion', brand: "Levi's", priceUSD: 79, unit: 'Pc', qty: 480, max: 600, creator: 'Leo Kelly', creatorImg: 'https://www.figma.com/api/mcp/asset/e1dadb8b-184f-44fe-bdeb-1a51e1564eeb', productImg: 'https://www.figma.com/api/mcp/asset/0caf812b-4bf5-4855-b63b-1f531c9a1e2d', emoji: '👖', soldThisMonth: 28, trend: 'up' },
-    { sku: 'PT014', name: 'Dyson V16 Vacuum', category: 'Appliances', brand: 'Dyson', priceUSD: 599, unit: 'Pc', qty: 5, max: 150, creator: 'Annette Walker', creatorImg: 'https://www.figma.com/api/mcp/asset/4de98c98-28bb-46b8-afad-9604e6e36268', productImg: 'https://www.figma.com/api/mcp/asset/5d50ee22-bc47-47b3-b9f4-61a4895fa547', emoji: '🧹', soldThisMonth: 7, trend: 'down' },
-    { sku: 'PT015', name: 'Nike Air Max 2025', category: 'Shoe', brand: 'Nike', priceUSD: 189, unit: 'Pc', qty: 210, max: 400, creator: 'John Weaver', creatorImg: 'https://www.figma.com/api/mcp/asset/d9a7af25-3f15-42c4-9589-96bd63ac9bca', productImg: 'https://www.figma.com/api/mcp/asset/c428762c-d427-4fd4-8783-a7ad64ea5b85', emoji: '👟', soldThisMonth: 47, trend: 'up' }
-  ],
-  orders: [
-    {
-      id: "PO-2023-001",
-      supplierName: "Tech Distributors Inc.",
-      orderDate: "2026-03-20",
-      status: "Delivered",
-      totalAmount: 12500,
-      items: 2
-    },
-    {
-      id: "PO-2023-002",
-      supplierName: "Global Electronics Ltd",
-      orderDate: "2026-04-01",
-      status: "Pending",
-      totalAmount: 4500,
-      items: 1
-    }
-  ],
-  transactions: [],
-  roles: [
-    { 
-      name: 'Retailer', 
-      description: 'Manage store inventory and orders', 
-      permissions: { viewInventory: true, editInventory: true, manageOrders: true, updateDeliveryStatus: false, viewReports: true, manageUsers: false } 
-    },
-    { 
-      name: 'Supplier', 
-      description: 'Supply products and manage distribution', 
-      permissions: { viewInventory: true, editInventory: false, manageOrders: false, updateDeliveryStatus: true, viewReports: false, manageUsers: false } 
-    },
-    { 
-      name: 'Consumer', 
-      description: 'Browse and purchase products', 
-      permissions: { viewInventory: true, editInventory: false, manageOrders: false, updateDeliveryStatus: false, viewReports: false, manageUsers: false } 
-    }
+    { sku: 'PT001', name: 'Lenovo IdeaPad 3', category: 'Computers', brand: 'Lenovo', priceUSD: 600, unit: 'Pc', qty: 100, max: 300, creator: 'James Kirwin', creatorImg: '', productImg: 'https://picsum.photos/seed/PT001/400', emoji: '💻', soldThisMonth: 22, trend: 'up', min: 20 },
+    { sku: 'PT002', name: 'Beats Pro', category: 'Audio', brand: 'Beats', priceUSD: 160, unit: 'Pc', qty: 140, max: 300, creator: 'Francis Chang', creatorImg: '', productImg: 'https://picsum.photos/seed/PT002/400', emoji: '🎧', soldThisMonth: 38, trend: 'up', min: 24 },
+    { sku: 'PT003', name: 'Nike Jordan', category: 'Footwear', brand: 'Nike', priceUSD: 110, unit: 'Pc', qty: 300, max: 500, creator: 'Antonio Engle', creatorImg: '', productImg: 'https://picsum.photos/seed/PT003/400', emoji: '👟', soldThisMonth: 54, trend: 'up', min: 50 },
+    { sku: 'PT004', name: 'Apple Series 5 Watch', category: 'Wearables', brand: 'Apple', priceUSD: 120, unit: 'Pc', qty: 450, max: 500, creator: 'Leo Kelly', creatorImg: '', productImg: 'https://picsum.photos/seed/PT004/400', emoji: '⌚', soldThisMonth: 17, trend: 'down', min: 40 },
+    { sku: 'PT005', name: 'Amazon Echo Dot', category: 'Smart Home', brand: 'Amazon', priceUSD: 80, unit: 'Pc', qty: 320, max: 500, creator: 'Annette Walker', creatorImg: '', productImg: 'https://picsum.photos/seed/PT005/400', emoji: '🔊', soldThisMonth: 29, trend: 'up', min: 40 },
+    { sku: 'PT006', name: 'Sanford Chair Sofa', category: 'Furniture', brand: 'Modern Wave', priceUSD: 320, unit: 'Pc', qty: 650, max: 800, creator: 'John Weaver', creatorImg: '', productImg: 'https://picsum.photos/seed/PT006/400', emoji: '🛋️', soldThisMonth: 8, trend: 'down', min: 60 },
+    { sku: 'PT007', name: 'Red Premium Satchel', category: 'Accessories', brand: 'Dior', priceUSD: 60, unit: 'Pc', qty: 700, max: 800, creator: 'Gary Hennessy', creatorImg: '', productImg: 'https://picsum.photos/seed/PT007/400', emoji: '👜', soldThisMonth: 41, trend: 'up', min: 50 },
+    { sku: 'PT008', name: 'iPhone 14 Pro', category: 'Mobiles', brand: 'Apple', priceUSD: 540, unit: 'Pc', qty: 630, max: 800, creator: 'Eleanor Panek', creatorImg: '', productImg: 'https://picsum.photos/seed/PT008/400', emoji: '📱', soldThisMonth: 63, trend: 'up', min: 70 },
+    { sku: 'PT009', name: 'Gaming Chair', category: 'Furniture', brand: 'Arlime', priceUSD: 200, unit: 'Pc', qty: 410, max: 500, creator: 'William Levy', creatorImg: '', productImg: 'https://picsum.photos/seed/PT009/400', emoji: '🪑', soldThisMonth: 12, trend: 'down', min: 40 },
+    { sku: 'PT010', name: 'Borealis Backpack', category: 'Accessories', brand: 'The North Face', priceUSD: 45, unit: 'Pc', qty: 550, max: 800, creator: 'Charlotte Klotz', creatorImg: '', productImg: 'https://picsum.photos/seed/PT010/400', emoji: '🎒', soldThisMonth: 33, trend: 'up', min: 50 },
+    { sku: 'PT011', name: 'Sony WH-1000XM6', category: 'Audio', brand: 'Sony', priceUSD: 349, unit: 'Pc', qty: 8, max: 300, creator: 'James Kirwin', creatorImg: '', productImg: 'https://picsum.photos/seed/PT011/400', emoji: '🎧', soldThisMonth: 55, trend: 'up', min: 12 },
+    { sku: 'PT012', name: 'MacBook Air M4', category: 'Computers', brand: 'Apple', priceUSD: 1099, unit: 'Pc', qty: 0, max: 200, creator: 'Francis Chang', creatorImg: '', productImg: 'https://picsum.photos/seed/PT012/400', emoji: '💻', soldThisMonth: 19, trend: 'up', min: 10 },
+    { sku: 'PT013', name: 'Levi\'s 512 Jeans', category: 'Fashion', brand: 'Levi\'s', priceUSD: 79, unit: 'Pc', qty: 480, max: 600, creator: 'Leo Kelly', creatorImg: '', productImg: 'https://picsum.photos/seed/PT013/400', emoji: '👖', soldThisMonth: 28, trend: 'up', min: 45 },
+    { sku: 'PT014', name: 'Dyson V16 Vacuum', category: 'Appliances', brand: 'Dyson', priceUSD: 599, unit: 'Pc', qty: 5, max: 150, creator: 'Annette Walker', creatorImg: '', productImg: 'https://picsum.photos/seed/PT014/400', emoji: '🧹', soldThisMonth: 7, trend: 'down', min: 10 },
+        { sku: 'PT015', name: 'Nike Air Max 2025', category: 'Footwear', brand: 'Nike', priceUSD: 189, unit: 'Pc', qty: 210, max: 400, creator: 'John Weaver', creatorImg: '', productImg: 'https://picsum.photos/seed/PT015/400', emoji: 'dYY', soldThisMonth: 47, trend: 'up', min: 35 },
+    { sku: 'PT016', name: 'Logitech MX Master 3', category: 'Accessories', brand: 'Logitech', priceUSD: 99, unit: 'Pc', qty: 250, max: 400, creator: 'AI Assistant', creatorImg: '', productImg: 'https://picsum.photos/seed/PT016/400', emoji: 'dY"', soldThisMonth: 89, trend: 'up', min: 50 }
   ]
 };
 
-// Initialization utility
-function initMockDB() {
-  if (!localStorage.getItem('so_users')) {
-    localStorage.setItem('so_users', JSON.stringify(MOCK_DATA.users));
-  }
-  if (!localStorage.getItem('so_stores')) {
-    localStorage.setItem('so_stores', JSON.stringify(MOCK_DATA.stores));
-  }
-  if (!localStorage.getItem('so_inventory')) {
-    localStorage.setItem('so_inventory', JSON.stringify(MOCK_DATA.inventory));
-  }
-  if (!localStorage.getItem('so_roles')) {
-    localStorage.setItem('so_roles', JSON.stringify(MOCK_DATA.roles));
-  }
-  if (!localStorage.getItem('so_orders')) {
-    localStorage.setItem('so_orders', JSON.stringify(MOCK_DATA.orders));
-  }
-  if (!localStorage.getItem('so_transactions')) {
-    localStorage.setItem('so_transactions', JSON.stringify(MOCK_DATA.transactions));
-  }
-  
-  // Enrichment for existing stores to ensure they have the new mock stats
+function readTable(name, fallback) {
   try {
-    let _stores = JSON.parse(localStorage.getItem('so_stores') || '[]');
-    MOCK_DATA.stores.forEach(ms => {
-      let existingIndex = _stores.findIndex(s => s.id === ms.id);
-      if (existingIndex !== -1) {
-        let existing = _stores[existingIndex];
-        // Force update if metrics are zero or missing
-        if (!existing.products || existing.products == 0 || !existing.revenue || existing.revenue === '$0') {
-          _stores[existingIndex] = { ...existing, ...ms };
-        }
-      } else {
-        _stores.push(ms);
-      }
-    });
-    // Final check to remove any stores that still somehow have 0 products/revenue
-    _stores = _stores.filter(s => s.products > 0 && s.revenue !== '$0');
-    localStorage.setItem('so_stores', JSON.stringify(_stores));
-  } catch(e) {}
-  
-  // Patch for existing localStorage consumers being Inactive
-  try {
-    let _users = JSON.parse(localStorage.getItem('so_users') || '[]');
-    let _c = _users.find(u => u.email === 'emily.davis@stockoverflow.com');
-    if (_c && _c.status === 'Inactive') {
-      _c.status = 'Active';
-      localStorage.setItem('so_users', JSON.stringify(_users));
-    }
-  } catch(e) {}
-  
-  // Also migrate the isolated retailer DB if it exists, otherwise it will be overwritten
-  // We'll clean this up by just forcing it to read from so_inventory eventually.
-}
-
-function getTable(name) {
-  try {
-    return JSON.parse(localStorage.getItem(`so_${name}`)) || [];
-  } catch(e) {
-    return [];
+    const parsed = JSON.parse(localStorage.getItem(`so_${name}`));
+    return Array.isArray(parsed) ? parsed : (fallback || []);
+  } catch (_err) {
+    return fallback || [];
   }
 }
 
-function saveTable(name, data) {
-  localStorage.setItem(`so_${name}`, JSON.stringify(data));
-  // Broadcast an event so other tabs/modules can update (optional, but good for local dev)
+function writeTable(name, data) {
+  localStorage.setItem(`so_${name}`, JSON.stringify(Array.isArray(data) ? data : []));
   window.dispatchEvent(new Event(`so_${name}_updated`));
 }
 
-// Simulated CRUD wrappers
-window.applyUserIsolation = function() {
+function formatMoney(value) {
+  return '$' + (Number(value) || 0).toLocaleString();
+}
+
+function ensureStoreValue(name) {
+  const value = String(name || '').trim();
+  return value || 'Global Hub';
+}
+
+function deriveOrdersFromPosTransactions() {
+  let transactions = [];
+  try {
+    transactions = JSON.parse(localStorage.getItem('imsPosTransactionsV1') || '[]');
+  } catch (_err) {
+    transactions = [];
+  }
+
+  if (!Array.isArray(transactions) || transactions.length === 0) {
+    return readTable('orders', []);
+  }
+
+  return transactions.map((tx, idx) => {
+    const items = Array.isArray(tx.items) ? tx.items : [];
+    const totalAmount = items.reduce((sum, item) => sum + (Number(item.total) || 0), 0);
+    return {
+      id: tx.orderId || `TX-${idx + 1}`,
+      supplierName: tx.customerName || tx.source || 'Walk-in Customer',
+      orderDate: tx.timestamp ? new Date(tx.timestamp).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+      status: tx.status || 'Delivered',
+      totalAmount: Number(totalAmount.toFixed(2)),
+      items: items.length,
+      store: ensureStoreValue(tx.storeName || tx.store)
+    };
+  });
+}
+
+function deriveStores(users, inventory, orders) {
+  const countsByStore = {};
+
+  users.forEach((user) => {
+    const storeName = ensureStoreValue(user.store);
+    if (!countsByStore[storeName]) {
+      countsByStore[storeName] = {
+        managers: [],
+        orders: 0,
+        revenue: 0,
+        products: 0,
+        inventoryWeight: 0
+      };
+    }
+
+    if (String(user.role).toLowerCase() === 'retailer' || String(user.role).toLowerCase() === 'admin') {
+      countsByStore[storeName].managers.push(user.name);
+    }
+  });
+
+  const safeInventory = Array.isArray(inventory) ? inventory : [];
+  const safeOrders = Array.isArray(orders) ? orders : [];
+
+  safeOrders.forEach((order) => {
+    const storeName = ensureStoreValue(order.store);
+    if (!countsByStore[storeName]) {
+      countsByStore[storeName] = { managers: [], orders: 0, revenue: 0, products: 0, inventoryWeight: 0 };
+    }
+    countsByStore[storeName].orders += 1;
+    countsByStore[storeName].revenue += Number(order.totalAmount) || 0;
+  });
+
+  const storeNames = Object.keys(countsByStore).length ? Object.keys(countsByStore) : ['Global Hub'];
+
+  const inventoryWeightTotal = safeInventory.reduce((sum, item) => {
+    return sum + Math.max(1, Number(item.qty) || 0);
+  }, 0);
+
+  storeNames.forEach((storeName) => {
+    const ref = countsByStore[storeName];
+    ref.inventoryWeight = Math.max(1, inventoryWeightTotal / storeNames.length);
+    ref.products = safeInventory.length;
+  });
+
+  return storeNames.map((storeName, index) => {
+    const ref = countsByStore[storeName];
+    const manager = ref.managers[0] || 'Unassigned';
+    const estimatedRevenue = ref.revenue;
+    const status = ref.orders > 0 || ref.products > 0 ? 'Active' : 'Pending';
+    return {
+      id: `s${index + 1}`,
+      name: storeName,
+      location: 'Location configured in store profile',
+      manager,
+      products: ref.products,
+      orders: ref.orders,
+      revenue: formatMoney(estimatedRevenue),
+      status
+    };
+  });
+}
+
+function initDataStore() {
+  if (!localStorage.getItem('so_users')) {
+    writeTable('users', APP_SEED.users);
+  }
+
+  if (!localStorage.getItem('so_roles')) {
+    writeTable('roles', APP_SEED.roles);
+  }
+
+  if (!localStorage.getItem('so_inventory')) {
+    writeTable('inventory', APP_SEED.inventory);
+  }
+
+  if (!localStorage.getItem('so_transactions')) {
+    writeTable('transactions', []);
+  }
+
+  if (!localStorage.getItem('so_orders')) {
+    writeTable('orders', []);
+  }
+
+  if (!localStorage.getItem('so_stores')) {
+    writeTable('stores', []);
+  }
+}
+
+function syncDerivedTables() {
+  const users = readTable('users', APP_SEED.users);
+  let inventory = readTable('inventory', APP_SEED.inventory);
+  if (!Array.isArray(inventory) || inventory.length === 0) {
+    inventory = APP_SEED.inventory.slice();
+    writeTable('inventory', inventory);
+  }
+  const orders = deriveOrdersFromPosTransactions();
+  const stores = deriveStores(users, inventory, orders);
+  writeTable('orders', orders);
+  writeTable('stores', stores);
+}
+
+window.applyUserIsolation = function () {
   if (typeof window.DB === 'undefined') return;
   const session = window.DB.getCurrentSession();
-  // Check if session ID is essentially a new user ID (timestamp string) or explicitly marked
-  if (session && (session.isFirstTime || (session.id && session.id.toString().length > 5))) {
-    // Clear out conventional mock constants used globally in module dashboards
-    if (typeof topSelling !== 'undefined') topSelling.length = 0;
-    if (typeof lowStock !== 'undefined') lowStock.length = 0;
-    if (typeof recentSales !== 'undefined') recentSales.length = 0;
-    if (typeof transData !== 'undefined') Object.keys(transData).forEach(k => transData[k] = []);
-    if (typeof topCustomers !== 'undefined') topCustomers.length = 0;
-    if (typeof MOVEMENTS !== 'undefined') MOVEMENTS.length = 0;
-    
-    // Defer DOM clearing to execution hook
-    window.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.metric-value, .rev-stat-val, .ts-val, .overall-stat-val, .fin-card-val, .donut-center-val, .donut-center-total, .product-meta, .sale-sub, .top-cust-amount').forEach(el => {
-        if (el.textContent.includes('$')) el.textContent = '$0';
-        else if (el.textContent.includes('x')) el.textContent = '0x';
-        else if (el.textContent.includes(' sold')) el.textContent = '0 sold';
-        else el.textContent = '0';
-      });
-      document.querySelectorAll('.badge, .metric-badge, .ts-badge, .badge-up, .badge-down, .badge-warn').forEach(el => {
-        el.innerHTML = '0.0%';
-        el.className = 'badge neutral'; 
-      });
-      const ids = ['m-total-units', 'm-low-stock', 'm-out-stock', 'donut-total'];
-      ids.forEach(id => {
-        const _id = document.getElementById(id);
-        if (_id) _id.textContent = '0';
-      });
+  if (!session || !session.isFirstTime) return;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.metric-value, .rev-stat-val, .ts-val, .overall-stat-val, .fin-card-val, .donut-center-val, .donut-center-total, .product-meta, .sale-sub, .top-cust-amount').forEach((el) => {
+      if (el.textContent.includes('$')) el.textContent = '$0';
+      else if (el.textContent.includes('x')) el.textContent = '0x';
+      else if (el.textContent.includes(' sold')) el.textContent = '0 sold';
+      else el.textContent = '0';
     });
-  }
+    document.querySelectorAll('.badge, .metric-badge, .ts-badge, .badge-up, .badge-down, .badge-warn').forEach((el) => {
+      el.innerHTML = '0.0%';
+      el.className = 'badge neutral';
+    });
+  });
 };
 
+function normalizeFeedbackEntry(entry) {
+  return {
+    rating: Math.max(1, Math.min(5, Number(entry.rating) || 0)),
+    type: String(entry.type || 'General').trim() || 'General',
+    comment: String(entry.comment || '').trim(),
+    date: entry.date || new Date().toISOString(),
+    productName: String(entry.productName || '').trim(),
+    sku: String(entry.sku || '').trim()
+  };
+}
+
 window.DB = {
-  getUsers: () => getTable('users'),
-  saveUsers: (data) => saveTable('users', data),
-  
-  getRoles: () => getTable('roles'),
-  saveRoles: (data) => saveTable('roles', data),
-
-  getStores: () => getTable('stores'),
-  saveStores: (data) => saveTable('stores', data),
-  
-  getInventory: () => getTable('inventory'),
-  saveInventory: (data) => saveTable('inventory', data),
-  
-  getOrders: () => getTable('orders'),
-  saveOrders: (data) => saveTable('orders', data),
-  
-  getTransactions: () => getTable('transactions'),
-  saveTransactions: (data) => saveTable('transactions', data),
-
-  // Session handling
-  login: (email, password) => {
-    const users = DB.getUsers();
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      if(user.status !== 'Active') {
-        throw new Error('Account is inactive.');
-      }
-      localStorage.setItem('so_session', JSON.stringify({ 
-        id: user.id, 
-        name: user.name, 
-        email: user.email, 
-        role: user.role,
-        store: user.store,
-        isFirstTime: user.isFirstTime === true
-      }));
-      // Clear the isFirstTime flag after first login so next login shows normal data
-      if (user.isFirstTime) {
-        user.isFirstTime = false;
-        const allUsers = DB.getUsers();
-        const idx = allUsers.findIndex(u => u.id === user.id);
-        if (idx !== -1) { allUsers[idx].isFirstTime = false; saveTable('users', allUsers); }
-      }
-      return user;
-    }
-    throw new Error('Invalid email or password');
+  getUsers: () => readTable('users', APP_SEED.users),
+  saveUsers: (data) => {
+    writeTable('users', data);
+    syncDerivedTables();
   },
-  
+
+  getRoles: () => readTable('roles', APP_SEED.roles),
+  saveRoles: (data) => writeTable('roles', data),
+
+  getStores: () => readTable('stores', []),
+  saveStores: (data) => writeTable('stores', data),
+
+  getInventory: () => readTable('inventory', []),
+  saveInventory: (data) => {
+    writeTable('inventory', data);
+    syncDerivedTables();
+  },
+
+  getOrders: () => readTable('orders', []),
+  saveOrders: (data) => writeTable('orders', data),
+
+  getTransactions: () => {
+    const dbTransactions = readTable('transactions', []);
+    if (dbTransactions.length) return dbTransactions;
+    try {
+      const posTransactions = JSON.parse(localStorage.getItem('imsPosTransactionsV1') || '[]');
+      return Array.isArray(posTransactions) ? posTransactions : [];
+    } catch (_err) {
+      return [];
+    }
+  },
+  saveTransactions: (data) => {
+    writeTable('transactions', data);
+    localStorage.setItem('imsPosTransactionsV1', JSON.stringify(Array.isArray(data) ? data : []));
+  },
+
+  login: (email, password) => {
+    const users = readTable('users', APP_SEED.users);
+    const user = users.find((u) => u.email === email && u.password === password);
+    if (!user) {
+      throw new Error('Invalid email or password');
+    }
+    if (user.status !== 'Active') {
+      throw new Error('Account is inactive.');
+    }
+
+    localStorage.setItem('so_session', JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      store: user.store,
+      isFirstTime: user.isFirstTime === true
+    }));
+
+    if (user.isFirstTime) {
+      user.isFirstTime = false;
+      writeTable('users', users);
+    }
+
+    return user;
+  },
+
   logout: () => {
     localStorage.removeItem('so_session');
   },
-  
+
   getCurrentSession: () => {
     try {
       return JSON.parse(localStorage.getItem('so_session'));
-    } catch(e) {
+    } catch (_err) {
       return null;
     }
   },
-  
+
+  updateProductFeedback: (sku, feedbackEntry) => {
+    if (!sku) return false;
+    const items = readTable('inventory', []);
+    const idx = items.findIndex((product) => product && product.sku === sku);
+    if (idx < 0) return false;
+
+    const product = Object.assign({}, items[idx]);
+    const feedback = normalizeFeedbackEntry(Object.assign({}, feedbackEntry, { sku }));
+    const feedbackList = Array.isArray(product.feedback) ? product.feedback.slice() : [];
+
+    feedbackList.unshift(feedback);
+    product.feedback = feedbackList.slice(0, 100);
+
+    const breakdown = Object.assign({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }, product.ratingBreakdown || {});
+    breakdown[feedback.rating] = (Number(breakdown[feedback.rating]) || 0) + 1;
+    product.ratingBreakdown = breakdown;
+
+    const ratingCount = Object.keys(breakdown).reduce((sum, key) => sum + (Number(breakdown[key]) || 0), 0);
+    const weighted = (breakdown[1] * 1) + (breakdown[2] * 2) + (breakdown[3] * 3) + (breakdown[4] * 4) + (breakdown[5] * 5);
+    product.ratingCount = ratingCount;
+    product.ratingAvg = ratingCount ? Number((weighted / ratingCount).toFixed(1)) : 0;
+
+    items[idx] = product;
+    writeTable('inventory', items);
+    return true;
+  },
+
+  getProductFeedback: (sku) => {
+    if (!sku) return [];
+    const items = readTable('inventory', []);
+    const product = items.find((p) => p && p.sku === sku);
+    if (!product || !Array.isArray(product.feedback)) return [];
+    return product.feedback.slice();
+  },
+
+  getRatingSummary: (sku) => {
+    if (!sku) {
+      return { avg: 0, total: 0, breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } };
+    }
+
+    const items = readTable('inventory', []);
+    const product = items.find((p) => p && p.sku === sku);
+    if (!product) {
+      return { avg: 0, total: 0, breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } };
+    }
+
+    const breakdown = Object.assign({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }, product.ratingBreakdown || {});
+    const total = Object.keys(breakdown).reduce((sum, key) => sum + (Number(breakdown[key]) || 0), 0);
+    const weighted = (breakdown[1] * 1) + (breakdown[2] * 2) + (breakdown[3] * 3) + (breakdown[4] * 4) + (breakdown[5] * 5);
+    const avg = total ? Number((weighted / total).toFixed(1)) : 0;
+    return { avg, total, breakdown };
+  },
+
   resetDB: () => {
-    if(confirm('Are you sure you want to reset all data? This will restore the system to its initial mock state and clear all your changes.')) {
-      Object.keys(localStorage).forEach(key => {
-        if(key.startsWith('so_')) localStorage.removeItem(key);
+    if (confirm('Are you sure you want to reset all project data? This removes all saved users, orders, products, and feedback.')) {
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('so_') || key.startsWith('ims')) {
+          localStorage.removeItem(key);
+        }
       });
-      window.location.reload(); 
+      initDataStore();
+      syncDerivedTables();
+      window.location.reload();
     }
   }
 };
 
-// Run initialize on load
-initMockDB();
+initDataStore();
+syncDerivedTables();

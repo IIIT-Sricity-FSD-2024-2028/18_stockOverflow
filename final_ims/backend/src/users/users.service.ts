@@ -294,12 +294,16 @@ export class UsersService {
 
   login(email: string, password: string): PublicUser {
     const normalizedEmail = this.normalizeEmail(email);
-    const user = this.readAll().find((entry) => {
+    let user = this.readAll().find((entry) => {
       return (
         this.normalizeEmail(entry.email) === normalizedEmail &&
         entry.password === password
       );
     });
+
+    if (!user) {
+      user = this.tryAutoProvisionUserFromProfiles(normalizedEmail, password);
+    }
 
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
@@ -310,6 +314,40 @@ export class UsersService {
     }
 
     return this.toPublicUser(this.syncLinkedProfileForUserId(user.id));
+  }
+
+  private tryAutoProvisionUserFromProfiles(email: string, password: string): User | null {
+    const suppliers = this.readRecordsFromFile<SupplierProfileRecord>(
+      this.suppliersFile,
+    );
+    const supplier = suppliers.find((item) => {
+      const bEmail = this.normalizeEmail(item.business?.businessEmail);
+      const dEmail = this.normalizeEmail(item.primaryContact?.directEmail);
+      return bEmail === email || dEmail === email;
+    });
+
+    if (supplier) {
+      const newUser: User = {
+        id: supplier.id || randomUUID(),
+        name: supplier.business?.companyName || supplier.primaryContact?.fullName || 'Supplier',
+        email,
+        password,
+        role: 'supplier',
+        status: 'Active',
+        store: supplier.business?.companyName || 'Supplier Store',
+        storeId: supplier.id,
+        currentStoreId: supplier.id,
+        accessibleStoreIds: [supplier.id],
+        profileId: supplier.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      const users = this.readAll();
+      users.push(newUser);
+      this.writeAll(users);
+      return newUser;
+    }
+    return null;
   }
 
   private syncLinkedProfileForUserId(id: string) {

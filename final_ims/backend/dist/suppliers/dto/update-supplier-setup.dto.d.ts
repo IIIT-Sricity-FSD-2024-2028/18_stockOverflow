@@ -6,4 +6,7 @@ export declare class UpdateSupplierSetupDto {
     products?: ProductDto[];
     pricingPolicies?: PricingPoliciesDto;
     bankDetails?: BankDetailsDto;
+    rating?: number;
+    avgRating?: number;
+    feedback?: any;
 }

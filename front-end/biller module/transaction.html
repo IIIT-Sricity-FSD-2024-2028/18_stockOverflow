@@ -201,7 +201,7 @@
   <aside class="sidebar">
     <div class="sidebar-logo"><img src="../Logo.png" alt="StockOverflow"/></div>
     <div class="sidebar-logout-wrap" style="margin-top:auto;padding-top:14px;">
-      <button type="button" class="sidebar-logout-btn" onclick="window.location.href='index.html'">Logout</button>
+      <button type="button" class="sidebar-logout-btn" onclick="localStorage.removeItem('so_session');window.location.href='../index.html'">Logout</button>
     </div>
   </aside>
 
@@ -217,15 +217,34 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-value" id="totalOrders">0</div>
-        <div class="stat-label">Total Orders</div>
+        <div class="stat-label">Orders</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="totalRevenue">₹0</div>
-        <div class="stat-label">Total Revenue</div>
+        <div class="stat-label">Revenue</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" id="totalItems">0</div>
         <div class="stat-label">Items Sold</div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:200px;border:1px solid var(--border);border-radius:6px;padding:6px 10px;background:#f9fafb;">
+        <span>🔍</span>
+        <input type="text" id="txSearchInput" placeholder="Search Order ID, Customer..." style="border:none;background:transparent;outline:none;width:100%;font-size:13px;" />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label style="font-size:12px;font-weight:600;color:var(--text-muted);">Payment:</label>
+        <select id="txPaymentFilter" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;background:#fff;">
+          <option value="">All Payments</option>
+          <option value="Cash">Cash</option>
+          <option value="Card">Card</option>
+          <option value="Points">Points</option>
+          <option value="Deposit">Deposit</option>
+          <option value="Cheque">Cheque</option>
+        </select>
       </div>
     </div>
 
@@ -250,222 +269,9 @@
 
   <div id="toast" class="toast"></div>
 
-  <script src="../js/mockData.js"></script>
-  <script src="../retailer module/common-products.js"></script>
-  <script>
-    (function() {
-      const currencyFormatter = new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR'
-      });
-
-      const formatInr = (amount) => currencyFormatter.format(amount);
-
-      const getTransactions = () => {
-        try {
-          if (window.DB) return window.DB.getTransactions();
-          const stored = localStorage.getItem('imsPosTransactionsV1');
-          return stored ? JSON.parse(stored) : [];
-        } catch {
-          return [];
-        }
-      };
-
-      const saveTransactions = (transactions) => {
-        if (window.DB) {
-          window.DB.saveTransactions(transactions);
-        } else {
-          localStorage.setItem('imsPosTransactionsV1', JSON.stringify(transactions));
-        }
-      };
-
-      const showToast = (msg) => {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 1800);
-      };
-
-      const renderTransactions = () => {
-        const transactions = getTransactions();
-        const container = document.getElementById('transactionsContainer');
-        const emptyState = document.getElementById('emptyState');
-
-        if (!transactions.length) {
-          container.innerHTML = '';
-          emptyState.style.display = 'block';
-          document.getElementById('totalOrders').textContent = '0';
-          document.getElementById('totalRevenue').textContent = '₹0';
-          document.getElementById('totalItems').textContent = '0';
-          return;
-        }
-
-        emptyState.style.display = 'none';
-
-        let totalItems = 0;
-        let totalRevenue = 0;
-
-        container.innerHTML = transactions.map((trans, idx) => {
-          const itemCount = trans.items.reduce((sum, item) => sum + item.quantity, 0);
-          totalItems += itemCount;
-          totalRevenue += trans.finalTotal;
-
-          return `
-            <div class="transaction-card">
-              <div>
-                <div class="trans-header">
-                  <span class="trans-id">${trans.orderId}</span>
-                  <span class="trans-date">${new Date(trans.timestamp).toLocaleString('en-IN')}</span>
-                </div>
-                <div class="trans-customer">👤 ${trans.customer}</div>
-                <div class="trans-items">${itemCount} items from ${trans.store}</div>
-                <div class="trans-total">${formatInr(trans.finalTotal)}</div>
-              </div>
-              <div class="trans-actions">
-                <button class="trans-btn" onclick="window.showTransactionDetails(${idx})">View</button>
-                <button class="trans-btn" onclick="window.editTransactionInventory(${idx})">Edit Inventory</button>
-                <button class="trans-btn trans-btn-danger" onclick="window.deleteTransaction(${idx})">Delete</button>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        document.getElementById('totalOrders').textContent = transactions.length;
-        document.getElementById('totalRevenue').textContent = formatInr(totalRevenue);
-        document.getElementById('totalItems').textContent = totalItems;
-      };
-
-      window.showTransactionDetails = (idx) => {
-        const transactions = getTransactions();
-        const trans = transactions[idx];
-        const details = trans.items.map(item => `${item.name} × ${item.quantity} = ${formatInr(item.total)}`).join('\n');
-        alert(`Order: ${trans.orderId}\nCustomer: ${trans.customer}\n\n${details}\n\nTotal: ${formatInr(trans.finalTotal)}`);
-      };
-
-      window.editTransactionInventory = (idx) => {
-        const transactions = getTransactions();
-        const trans = transactions[idx];
-        const modal = document.getElementById('editModal');
-        const itemsDiv = document.getElementById('modalItems');
-
-        itemsDiv.innerHTML = trans.items.map((item, i) => `
-          <div class="modal-item">
-            <div class="modal-item-name">${item.name}</div>
-            <div class="modal-item-qty">
-              <span>Qty:</span>
-              <input type="number" class="qty-input" value="${item.quantity}" data-idx="${i}" />
-            </div>
-          </div>
-        `).join('');
-
-        window.currentEditIdx = idx;
-        modal.classList.add('show');
-      };
-
-      window.deleteTransaction = (idx) => {
-        if (!confirm('Delete this transaction?')) return;
-        const transactions = getTransactions();
-        transactions.splice(idx, 1);
-        saveTransactions(transactions);
-        showToast('Transaction deleted');
-        renderTransactions();
-      };
-
-      document.getElementById('confirmBtn').addEventListener('click', () => {
-        const transactions = getTransactions();
-        const trans = transactions[window.currentEditIdx];
-        const inputs = document.querySelectorAll('.qty-input');
-
-        const newItems = Array.from(inputs).map((input, i) => {
-          const newQty = Number(input.value) || 0;
-          const item = trans.items[i];
-          return { ...item, quantity: newQty, total: newQty * item.price };
-        });
-
-        trans.items = newItems;
-        trans.finalTotal = newItems.reduce((sum, item) => sum + item.total, 0);
-
-        saveTransactions(transactions);
-
-        // Sync to retailer inventory
-        if (window.DB) {
-          const inventory = window.DB.getInventory();
-          newItems.forEach(item => {
-            const product = inventory.find(p => p.sku === item.sku);
-            if (product) {
-              product.qty = Math.max(0, (product.qty || 0) - item.quantity);
-            }
-          });
-          window.DB.saveInventory(inventory);
-        } else {
-          const products = window.RetailerProductsData?.getMasterProducts?.() || window.RetailerProductsData?.masterProducts || [];
-          newItems.forEach(item => {
-            const product = products.find(p => p.sku === item.sku);
-            if (product) {
-              product.qty = Math.max(0, (product.qty || 0) - item.quantity);
-            }
-          });
-
-          if (typeof window.RetailerProductsData?.saveProductsToStorage === 'function') {
-            window.RetailerProductsData.saveProductsToStorage(products);
-          } else {
-            localStorage.setItem('imsRetailerProductsV1', JSON.stringify(products));
-          }
-        }
-
-        showToast('Inventory updated');
-        document.getElementById('editModal').classList.remove('show');
-        renderTransactions();
-      });
-
-      document.getElementById('cancelBtn').addEventListener('click', () => {
-        document.getElementById('editModal').classList.remove('show');
-      });
-
-      document.getElementById('backBtn').addEventListener('click', () => {
-        window.location.href = 'pos.html';
-      });
-
-      document.getElementById('syncBtn').addEventListener('click', () => {
-        const transactions = getTransactions();
-        
-        if (window.DB) {
-          const inventory = window.DB.getInventory();
-          transactions.forEach(trans => {
-            trans.items.forEach(item => {
-              const product = inventory.find(p => p.sku === item.sku);
-              if (product) {
-                product.qty = Math.max(0, (product.qty || 0) - item.quantity);
-              }
-            });
-          });
-          window.DB.saveInventory(inventory);
-        } else {
-          const products = window.RetailerProductsData?.getMasterProducts?.() || window.RetailerProductsData?.masterProducts || [];
-
-          transactions.forEach(trans => {
-            trans.items.forEach(item => {
-              const product = products.find(p => p.sku === item.sku);
-              if (product) {
-                product.qty = Math.max(0, (product.qty || 0) - item.quantity);
-              }
-            });
-          });
-
-          if (typeof window.RetailerProductsData?.saveProductsToStorage === 'function') {
-            window.RetailerProductsData.saveProductsToStorage(products);
-          } else {
-            localStorage.setItem('imsRetailerProductsV1', JSON.stringify(products));
-          }
-        }
-
-        showToast('All inventory synced');
-      });
-
-      renderTransactions();
-      setInterval(renderTransactions, 5000);
-    })();
-  </script>
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
+  <script src="transaction-app.js"></script>
 
 </body>
 </html>

@@ -174,10 +174,13 @@ let UsersService = class UsersService {
     }
     login(email, password) {
         const normalizedEmail = this.normalizeEmail(email);
-        const user = this.readAll().find((entry) => {
+        let user = this.readAll().find((entry) => {
             return (this.normalizeEmail(entry.email) === normalizedEmail &&
                 entry.password === password);
         });
+        if (!user) {
+            user = this.tryAutoProvisionUserFromProfiles(normalizedEmail, password);
+        }
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid email or password');
         }
@@ -185,6 +188,36 @@ let UsersService = class UsersService {
             throw new common_1.UnauthorizedException('Account is inactive');
         }
         return this.toPublicUser(this.syncLinkedProfileForUserId(user.id));
+    }
+    tryAutoProvisionUserFromProfiles(email, password) {
+        const suppliers = this.readRecordsFromFile(this.suppliersFile);
+        const supplier = suppliers.find((item) => {
+            const bEmail = this.normalizeEmail(item.business?.businessEmail);
+            const dEmail = this.normalizeEmail(item.primaryContact?.directEmail);
+            return bEmail === email || dEmail === email;
+        });
+        if (supplier) {
+            const newUser = {
+                id: supplier.id || (0, node_crypto_1.randomUUID)(),
+                name: supplier.business?.companyName || supplier.primaryContact?.fullName || 'Supplier',
+                email,
+                password,
+                role: 'supplier',
+                status: 'Active',
+                store: supplier.business?.companyName || 'Supplier Store',
+                storeId: supplier.id,
+                currentStoreId: supplier.id,
+                accessibleStoreIds: [supplier.id],
+                profileId: supplier.id,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+            const users = this.readAll();
+            users.push(newUser);
+            this.writeAll(users);
+            return newUser;
+        }
+        return null;
     }
     syncLinkedProfileForUserId(id) {
         const users = this.readAll();

@@ -283,6 +283,21 @@ table.sa-table tbody tr:hover td{background:#fafafa}
 
 /* Text cell */
 .cell-text{font-weight:600;color:#646b72;font-size:13px}
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
 </style>
 </head>
 <body>
@@ -405,7 +420,7 @@ table.sa-table tbody tr:hover td{background:#fafafa}
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+        <a class="sb-item" href="#" onclick="logout()">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -425,7 +440,32 @@ table.sa-table tbody tr:hover td{background:#fafafa}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <div class="topbar-avatar">RS</div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -622,7 +662,7 @@ table.sa-table tbody tr:hover td{background:#fafafa}
   </div>
 </div>
 
-<script src="../js/mockData.js"></script>
+<script src="api-config.js"></script>
 <script src="common-products.js"></script>
 <script>
 // ──────────────────────────────────────────────────────
@@ -640,6 +680,7 @@ let productInventory = {
   'PT009': { name: 'Gaming Chair',         stock: 410 },
   'PT010': { name: 'Borealis Backpack',    stock: 550 },
 };
+productInventory = {};
 
 function initProductInventoryFromShared() {
   const shared = window.RetailerProductsData;
@@ -668,18 +709,8 @@ function populateProductSelect() {
 // ──────────────────────────────────────────────────────
 // ADJUSTMENT HISTORY DATA
 // ──────────────────────────────────────────────────────
-const adjustmentHistory = [
-  { id: 1, product: 'Lenovo IdeaPad 3',     warehouse: 'Lavish Warehouse',      type: 'add',    qty: 50,  reason: 'Recount',        date: '24 Dec 2024', person: 'James Kirwin',    personImg: 'https://www.figma.com/api/mcp/asset/70e2ee73-c607-4c1f-9c9a-0cbe445512f4', status: 'completed', notes: 'Physical recount adjustment' },
-  { id: 2, product: 'Beats Pro',            warehouse: 'Quaint Warehouse',      type: 'remove', qty: 15,  reason: 'Damage',         date: '10 Dec 2024', person: 'Francis Chang',   personImg: 'https://www.figma.com/api/mcp/asset/4875a3a0-18a8-4fb2-9c1f-69b908ec9417', status: 'completed', notes: 'Damaged units removed from inventory' },
-  { id: 3, product: 'Nike Jordan',          warehouse: 'Traditional Warehouse', type: 'add',    qty: 75,  reason: 'Correction',     date: '27 Nov 2024', person: 'Antonio Engle',   personImg: 'https://www.figma.com/api/mcp/asset/d5518c84-4bc4-4659-9958-20d59962e84b', status: 'completed', notes: 'Previous count correction' },
-  { id: 4, product: 'Apple Series 5 Watch', warehouse: 'Cool Warehouse',        type: 'remove', qty: 10,  reason: 'Loss',           date: '18 Nov 2024', person: 'Leo Kelly',      personImg: 'https://www.figma.com/api/mcp/asset/e1dadb8b-184f-44fe-bdeb-1a51e1564eeb', status: 'completed', notes: 'Shrinkage adjustment' },
-  { id: 5, product: 'Amazon Echo Dot',      warehouse: 'Overflow Warehouse',    type: 'add',    qty: 30,  reason: 'Transfer',       date: '06 Nov 2024', person: 'Annette Walker',  personImg: 'https://www.figma.com/api/mcp/asset/4de98c98-28bb-46b8-afad-9604e6e36268', status: 'completed', notes: 'Transfer from Nova Storage Hub' },
-  { id: 6, product: 'Sanford Chair Sofa',   warehouse: 'Nova Storage Hub',      type: 'remove', qty: 20,  reason: 'Expiry',         date: '25 Oct 2024', person: 'John Weaver',    personImg: 'https://www.figma.com/api/mcp/asset/d9a7af25-3f15-42c4-9589-96bd63ac9bca', status: 'completed', notes: 'Expired batch removed' },
-  { id: 7, product: 'Red Premium Satchel',  warehouse: 'Retail Supply Hub',     type: 'add',    qty: 40,  reason: 'Return',         date: '14 Oct 2024', person: 'Gary Hennessy',  personImg: 'https://www.figma.com/api/mcp/asset/38d4ff50-b365-4010-89a3-c4c7970201ca', status: 'completed', notes: 'Customer return received' },
-  { id: 8, product: 'Iphone 14 Pro',        warehouse: 'EdgeWare Solutions',    type: 'remove', qty: 25,  reason: 'Loss',           date: '03 Oct 2024', person: 'Eleanor Panek',  personImg: 'https://www.figma.com/api/mcp/asset/0ea47749-df36-4768-bff0-50654a1e9123', status: 'completed', notes: 'Missing units' },
-  { id: 9, product: 'Gaming Chair',         warehouse: 'North Zone Warehouse',  type: 'add',    qty: 60,  reason: 'Recount',        date: '20 Sep 2024', person: 'William Levy',   personImg: 'https://www.figma.com/api/mcp/asset/c443dd72-8038-47b5-9154-94f8138db7d3', status: 'completed', notes: 'Stock recount completed' },
-  { id: 10, product: 'Borealis Backpack',   warehouse: 'Fulfillment Hub',       type: 'remove', qty: 35,  reason: 'Damage',         date: '10 Sep 2024', person: 'Charlotte Klotz', personImg: 'https://www.figma.com/api/mcp/asset/7aa74334-d316-48b9-9833-a00521f5ebc1', status: 'completed', notes: 'Water damage removal' },
-];
+const adjustmentHistory = [];
+adjustmentHistory.splice(0, adjustmentHistory.length);
 
 let currentPage = 1;
 let rowsPerPage = 10;
@@ -763,6 +794,12 @@ function renderTable() {
   const end = start + rowsPerPage;
   const pageData = filteredAdjustments.slice(start, end);
 
+  if (!pageData.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="padding:28px;text-align:center;color:#6b7280;font-family:\'Nunito Sans\',sans-serif;">No stock adjustments recorded for this store yet.</td></tr>';
+    renderPagination();
+    return;
+  }
+
   tbody.innerHTML = pageData.map(a => `
     <tr>
       <td><input type="checkbox" class="sa-checkbox row-check"/></td>
@@ -810,6 +847,11 @@ function renderTable() {
 function renderPagination() {
   const totalPages = Math.ceil(filteredAdjustments.length / rowsPerPage);
   const container = document.getElementById('paginationContainer');
+
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
 
   let html = `
     <div class="sa-page-nav" onclick="goPage(${currentPage - 1})" title="Previous">
@@ -869,7 +911,6 @@ function toggleAll(cb) {
 }
 
 function deleteAdjustment(id) {
-  if (window.event) window.event.stopPropagation();
   if (!confirm('Delete this adjustment record?')) return;
   const idx = adjustmentHistory.findIndex(a => a.id === id);
   if (idx !== -1) adjustmentHistory.splice(idx, 1);
@@ -922,5 +963,212 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTable();
 });
 </script>
+<script>
+let stockAdjustmentTypeFilter = '';
+let stockAdjustmentStatusFilter = '';
+
+function syncAdjustmentHistory(entries) {
+  adjustmentHistory.splice(0, adjustmentHistory.length);
+  entries.forEach(function (entry) {
+    adjustmentHistory.push(entry);
+  });
+}
+
+async function loadStockAdjustmentPage() {
+  try {
+    const results = await Promise.all([
+      window.RetailerApi.getProducts(),
+      window.RetailerApi.getStockAdjustments(),
+    ]);
+
+    productInventory = {};
+    results[0].forEach(function (product) {
+      productInventory[product.sku] = {
+        name: product.name,
+        stock: Number(product.qty) || 0,
+      };
+    });
+
+    syncAdjustmentHistory(results[1]);
+    populateProductSelect();
+    updateStockInfo();
+    filterTable();
+  } catch (error) {
+    console.error('Error loading stock adjustment data:', error);
+    productInventory = {};
+    adjustmentHistory.splice(0, adjustmentHistory.length);
+    populateProductSelect();
+    filterTable();
+    window.RetailerUi.showToast(window.RetailerUi.getErrorMessage(error), 'error');
+  }
+}
+
+submitAdjustment = async function () {
+  const productSku = document.getElementById('productSelect').value;
+  const currentStore = window.RetailerApi.getCurrentStore();
+  const warehouse = currentStore ? currentStore.name : '';
+  const qty = parseInt(document.getElementById('adjustmentQty').value, 10) || 0;
+  const reason = document.getElementById('reasonSelect').value;
+  const notes = document.getElementById('notesInput').value.trim();
+  const type = document.querySelector('input[name="adjustmentType"]:checked').value;
+
+  if (!productSku || qty <= 0 || !reason) {
+    window.RetailerUi.showToast('Please fill in all required fields.', 'error');
+    return;
+  }
+
+  try {
+    await window.RetailerApi.createStockAdjustment({
+      productSku: productSku,
+      warehouse: warehouse,
+      type: type,
+      qty: qty,
+      reason: reason,
+      notes: notes,
+    });
+    resetForm();
+    await loadStockAdjustmentPage();
+    window.RetailerUi.showToast('Stock adjustment recorded successfully.', 'success');
+  } catch (error) {
+    window.RetailerUi.showToast(
+      'Could not record stock adjustment: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+showNotification = function (msg) {
+  window.RetailerUi.showToast(msg, 'success');
+};
+
+filterTable = function () {
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  filteredAdjustments = adjustmentHistory.filter(function (adjustment) {
+    const matchesQuery =
+      !query ||
+      adjustment.product.toLowerCase().includes(query) ||
+      adjustment.warehouse.toLowerCase().includes(query) ||
+      adjustment.reason.toLowerCase().includes(query) ||
+      adjustment.person.toLowerCase().includes(query) ||
+      adjustment.notes.toLowerCase().includes(query);
+    const matchesType = !stockAdjustmentTypeFilter || adjustment.type === stockAdjustmentTypeFilter;
+    const matchesStatus = !stockAdjustmentStatusFilter || adjustment.status === stockAdjustmentStatusFilter;
+    return matchesQuery && matchesType && matchesStatus;
+  });
+  currentPage = 1;
+  renderTable();
+};
+
+deleteAdjustment = async function (id) {
+  if (!confirm('Delete this adjustment record?')) {
+    return;
+  }
+
+  try {
+    await window.RetailerApi.deleteStockAdjustment(id);
+    await loadStockAdjustmentPage();
+    window.RetailerUi.showToast('Adjustment record deleted.', 'success');
+  } catch (error) {
+    window.RetailerUi.showToast(
+      'Could not delete adjustment: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+toggleFilter = function (type) {
+  if (type === 'type') {
+    const values = ['', 'add', 'remove'];
+    const index = Math.max(0, values.indexOf(stockAdjustmentTypeFilter));
+    stockAdjustmentTypeFilter = values[(index + 1) % values.length];
+    document.querySelectorAll('.sa-filter-btn')[0].childNodes[0].textContent = stockAdjustmentTypeFilter
+      ? 'Type: ' + stockAdjustmentTypeFilter
+      : 'Type';
+  } else {
+    const values = ['', 'completed', 'pending'];
+    const index = Math.max(0, values.indexOf(stockAdjustmentStatusFilter));
+    stockAdjustmentStatusFilter = values[(index + 1) % values.length];
+    document.querySelectorAll('.sa-filter-btn')[1].childNodes[0].textContent = stockAdjustmentStatusFilter
+      ? 'Status: ' + stockAdjustmentStatusFilter
+      : 'Status';
+  }
+
+  filterTable();
+};
+
+document.addEventListener('DOMContentLoaded', loadStockAdjustmentPage);
+document.addEventListener('DOMContentLoaded', function () {
+  const warehouseSelect = document.getElementById('warehouseSelect');
+  if (warehouseSelect && warehouseSelect.parentElement) {
+    warehouseSelect.parentElement.style.display = 'none';
+  }
+});
+
+exportAdjustments = function () {
+  const headers = ['Product', 'Store', 'Type', 'Quantity', 'Reason', 'Date', 'Adjusted By', 'Status', 'Notes'];
+  const rows = adjustmentHistory.map(function (adjustment) {
+    return [
+      adjustment.product,
+      adjustment.warehouse || '',
+      adjustment.type,
+      adjustment.qty,
+      adjustment.reason,
+      adjustment.date,
+      adjustment.person,
+      adjustment.status,
+      adjustment.notes || '',
+    ];
+  });
+  const csv = [headers]
+    .concat(rows)
+    .map(function (row) {
+      return row.map(function (value) {
+        return '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+      }).join(',');
+    })
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'stock-adjustments.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+  window.RetailerUi.showToast('Adjustment export is ready.', 'success');
+};
+</script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('topbarAvatar').textContent = initials;
+      document.getElementById('profilePopoverAvatar').textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
 </body>
 </html>

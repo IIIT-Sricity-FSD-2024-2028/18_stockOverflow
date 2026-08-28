@@ -122,7 +122,7 @@
       <div class="sdp-kpis">
         <div class="sdp-kpi"><div class="sdp-kpi-val" id="sdpProducts">-</div><div class="sdp-kpi-lbl">Total Products</div></div>
         <div class="sdp-kpi"><div class="sdp-kpi-val" id="sdpOrders">-</div><div class="sdp-kpi-lbl">Total Orders</div></div>
-        <div class="sdp-kpi"><div class="sdp-kpi-val" id="sdpRevenue">-</div><div class="sdp-kpi-lbl">Revenue (Mock)</div></div>
+        <div class="sdp-kpi"><div class="sdp-kpi-val" id="sdpRevenue">-</div><div class="sdp-kpi-lbl">Revenue</div></div>
       </div>
       <div class="card" style="padding:1rem;margin-bottom:0;">
         <p style="font-size:0.875rem;font-weight:600;color:var(--text-main);margin-bottom:0.5rem;">Manager</p>
@@ -137,62 +137,65 @@
   </div>
 
   <script src="../js/mockData.js"></script>
+  <script src="../js/api-config.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Auth guard
+      const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+      if (!session || session.role !== 'admin') { window.location.href = '../index.html'; }
+
       // Logout
       const logoutBtn = document.getElementById('logoutBtn');
-      if(logoutBtn) logoutBtn.addEventListener('click', () => { DB.logout(); window.location.href = '../index.html'; });
+      if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.removeItem('so_session'); window.location.href = '../index.html'; });
 
-      // Session
-      const session = DB.getCurrentSession();
-      if(session) {
-        const navName = document.getElementById('navName'); if(navName) navName.textContent = session.name;
-        const initials = session.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
-        const navAvatar = document.getElementById('navAvatar'); if(navAvatar) navAvatar.textContent = initials;
+      // Nav
+      if (session) {
+        const navName = document.getElementById('navName'); if (navName) navName.textContent = session.name;
+        const initials = session.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const navAvatar = document.getElementById('navAvatar'); if (navAvatar) navAvatar.textContent = initials;
       }
 
-      const STORE_DATA = DB.getStores();
       const grid = document.getElementById('storesGrid');
+      let STORE_DATA = [];
+
+      // Fetch from live API (StoresService merges retailer stores + admin stores)
+      try {
+        STORE_DATA = await window.IMS_HTTP.request('/stores');
+      } catch (e) {
+        console.warn('API unavailable, falling back to mockData', e);
+        STORE_DATA = typeof DB !== 'undefined' && DB.getStores ? DB.getStores() : [];
+      }
 
       if (!STORE_DATA || STORE_DATA.length === 0) {
-        grid.innerHTML = '<p style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 3rem;">No stores found. Go to the Dashboard to add one.</p>';
+        grid.innerHTML = '<p style="grid-column: span 3; text-align: center; color: var(--text-muted); padding: 3rem;">No stores found. Retailers need to complete their setup to add stores.</p>';
       } else {
         STORE_DATA.forEach(s => {
           const card = document.createElement('div');
           card.className = 'store-card';
+          const statusColor = String(s.status || 'Active').toLowerCase() === 'active' ? '#16a34a' : '#64748b';
           card.innerHTML = `
             <div class="store-card-header">
               <div class="store-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               </div>
-              <span class="store-name">${s.name}</span>
+              <div style="flex:1;">
+                <div class="store-name">${s.name}</div>
+                <span style="font-size:0.72rem;font-weight:600;padding:2px 8px;border-radius:20px;background:${statusColor}22;color:${statusColor};">${s.status || 'Active'}</span>
+              </div>
             </div>
             <div style="display:flex;flex-direction:column;gap:0.4rem;">
               <div class="store-meta-row">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 0 1 8-8z"/></svg>
-                ${s.location}
+                ${s.location || 'Unknown location'}
               </div>
               <div class="store-meta-row">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
-                Manager: ${s.manager}
+                Manager: ${s.manager || 'Not assigned'}
               </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.25rem;">
-                <div class="store-meta-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                  ${s.products || 0} Items
-                </div>
-                <div class="store-meta-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-                  ${s.orders || 0} Orders
-                </div>
-              </div>
-              <div class="store-meta-row" style="margin-top: 0.25rem; font-weight: 600; color: var(--success-color);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                Revenue: ${s.revenue || '$0'}
-              </div>
+              ${s.retailerId ? `<div class="store-meta-row" style="font-size:0.78rem;color:var(--text-muted);">Retailer ID: ${s.retailerId}</div>` : ''}
             </div>
             <button class="enter-btn" onclick="openStoreDetail('${s.id}')">
-              Enter Store &rarr;
+              View Details &rarr;
             </button>
           `;
           grid.appendChild(card);
@@ -200,18 +203,17 @@
       }
 
       window.openStoreDetail = (id) => {
-        const stores = DB.getStores();
-        const s = stores.find(x => x.id === id);
-        if(!s) return;
+        const s = STORE_DATA.find(x => String(x.id) === String(id));
+        if (!s) return;
         document.getElementById('sdpName').textContent = s.name;
-        document.getElementById('sdpLocation').textContent = s.location;
-        document.getElementById('sdpProducts').textContent = (s.products || 0).toLocaleString();
+        document.getElementById('sdpLocation').textContent = s.location || '—';
+        document.getElementById('sdpProducts').textContent = (s.products || '—').toLocaleString?.() ?? '—';
         document.getElementById('sdpOrders').textContent = (s.orders || 0).toLocaleString();
         document.getElementById('sdpRevenue').textContent = s.revenue || '$0';
-        document.getElementById('sdpManager').textContent = s.manager;
+        document.getElementById('sdpManager').textContent = s.manager || 'Not assigned';
         const perf = s.orders ? Math.round((s.orders / 450) * 100) : 0;
         document.getElementById('sdpPerf').style.width = Math.min(perf, 100) + '%';
-        document.getElementById('sdpPerfLabel').textContent = `${Math.min(perf,100)}% capacity utilization`;
+        document.getElementById('sdpPerfLabel').textContent = `${Math.min(perf, 100)}% capacity utilization`;
         document.getElementById('storeDetailOverlay').classList.add('active');
       };
     });

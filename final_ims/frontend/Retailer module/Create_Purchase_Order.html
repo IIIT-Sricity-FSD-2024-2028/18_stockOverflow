@@ -388,21 +388,6 @@ table.po-table tbody tr:hover td{background:#fafbfc}
 /* Row fade in animation */
 @keyframes rowFadeIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
 .prod-row-anim{animation:rowFadeIn .2s ease both}
-
-.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
-.profile-popover.open{display:block;}
-.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
-.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
-.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
-.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
-.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
-.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
-.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
-.profile-popover-actions{display:flex;gap:8px}
-.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
-.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
-
 </style>
 </head>
 <body>
@@ -525,7 +510,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="logout()">
+        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -551,32 +536,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      
-      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RS</button>
-      <div class="profile-popover" id="profilePopover">
-        <div class="profile-popover-head">
-          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
-          <div>
-            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
-            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
-          </div>
-        </div>
-        <div class="profile-popover-grid">
-          <div class="profile-popover-item">
-            <div class="profile-popover-label">Email</div>
-            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
-          </div>
-          <div class="profile-popover-item">
-            <div class="profile-popover-label">Phone</div>
-            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
-          </div>
-        </div>
-        <div class="profile-popover-actions">
-          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
-          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
-        </div>
-      </div>
-
+      <div class="topbar-avatar">JS</div>
     </div>
   </div>
 
@@ -624,6 +584,10 @@ table.po-table tbody tr:hover td{background:#fafbfc}
                 <div class="po-select-wrap">
                   <select class="po-select" id="supplierSelect" onchange="onSupplierChange()">
                     <option value="">Select supplier...</option>
+                    <option value="abc">ABC Suppliers Inc</option>
+                    <option value="global">Global Trade Ltd</option>
+                    <option value="premium">Premium Goods Co</option>
+                    <option value="rapid">Rapid Imports Co</option>
                   </select>
                 </div>
               </div>
@@ -831,19 +795,6 @@ table.po-table tbody tr:hover td{background:#fafbfc}
         </div>
       </div>
 
-    
-        <!-- PO HISTORY CARD -->
-        <div class="po-card" style="margin-top:20px" id="poHistoryCard">
-          <div class="po-card-header">
-            <div class="po-card-title">PO History (Selected Supplier)</div>
-          </div>
-          <div class="po-card-body" style="max-height: 400px; overflow-y: auto;">
-            <div id="poHistoryList" style="font-size: 13px; color: var(--text-secondary); text-align: center; padding: 20px;">
-              Select a supplier to view history.
-            </div>
-          </div>
-        </div>
-      </div>
     </div><!-- /po-grid -->
   </div><!-- /po-content -->
 </div><!-- /main -->
@@ -878,46 +829,13 @@ table.po-table tbody tr:hover td{background:#fafbfc}
   </div>
 </div>
 
-
-<!-- FEEDBACK MODAL -->
-<div class="modal-overlay" id="feedbackModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">Leave Feedback</div>
-      <div class="modal-x" onclick="closeFeedbackModal()">✕</div>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="feedbackPoId" />
-      <div style="margin-bottom: 12px;">
-        <label style="display:block; margin-bottom:4px; font-weight:700; font-size:12px;">Rating (1-5)</label>
-        <select id="feedbackRating" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;">
-          <option value="5">5 - Excellent</option>
-          <option value="4">4 - Good</option>
-          <option value="3">3 - Average</option>
-          <option value="2">2 - Poor</option>
-          <option value="1">1 - Terrible</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block; margin-bottom:4px; font-weight:700; font-size:12px;">Comment</label>
-        <textarea id="feedbackComment" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; height:80px;"></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="modal-btn-cancel" onclick="closeFeedbackModal()">Cancel</button>
-      <button class="btn btn-primary" style="padding:8px 18px" onclick="submitFeedback()">Submit Feedback</button>
-    </div>
-  </div>
-</div>
-
 <!-- TOAST -->
 <div class="toast" id="toast">
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toastMsg">Saved!</span>
 </div>
 
-<script src="../js/so-toast.js"></script>
-<script src="api-config.js"></script>
+<script src="../js/mockData.js"></script>
 <script>
 'use strict';
 
@@ -925,8 +843,12 @@ table.po-table tbody tr:hover td{background:#fafbfc}
 let products = [];   // Array of { id, name, emoji, sku, cat, price, qty, stock, stockStatus }
 let deleteTargetId = null;
 
-window.SUPPLIER_NAMES = window.SUPPLIER_NAMES || {};
-var SUPPLIER_NAMES = window.SUPPLIER_NAMES;
+const SUPPLIER_NAMES = {
+  abc: 'ABC Suppliers Inc',
+  global: 'Global Trade Ltd',
+  premium: 'Premium Goods Co',
+  rapid: 'Rapid Imports Co',
+};
 
 const PAYMENT_NAMES = {
   net30:'Net 30', net15:'Net 15', net45:'Net 45',
@@ -937,7 +859,6 @@ const PAYMENT_NAMES = {
 document.addEventListener('DOMContentLoaded', () => {
   loadFromStorage();
   updateDisplay();
-  loadPoHistory();
 
   // Set min date for delivery to today
   const today = new Date().toISOString().split('T')[0];
@@ -989,16 +910,10 @@ function checkForNewProducts() {
 
 /* ── NAVIGATION ──────────────────────────────────── */
 function goToProductSelection() {
-  const supplierId = document.getElementById('supplierSelect').value;
-  if (!supplierId) {
-    window.RetailerUi.showToast('Select a supplier before adding products.', 'error');
-    return;
-  }
   // Save current products to storage so the selection page can pre-select them
   localStorage.setItem('po_products', JSON.stringify(products));
   localStorage.setItem('po_products_ts', '0'); // mark as not fresh
-  localStorage.setItem('po_supplier_id', supplierId);
-  window.location.href = 'po-products.html?supplierId=' + encodeURIComponent(supplierId);
+  window.location.href = 'po-products.html';
 }
 
 /* ── UPDATE DISPLAY ──────────────────────────────── */
@@ -1129,10 +1044,12 @@ function updateSummaryPanel() {
   document.getElementById('summaryTax').textContent = '₹' + tax.toLocaleString('en-IN');
   document.getElementById('summaryTotal').textContent = '₹' + total.toLocaleString('en-IN');
 
+  // Right panel
   document.getElementById('osProdCount').textContent = products.length ? `${products.length} added` : '0 added';
   document.getElementById('osTotalUnits').textContent = totalUnits;
   document.getElementById('osValue').textContent = total > 0 ? '₹' + total.toLocaleString('en-IN') : '₹0';
 
+  // Products mini-list
   const wrap = document.getElementById('selProdListWrap');
   const list = document.getElementById('selProdList');
   if (products.length) {
@@ -1148,6 +1065,7 @@ function updateSummaryPanel() {
     wrap.style.display = 'none';
   }
 
+  // Prod count badge in card header
   const badge = document.getElementById('prodCountBadge');
   if (products.length) {
     badge.style.display = 'inline';
@@ -1157,234 +1075,11 @@ function updateSummaryPanel() {
   }
 }
 
+/* ── SUPPLIER/DATE CHANGE ─────────────────────────── */
 function onSupplierChange() {
-  const select = document.getElementById('supplierSelect');
-  if (!select) return;
-  const val = select.value;
-  const selectedText = (select.options && select.options[select.selectedIndex]) ? select.options[select.selectedIndex].text : val;
-  const osSup = document.getElementById('osSup');
-  if (osSup) {
-    osSup.textContent = val ? ((window.SUPPLIER_NAMES && window.SUPPLIER_NAMES[val]) || selectedText) : '—';
-  }
-  if (typeof updateChecklist === 'function') updateChecklist();
-  if (typeof loadPoHistory === 'function') loadPoHistory();
-}
-window.onSupplierChange = onSupplierChange;
-
-let poHistoryItems = [];
-let currentPoDetail = null;
-
-async function loadPoHistory() {
-  const container = document.getElementById('poHistoryList');
-  const title = document.querySelector('#poHistoryCard .po-card-title');
-  if (!container) return;
-
-  const select = document.getElementById('supplierSelect');
-  const supplierId = select ? select.value : '';
-  const selectedName = select && select.selectedIndex > 0 ? select.options[select.selectedIndex].text : '';
-
-  if (title) {
-    title.textContent = supplierId
-      ? `PO History (${selectedName || (window.SUPPLIER_NAMES && window.SUPPLIER_NAMES[supplierId]) || supplierId})`
-      : 'PO History (Whole History)';
-  }
-
-  try {
-    let pos = [];
-    if (window.RetailerApi && typeof window.RetailerApi.getPurchaseOrders === 'function') {
-      pos = await window.RetailerApi.getPurchaseOrders();
-    } else {
-      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
-      const retailerId = session.profileId || session.id || '';
-      const url = `http://localhost:3001/api/purchase-orders?retailerId=${encodeURIComponent(retailerId)}`;
-      pos = await fetch(url).then(r => r.json());
-    }
-
-    if (!Array.isArray(pos)) pos = [];
-
-    if (supplierId) {
-      pos = pos.filter(p => String(p.supplierId || '') === String(supplierId));
-    }
-
-    poHistoryItems = pos;
-
-    if (!pos.length) {
-      container.innerHTML = `<div style="padding:20px;color:var(--text-secondary);text-align:center;">No purchase history found${supplierId ? ' for this supplier' : ''}.</div>`;
-      return;
-    }
-
-    let html = `
-      <table style="width:100%; border-collapse:collapse; font-size:12.5px; text-align:left; font-family:'Nunito Sans',sans-serif;">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border); color:var(--text-secondary); font-weight:700; font-size:11px; text-transform:uppercase; background:#f9fafb;">
-            <th style="padding:10px 8px;">PO ID</th>
-            <th style="padding:10px 8px;">Supplier</th>
-            <th style="padding:10px 8px;">Date</th>
-            <th style="padding:10px 8px;">Items</th>
-            <th style="padding:10px 8px;">Total</th>
-            <th style="padding:10px 8px;">Status</th>
-            <th style="padding:10px 8px; text-align:right;">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-    pos.forEach(po => {
-      const dateStr = po.createdAt ? new Date(po.createdAt).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}) : '-';
-      const itemsList = Array.isArray(po.items) ? po.items : [];
-      const itemsStr = itemsList.map(i => `${i.name || i.productName || 'Item'} (x${i.qty || 1})`).join(', ') || '-';
-      const totalStr = `$${Number(po.total || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
-      
-      let statusBg = '#eef3fc', statusColor = '#2e6bc5', statusSymbol = '⏳';
-      const s = String(po.status || 'Pending');
-      if (s === 'Delivered') { statusBg = '#dcfce7'; statusColor = '#15803d'; statusSymbol = '✅'; }
-      else if (s === 'Cancelled') { statusBg = '#fee2e2'; statusColor = '#b91c1c'; statusSymbol = '✕'; }
-      else if (s === 'Approved' || s === 'Confirmed') { statusBg = '#ede9fe'; statusColor = '#6366f1'; statusSymbol = '✓'; }
-      else if (s === 'Shipped' || s === 'In Delivery' || s === 'In Transit') { statusBg = '#e0f2fe'; statusColor = '#0369a1'; statusSymbol = '🚚'; }
-
-      html += `
-        <tr style="border-bottom:1px solid #f1f5f9;">
-          <td style="padding:10px 8px; font-weight:700; color:#2e6bc5;">${po.id}</td>
-          <td style="padding:10px 8px; font-weight:600; color:#212b36;">${po.supplierName || po.supplierId || '-'}</td>
-          <td style="padding:10px 8px; color:var(--text-secondary); font-size:12px;">${dateStr}</td>
-          <td style="padding:10px 8px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#212b36;" title="${itemsStr}">${itemsStr}</td>
-          <td style="padding:10px 8px; font-weight:700; color:#212b36;">${totalStr}</td>
-          <td style="padding:10px 8px;"><span style="background:${statusBg}; color:${statusColor}; padding:3px 9px; border-radius:12px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:4px;">${statusSymbol} ${s}</span></td>
-          <td style="padding:10px 8px; text-align:right;">
-            <div style="display:inline-flex; gap:4px; flex-wrap:nowrap;">
-              <button type="button" onclick="viewPoDetail('${po.id}')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:1px solid #e6eaed; border-radius:4px; background:#fff; color:#646b72; cursor:pointer;" title="View Order Details">View</button>
-              ${s === 'Pending' ? `
-                <button type="button" onclick="markPoStatus('${po.id}', 'Confirmed')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#ede9fe; color:#6366f1; cursor:pointer;" title="Approve/Confirm PO">Approve</button>
-                <button type="button" onclick="markPoStatus('${po.id}', 'Cancelled')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#fee2e2; color:#b91c1c; cursor:pointer;" title="Cancel Order">Cancel</button>
-              ` : ''}
-              ${(s === 'Approved' || s === 'Confirmed') ? `
-                <button type="button" onclick="markPoStatus('${po.id}', 'In Delivery')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#e0f2fe; color:#0369a1; cursor:pointer;" title="Mark In Delivery">In Delivery</button>
-                <button type="button" onclick="markPoStatus('${po.id}', 'Delivered')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#dcfce7; color:#15803d; cursor:pointer;" title="Receive Stock into Inventory">Receive</button>
-              ` : ''}
-              ${(s === 'Shipped' || s === 'In Delivery' || s === 'In Transit') ? `
-                <button type="button" onclick="markPoStatus('${po.id}', 'Delivered')" style="padding:4px 8px; font-size:11.5px; font-weight:700; border:none; border-radius:4px; background:#dcfce7; color:#15803d; cursor:pointer;" title="Confirm Delivery & Receive Stock">Receive Stock</button>
-              ` : ''}
-            </div>
-          </td>
-        </tr>
-      `;
-    });
-
-    html += `</tbody></table>`;
-    container.innerHTML = html;
-  } catch (error) {
-    console.error('Error loading PO history:', error);
-    container.innerHTML = '<div style="padding:20px;color:#ef4444;text-align:center;">Could not load purchase history.</div>';
-  }
-}
-
-async function markPoStatus(poId, newStatus) {
-  try {
-    const url = `/api/purchase-orders/${encodeURIComponent(poId)}`;
-    if (window.RetailerApi && typeof window.RetailerApi.request === 'function') {
-      await window.RetailerApi.request(url, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-    } else {
-      await fetch(`http://localhost:3001${url}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-    }
-
-    if (window.RetailerUi && typeof window.RetailerUi.showToast === 'function') {
-      window.RetailerUi.showToast(
-        newStatus === 'Delivered'
-          ? `PO ${poId} marked as Delivered! Stock received into inventory.`
-          : `PO ${poId} marked as ${newStatus}.`,
-        newStatus === 'Delivered' ? 'success' : 'info'
-      );
-    } else {
-      showToast(`PO ${poId} updated to ${newStatus}`, 'ok');
-    }
-
-    await loadPoHistory();
-  } catch (err) {
-    console.error('Error updating PO status:', err);
-    if (window.RetailerUi && typeof window.RetailerUi.showToast === 'function') {
-      window.RetailerUi.showToast('Error updating PO status: ' + window.RetailerUi.getErrorMessage(err), 'error');
-    }
-  }
-}
-
-function viewPoDetail(poId) {
-  const po = poHistoryItems.find(p => p.id === poId);
-  if (!po) return;
-  currentPoDetail = po;
-
-  let modal = document.getElementById('poDetailModal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'poDetailModal';
-    modal.className = 'modal-overlay';
-    modal.onclick = function(e) { if (e.target === modal) modal.classList.remove('open'); };
-    document.body.appendChild(modal);
-  }
-
-  const itemsList = Array.isArray(po.items) ? po.items : [];
-  const dateStr = po.createdAt ? new Date(po.createdAt).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}) : '-';
-
-  modal.innerHTML = `
-    <div class="modal" style="width:520px; max-width:calc(100vw - 40px); background:#fff; border-radius:8px; overflow:hidden; font-family:'Nunito Sans',sans-serif;">
-      <div style="padding:16px 20px; border-bottom:1px solid #e6eaed; display:flex; justify-content:space-between; align-items:center; background:#f9fafb;">
-        <div>
-          <div style="font-size:16px; font-weight:800; color:#2e6bc5;">${po.id}</div>
-          <div style="font-size:12px; color:#646b72; margin-top:2px;">Created on ${dateStr}</div>
-        </div>
-        <div style="font-size:20px; font-weight:700; cursor:pointer; color:#a6aaaf;" onclick="document.getElementById('poDetailModal').classList.remove('open')">✕</div>
-      </div>
-      <div style="padding:20px; max-height:420px; overflow-y:auto;">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; font-size:12.5px; background:#f5f6fa; padding:12px; border-radius:6px;">
-          <div><span style="color:#646b72;">Supplier:</span> <strong style="color:#212b36;">${po.supplierName || po.supplierId}</strong></div>
-          <div><span style="color:#646b72;">Status:</span> <strong style="color:#2e6bc5;">${po.status}</strong></div>
-          <div><span style="color:#646b72;">Delivery Date:</span> <strong>${po.deliveryDate || '-'}</strong></div>
-          <div><span style="color:#646b72;">Payment Terms:</span> <strong>${po.paymentTerms || 'Net 30'}</strong></div>
-        </div>
-        <div style="font-size:13px; font-weight:700; color:#212b36; margin-bottom:8px;">Ordered Items</div>
-        <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:16px;">
-          <thead>
-            <tr style="border-bottom:1px solid #e6eaed; color:#646b72; font-weight:700; text-transform:uppercase; font-size:10px;">
-              <th style="padding:6px 0; text-align:left;">Product</th>
-              <th style="padding:6px; text-align:center;">Qty</th>
-              <th style="padding:6px; text-align:right;">Unit Price</th>
-              <th style="padding:6px 0; text-align:right;">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${itemsList.map(item => `
-              <tr style="border-bottom:1px solid #f1f5f9;">
-                <td style="padding:8px 0; font-weight:600;">${item.name || item.productName || 'Item'}<br><span style="font-size:10.5px; color:#a6aaaf;">SKU: ${item.sku || '-'}</span></td>
-                <td style="padding:8px; text-align:center;">${item.qty || 1}</td>
-                <td style="padding:8px; text-align:right;">$${Number(item.price || 0).toFixed(2)}</td>
-                <td style="padding:8px 0; text-align:right; font-weight:700;">$${(Number(item.price || 0) * Number(item.qty || 1)).toFixed(2)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; border-top:1px solid #e6eaed; padding-top:10px;">
-          <span>Grand Total</span>
-          <span style="color:#2e6bc5; font-size:15px;">$${Number(po.total || 0).toFixed(2)}</span>
-        </div>
-        ${po.notes ? `<div style="margin-top:12px; font-size:12px; color:#646b72; background:#fffbeb; padding:10px; border-radius:5px;"><strong>Notes:</strong> ${po.notes}</div>` : ''}
-      </div>
-      <div style="padding:12px 20px; border-top:1px solid #e6eaed; background:#f9fafb; display:flex; justify-content:flex-end; gap:8px;">
-        ${(po.status === 'Pending' || po.status === 'Approved' || po.status === 'Shipped') ? `
-          <button type="button" onclick="document.getElementById('poDetailModal').classList.remove('open'); markPoStatus('${po.id}', 'Delivered');" style="padding:8px 16px; border-radius:5px; border:none; background:#22c55e; color:#fff; font-size:12.5px; font-weight:700; cursor:pointer;">Receive Stock (Mark Delivered)</button>
-        ` : ''}
-        <button type="button" onclick="document.getElementById('poDetailModal').classList.remove('open')" style="padding:8px 16px; border-radius:5px; border:1px solid #e6eaed; background:#fff; color:#646b72; font-size:12.5px; font-weight:700; cursor:pointer;">Close</button>
-      </div>
-    </div>
-  `;
-
-  modal.classList.add('open');
+  const val = document.getElementById('supplierSelect').value;
+  document.getElementById('osSup').textContent = val ? SUPPLIER_NAMES[val] : '—';
+  updateChecklist();
 }
 function onDeliveryChange() {
   const val = document.getElementById('deliveryDate').value;
@@ -1461,11 +1156,35 @@ function closeCreateModal(e) {
 }
 function confirmCreate() {
   closeCreateModal(null);
-  document.getElementById('summaryStatusBadge').className = 'badge badge-pending';
-  document.getElementById('summaryStatusBadge').textContent = 'Pending';
-  showToast('🎉 Purchase Order PO-2026-0094 created!', 'ok');
+  document.getElementById('summaryStatusBadge').className = 'badge badge-success';
+  document.getElementById('summaryStatusBadge').textContent = 'Confirmed';
+  
+  const supplierId = document.getElementById('supplierSelect').value;
+  const supplierName = SUPPLIER_NAMES && SUPPLIER_NAMES[supplierId] ? SUPPLIER_NAMES[supplierId] : 'Selected Supplier';
+  const subtotal = products.reduce((s,p) => s + p.price * p.qty, 0);
+  const total = subtotal + Math.round(subtotal * 0.05);
+  const poId = 'PO-2026-' + Math.floor(1000 + Math.random() * 9000);
+  
+  const newOrder = {
+    id: poId,
+    supplierName: supplierName,
+    orderDate: document.getElementById('deliveryDate').value || new Date().toISOString().split('T')[0],
+    status: 'Pending',
+    totalAmount: total,
+    items: products.length
+  };
+  
+  if (window.DB) {
+    const orders = window.DB.getOrders();
+    orders.push(newOrder);
+    window.DB.saveOrders(orders);
+  }
+  
+  showToast('🎉 Purchase Order ' + poId + ' created!', 'ok');
   localStorage.removeItem('po_products');
   localStorage.removeItem('po_products_ts');
+  products = []; // clear current UI state
+  setTimeout(() => window.location.reload(), 1500);
 }
 
 /* ── CLEAR ALL ────────────────────────────────────── */
@@ -1509,250 +1228,6 @@ function showToast(msg, type) {
   clearTimeout(t._tm);
   t._tm = setTimeout(() => t.classList.remove('show'), 2800);
 }
-
-var SUPPLIER_NAMES = window.SUPPLIER_NAMES = window.SUPPLIER_NAMES || {};
-let suppliers = [];
-let createdPurchaseOrder = null;
-
-function populateSupplierSelect() {
-  const select = document.getElementById('supplierSelect');
-  const currentValue = select.value;
-
-  Object.keys(SUPPLIER_NAMES).forEach(function (key) {
-    delete SUPPLIER_NAMES[key];
-  });
-
-  select.innerHTML = '<option value="">Select supplier...</option>';
-  suppliers.forEach(function (supplier) {
-    const option = document.createElement('option');
-    option.value = String(supplier.id);
-    option.textContent =
-      supplier.companyName ||
-      supplier.company ||
-      supplier.name ||
-      (supplier.business && supplier.business.companyName) ||
-      (supplier.primaryContact && supplier.primaryContact.fullName) ||
-      'Supplier';
-    SUPPLIER_NAMES[option.value] = option.textContent;
-    select.appendChild(option);
-  });
-
-  if (SUPPLIER_NAMES[currentValue]) {
-    select.value = currentValue;
-  }
-}
-
-async function loadSuppliers() {
-  try {
-    const select = document.getElementById('supplierSelect');
-    const [supplierProfiles, supplierUsers] = await Promise.all([
-      window.RetailerApi.getSuppliers().catch(function () { return []; }),
-      window.RetailerApi.request('/api/users?role=supplier').catch(function () { return []; }),
-    ]);
-
-    const mappedProfiles = (supplierProfiles || []).map(function (supplier) {
-      return {
-        id: supplier.id,
-        companyName:
-          supplier.business && supplier.business.companyName
-            ? supplier.business.companyName
-            : supplier.companyName || supplier.company || supplier.name || '',
-        name:
-          supplier.primaryContact && supplier.primaryContact.fullName
-            ? supplier.primaryContact.fullName
-            : supplier.name || '',
-        businessEmail:
-          supplier.business && supplier.business.businessEmail
-            ? supplier.business.businessEmail
-            : supplier.businessEmail || supplier.email || '',
-        products: Array.isArray(supplier.products) ? supplier.products : [],
-      };
-    });
-
-    const profileIds = new Set(mappedProfiles.map(function (supplier) { return String(supplier.id); }));
-    const mappedUsers = (supplierUsers || [])
-      .filter(function (user) { return !profileIds.has(String(user.profileId || user.id)); })
-      .map(function (user) {
-        return {
-          id: user.profileId || user.id,
-          companyName: user.profile && user.profile.businessName ? user.profile.businessName : user.name,
-          name: user.name,
-          businessEmail: user.email,
-          products: [],
-        };
-      });
-
-    const rawCombined = mappedProfiles.concat(mappedUsers);
-    const seenKeys = new Set();
-    const uniqueSuppliers = [];
-
-    rawCombined.forEach(function (sup) {
-      const cName = String(sup.companyName || sup.name || '').trim().toLowerCase();
-      const cEmail = String(sup.businessEmail || '').trim().toLowerCase();
-      const key = cName || cEmail || String(sup.id);
-      if (key && !seenKeys.has(key)) {
-        seenKeys.add(key);
-        uniqueSuppliers.push(sup);
-      }
-    });
-
-    suppliers = uniqueSuppliers;
-    populateSupplierSelect();
-    const preferredSupplierId = localStorage.getItem('po_supplier_id');
-    if (preferredSupplierId && SUPPLIER_NAMES[preferredSupplierId]) {
-      select.value = preferredSupplierId;
-    }
-    onSupplierChange();
-  } catch (error) {
-    console.error('Error loading suppliers:', error);
-    window.RetailerUi.showToast(
-      'Could not load suppliers: ' + window.RetailerUi.getErrorMessage(error),
-      'error',
-    );
-  }
-}
-
-confirmCreate = async function () {
-  const supplierId = document.getElementById('supplierSelect').value;
-  const deliveryDate = document.getElementById('deliveryDate').value;
-  const paymentTerms = document.getElementById('paymentTerms').value;
-  const notes = document.getElementById('poNotes').value.trim();
-  const shippingAddress = document.getElementById('shippingAddr').value.trim();
-
-  if (!supplierId || !products.length || !deliveryDate) {
-    window.RetailerUi.showToast(
-      'Please complete the supplier, products, and delivery date first.',
-      'error',
-    );
-    return;
-  }
-
-  try {
-    const payload = {
-      supplierId: supplierId,
-      supplierName: SUPPLIER_NAMES[String(supplierId)] || '',
-      items: products.map(function (product) {
-        return {
-          id: product.id,
-          name: product.name,
-          emoji: product.emoji || '📦',
-          sku: product.sku,
-          cat: product.cat,
-          price: Number(product.price) || 0,
-          qty: Number(product.qty) || 1,
-          stock: Number(product.stock) || 0,
-          stockStatus: product.stockStatus || 'ok',
-        };
-      }),
-      deliveryDate: deliveryDate,
-      paymentTerms: PAYMENT_NAMES[paymentTerms] || 'Net 30',
-      notes: notes,
-      shippingAddress: shippingAddress,
-      status: 'Pending',
-    };
-
-    createdPurchaseOrder = await window.RetailerApi.createPurchaseOrder(payload);
-    closeCreateModal(null);
-    document.getElementById('summaryStatusBadge').className = 'badge badge-pending';
-    document.getElementById('summaryStatusBadge').textContent = createdPurchaseOrder.status;
-    document.getElementById('createModalBody').innerHTML = '';
-    window.RetailerUi.showToast(
-      'Purchase order ' + createdPurchaseOrder.id + ' created successfully.',
-      'success',
-    );
-    localStorage.removeItem('po_products');
-    localStorage.removeItem('po_products_ts');
-    localStorage.removeItem('po_supplier_id');
-    loadPoHistory();
-  } catch (error) {
-    window.RetailerUi.showToast(
-      'Could not create purchase order: ' + window.RetailerUi.getErrorMessage(error),
-      'error',
-    );
-  }
-};
-
-createPO = function () {
-  const supplier = document.getElementById('supplierSelect').value;
-  if (!supplier) {
-    window.RetailerUi.showToast('Please select a supplier first.', 'error');
-    return;
-  }
-  if (!products.length) {
-    window.RetailerUi.showToast('Please add at least one product.', 'error');
-    return;
-  }
-  if (!document.getElementById('deliveryDate').value) {
-    window.RetailerUi.showToast('Please set the expected delivery date.', 'error');
-    return;
-  }
-
-  const subtotal = products.reduce(function (sum, product) {
-    return sum + product.price * product.qty;
-  }, 0);
-  const tax = Math.round(subtotal * 0.05);
-  const total = subtotal + tax;
-  const units = products.reduce(function (sum, product) {
-    return sum + product.qty;
-  }, 0);
-
-  document.getElementById('createModalBody').innerHTML = `
-    <div style="background:#f5f6fa;border-radius:6px;padding:14px;margin-bottom:12px;font-family:'Nunito Sans',sans-serif;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
-        <span style="color:#646b72">Supplier</span>
-        <span style="font-weight:700;color:#092c4c">${SUPPLIER_NAMES[supplier] || 'Selected Supplier'}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
-        <span style="color:#646b72">Products</span>
-        <span style="font-weight:700;color:#092c4c">${products.length} item${products.length > 1 ? 's' : ''} · ${units} units</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:12px">
-        <span style="color:#646b72">Grand Total</span>
-        <span style="font-weight:800;color:#2e6bc5;font-size:14px">₹${total.toLocaleString('en-IN')}</span>
-      </div>
-    </div>
-    <div style="font-size:13px;color:#646b72;font-family:'Nunito Sans',sans-serif;">
-      This will create a pending purchase order for the selected supplier and save it to the backend.
-    </div>
-  `;
-  document.getElementById('createModal').classList.add('open');
-};
-
-document.addEventListener('DOMContentLoaded', async function() {
-  await loadSuppliers();
-  await loadPoHistory();
-  setInterval(loadPoHistory, 4000);
-});
 </script>
-
-<script>
-function toggleProfilePopover(e) {
-  if (e) e.stopPropagation();
-  const popover = document.getElementById('profilePopover');
-  if (popover) {
-    popover.classList.toggle('open');
-    if (popover.classList.contains('open')) {
-      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
-      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
-      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
-      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
-      let initials = 'RS';
-      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
-      document.getElementById('topbarAvatar').textContent = initials;
-      document.getElementById('profilePopoverAvatar').textContent = initials;
-    }
-  }
-}
-document.addEventListener('click', function(e) {
-  const popover = document.getElementById('profilePopover');
-  const avatar = document.getElementById('topbarAvatar');
-  if (popover && popover.classList.contains('open')) {
-    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
-      popover.classList.remove('open');
-    }
-  }
-});
-</script>
-
 </body>
 </html>

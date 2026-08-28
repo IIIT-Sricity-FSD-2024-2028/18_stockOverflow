@@ -10,7 +10,7 @@ Stock Overflow provides a centralized command center for managing complex retail
 
 - **Core**: Semantic HTML5 & Modern JavaScript (ES6+)
 - **Styling**: Vanilla CSS3 with Custom Properties (CSS Variables)
-- **Data Persistence**: `localStorage` based Mock Database (Simulated Backend)
+- **Data Persistence**: `localStorage` based data engine (browser-side persistence)
 - **UI/UX**: Custom-built components, glassmorphism effects, and dynamic animations.
 
 ## 📂 Project Structure
@@ -21,7 +21,7 @@ Stock Overflow provides a centralized command center for managing complex retail
 - `/customer module`: Consumer-facing interface for product browsing and order tracking.
 - `/biller module`: Point-of-Sale (POS) and billing interface for retail staff.
 - `/auth`: Secure login and registration flows.
-- `/js`: Core application logic, authentication wrappers, and the `mockData.js` database engine.
+- `/js`: Core application logic, authentication wrappers, and the `mockData.js` data engine.
 - `/css`: Global design system and component-specific styles.
 
 ## ✨ Key Features
@@ -52,7 +52,7 @@ Stock Overflow provides a centralized command center for managing complex retail
 
 ---
 
-## 💾 Mock Database
+## 💾 Local Data Engine
 
 The application uses a simulated database stored in the browser's `localStorage`.
 - To reset the system to its initial state, navigate to **Admin Settings > Danger Zone** and click **Reset Database**.

@@ -1,383 +1,328 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Utility for email validation
-  const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+document.addEventListener('DOMContentLoaded', function () {
+  var API_BASE =
+    window.location && window.location.hostname
+      ? window.location.protocol + '//' + window.location.hostname + ':3001/api'
+      : 'http://localhost:3001/api';
+
+  var ROUTES = {
+    admin: '../admin/dashboard.html',
+    retailerSetup: '../Retailer module/Retailer-initial.html',
+    retailerDashboard: '../Retailer module/Retialer_Dashboard.html',
+    supplierSetup: '../supplier module/supplier-initial.html',
+    supplier: '../supplier module/supplier-dashboard.html',
+    biller: '../biller module/pos.html',
+    consumer: '../customer module/consumer-landingpage.html',
   };
 
-  // Toggle password visibility
-  function initPasswordToggles() {
-    const passwordToggles = document.querySelectorAll('.password-toggle-btn');
-    passwordToggles.forEach(toggle => {
-      // Remove existing listeners if any
-      toggle.replaceWith(toggle.cloneNode(true));
-    });
+  function request(path, options) {
+    return fetch(API_BASE + path, options || {}).then(async function (response) {
+      var contentType = response.headers.get('content-type') || '';
+      var payload =
+        contentType.indexOf('application/json') >= 0
+          ? await response.json()
+          : await response.text();
 
-    const newToggles = document.querySelectorAll('.password-toggle-btn');
-    newToggles.forEach(toggle => {
-      toggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const targetId = this.getAttribute('data-target');
-        const passwordInput = document.getElementById(targetId);
-        if (!passwordInput) return;
+      if (!response.ok) {
+        var message =
+          payload && typeof payload === 'object'
+            ? Array.isArray(payload.message)
+              ? payload.message.join(', ')
+              : payload.message || payload.error || 'Request failed'
+            : String(payload || 'Request failed');
+        throw new Error(message);
+      }
 
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-
-        // Update eye icon color for active state
-        const eyeIcon = this.querySelector('.eye-icon');
-        if (eyeIcon) {
-          if (type === 'text') {
-            eyeIcon.style.color = 'var(--primary-color)';
-            eyeIcon.style.stroke = 'var(--primary-color)';
-          } else {
-            eyeIcon.style.color = 'var(--text-light)';
-            eyeIcon.style.stroke = 'currentColor';
-          }
-        }
-      });
+      return payload;
     });
   }
 
-  initPasswordToggles();
-
-  // --- LOGIN FORM ---
-  const loginForm = document.getElementById('loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const emailInput = document.getElementById('email');
-      const passwordInput = document.getElementById('password');
-      let isValid = true;
-
-      // Reset
-      emailInput.classList.remove('is-invalid');
-      passwordInput.classList.remove('is-invalid');
-      const loginError = document.getElementById('loginError');
-      loginError.style.display = 'none';
-
-      // Validate Email
-      if (!emailInput.value.trim() || !isValidEmail(emailInput.value)) {
-        emailInput.classList.add('is-invalid');
-        isValid = false;
-      }
-
-      // Validate Password
-      if (!passwordInput.value.trim()) {
-        passwordInput.classList.add('is-invalid');
-        isValid = false;
-      }
-
-      if (isValid) {
-        try {
-          const user = DB.login(emailInput.value, passwordInput.value);
-          // Redirect based on role
-          if (user.role.toLowerCase() === 'admin') {
-            window.location.href = '../admin/dashboard.html';
-          } else if (user.role.toLowerCase() === 'retailer') {
-            if (user.isFirstTime) {
-              window.location.href = '../Retailer module/Retailer-intitial.html';
-            } else {
-              window.location.href = '../Retailer module/Retialer_Dashboard.html';
-            }
-          } else if (user.role.toLowerCase() === 'supplier') {
-            if (user.isFirstTime) {
-              window.location.href = '../supplier module/supplier-initial.html';
-            } else {
-              window.location.href = '../supplier module/supplier-dashboard.html';
-            }
-          } else {
-            window.location.href = '../customer module/consumer-landingpage.html';
-          }
-        } catch (error) {
-          loginError.textContent = error.message;
-          loginError.style.display = 'block';
-        }
-      }
-    });
-
-    // Real-time validation clearing on input
-    loginForm.querySelectorAll('.form-control').forEach(input => {
-      input.addEventListener('input', () => {
-        input.classList.remove('is-invalid');
-        document.getElementById('loginError').style.display = 'none';
-      });
-    });
+  function normalizeRole(value) {
+    var role = String(value || 'consumer').trim().toLowerCase();
+    return role === 'customer' ? 'consumer' : role;
   }
 
-  // --- REGISTER FORM ---
-  const registerForm = document.getElementById('registerForm');
-  if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const inputs = {
-        name: document.getElementById('name'),
-        email: document.getElementById('email'),
-        password: document.getElementById('password'),
-        confirmPassword: document.getElementById('confirmPassword'),
-        role: document.getElementById('role')
-      };
-
-      let isValid = true;
-
-      // Reset invalid state
-      Object.keys(inputs).forEach(key => {
-        inputs[key].classList.remove('is-invalid');
-      });
-
-      // Name >= 4
-      if (inputs.name.value.trim().length < 4) {
-        inputs.name.classList.add('is-invalid');
-        isValid = false;
-      }
-
-      // Valid Email
-      if (!inputs.email.value.trim() || !isValidEmail(inputs.email.value)) {
-        inputs.email.classList.add('is-invalid');
-        isValid = false;
-      }
-
-      // Password >= 8
-      if (inputs.password.value.length < 8) {
-        inputs.password.classList.add('is-invalid');
-        isValid = false;
-      }
-
-      // Confirm Password matches
-      if (inputs.confirmPassword.value !== inputs.password.value) {
-        inputs.confirmPassword.classList.add('is-invalid');
-        isValid = false;
-      }
-
-      // Role selected
-      if (!inputs.role.value) {
-        inputs.role.classList.add('is-invalid');
-        isValid = false;
-      }
-
-      if (isValid) {
-        const users = DB.getUsers();
-        // Check if email already exists
-        if (users.find(u => u.email === inputs.email.value)) {
-          inputs.email.classList.add('is-invalid');
-          inputs.email.nextElementSibling.textContent = 'Email already registered.';
-          return;
-        }
-
-        // Add new user
-        const newUser = {
-          id: Date.now().toString(),
-          name: inputs.name.value.trim(),
-          email: inputs.email.value.trim(),
-          password: inputs.password.value,
-          role: inputs.role.value,
-          status: 'Active',
-          store: 'Unassigned',
-          isFirstTime: true
-        };
-
-        users.push(newUser);
-        DB.saveUsers(users);
-
-        // Auto-login the new user and send them straight to onboarding
-        localStorage.setItem('so_session', JSON.stringify({
-          id: newUser.id,
-          name: newUser.name,
-          email: newUser.email,
-          role: newUser.role,
-          store: newUser.store,
-          isFirstTime: true
-        }));
-
-        // Route to the correct onboarding page based on role
-        const role = newUser.role;
-        if (role === 'retailer') {
-          window.location.href = '../Retailer module/Retailer-intitial.html';
-        } else if (role === 'supplier') {
-          window.location.href = '../supplier module/supplier-initial.html';
-        } else {
-          window.location.href = 'login.html';
-        }
-      }
-    });
-
-    registerForm.querySelectorAll('.form-control').forEach(input => {
-      input.addEventListener('input', () => input.classList.remove('is-invalid'));
-    });
+  function getInitials(name) {
+    return String(name || 'SO')
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(function (part) {
+        return part.charAt(0);
+      })
+      .join('')
+      .toUpperCase() || 'SO';
   }
 
-  // --- FORGOT PASSWORD FORM ---
-  const forgotForm = document.getElementById('forgotPasswordForm');
-  if (forgotForm) {
-    forgotForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+  function buildSession(user) {
+    var role = normalizeRole(user && user.role);
+    var accessibleStoreIds = Array.isArray(user && user.accessibleStoreIds)
+      ? user.accessibleStoreIds.filter(Boolean)
+      : [];
 
-      const emailInput = document.getElementById('email');
-      const emailFeedback = document.getElementById('emailFeedback');
-      emailInput.classList.remove('is-invalid');
-
-      const enteredEmail = emailInput.value.trim();
-
-      // Basic format check
-      if (!enteredEmail || !isValidEmail(enteredEmail)) {
-        emailFeedback.textContent = 'Please enter a valid email address.';
-        emailInput.classList.add('is-invalid');
-        return;
-      }
-
-      // Check if email exists in mock data
-      const users = DB.getUsers();
-      const matchedUser = users.find(u => u.email.toLowerCase() === enteredEmail.toLowerCase());
-
-      if (!matchedUser) {
-        emailFeedback.textContent = 'No account found with this email address.';
-        emailInput.classList.add('is-invalid');
-        return;
-      }
-
-      // Store email in sessionStorage to pass it across pages
-      sessionStorage.setItem('reset_email', matchedUser.email);
-
-      // Redirect to OTP page
-      window.location.href = 'otp-verification.html';
-    });
-
-    document.getElementById('email').addEventListener('input', function () {
-      this.classList.remove('is-invalid');
-    });
+    return {
+      id: user.id,
+      name: user.name || 'User',
+      email: user.email || '',
+      role: role,
+      status: user.status || 'Active',
+      store: user.store || '',
+      storeId: user.storeId || '',
+      currentStoreId: user.currentStoreId || user.storeId || '',
+      accessibleStoreIds: accessibleStoreIds,
+      profileId: user.profileId || '',
+      profile: user.profile || null,
+      retailerId: user.retailerId || (user.profile && user.profile.retailerId) || (role === 'retailer' ? user.profileId : ''),
+      initials: getInitials(user.name),
+    };
   }
 
-  // --- OTP VERIFICATION ---
-  const otpForm = document.getElementById('otpForm');
-  if (otpForm) {
-    // Make sure a reset email was set (guard)
-    const resetEmail = sessionStorage.getItem('reset_email');
-    if (!resetEmail) {
-      window.location.href = 'forgot-password.html';
-      return;
+  function saveSession(user) {
+    var session = buildSession(user);
+    localStorage.setItem('so_session', JSON.stringify(session));
+    return session;
+  }
+
+  function readSession() {
+    try {
+      return JSON.parse(localStorage.getItem('so_session') || 'null');
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function hasBillerStoreAccess(user) {
+    var role = normalizeRole(user && user.role);
+    if (role !== 'biller') return false;
+    var storeId = String(
+      (user && (user.currentStoreId || user.storeId)) || '',
+    ).trim();
+    var accessibleStoreIds = Array.isArray(user && user.accessibleStoreIds)
+      ? user.accessibleStoreIds.filter(Boolean)
+      : [];
+    return Boolean((user && user.profileId) && storeId && accessibleStoreIds.length);
+  }
+
+  function getRedirectForRole(user) {
+    var role = normalizeRole(user && user.role);
+
+    if (role === 'admin') return ROUTES.admin;
+    if (role === 'biller') {
+      if (hasBillerStoreAccess(user)) {
+        var billerStoreId = user.currentStoreId || user.storeId;
+        return ROUTES.biller + '?storeId=' + encodeURIComponent(billerStoreId);
+      }
+      return '../auth/biller-pending.html';
+    }
+    if (role === 'supplier') {
+      var hasSupplierProfile =
+        Boolean(user && user.profileId) ||
+        Boolean(user && user.profile && user.profile.businessName);
+      return hasSupplierProfile
+        ? ROUTES.supplier +
+            (user && user.profileId
+              ? '?supplierId=' + encodeURIComponent(user.profileId)
+              : '')
+        : ROUTES.supplierSetup;
+    }
+    if (role === 'retailer') {
+      var hasProfile =
+        Boolean(user && user.profileId) ||
+        Boolean(user && user.profile && user.profile.businessName);
+      return hasProfile ? ROUTES.retailerDashboard : ROUTES.retailerSetup;
     }
 
-    // Show masked email in subtitle
-    const subtitle = document.getElementById('otpSubtitle');
-    if (subtitle) {
-      const [user, domain] = resetEmail.split('@');
-      const masked = user.slice(0, 2) + '***@' + domain;
-      subtitle.textContent = `Enter the OTP sent to ${masked}.`;
+    return ROUTES.consumer;
+  }
+
+  function setError(targetId, message) {
+    var el = document.getElementById(targetId);
+    if (!el) return;
+    el.textContent = message || '';
+    el.style.display = message ? 'block' : 'none';
+  }
+
+  function toggleLoading(button, isLoading, label) {
+    if (!button) return;
+    button.disabled = Boolean(isLoading);
+    button.dataset.originalLabel = button.dataset.originalLabel || button.textContent;
+    button.textContent = isLoading ? label : button.dataset.originalLabel;
+  }
+
+  function wirePasswordToggles() {
+    document.querySelectorAll('.password-toggle-btn').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var targetId = button.getAttribute('data-target');
+        var input = targetId ? document.getElementById(targetId) : null;
+        if (!input) return;
+        input.type = input.type === 'password' ? 'text' : 'password';
+      });
+    });
+  }
+
+  async function handleLoginSubmit(event) {
+    event.preventDefault();
+
+    var emailInput = document.getElementById('email');
+    var passwordInput = document.getElementById('password');
+    var submitButton = event.target.querySelector('button[type="submit"]');
+    setError('loginError', '');
+
+    toggleLoading(submitButton, true, 'Signing In...');
+
+    try {
+      var user = await request('/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: String(emailInput && emailInput.value || '').trim(),
+          password: String(passwordInput && passwordInput.value || ''),
+        }),
+      });
+
+      saveSession(user);
+      window.location.href = getRedirectForRole(user);
+    } catch (error) {
+      setError('loginError', error.message || 'Unable to login');
+    } finally {
+      toggleLoading(submitButton, false);
+    }
+  }
+
+  function validateRegisterForm() {
+    var name = String(document.getElementById('name')?.value || '').trim();
+    var email = String(document.getElementById('email')?.value || '').trim();
+    var password = String(document.getElementById('password')?.value || '');
+    var confirmPassword = String(
+      document.getElementById('confirmPassword')?.value || '',
+    );
+    var role = normalizeRole(document.getElementById('role')?.value || '');
+
+    if (name.length < 3) {
+      throw new Error('Please enter your full name.');
+    }
+    if (!email || !email.includes('@')) {
+      throw new Error('Please enter a valid email address.');
+    }
+    if (password.length < 8) {
+      throw new Error('Password must be at least 8 characters long.');
+    }
+    if (password !== confirmPassword) {
+      throw new Error('Passwords do not match.');
+    }
+    if (!role) {
+      throw new Error('Please select a role.');
     }
 
-    // OTP auto-focus logic
-    const otpInputs = document.querySelectorAll('.otp-input');
-    otpInputs.forEach((input, idx) => {
-      input.addEventListener('input', (e) => {
-        // Allow only digits
-        input.value = input.value.replace(/[^0-9]/g, '').slice(-1);
-        if (input.value && idx < otpInputs.length - 1) {
-          otpInputs[idx + 1].focus();
-        }
+    return {
+      name: name,
+      email: email.toLowerCase(),
+      password: password,
+      role: role,
+      status: 'Active',
+    };
+  }
+
+  async function handleRegisterSubmit(event) {
+    event.preventDefault();
+    var submitButton = event.target.querySelector('button[type="submit"]');
+    var footer = document.querySelector('.auth-footer');
+    var errorId = 'registerError';
+    var existingError = document.getElementById(errorId);
+
+    if (!existingError && footer) {
+      existingError = document.createElement('div');
+      existingError.id = errorId;
+      existingError.className = 'invalid-feedback';
+      existingError.style.display = 'none';
+      existingError.style.textAlign = 'center';
+      existingError.style.marginTop = '0.75rem';
+      footer.parentNode.insertBefore(existingError, footer);
+    }
+
+    setError(errorId, '');
+    toggleLoading(submitButton, true, 'Creating...');
+
+    try {
+      var payload = validateRegisterForm();
+      var created = await request('/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !input.value && idx > 0) {
-          otpInputs[idx - 1].focus();
-        }
-      });
-
-      // Allow paste of 4-digit code
-      input.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-        [...pasted.slice(0, 4)].forEach((char, i) => {
-          if (otpInputs[i]) otpInputs[i].value = char;
+      if (payload.role === 'biller') {
+        await request('/billers/requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: payload.name,
+            email: payload.email,
+            phone: 'Not provided',
+            company: payload.name + ' Biller Request',
+            country: 'India',
+          }),
         });
-        const lastFilled = Math.min(pasted.length, 4) - 1;
-        if (otpInputs[lastFilled]) otpInputs[lastFilled].focus();
-      });
-    });
-
-    // Focus first box on load
-    otpInputs[0] && otpInputs[0].focus();
-
-    // Resend OTP
-    document.getElementById('resendOtp').addEventListener('click', (e) => {
-      e.preventDefault();
-      otpInputs.forEach(i => { i.value = ''; i.classList.remove('is-invalid'); });
-      otpInputs[0].focus();
-      document.getElementById('otpError').style.display = 'none';
-      // Show a brief flash message
-      const resendLink = e.target;
-      resendLink.textContent = 'OTP Resent!';
-      setTimeout(() => { resendLink.textContent = 'Resend OTP'; }, 2000);
-    });
-
-    otpForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const otpError = document.getElementById('otpError');
-      const values = [...otpInputs].map(i => i.value);
-      const allFilled = values.every(v => v.length === 1);
-
-      if (!allFilled) {
-        otpInputs.forEach(i => i.classList.add('is-invalid'));
-        otpError.style.display = 'block';
-        return;
       }
 
-      // Any 4-digit OTP is accepted — proceed to reset password
-      otpError.style.display = 'none';
-      window.location.href = 'reset-password.html';
-    });
+      if (payload.role === 'retailer') {
+        saveSession(created);
+        window.location.href = ROUTES.retailerSetup;
+        return;
+      }
+      if (payload.role === 'supplier') {
+        saveSession(created);
+        window.location.href = ROUTES.supplierSetup;
+        return;
+      }
+      if (payload.role === 'biller') {
+        localStorage.removeItem('so_session');
+        window.location.href = '../auth/biller-pending.html';
+        return;
+      }
+      saveSession(created);
+      window.location.href = getRedirectForRole(created);
+    } catch (error) {
+      setError(errorId, error.message || 'Unable to create account');
+    } finally {
+      toggleLoading(submitButton, false);
+    }
   }
 
-  // --- RESET PASSWORD FORM ---
-  const resetForm = document.getElementById('resetPasswordForm');
-  if (resetForm) {
-    // Guard: must have a reset_email
-    const resetEmail = sessionStorage.getItem('reset_email');
-    if (!resetEmail) {
-      window.location.href = 'forgot-password.html';
+  function redirectAuthenticatedUser() {
+    var session = readSession();
+    var currentPath = String(window.location.pathname || '').toLowerCase();
+    if (!session || currentPath.indexOf('/auth/') === -1) {
       return;
     }
 
-    resetForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+    if (currentPath.endsWith('/login.html') || currentPath.endsWith('/register.html')) {
+      return;
+    }
+  }
 
-      const newPwd = document.getElementById('newPassword');
-      const confirmPwd = document.getElementById('confirmNewPassword');
-      let isValid = true;
+  window.StockOverflowAuth = {
+    apiBase: API_BASE,
+    readSession: readSession,
+    saveSession: saveSession,
+    getRedirectForRole: getRedirectForRole,
+    getInitials: getInitials,
+    normalizeRole: normalizeRole,
+    logout: function() {
+      localStorage.removeItem('so_session');
+      window.location.href = '../auth/login.html';
+    }
+  };
 
-      newPwd.classList.remove('is-invalid');
-      confirmPwd.classList.remove('is-invalid');
+  wirePasswordToggles();
+  redirectAuthenticatedUser();
 
-      if (newPwd.value.length < 8) {
-        newPwd.classList.add('is-invalid');
-        isValid = false;
-      }
+  var loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLoginSubmit);
+  }
 
-      if (confirmPwd.value !== newPwd.value) {
-        confirmPwd.classList.add('is-invalid');
-        isValid = false;
-      }
-
-      if (!isValid) return;
-
-      // Update password in mock data
-      const users = DB.getUsers();
-      const userIdx = users.findIndex(u => u.email.toLowerCase() === resetEmail.toLowerCase());
-      if (userIdx !== -1) {
-        users[userIdx].password = newPwd.value;
-        DB.saveUsers(users);
-      }
-
-      // Clear the reset session
-      sessionStorage.removeItem('reset_email');
-
-      // Redirect to success screen
-      window.location.href = 'reset-success.html';
-    });
-
-    resetForm.querySelectorAll('.form-control').forEach(input => {
-      input.addEventListener('input', () => input.classList.remove('is-invalid'));
-    });
+  var registerForm = document.getElementById('registerForm');
+  if (registerForm) {
+    registerForm.addEventListener('submit', handleRegisterSubmit);
   }
 });

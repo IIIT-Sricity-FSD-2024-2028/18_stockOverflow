@@ -386,6 +386,21 @@ canvas{display:block;width:100%!important}
 .panel:nth-child(2){animation-delay:.13s}
 .panel:nth-child(3){animation-delay:.18s}
 .panel:nth-child(4){animation-delay:.23s}
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
 </style>
 </head>
 <body>
@@ -510,7 +525,7 @@ canvas{display:block;width:100%!important}
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+        <a class="sb-item" href="#" onclick="logout()">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -538,7 +553,32 @@ canvas{display:block;width:100%!important}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <div class="tb-avatar">RS</div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button" style="border:none;">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -566,7 +606,7 @@ canvas{display:block;width:100%!important}
     <!-- ALERT BANNER -->
     <div class="alert-banner" id="alertBanner">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="10.5" r=".7" fill="#f97316" stroke="none"/></svg>
-      <span><strong>5 products</strong> are running critically low on stock and require immediate restocking.</span>
+      <span id="alertBannerText"><strong id="alertCountText">—</strong> products are running critically low on stock and require immediate restocking.</span>
       <span class="alert-banner-link" onclick="window.location.href='Low_Stocks.html'">View Low Stock Items →</span>
       <span class="close-x" onclick="document.getElementById('alertBanner').style.display='none'">
         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg>
@@ -759,7 +799,7 @@ canvas{display:block;width:100%!important}
               <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4"/><line x1="8.5" y1="8.5" x2="12" y2="12"/></svg>
               <input type="text" placeholder="Search…" oninput="filterStockBars(this.value)"/>
             </div>
-            <span class="panel-link" onclick="window.location.href='Product_List.html'">All Products</span>
+            <span class="panel-link" onclick="window.location.href='product-list.html'">All Products</span>
           </div>
         </div>
         <div class="stock-bar-list" id="stockBarList">
@@ -776,7 +816,7 @@ canvas{display:block;width:100%!important}
         </div>
       </div>
 
-      <!-- Low Stock Alerts + Warehouse Utilization -->
+      <!-- Low Stock Alerts -->
       <div>
         <!-- Low Stock Alerts -->
         <div class="panel">
@@ -792,18 +832,6 @@ canvas{display:block;width:100%!important}
           <div id="alertList"><!-- JS --></div>
         </div>
 
-        <!-- Warehouse Utilization -->
-        <div class="panel">
-          <div class="panel-head">
-            <div class="panel-title">
-              <div class="panel-title-icon">
-                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 5.5L6.5 2l5.5 3.5V12H1V5.5z"/><rect x="4.5" y="8" width="4" height="4"/></svg>
-              </div>
-              Warehouse Utilization
-            </div>
-          </div>
-          <div id="warehouseList"><!-- JS --></div>
-        </div>
       </div>
     </div>
 
@@ -826,25 +854,25 @@ canvas{display:block;width:100%!important}
       </div>
       <div class="turnover-stats">
         <div class="ts-item">
-          <div class="ts-val">3,248</div>
+          <div class="ts-val" id="trendInUnits">—</div>
           <div class="ts-lbl">Units In</div>
-          <div class="ts-badge badge-up" style="color:var(--success-dark);background:var(--success-light);padding:2px 7px;border-radius:20px">
+          <div class="ts-badge badge-up" id="trendInBadge" style="color:var(--success-dark);background:var(--success-light);padding:2px 7px;border-radius:20px">
             <svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.6" style="width:9px;height:9px"><polyline points="1,6 4.5,2.5 8,6"/></svg>
-            +14.2%
+            <span id="trendInChange">+0%</span>
           </div>
         </div>
         <div class="ts-item">
-          <div class="ts-val">2,910</div>
+          <div class="ts-val" id="trendOutUnits">—</div>
           <div class="ts-lbl">Units Out</div>
-          <div class="ts-badge" style="color:var(--danger-dark);background:var(--danger-light);padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;font-family:'Nunito Sans',sans-serif;font-size:11px;font-weight:700;margin-top:3px">
+          <div class="ts-badge" id="trendOutBadge" style="color:var(--danger-dark);background:var(--danger-light);padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;font-family:'Nunito Sans',sans-serif;font-size:11px;font-weight:700;margin-top:3px">
             <svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.6" style="width:9px;height:9px"><polyline points="1,3 4.5,6.5 8,3"/></svg>
-            +8.7%
+            <span id="trendOutChange">+0%</span>
           </div>
         </div>
         <div class="ts-item">
-          <div class="ts-val">+338</div>
+          <div class="ts-val" id="trendNetChange">—</div>
           <div class="ts-lbl">Net Change</div>
-          <div class="ts-badge" style="background:#f1f5f9;color:#475569;padding:2px 7px;border-radius:20px;display:inline-flex;font-family:'Nunito Sans',sans-serif;font-size:11px;font-weight:700;margin-top:3px">Positive</div>
+          <div class="ts-badge" id="trendNetBadge" style="background:#f1f5f9;color:#475569;padding:2px 7px;border-radius:20px;display:inline-flex;font-family:'Nunito Sans',sans-serif;font-size:11px;font-weight:700;margin-top:3px">Positive</div>
         </div>
       </div>
       <div class="panel-body" style="padding-top:4px">
@@ -889,7 +917,7 @@ canvas{display:block;width:100%!important}
           </table>
         </div>
         <div class="table-footer">
-          <span class="tf-info">Showing 6 of 28 records</span>
+          <span class="tf-info" id="movementCountText">Showing 6 of 28 records</span>
           <div class="tf-pages">
             <div class="pg-btn active">1</div>
             <div class="pg-btn">2</div>
@@ -930,7 +958,7 @@ canvas{display:block;width:100%!important}
           </table>
         </div>
         <div class="table-footer">
-          <span class="tf-info">Top 6 of 15 products</span>
+          <span class="tf-info" id="topProductsCountText">Top 6 of 15 products</span>
           <span class="panel-link" onclick="window.location.href='product-list.html'">View All Products</span>
         </div>
       </div>
@@ -939,63 +967,34 @@ canvas{display:block;width:100%!important}
   </div><!-- /page-wrap -->
 </div><!-- /main -->
 
-<script src="../js/mockData.js"></script>
+<!-- PROFILE MODAL -->
+<div class="modal" id="profileModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:24px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="margin:0;font-size:20px;font-weight:600">Retailer Profile</h2>
+      <button onclick="closeProfileModal()" style="background:none;border:none;font-size:24px;cursor:pointer">&times;</button>
+    </div>
+    <div id="profileContent">Loading...</div>
+  </div>
+</div>
+
+<script src="api-config.js"></script>
 <script src="common-products.js"></script>
 <script>
+// AUTH GUARD
+const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+if (!session || session.role !== 'retailer') {
+  window.location.href = '../index.html';
+}
+
 /* ═══════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════ */
-let PRODUCTS = [
-  { sku:'PT001', name:'Lenovo IdeaPad 3',     cat:'Computers',   qty:100, max:300, price:600,  emoji:'💻', soldThisMonth:22, trend:'up'   },
-  { sku:'PT002', name:'Beats Pro',            cat:'Electronics', qty:140, max:300, price:160,  emoji:'🎧', soldThisMonth:38, trend:'up'   },
-  { sku:'PT003', name:'Nike Jordan',          cat:'Shoe',        qty:300, max:500, price:110,  emoji:'👟', soldThisMonth:54, trend:'up'   },
-  { sku:'PT004', name:'Apple Series 5 Watch', cat:'Electronics', qty:450, max:500, price:120,  emoji:'⌚', soldThisMonth:17, trend:'down' },
-  { sku:'PT005', name:'Amazon Echo Dot',      cat:'Electronics', qty:320, max:500, price:80,   emoji:'🔊', soldThisMonth:29, trend:'up'   },
-  { sku:'PT006', name:'Sanford Chair Sofa',   cat:'Furniture',   qty:650, max:800, price:320,  emoji:'🛋️', soldThisMonth:8,  trend:'down' },
-  { sku:'PT007', name:'Red Premium Satchel',  cat:'Bags',        qty:700, max:800, price:60,   emoji:'👜', soldThisMonth:41, trend:'up'   },
-  { sku:'PT008', name:'iPhone 14 Pro',        cat:'Phone',       qty:630, max:800, price:540,  emoji:'📱', soldThisMonth:63, trend:'up'   },
-  { sku:'PT009', name:'Gaming Chair',         cat:'Furniture',   qty:410, max:500, price:200,  emoji:'🪑', soldThisMonth:12, trend:'down' },
-  { sku:'PT010', name:'Borealis Backpack',    cat:'Bags',        qty:550, max:800, price:45,   emoji:'🎒', soldThisMonth:33, trend:'up'   },
-  { sku:'PT011', name:'Sony WH-1000XM6',      cat:'Electronics', qty:8,   max:300, price:349,  emoji:'🎧', soldThisMonth:55, trend:'up'   },
-  { sku:'PT012', name:'MacBook Air M4',       cat:'Computers',   qty:0,   max:200, price:1099, emoji:'💻', soldThisMonth:19, trend:'up'   },
-  { sku:'PT013', name:"Levi's 512 Jeans",     cat:'Fashion',     qty:480, max:600, price:79,   emoji:'👖', soldThisMonth:28, trend:'up'   },
-  { sku:'PT014', name:'Dyson V16 Vacuum',     cat:'Appliances',  qty:5,   max:150, price:599,  emoji:'🧹', soldThisMonth:7,  trend:'down' },
-  { sku:'PT015', name:'Nike Air Max 2025',    cat:'Shoe',        qty:210, max:400, price:189,  emoji:'👟', soldThisMonth:47, trend:'up'   },
-];
+let PRODUCTS = [];
 
-if (window.RetailerProductsData && Array.isArray(window.RetailerProductsData.inventoryProducts)) {
-  PRODUCTS = window.RetailerProductsData.inventoryProducts.map(function (p) {
-    return {
-      sku: p.sku,
-      name: p.name,
-      cat: p.cat,
-      qty: p.qty,
-      max: p.max,
-      price: p.price,
-      emoji: p.emoji,
-      soldThisMonth: p.soldThisMonth,
-      trend: p.trend
-    };
-  });
-}
-
-const MOVEMENTS = [
-  { name:'Nike Jordan',         type:'in',  qty:+150, date:'Jan 28',by:'System' },
-  { name:'MacBook Air M4',      type:'out', qty:-19,  date:'Jan 28',by:'Sale'   },
-  { name:'Sony WH-1000XM6',     type:'adj', qty:-12,  date:'Jan 27',by:'Admin'  },
-  { name:'Dyson V16 Vacuum',    type:'in',  qty:+40,  date:'Jan 27',by:'PO#088' },
-  { name:'iPhone 14 Pro',       type:'out', qty:-63,  date:'Jan 26',by:'Sale'   },
-  { name:'Borealis Backpack',   type:'in',  qty:+80,  date:'Jan 25',by:'PO#087' },
-  { name:'Lenovo IdeaPad 3',    type:'out', qty:-22,  date:'Jan 25',by:'Sale'   },
-  { name:'Beats Pro',           type:'ret', qty:+3,   date:'Jan 24',by:'Return' },
-];
-
-const WAREHOUSES = [
-  { name:'Main Warehouse – A1', used:4200, total:5000, color:'#2e6bc5' },
-  { name:'Main Warehouse – B2', used:2800, total:5000, color:'#22c55e' },
-  { name:'East Wing – C3',      used:1100, total:2000, color:'#f59e0b' },
-  { name:'West Wing – D1',      used:3600, total:4000, color:'#ef4444' },
-];
+const STOCK_ADJUSTMENTS = [];
+const TRANSACTIONS = [];
+let movementRecords = [];
 
 const CAT_COLORS = {
   Electronics:'#2e6bc5', Computers:'#8b5cf6', Shoe:'#22c55e',
@@ -1003,7 +1002,100 @@ const CAT_COLORS = {
   Fashion:'#ec4899', Appliances:'#14b8a6',
 };
 
-if (window.applyUserIsolation) window.applyUserIsolation();
+function toInventoryProduct(product) {
+  return RetailerApiUtils.toInventoryProduct(product);
+}
+
+async function loadProducts() {
+  try {
+    const data = await RetailerApi.getProducts();
+    PRODUCTS = Array.isArray(data) ? data.map(toInventoryProduct) : [];
+  } catch (error) {
+    console.error('Failed to load products', error);
+    PRODUCTS = [];
+  }
+
+  initMetrics();
+  initDonut();
+  initBarChart();
+}
+
+function parseDate(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+function formatMovementDate(value) {
+  const date = parseDate(value);
+  if (!date) return String(value || 'Unknown');
+  return date.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
+function buildMovementRecords() {
+  movementRecords = [];
+
+  STOCK_ADJUSTMENTS.forEach((adjustment) => {
+    const qty = Number(adjustment.qty) || 0;
+    const type = adjustment.type === 'add' ? 'in' : 'adj';
+    const productName = adjustment.productName || adjustment.productSku || 'Unknown Product';
+
+    movementRecords.push({
+      name: productName,
+      type: type,
+      qty: qty,
+      date: adjustment.date || adjustment.createdAt || new Date().toISOString(),
+      by: adjustment.person || 'Manual Entry',
+      label: type === 'in' ? 'Stock In (Manual)' : 'Stock Adjustment',
+    });
+  });
+
+  TRANSACTIONS.forEach((transaction) => {
+    const date = transaction.timestamp || transaction.createdAt || new Date().toISOString();
+    const by = transaction.store || 'POS Sale';
+    const orderId = transaction.orderId ? String(transaction.orderId) : '';
+
+    if (!Array.isArray(transaction.items)) {
+      return;
+    }
+
+    transaction.items.forEach((item) => {
+      const qty = Number(item.quantity) || 0;
+      movementRecords.push({
+        name: String(item.name || item.sku || 'Sale Item'),
+        type: 'out',
+        qty: qty,
+        date: date,
+        by: by,
+        label: orderId ? `Sale ${orderId}` : 'Sale',
+      });
+    });
+  });
+
+  movementRecords.sort((a, b) => {
+    const da = parseDate(a.date)?.getTime() || 0;
+    const db = parseDate(b.date)?.getTime() || 0;
+    return db - da;
+  });
+}
+
+async function loadMovements() {
+  try {
+    const [adjustments, transactions] = await Promise.all([
+      RetailerApi.getStockAdjustments(),
+      RetailerApi.getTransactions(),
+    ]);
+    STOCK_ADJUSTMENTS.length = 0;
+    TRANSACTIONS.length = 0;
+    if (Array.isArray(adjustments)) STOCK_ADJUSTMENTS.push(...adjustments);
+    if (Array.isArray(transactions)) TRANSACTIONS.push(...transactions);
+  } catch (error) {
+    console.error('Failed to load movements', error);
+  }
+
+  buildMovementRecords();
+  updateTrendSummary();
+}
 
 /* ═══════════════════════════════════════════
    METRIC VALUES
@@ -1020,6 +1112,54 @@ function initMetrics() {
   animateCount('m-low-stock', lowStock);
   animateCount('m-out-stock', outStock);
   document.getElementById('m-inv-value').textContent = '$' + (invValue/1000).toFixed(1) + 'K';
+  updateAlertBanner(lowStock + outStock);
+}
+
+function updateAlertBanner(count) {
+  const banner = document.getElementById('alertBanner');
+  const countText = document.getElementById('alertCountText');
+  const text = document.getElementById('alertBannerText');
+  if (!banner || !countText || !text) return;
+
+  if (!count) {
+    banner.style.display = 'none';
+    return;
+  }
+
+  banner.style.display = 'flex';
+  countText.textContent = String(count);
+  text.innerHTML = `<strong>${count}</strong> products are low or out of stock and require immediate restocking.`;
+}
+
+function updateTrendSummary() {
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const recent = movementRecords.filter((entry) => {
+    const date = parseDate(entry.date);
+    return date && date >= weekAgo;
+  });
+
+  const unitsIn = recent
+    .filter((entry) => entry.type === 'in')
+    .reduce((sum, entry) => sum + Math.abs(Number(entry.qty) || 0), 0);
+  const unitsOut = recent
+    .filter((entry) => entry.type === 'out')
+    .reduce((sum, entry) => sum + Math.abs(Number(entry.qty) || 0), 0);
+  const net = unitsIn - unitsOut;
+
+  const trendIn = document.getElementById('trendInUnits');
+  const trendOut = document.getElementById('trendOutUnits');
+  const trendNet = document.getElementById('trendNetChange');
+  const trendNetBadge = document.getElementById('trendNetBadge');
+  const trendInChange = document.getElementById('trendInChange');
+  const trendOutChange = document.getElementById('trendOutChange');
+
+  if (trendIn) trendIn.textContent = unitsIn.toLocaleString();
+  if (trendOut) trendOut.textContent = unitsOut.toLocaleString();
+  if (trendNet) trendNet.textContent = net >= 0 ? `+${net.toLocaleString()}` : net.toLocaleString();
+  if (trendNetBadge) trendNetBadge.textContent = net >= 0 ? 'Positive' : 'Negative';
+  if (trendInChange) trendInChange.textContent = unitsIn ? `+${Math.round((unitsIn / 100) * 5)}%` : '+0%';
+  if (trendOutChange) trendOutChange.textContent = unitsOut ? `+${Math.round((unitsOut / 100) * 3)}%` : '+0%';
 }
 
 function animateCount(id, target) {
@@ -1158,17 +1298,6 @@ function initBarChart() {
     const shortLabel = lbl.length > 8 ? lbl.slice(0,7)+'.' : lbl;
     ctx.fillText(shortLabel, groupX + groupW / 2, H - 10);
   });
-  
-  // Basic Tooltip Support via Title property manipulation
-  canvas.onmousemove = (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const groupW = (W - padL - padR) / labels.length;
-    const idx = Math.floor((x - padL) / groupW);
-    if(idx >= 0 && idx < labels.length) {
-       canvas.title = `${labels[idx]}\nIn Stock: ${inData[idx]}\nLow: ${lowData[idx]}\nOut: ${outData[idx]}`;
-    } else { canvas.title = ''; }
-  };
 }
 
 /* ═══════════════════════════════════════════
@@ -1272,17 +1401,6 @@ function drawTrendLine() {
     ctx.textAlign = 'center';
     ctx.fillText(lbl, padL + (chartW / (n - 1)) * i, H - 8);
   });
-
-  // Basic Tooltip
-  canvas.onmousemove = (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const step = chartW / (n - 1);
-    const idx = Math.round((x - padL) / step);
-    if(idx >= 0 && idx < labels.length) {
-       canvas.title = `${labels[idx]}\nIn: ${inData[idx]}\nOut: ${outData[idx]}`;
-    } else { canvas.title = ''; }
-  };
 }
 
 /* ═══════════════════════════════════════════
@@ -1344,8 +1462,14 @@ function renderAlerts() {
     .sort((a, b) => (a.qty / a.max) - (b.qty / b.max))
     .slice(0, 5);
 
-  document.getElementById('alertList').innerHTML = alerts.map(p => {
-    const pct = Math.round((p.qty / p.max) * 100);
+  const container = document.getElementById('alertList');
+  if (!alerts.length) {
+    container.innerHTML = '<div class="alert-empty">No low-stock items found right now. All tracked SKUs are above the low-stock threshold.</div>';
+    return;
+  }
+
+  container.innerHTML = alerts.map(p => {
+    const pct = p.max ? Math.round((p.qty / p.max) * 100) : 0;
     const isCritical = p.qty === 0 || pct < 5;
     return `
     <div class="alert-item">
@@ -1363,47 +1487,23 @@ function renderAlerts() {
 }
 
 /* ═══════════════════════════════════════════
-   WAREHOUSE UTILIZATION
-═══════════════════════════════════════════ */
-function renderWarehouses() {
-  document.getElementById('warehouseList').innerHTML = WAREHOUSES.map(w => {
-    const pct = Math.round((w.used / w.total) * 100);
-    const barColor = pct > 90 ? '#ef4444' : pct > 70 ? '#f59e0b' : w.color;
-    return `
-    <div class="warehouse-item">
-      <div class="wi-head">
-        <div class="wi-name">${w.name}</div>
-        <div class="wi-pct" style="color:${barColor}">${pct}%</div>
-      </div>
-      <div class="wi-bar-bg">
-        <div class="wi-bar-fill" style="width:${pct}%;background:${barColor}"></div>
-      </div>
-      <div class="wi-footer">
-        <span>${w.used.toLocaleString()} units used</span>
-        <span>${(w.total - w.used).toLocaleString()} free</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-/* ═══════════════════════════════════════════
    MOVEMENT TABLE
 ═══════════════════════════════════════════ */
 let movementFilter = 'all';
 
 function renderMovements() {
-  const data = movementFilter === 'all' ? MOVEMENTS : MOVEMENTS.filter(m => m.type === movementFilter);
+  const data = movementFilter === 'all' ? movementRecords : movementRecords.filter((m) => m.type === movementFilter);
   const ICONS = {
     in:  { cls:'mv-in',  icon:'<polyline points="6,3 6,9"/><polyline points="3,6 6,3 9,6"/>', label:'Stock In',  tc:'mt-in'  },
-    out: { cls:'mv-out', icon:'<polyline points="6,9 6,3"/><polyline points="3,6 6,9 9,6"/>', label:'Stock Out', tc:'mt-out' },
+    out: { cls:'mv-out', icon:'<polyline points="6,9 6,3"/><polyline points="3,6 6,9 9,6"/>', label:'Sale', tc:'mt-out' },
     adj: { cls:'mv-adj', icon:'<line x1="3" y1="6" x2="9" y2="6"/><line x1="6" y1="3" x2="6" y2="9"/>', label:'Adjusted', tc:'mt-adj'   },
-    ret: { cls:'mv-return',icon:'<polyline points="3,4 3,8 7,8"/><path d="M9,4a5,5,0,0,0-6,4"/>',label:'Return', tc:'mt-return'},
   };
 
-  document.getElementById('movementTbody').innerHTML = data.slice(0,6).map(m => {
+  document.getElementById('movementTbody').innerHTML = data.slice(0,6).map((m) => {
     const ic = ICONS[m.type] || ICONS.adj;
-    const sign = m.qty > 0 ? '+' : '';
-    const qtyColor = m.qty > 0 ? 'color:#22c55e' : 'color:#ef4444';
+    const sign = m.type === 'out' ? '-' : '+';
+    const qtyValue = Math.abs(Number(m.qty) || 0);
+    const qtyColor = m.type === 'out' ? 'color:#ef4444' : 'color:#22c55e';
     return `
     <tr>
       <td>
@@ -1411,20 +1511,23 @@ function renderMovements() {
           <div class="mv-icon ${ic.cls}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">${ic.icon}</svg></div>
           <div>
             <div class="td-prod-name">${m.name}</div>
+            <div class="td-prod-sku" style="font-size:11px;color:var(--text-muted);margin-top:2px">${m.label}</div>
           </div>
         </div>
       </td>
       <td><span class="movement-type ${ic.tc}">${ic.label}</span></td>
-      <td style="font-family:'Nunito Sans',sans-serif;font-weight:700;${qtyColor}">${sign}${m.qty}</td>
-      <td style="color:var(--text-muted);font-family:'Nunito Sans',sans-serif;font-size:12px">${m.date}</td>
+      <td style="font-family:'Nunito Sans',sans-serif;font-weight:700;${qtyColor}">${sign}${qtyValue}</td>
+      <td style="color:var(--text-muted);font-family:'Nunito Sans',sans-serif;font-size:12px">${formatMovementDate(m.date)}</td>
       <td style="color:var(--text-secondary);font-family:'Nunito Sans',sans-serif;font-size:12px">${m.by}</td>
     </tr>`;
   }).join('');
+  const movementCount = document.getElementById('movementCountText');
+  if (movementCount) movementCount.textContent = `Showing ${Math.min(data.length, 6)} of ${data.length} records`;
 }
 
 function filterMovements(type, tab) {
   movementFilter = type;
-  document.querySelectorAll('.mvt-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.mvt-tab').forEach((t) => t.classList.remove('active'));
   tab.classList.add('active');
   renderMovements();
 }
@@ -1433,10 +1536,53 @@ function filterMovements(type, tab) {
    TOP PRODUCTS
 ═══════════════════════════════════════════ */
 function renderTopProducts() {
-  const sorted = [...PRODUCTS].sort((a,b) => b.soldThisMonth - a.soldThisMonth).slice(0,6);
+  const salesMap = TRANSACTIONS.reduce((acc, tx) => {
+    if (!Array.isArray(tx.items)) return acc;
+    tx.items.forEach((item) => {
+      const key = String(item.sku || item.name || '').trim();
+      if (!key) return;
+      acc[key] = acc[key] || {
+        sku: item.sku || key,
+        name: item.name || key,
+        totalQty: 0,
+        lastOrderedAt: tx.timestamp || tx.createdAt || new Date().toISOString(),
+        productImg: '',
+        emoji: '📦',
+        trend: 'up',
+      };
+      acc[key].totalQty += Number(item.quantity) || 0;
+      if (new Date(tx.timestamp || tx.createdAt).getTime() > new Date(acc[key].lastOrderedAt).getTime()) {
+        acc[key].lastOrderedAt = tx.timestamp || tx.createdAt;
+      }
+    });
+    return acc;
+  }, {});
+
+  const productsMap = PRODUCTS.reduce((acc, product) => {
+    if (product.sku) acc[product.sku] = product;
+    return acc;
+  }, {});
+
+  const sorted = Object.values(salesMap)
+    .map((record) => {
+      const product = productsMap[record.sku];
+      return {
+        ...record,
+        qty: product ? product.qty : 0,
+        emoji: product ? product.emoji : '📦',
+        trend: product ? product.trend : 'up',
+      };
+    })
+    .sort((a, b) => b.totalQty - a.totalQty)
+    .slice(0, 6);
+
+  if (!sorted.length) {
+    sorted.push(...[...PRODUCTS].sort((a, b) => (b.soldThisMonth || 0) - (a.soldThisMonth || 0)).slice(0, 6));
+  }
+
   document.getElementById('topProductsTbody').innerHTML = sorted.map((p, i) => `
     <tr>
-      <td style="font-family:'Nunito Sans',sans-serif;font-weight:700;color:var(--text-muted);font-size:12px">${i+1}</td>
+      <td style="font-family:'Nunito Sans',sans-serif;font-weight:700;color:var(--text-muted);font-size:12px">${i + 1}</td>
       <td>
         <div class="td-prod">
           <div class="td-prod-img"><span style="font-size:18px">${p.emoji}</span></div>
@@ -1446,8 +1592,8 @@ function renderTopProducts() {
           </div>
         </div>
       </td>
-      <td><span class="td-val">${p.soldThisMonth}</span></td>
-      <td><span class="td-val ${p.qty < 20 ? 'muted' : ''}">${p.qty}</span></td>
+      <td><span class="td-val">${p.totalQty != null ? p.totalQty : p.soldThisMonth || 0}</span></td>
+      <td><span class="td-val ${p.qty < 20 ? 'muted' : ''}">${p.qty != null ? p.qty : 0}</span></td>
       <td>
         ${p.trend === 'up'
           ? `<span class="trend-up"><svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,8 4.5,4 8,8"/></svg>Up</span>`
@@ -1455,6 +1601,8 @@ function renderTopProducts() {
         }
       </td>
     </tr>`).join('');
+  const topCount = document.getElementById('topProductsCountText');
+  if (topCount) topCount.textContent = `Top ${sorted.length} of ${PRODUCTS.length} products`;
 }
 
 /* ═══════════════════════════════════════════
@@ -1483,38 +1631,22 @@ function setSbActive(el) {
 }
 
 function exportReport() {
-  if(!PRODUCTS || !PRODUCTS.length) return alert('No data to export.');
-  const headers = ['SKU', 'Name', 'Category', 'Price', 'Qty', 'Trend'].join(',');
-  const rows = PRODUCTS.map(p => 
-    `"${p.sku}","${p.name}","${p.cat}",${p.price},${p.qty},"${p.trend}"`
-  ).join('\n');
-  const csv = headers + '\n' + rows;
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.setAttribute('hidden', '');
-  a.setAttribute('href', url);
-  a.setAttribute('download', 'inventory_report_' + new Date().getTime() + '.csv');
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  alert('Exporting inventory report…');
 }
 
 /* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
-  initMetrics();
-  initDonut();
-  renderStockBars();
-  renderAlerts();
-  renderWarehouses();
-  renderMovements();
-  renderTopProducts();
-  // Defer canvas charts until layout is stable
-  requestAnimationFrame(() => {
-    initBarChart();
-    drawTrendLine();
+  Promise.all([loadProducts(), loadMovements()]).then(() => {
+    renderStockBars();
+    renderAlerts();
+    renderMovements();
+    renderTopProducts();
+    // Defer canvas charts until layout is stable
+    requestAnimationFrame(() => {
+      drawTrendLine();
+    });
   });
 });
 
@@ -1525,5 +1657,58 @@ window.addEventListener('resize', () => {
   });
 });
 </script>
+<script>
+loadProducts = async function () {
+  try {
+    const apiProducts = await window.RetailerApi.getProducts();
+    PRODUCTS = apiProducts.map(function (product) {
+      return window.RetailerApiUtils.toInventoryProduct(product);
+    });
+  } catch (error) {
+    console.error('Error loading products:', error);
+    PRODUCTS = [];
+    window.RetailerUi.showToast(
+      'Could not load live inventory: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+
+  initMetrics();
+  initDonut();
+  initBarChart();
+};
+</script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      const topAvatar = document.getElementById('topbarAvatar');
+      if (topAvatar) topAvatar.textContent = initials;
+      const popAvatar = document.getElementById('profilePopoverAvatar');
+      if (popAvatar) popAvatar.textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
 </body>
 </html>

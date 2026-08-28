@@ -567,6 +567,21 @@ table.cust-table tbody tr.selected td{background:#f0f6ff}
 .dropdown-item.danger svg{color:var(--danger)}
 .dropdown-sep{height:1px;background:var(--border);margin:4px 0}
 
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
 </style>
 </head>
 <body>
@@ -691,7 +706,7 @@ table.cust-table tbody tr.selected td{background:#f0f6ff}
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+        <a class="sb-item" href="#" onclick="logout()">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -719,7 +734,32 @@ table.cust-table tbody tr.selected td{background:#f0f6ff}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <div class="tb-avatar">RS</div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button" style="border:none;">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -1028,6 +1068,7 @@ table.cust-table tbody tr.selected td{background:#f0f6ff}
   <span id="toastMsg">Done!</span>
 </div>
 
+<script src="api-config.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════
    DATA
@@ -1057,6 +1098,7 @@ const CUSTOMERS = [
   { id:17, fname:'Yuki',    lname:'Tanaka',   email:'yuki.tanaka@email.com',    phone:'+81 90 1234 5678',city:'Tokyo',         country:'Japan',      orders:27, spent:5640,  status:'vip',      created:'Feb 19, 2024', rating:5, notes:'Bulk buyer — seasonal orders' },
   { id:18, fname:'Isabella',lname:'Romano',   email:'i.romano@email.com',       phone:'+39 320 000 0001',city:'Milan',         country:'Italy',      orders:6,  spent:870,   status:'inactive', created:'Aug 12, 2024', rating:3, notes:'' },
 ];
+CUSTOMERS.splice(0, CUSTOMERS.length);
 
 /* ═══════════════════════════════════════════════════
    STATE
@@ -1502,7 +1544,7 @@ function saveCustomer() {
     }
     showToast('Customer updated successfully.', 'success');
   } else {
-    const newId = Math.max(...CUSTOMERS.map(c => c.id)) + 1;
+    const newId = (CUSTOMERS.length ? Math.max(...CUSTOMERS.map(c => c.id)) : 0) + 1;
     CUSTOMERS.unshift({
       id: newId, fname, lname, email,
       phone:   document.getElementById('f-phone').value.trim(),
@@ -1521,7 +1563,6 @@ function saveCustomer() {
 }
 
 function deleteCustomer(id) {
-  if (window.event) window.event.stopPropagation();
   const c = CUSTOMERS.find(x => x.id === id);
   if (!c || !confirm(`Delete customer "${c.fname} ${c.lname}"?`)) return;
   CUSTOMERS.splice(CUSTOMERS.findIndex(x => x.id === id), 1);
@@ -1603,5 +1644,151 @@ document.getElementById('modalOverlay').addEventListener('click', function(e) {
 updateMetrics();
 renderTable();
 </script>
+<script>
+function syncCustomers(nextCustomers) {
+  CUSTOMERS.splice(0, CUSTOMERS.length);
+  nextCustomers.forEach(function (customer) {
+    CUSTOMERS.push(customer);
+  });
+}
+
+async function loadCustomers() {
+  try {
+    const data = await window.RetailerApi.getCustomers();
+    syncCustomers(data);
+    updateMetrics();
+    renderTable();
+  } catch (error) {
+    console.error('Error loading customers:', error);
+    updateMetrics();
+    renderTable();
+    window.RetailerUi.showToast(
+      'Using saved customer list: ' + window.RetailerUi.getErrorMessage(error),
+      'info',
+    );
+  }
+}
+
+bulkDelete = async function () {
+  const ids = Array.from(selectedIds);
+  if (!ids.length) {
+    return;
+  }
+
+  if (!confirm(`Delete ${ids.length} selected customer(s)?`)) {
+    return;
+  }
+
+  try {
+    await Promise.all(
+      ids.map(function (id) {
+        return window.RetailerApi.deleteCustomer(id);
+      }),
+    );
+    selectedIds.clear();
+    updateBulkBar();
+    await loadCustomers();
+    showToast('Customers deleted successfully.', 'success');
+  } catch (error) {
+    showToast(
+      'Could not delete customers: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+saveCustomer = async function () {
+  const payload = {
+    fname: document.getElementById('f-fname').value.trim(),
+    lname: document.getElementById('f-lname').value.trim(),
+    email: document.getElementById('f-email').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
+    city: document.getElementById('f-city').value.trim(),
+    country: document.getElementById('f-country').value.trim(),
+    status: document.getElementById('f-status').value,
+    notes: document.getElementById('f-notes').value.trim(),
+  };
+
+  if (!payload.fname || !payload.lname || !payload.email) {
+    showToast('Please fill in all required fields.', 'error');
+    return;
+  }
+
+  try {
+    if (editingId) {
+      await window.RetailerApi.updateCustomer(editingId, payload);
+      showToast('Customer updated successfully.', 'success');
+    } else {
+      await window.RetailerApi.createCustomer(payload);
+      showToast('Customer added successfully.', 'success');
+    }
+
+    closeModal();
+    await loadCustomers();
+  } catch (error) {
+    showToast(
+      'Could not save customer: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+deleteCustomer = async function (id) {
+  const customer = CUSTOMERS.find(function (entry) {
+    return entry.id === id;
+  });
+
+  if (!customer || !confirm(`Delete customer "${customer.fname} ${customer.lname}"?`)) {
+    return;
+  }
+
+  try {
+    await window.RetailerApi.deleteCustomer(id);
+    selectedIds.delete(id);
+    updateBulkBar();
+    await loadCustomers();
+    showToast('Customer deleted.', 'success');
+  } catch (error) {
+    showToast(
+      'Could not delete customer: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+document.addEventListener('DOMContentLoaded', loadCustomers);
+</script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      const topAvatar = document.getElementById('topbarAvatar');
+      if (topAvatar) topAvatar.textContent = initials;
+      const popAvatar = document.getElementById('profilePopoverAvatar');
+      if (popAvatar) popAvatar.textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
 </body>
 </html>

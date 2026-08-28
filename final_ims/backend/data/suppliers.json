@@ -7,7 +7,7 @@
     "assignedEmployeeId": "EMP-1001",
     "assignedAt": "2026-08-27T19:26:09.950Z",
     "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-28T04:54:45.055Z",
+    "updatedAt": "2026-08-28T05:39:52.386Z",
     "business": {
       "companyName": "Hans",
       "businessType": "Distributor",
@@ -40,16 +40,16 @@
         "category": "Electronics",
         "unitPrice": 525,
         "minOrderQty": 1,
-        "stockAvailable": 147,
+        "stockAvailable": 149,
         "unit": "Piece",
         "description": "Product op3 supplied by Hans"
       }
     ],
     "pricingPolicies": [],
     "bankDetails": [],
-    "validatedBy": "",
-    "validatedAt": "",
-    "rejectionReason": ""
+    "documents": [],
+    "rating": 4,
+    "avgRating": 4
   },
   {
     "id": "50c1c24d-9efa-4fd6-acdb-137f8cc8936f",
@@ -86,9 +86,7 @@
     "products": [],
     "pricingPolicies": [],
     "bankDetails": [],
-    "validatedBy": "",
-    "validatedAt": "",
-    "rejectionReason": ""
+    "documents": []
   },
   {
     "business": {
@@ -122,9 +120,7 @@
     "assignedAt": "2026-08-27T16:57:44.772Z",
     "createdAt": "2026-08-27T16:57:44.772Z",
     "updatedAt": "2026-08-27T16:58:35.358Z",
-    "validatedBy": "",
-    "validatedAt": "",
-    "rejectionReason": ""
+    "documents": []
   },
   {
     "business": {
@@ -164,7 +160,8 @@
     "assignedAt": "",
     "validatedBy": "",
     "validatedAt": "",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "documents": []
   },
   {
     "business": {
@@ -200,7 +197,8 @@
     "assignedAt": "",
     "validatedBy": "",
     "validatedAt": "",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "documents": []
   },
   {
     "business": {
@@ -237,7 +235,8 @@
     "assignedAt": "",
     "validatedBy": "",
     "validatedAt": "",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "documents": []
   },
   {
     "business": {
@@ -274,7 +273,8 @@
     "assignedAt": "",
     "validatedBy": "",
     "validatedAt": "",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "documents": []
   },
   {
     "business": {
@@ -310,7 +310,8 @@
     "assignedAt": "",
     "validatedBy": "",
     "validatedAt": "",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "documents": []
   },
   {
     "business": {
@@ -349,7 +350,8 @@
     "assignedAt": "",
     "validatedBy": "",
     "validatedAt": "",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "documents": []
   },
   {
     "business": {
@@ -384,6 +386,7 @@
     "assignedAt": "",
     "validatedBy": "",
     "validatedAt": "",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "documents": []
   }
 ]

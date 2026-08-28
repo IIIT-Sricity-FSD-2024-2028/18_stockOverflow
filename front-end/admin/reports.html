@@ -86,20 +86,20 @@
       <!-- KPIs -->
       <div class="report-kpis">
         <div class="report-kpi">
-          <div class="kpi-top"><div class="kpi-icon" style="background:#eff6ff;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><span class="kpi-badge badge-green">+12.5%</span></div>
-          <div class="kpi-val">$809,000</div><div class="kpi-lbl">Total Sales</div>
+          <div class="kpi-top"><div class="kpi-icon" style="background:#eff6ff;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><span class="kpi-badge badge-green">Live</span></div>
+          <div class="kpi-val" data-kpi="totalSales">—</div><div class="kpi-lbl">Total Revenue</div>
         </div>
         <div class="report-kpi">
-          <div class="kpi-top"><div class="kpi-icon" style="background:#f0fdf4;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><span class="kpi-badge badge-green">+8.2%</span></div>
-          <div class="kpi-val">5,420</div><div class="kpi-lbl">Total Orders</div>
+          <div class="kpi-top"><div class="kpi-icon" style="background:#f0fdf4;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><span class="kpi-badge badge-green">Live</span></div>
+          <div class="kpi-val" data-kpi="totalOrders">—</div><div class="kpi-lbl">Total Orders</div>
         </div>
         <div class="report-kpi">
-          <div class="kpi-top"><div class="kpi-icon" style="background:#fef3c7;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg></div><span class="kpi-badge badge-green">+15.3%</span></div>
-          <div class="kpi-val">24,580</div><div class="kpi-lbl">Products Sold</div>
+          <div class="kpi-top"><div class="kpi-icon" style="background:#fef3c7;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg></div><span class="kpi-badge badge-green">Live</span></div>
+          <div class="kpi-val" data-kpi="productsSold">—</div><div class="kpi-lbl">Products Sold (This Month)</div>
         </div>
         <div class="report-kpi">
-          <div class="kpi-top"><div class="kpi-icon" style="background:#fef2f2;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="kpi-badge badge-red">-5.1%</span></div>
-          <div class="kpi-val">68</div><div class="kpi-lbl">Low Stock Items</div>
+          <div class="kpi-top"><div class="kpi-icon" style="background:#fef2f2;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="kpi-badge badge-red">Alert</span></div>
+          <div class="kpi-val" data-kpi="lowStockItems">—</div><div class="kpi-lbl">Low Stock Items</div>
         </div>
       </div>
 
@@ -113,9 +113,9 @@
           <h3>Inventory Status</h3>
           <canvas id="inventoryDonut" height="160" style="max-width:180px;margin:0 auto;display:block;"></canvas>
           <div style="margin-top:1rem;">
-            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#22c55e;"></div>In Stock</div><strong>245</strong></div>
-            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#f59e0b;"></div>Low Stock</div><strong>68</strong></div>
-            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#ef4444;"></div>Out of Stock</div><strong>23</strong></div>
+            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#22c55e;"></div>In Stock</div><strong id="legendInStock">—</strong></div>
+            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#f59e0b;"></div>Low Stock</div><strong id="legendLowStock">—</strong></div>
+            <div class="legend-row"><div style="display:flex;align-items:center;gap:8px;"><div class="legend-dot" style="background:#ef4444;"></div>Out of Stock</div><strong id="legendOutOfStock">—</strong></div>
           </div>
         </div>
       </div>
@@ -125,12 +125,8 @@
         <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-color);"><h3 style="font-size:1rem;font-weight:600;">Top Selling Products</h3></div>
         <table class="prod-table">
           <thead><tr><th>Product Name</th><th>Store</th><th>Units Sold</th><th>Revenue</th></tr></thead>
-          <tbody>
-            <tr><td>Wireless Mouse</td><td style="color:var(--text-muted);">Downtown Store</td><td>1,234</td><td class="rev-green">$37,020</td></tr>
-            <tr><td>USB-C Cable</td><td style="color:var(--text-muted);">West Side Branch</td><td>987</td><td class="rev-green">$19,740</td></tr>
-            <tr><td>Laptop Stand</td><td style="color:var(--text-muted);">East Coast Hub</td><td>856</td><td class="rev-green">$42,800</td></tr>
-            <tr><td>Bluetooth Speaker</td><td style="color:var(--text-muted);">Central Market</td><td>745</td><td class="rev-green">$59,600</td></tr>
-            <tr><td>Phone Case</td><td style="color:var(--text-muted);">North Point Outlet</td><td>698</td><td class="rev-green">$13,960</td></tr>
+          <tbody id="topProductsBody">
+            <tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:1.5rem;">Loading...</td></tr>
           </tbody>
         </table>
       </div>
@@ -138,40 +134,120 @@
   </main>
 
   <script src="../js/mockData.js"></script>
+  <script src="../js/api-config.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if(document.getElementById('logoutBtn'))
-        document.getElementById('logoutBtn').addEventListener('click', () => { DB.logout(); window.location.href='../index.html'; });
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Auth guard
+      const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+      if (!session || session.role !== 'admin') { window.location.href = '../index.html'; }
 
-      // Sales Line Chart
+      if (document.getElementById('logoutBtn'))
+        document.getElementById('logoutBtn').addEventListener('click', () => { localStorage.removeItem('so_session'); window.location.href = '../index.html'; });
+
+      // Populate store filter from live stores
+      try {
+        const stores = await window.IMS_HTTP.request('/stores');
+        const storeFilter = document.getElementById('storeFilter');
+        if (storeFilter && Array.isArray(stores)) {
+          stores.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = s.name;
+            storeFilter.appendChild(opt);
+          });
+        }
+      } catch (e) { /* silent */ }
+
+      // Load report summary from API
+      let summary = null;
+      try {
+        summary = await window.IMS_HTTP.request('/admin/reports/summary');
+      } catch (e) {
+        console.error('Reports API error', e);
+        summary = { totalRevenue: 0, totalOrders: 0, productsSold: 0, lowStockItems: 0, outOfStockItems: 0, inStockItems: 0, topProducts: [], monthlyRevenue: {} };
+      }
+
+      // Update KPI cards
+      const fmt = (n) => Number(n || 0).toLocaleString('en-US');
+      const fmtUSD = (n) => '$' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 0 });
+
+      document.querySelector('[data-kpi="totalSales"]').textContent = fmtUSD(summary.totalRevenue);
+      document.querySelector('[data-kpi="totalOrders"]').textContent = fmt(summary.totalOrders);
+      document.querySelector('[data-kpi="productsSold"]').textContent = fmt(summary.productsSold);
+      document.querySelector('[data-kpi="lowStockItems"]').textContent = fmt(summary.lowStockItems);
+
+      // Update inventory legend
+      const elInStock = document.getElementById('legendInStock');
+      const elLow = document.getElementById('legendLowStock');
+      const elOut = document.getElementById('legendOutOfStock');
+      if (elInStock) elInStock.textContent = fmt(summary.inStockItems);
+      if (elLow) elLow.textContent = fmt(summary.lowStockItems);
+      if (elOut) elOut.textContent = fmt(summary.outOfStockItems);
+
+      // Monthly sales chart from real monthly data
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const currentYear = new Date().getFullYear();
+      const monthlyData = months.map((_, i) => {
+        const key = `${currentYear}-${String(i + 1).padStart(2, '0')}`;
+        return summary.monthlyRevenue && summary.monthlyRevenue[key] ? Number(summary.monthlyRevenue[key]) : 0;
+      });
+      const hasData = monthlyData.some(v => v > 0);
+      // Fallback to illustrative data if no transactions yet
+      const chartData = hasData ? monthlyData : [45000,52000,48000,61000,57000,65000,63000,72000,78000,81000,88000,96000];
+
       new Chart(document.getElementById('salesChart'), {
-        type:'line',
-        data:{
-          labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-          datasets:[{
-            label:'Sales ($)',
-            data:[45000,52000,48000,61000,57000,65000,63000,72000,78000,81000,88000,96000],
-            borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.08)',
-            borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#3b82f6', tension:0.35, fill:true,
-          }]
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'Revenue ($)',
+            data: chartData,
+            borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)',
+            borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#3b82f6', tension: 0.35, fill: true,
+          }],
         },
-        options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ grid:{ color:'#f0f4f8' } } } }
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#f0f4f8' } } } },
       });
 
-      // Donut
+      // Inventory donut
+      const inStock = Number(summary.inStockItems || 0);
+      const lowStock = Number(summary.lowStockItems || 0);
+      const outOfStock = Number(summary.outOfStockItems || 0);
       new Chart(document.getElementById('inventoryDonut'), {
-        type:'doughnut',
-        data:{
-          labels:['In Stock','Low Stock','Out of Stock'],
-          datasets:[{ data:[245,68,23], backgroundColor:['#22c55e','#f59e0b','#ef4444'], hoverOffset:4, borderWidth:0 }]
+        type: 'doughnut',
+        data: {
+          labels: ['In Stock', 'Low Stock', 'Out of Stock'],
+          datasets: [{ data: [inStock || 1, lowStock, outOfStock], backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'], hoverOffset: 4, borderWidth: 0 }],
         },
-        options:{ responsive:true, cutout:'68%', plugins:{ legend:{ display:false } } }
+        options: { responsive: true, cutout: '68%', plugins: { legend: { display: false } } },
       });
+
+      // Top products table
+      const tbody = document.getElementById('topProductsBody');
+      if (tbody && Array.isArray(summary.topProducts)) {
+        tbody.innerHTML = '';
+        summary.topProducts.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${p.emoji || '📦'} ${p.name || '—'}</td>
+            <td style="color:var(--text-muted);">${p.store || 'All Stores'}</td>
+            <td>${Number(p.unitsSold || 0).toLocaleString()}</td>
+            <td class="rev-green">$${Number(p.revenue || 0).toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+        if (!summary.topProducts.length) {
+          tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:2rem;">No product data available yet.</td></tr>';
+        }
+      }
 
       function exportCSV() {
-        const rows = [['Product','Store','Units Sold','Revenue'],['Wireless Mouse','Downtown Store',1234,'$37,020'],['USB-C Cable','West Side Branch',987,'$19,740'],['Laptop Stand','East Coast Hub',856,'$42,800'],['Bluetooth Speaker','Central Market',745,'$59,600'],['Phone Case','North Point Outlet',698,'$13,960']];
-        const csv = rows.map(r=>r.join(',')).join('\n');
-        const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+        const rows = [['Product', 'Store', 'Units Sold', 'Revenue']];
+        (summary.topProducts || []).forEach(p => {
+          rows.push([p.name, p.store || 'All Stores', p.unitsSold || 0, p.revenue || 0]);
+        });
+        const csv = rows.map(r => r.join(',')).join('\n');
+        const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
         a.download = 'stock_overflow_report.csv'; a.click();
       }
       window.exportCSV = exportCSV;

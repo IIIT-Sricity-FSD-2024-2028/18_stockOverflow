@@ -704,9 +704,9 @@ table.pl-table tbody tr:hover td{background:#fafafa}
   </div>
 </div>
 
-<script src="../js/so-toast.js"></script>
-<script src="api-config.js"></script>
-<script src="common-products.js"></script>
+<script src="./api-config.js"></script>
+<script src="./common-products.js"></script>
+<script src="./so-toast.js"></script>
 <script>
 // AUTH GUARD
 const session = JSON.parse(localStorage.getItem('so_session') || 'null');
@@ -788,32 +788,42 @@ if (rowsPerPageControl) {
 // PROFILE FUNCTIONS
 function loadProfile() {
   if (!session) return;
-  fetch(`http://localhost:3001/api/users/${session.id}`)
+  const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+  fetch(`${apiBase}/api/users/${session.id}`)
     .then(response => response.json())
     .then(user => {
       // Set avatar
-      const nameParts = user.name.split(' ');
+      const nameParts = (user.name || 'Retail Store').split(' ');
       const initials = (nameParts[0][0] + (nameParts[1] ? nameParts[1][0] : '')).toUpperCase();
-      document.getElementById('avatar').textContent = initials;
+      ['avatar', 'topbarAvatar', 'profilePopoverAvatar', 'sidebarAvatar'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = initials;
+      });
     })
     .catch(error => console.error('Error loading profile:', error));
 }
 
 function showProfileModal() {
-  document.getElementById('profileModal').style.display = 'flex';
+  const profileModal = document.getElementById('profileModal');
+  if (profileModal) profileModal.style.display = 'flex';
   if (!session) return;
-  fetch(`http://localhost:3001/api/users/${session.id}`)
+  const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+  fetch(`${apiBase}/api/users/${session.id}`)
     .then(response => response.json())
     .then(user => {
       const profile = user.profile || {};
-      document.getElementById('profileContent').innerHTML = `
+      const avatarEl = document.getElementById('avatar') || document.getElementById('topbarAvatar') || document.getElementById('profilePopoverAvatar');
+      const initialsText = avatarEl ? avatarEl.textContent : (user.name ? user.name.charAt(0) : 'R');
+      const contentEl = document.getElementById('profileContent');
+      if (contentEl) {
+        contentEl.innerHTML = `
         <div style="display:flex;flex-direction:column;gap:16px">
           <div style="display:flex;align-items:center;gap:16px">
-            <div style="width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center">${document.getElementById('avatar').textContent}</div>
+            <div style="width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center">${initialsText}</div>
             <div>
-              <div style="font-size:18px;font-weight:600">${user.name}</div>
-              <div style="color:#666">${user.email}</div>
-              <div style="color:#666">${user.role} • ${user.store}</div>
+              <div style="font-size:18px;font-weight:600">${user.name || ''}</div>
+              <div style="color:#666">${user.email || ''}</div>
+              <div style="color:#666">${user.role || ''} • ${user.store || ''}</div>
             </div>
           </div>
           ${profile.businessName ? `
@@ -832,9 +842,11 @@ function showProfileModal() {
           <button onclick="logout()" style="margin-top:16px;padding:8px 16px;background:#ef4444;color:#fff;border:none;border-radius:6px;cursor:pointer;">Logout</button>
         </div>
       `;
+      }
     })
     .catch(error => {
-      document.getElementById('profileContent').innerHTML = 'Error loading profile.';
+      const contentEl = document.getElementById('profileContent');
+      if (contentEl) contentEl.innerHTML = 'Error loading profile.';
       console.error('Error loading profile:', error);
     });
 }
@@ -1191,7 +1203,19 @@ function applyProductFilters(resetPage) {
 
 loadProducts = async function () {
   try {
-    products = await window.RetailerApi.getProducts();
+    if (window.RetailerApi && typeof window.RetailerApi.getProducts === 'function') {
+      products = await window.RetailerApi.getProducts();
+    }
+    if (!Array.isArray(products) || !products.length) {
+      const apiBase = window.API_BASE_URL || (window.location && window.location.hostname ? window.location.protocol + '//' + window.location.hostname + ':3001' : 'http://localhost:3001');
+      const res = await fetch(`${apiBase}/api/products`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          products = data;
+        }
+      }
+    }
     applyProductFilters(true);
   } catch (error) {
     console.error('Error loading products:', error);
@@ -1199,10 +1223,6 @@ loadProducts = async function () {
     filteredProducts = [];
     renderTable();
     updateStats();
-    window.RetailerUi.showToast(
-      'Could not load products: ' + window.RetailerUi.getErrorMessage(error),
-      'error',
-    );
   }
 };
 

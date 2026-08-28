@@ -255,6 +255,21 @@ tr:hover td{background:rgba(91,103,202,.03)}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
 </style>
 </head>
 <body>
@@ -377,7 +392,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+        <a class="sb-item" href="#" onclick="logout()">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -397,7 +412,32 @@ tr:hover td{background:rgba(91,103,202,.03)}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <div class="topbar-avatar">RS</div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -467,11 +507,11 @@ tr:hover td{background:rgba(91,103,202,.03)}
     <div class="fin-cards-grid">
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$18,920</div><div class="fin-card-label">Net Profit</div></div>
+          <div><div class="fin-card-val">$0</div><div class="fin-card-label">Net Profit</div></div>
           <div class="fin-card-icon" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>+12.4% vs last month</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>0.0% vs last month</span><a>View All</a></div>
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
@@ -668,6 +708,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
   </div>
 </div>
 
+<script src="api-config.js"></script>
 <script>
 // DATA
 const topSelling=[
@@ -736,8 +777,6 @@ const catData=[
   {label:'Home & Living',pct:23,color:'#f59e0b'},
 ];
 
-if (window.applyUserIsolation) window.applyUserIsolation();
-
 // RENDER
 function initTopSelling(){
   document.getElementById('topSellingList').innerHTML=topSelling.map(p=>`
@@ -773,7 +812,9 @@ function initTopCustomers(){
 }
 function renderTransactions(tab){
   const data=transData[tab]||transData['Sale'];
-  document.getElementById('transBody').innerHTML=data.map(r=>`
+  const host = document.getElementById('transBody');
+  if(!host) return;
+  host.innerHTML=data.map(r=>`
     <tr>
       <td style="color:var(--text-secondary);font-size:12px">${r.date}</td>
       <td><div class="cust-cell"><div class="avatar-sm" style="background:${r.color}">${r.name.split(' ').map(x=>x[0]).join('').slice(0,2)}</div><div><div class="cust-name">${r.name}</div><div class="cust-id">${r.id}</div></div></div></td>
@@ -784,7 +825,9 @@ function renderTransactions(tab){
 
 // CHARTS
 function initSalesChart(){
-  const ctx=document.getElementById('salesChart').getContext('2d');
+  const canvas=document.getElementById('salesChart');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   new Chart(ctx,{type:'bar',data:{labels:months,datasets:[
     {label:'Purchase',data:[28000,22000,32000,28000,24000,30000,19000,26000,31000,22000,29000,24000],backgroundColor:'#5b67ca',borderRadius:4,borderSkipped:false,barPercentage:0.5,categoryPercentage:0.7},
@@ -792,7 +835,9 @@ function initSalesChart(){
   ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${(c.raw/1000).toFixed(0)}K`}}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:v=>`$${(v/1000).toFixed(0)}K`,font:{size:10},color:'#9ca3af'}}}}});
 }
 function initRevExpChart(){
-  const ctx=document.getElementById('revExpChart').getContext('2d');
+  const canvas=document.getElementById('revExpChart');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   new Chart(ctx,{type:'bar',data:{labels:months,datasets:[
     {label:'Revenue',data:[18000,28000,26000,22000,24000,22000,28000,20000,28000,15000,8000,24000],backgroundColor:'#5b67ca',borderRadius:4,borderSkipped:false,barPercentage:0.4,categoryPercentage:0.8},
@@ -800,13 +845,18 @@ function initRevExpChart(){
   ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${(Math.abs(c.raw)/1000).toFixed(0)}K`}}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:v=>`$${(Math.abs(v)/1000).toFixed(0)}K`,font:{size:10},color:'#9ca3af'}}}}});
 }
 function initCustDonut(){
-  const ctx=document.getElementById('custDonut').getContext('2d');
+  const canvas=document.getElementById('custDonut');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
   new Chart(ctx,{type:'doughnut',data:{datasets:[{data:[840,444],backgroundColor:['#5b67ca','#22c55e'],borderWidth:0,hoverOffset:4}]},options:{cutout:'72%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} customers`}}}}});
 }
 function initCatDonut(){
-  const ctx=document.getElementById('catDonut').getContext('2d');
+  const canvas=document.getElementById('catDonut');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
   new Chart(ctx,{type:'doughnut',data:{labels:catData.map(d=>d.label),datasets:[{data:catData.map(d=>d.pct),backgroundColor:catData.map(d=>d.color),borderWidth:0,hoverOffset:4}]},options:{cutout:'70%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw}%`}}}}});
-  document.getElementById('catLegend').innerHTML=catData.map(d=>`
+  const legend=document.getElementById('catLegend');
+  if(legend) legend.innerHTML=catData.map(d=>`
     <div style="display:flex;align-items:center;gap:8px">
       <div style="width:3px;height:30px;border-radius:3px;background:${d.color};flex-shrink:0"></div>
       <div><div style="font-size:14px;font-weight:700">${d.pct}%</div><div style="font-size:11px;color:var(--text-secondary)">${d.label}</div></div>
@@ -851,19 +901,478 @@ function setSbActive(el){document.querySelectorAll('.sb-item').forEach(i=>i.clas
 function setFilter(el,id){document.querySelectorAll(`#${id} .filter-tab`).forEach(t=>t.classList.remove('active'));el.classList.add('active')}
 function setTransTab(el){document.querySelectorAll('#transTabs .trans-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderTransactions(el.textContent.trim())}
 
+// AUTH GUARD
+const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+if (!session || session.role !== 'retailer') {
+  window.location.href = '../index.html';
+}
+
 // INIT
 document.addEventListener('DOMContentLoaded',()=>{
-  initTopSelling();
-  initLowStock();
-  initRecentSales();
-  initTopCustomers();
-  renderTransactions('Sale');
-  initSalesChart();
-  initRevExpChart();
-  initCustDonut();
-  initCatDonut();
-  initHeatmap();
+  loadProfile();
+});
+
+// PROFILE FUNCTIONS
+function loadProfile() {
+  if (!session || !session.id) return;
+  const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+  fetch(`${apiBase}/api/users/${session.id}`)
+    .then(response => response.json())
+    .then(user => {
+      if (!user) return;
+      const nameStr = String(user.name || session.name || 'Retail Store').trim();
+      const parts = nameStr.split(' ').filter(Boolean);
+      const initials = parts.length > 1
+        ? (parts[0][0] + parts[1][0]).toUpperCase()
+        : (parts[0] ? parts[0].substring(0, 2).toUpperCase() : 'RS');
+      ['avatar', 'topbarAvatar', 'profilePopoverAvatar', 'sidebarAvatar'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = initials;
+      });
+    })
+    .catch(error => console.error('Error loading profile:', error));
+}
+
+function showProfileModal() {
+  const profileModal = document.getElementById('profileModal');
+  if (profileModal) profileModal.style.display = 'flex';
+  if (!session) return;
+  const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+  fetch(`${apiBase}/api/users/${session.id}`)
+    .then(response => response.json())
+    .then(user => {
+      const profile = user.profile || {};
+      const avatarEl = document.getElementById('avatar') || document.getElementById('topbarAvatar') || document.getElementById('profilePopoverAvatar');
+      const initialsText = avatarEl ? avatarEl.textContent : (user.name ? user.name.charAt(0) : 'R');
+      const contentEl = document.getElementById('profileContent');
+      if (contentEl) {
+        contentEl.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div style="width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center">${initialsText}</div>
+            <div>
+              <div style="font-size:18px;font-weight:600">${user.name || ''}</div>
+              <div style="color:#666">${user.email || ''}</div>
+              <div style="color:#666">${user.role || ''} • ${user.store || ''}</div>
+            </div>
+          </div>
+          ${profile.businessName ? `
+          <div>
+            <h3 style="margin:0 0 8px 0;font-size:16px;font-weight:600">Business Information</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">
+              <div><strong>Name:</strong> ${profile.businessName}</div>
+              <div><strong>Email:</strong> ${profile.businessEmail || 'N/A'}</div>
+              <div><strong>Phone:</strong> ${profile.businessPhone || 'N/A'}</div>
+              <div><strong>Tax ID:</strong> ${profile.taxId || 'N/A'}</div>
+              <div style="grid-column:span 2"><strong>Address:</strong> ${profile.address || 'N/A'}</div>
+              <div style="grid-column:span 2"><strong>Website:</strong> ${profile.website || 'N/A'}</div>
+            </div>
+          </div>
+          ` : '<div>No business profile set up yet.</div>'}
+          <button onclick="logout()" style="margin-top:16px;padding:8px 16px;background:#ef4444;color:#fff;border:none;border-radius:6px;cursor:pointer;">Logout</button>
+        </div>
+      `;
+      }
+    })
+    .catch(error => {
+      const contentEl = document.getElementById('profileContent');
+      if (contentEl) contentEl.innerHTML = 'Error loading profile.';
+      console.error('Error loading profile:', error);
+    });
+}
+
+function closeProfileModal() {
+  document.getElementById('profileModal').style.display = 'none';
+}
+
+function logout() {
+  localStorage.removeItem('so_session');
+  window.location.href = '../index.html';
+}
+</script>
+<script>
+(function(){
+  function formatCurrency(value){
+    return '$' + Number(value || 0).toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+  }
+
+  function formatCompact(value){
+    return Number(value || 0).toLocaleString('en-US');
+  }
+
+  function formatDate(value){
+    if(!value) return '-';
+    const parsed = new Date(value);
+    if(Number.isNaN(parsed.getTime())) return String(value);
+    return parsed.toLocaleDateString('en-US', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function getStatusClass(status){
+    const normalized = String(status || '').toLowerCase();
+    if(normalized.includes('reject') || normalized.includes('cancel')) return 'cancelled';
+    if(normalized.includes('pending')) return 'pending';
+    if(normalized.includes('process') || normalized.includes('delivery')) return 'processing';
+    return 'completed';
+  }
+
+  function destroyChart(id){
+    const chart = window.Chart && Chart.getChart ? Chart.getChart(id) : null;
+    if(chart) chart.destroy();
+  }
+
+  function renderEmptyState(host, message){
+    host.innerHTML = `<div class="empty-state" style="padding:20px"><p>${message}</p></div>`;
+  }
+
+  function buildHeatmap(container){
+    const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const times=['9 AM','10 AM','11 AM','12 PM','1 PM','2 PM','3 PM','4 PM','5 PM'];
+    let html=`<div class="heatmap-header">`;
+    days.forEach((d)=>html+=`<div class="heatmap-day-lbl">${d}</div>`);
+    html+=`</div><div class="heatmap-grid"><div class="heatmap-time-col">`;
+    times.forEach((t)=>html+=`<div class="heatmap-time-lbl">${t}</div>`);
+    html+=`</div><div class="heatmap-cells">`;
+    days.forEach((d)=>{
+      html+=`<div class="heatmap-col">`;
+      times.forEach((t)=>{
+        html+=`<div class="heatmap-cell h0" data-info="0 orders on ${d} at ${t}" onmouseenter="showHeatTip(event,this)" onmouseleave="hideHeatTip()"></div>`;
+      });
+      html+=`</div>`;
+    });
+    html+=`</div></div>`;
+    container.innerHTML = html;
+  }
+
+  async function initScopedDashboard(){
+    if(!window.RetailerApi) return;
+
+    const session = await window.RetailerApi.refreshSession();
+    if(!session) return;
+
+    const [products, customers, transactions, purchaseOrders, returns, suppliers] =
+      await Promise.all([
+        window.RetailerApi.getProducts().catch(()=>[]),
+        window.RetailerApi.getCustomers().catch(()=>[]),
+        window.RetailerApi.getTransactions().catch(()=>[]),
+        window.RetailerApi.getPurchaseOrders ? window.RetailerApi.getPurchaseOrders().catch(()=>[]) : Promise.resolve([]),
+        window.RetailerApi.getReturns().catch(()=>[]),
+        window.RetailerApi.getSuppliers().catch(()=>[])
+      ]);
+
+    const deliveredPurchaseOrders = purchaseOrders.filter((order) => {
+      const status = String(order.status || '').toLowerCase();
+      return status.includes('delivered') || status.includes('received');
+    });
+    const totalSales = transactions.reduce((sum, tx) => sum + (Number(tx.finalTotal) || 0), 0);
+    const totalSalesReturn = returns.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+    const totalPurchase = deliveredPurchaseOrders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+    const purchaseReturn = 0;
+    const netSales = Math.max(0, totalSales - totalSalesReturn);
+    const netPurchase = Math.max(0, totalPurchase - purchaseReturn);
+    const netProfit = Math.max(0, netSales - netPurchase);
+    const invoiceDue = purchaseOrders
+      .filter((order) => String(order.status || '').toLowerCase().includes('pending'))
+      .reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+    const totalExpenses = totalPurchase;
+    const paymentReturns = 0;
+    const lowStockProducts = products.filter((product) => (Number(product.qty) || 0) <= (Number(product.min) || 0));
+    const topSellingProducts = products
+      .slice()
+      .sort((left, right) => (Number(right.soldThisMonth) || 0) - (Number(left.soldThisMonth) || 0))
+      .slice(0, 5);
+    const topCustomers = customers
+      .slice()
+      .sort((left, right) => (Number(right.totalSpent) || 0) - (Number(left.totalSpent) || 0))
+      .slice(0, 5);
+    const firstTimeCustomers = customers.filter((customer) => (Number(customer.totalOrders) || 0) <= 1).length;
+    const returnCustomers = Math.max(0, customers.length - firstTimeCustomers);
+    const latestSales = transactions
+      .slice()
+      .sort((left, right) => new Date(right.timestamp || 0) - new Date(left.timestamp || 0))
+      .slice(0, 5);
+    const salesRows = transactions.slice(0, 5).map((tx) => ({
+      date: formatDate(tx.timestamp),
+      name: tx.customer || 'Customer',
+      id: tx.orderId || '-',
+      color: '#5b67ca',
+      status: getStatusClass(tx.status),
+      total: formatCurrency(tx.finalTotal)
+    }));
+    const purchaseRows = purchaseOrders.slice(0, 5).map((po) => ({
+      date: formatDate(po.createdAt || po.deliveryDate),
+      name: po.supplierName || 'Supplier',
+      id: po.id || '-',
+      color: '#22c55e',
+      status: getStatusClass(po.status),
+      total: formatCurrency(po.total)
+    }));
+
+    const transTabs = {
+      Sale: salesRows,
+      Purchase: purchaseRows,
+      Quotation: [],
+      Expenses: [],
+      Invoices: []
+    };
+
+    window.renderTransactions = function(tab){
+      const rows = transTabs[tab] || [];
+      const host = document.getElementById('transBody');
+      if(!rows.length){
+        host.innerHTML = '<tr><td colspan="4" style="padding:18px;color:#9ca3af;text-align:center">No transactions yet.</td></tr>';
+        return;
+      }
+      host.innerHTML = rows.map((row) => `
+        <tr>
+          <td style="color:var(--text-secondary);font-size:12px">${row.date}</td>
+          <td><div class="cust-cell"><div class="avatar-sm" style="background:${row.color}">${row.name.split(' ').map(x=>x[0]).join('').slice(0,2)}</div><div><div class="cust-name">${row.name}</div><div class="cust-id">${row.id}</div></div></div></td>
+          <td><span class="status-pill ${row.status}">${row.status.charAt(0).toUpperCase()+row.status.slice(1)}</span></td>
+          <td style="font-weight:700;font-size:13px">${row.total}</td>
+        </tr>
+      `).join('');
+    };
+    window.setTransTab = function(el){
+      document.querySelectorAll('#transTabs .trans-tab').forEach((tab) => tab.classList.remove('active'));
+      el.classList.add('active');
+      window.renderTransactions(el.textContent.trim());
+    };
+
+    const metricCards = document.querySelectorAll('.metric-card');
+    if(metricCards[0]){
+      metricCards[0].querySelector('.metric-value').textContent = formatCurrency(totalSales);
+      metricCards[0].querySelector('.badge').innerHTML = '0.0%';
+    }
+    if(metricCards[1]){
+      metricCards[1].querySelector('.metric-value').textContent = formatCurrency(totalSalesReturn);
+      metricCards[1].querySelector('.badge').innerHTML = '0.0%';
+    }
+    if(metricCards[2]){
+      metricCards[2].querySelector('.metric-value').textContent = formatCurrency(totalPurchase);
+      metricCards[2].querySelector('.badge').innerHTML = '0.0%';
+    }
+    if(metricCards[3]){
+      metricCards[3].querySelector('.metric-value').textContent = formatCurrency(purchaseReturn);
+      metricCards[3].querySelector('.badge').textContent = '0.0%';
+    }
+
+    const finCards = document.querySelectorAll('.fin-card');
+    if(finCards[0]) finCards[0].querySelector('.fin-card-val').textContent = formatCurrency(netProfit);
+    if(finCards[1]) finCards[1].querySelector('.fin-card-val').textContent = formatCurrency(invoiceDue);
+    if(finCards[2]) finCards[2].querySelector('.fin-card-val').textContent = formatCurrency(totalExpenses);
+    if(finCards[3]) finCards[3].querySelector('.fin-card-val').textContent = formatCurrency(paymentReturns);
+
+    const legendValues = document.querySelectorAll('.legend-val');
+    if(legendValues[0]) legendValues[0].textContent = formatCurrency(totalPurchase);
+    if(legendValues[1]) legendValues[1].textContent = formatCurrency(totalSales);
+
+    const salesByMonth = Array(12).fill(0);
+    const purchaseByMonth = Array(12).fill(0);
+    const expenseByMonth = Array(12).fill(0);
+
+    transactions.forEach(tx => {
+      const month = new Date(tx.timestamp).getMonth();
+      salesByMonth[month] = Number((salesByMonth[month] + (Number(tx.finalTotal) || 0) / 1000).toFixed(1));
+    });
+
+    deliveredPurchaseOrders.forEach(po => {
+      const month = new Date(po.createdAt || po.deliveryDate).getMonth();
+      const val = (Number(po.total) || 0) / 1000;
+      purchaseByMonth[month] = Number((purchaseByMonth[month] + val).toFixed(1));
+      expenseByMonth[month] = Number((expenseByMonth[month] + val).toFixed(1));
+    });
+    const revStats = document.querySelectorAll('.rev-stat-val');
+    if(revStats[0]) revStats[0].textContent = formatCurrency(totalSales);
+    if(revStats[1]) revStats[1].textContent = formatCurrency(totalExpenses);
+
+    const overallStats = document.querySelectorAll('.overall-stat-val');
+    if(overallStats[0]) overallStats[0].textContent = formatCompact(suppliers.length);
+    if(overallStats[1]) overallStats[1].textContent = formatCompact(customers.length);
+    if(overallStats[2]) overallStats[2].textContent = formatCompact(transactions.length);
+
+    const notifBar = document.getElementById('notifBar');
+    if(notifBar){
+      const label = notifBar.querySelector('span');
+      if(lowStockProducts.length){
+        label.textContent = `${lowStockProducts.length} products are running low on stock.`;
+      }else{
+        label.textContent = 'No low stock alerts for the selected store.';
+      }
+    }
+
+    const topSellingHost = document.getElementById('topSellingList');
+    if(topSellingProducts.length){
+      topSellingHost.innerHTML = topSellingProducts.map((product) => `
+        <div class="product-item">
+          <div class="product-avatar">${product.emoji || 'PKG'}</div>
+          <div class="product-info"><div class="product-name">${product.name}</div><div class="product-meta">${formatCurrency(product.price)}<span class="meta-dot"></span>${Number(product.soldThisMonth || 0)} sold</div></div>
+          <span class="badge neutral">0.0%</span>
+        </div>
+      `).join('');
+    }else{
+      renderEmptyState(topSellingHost, 'No product sales yet.');
+    }
+
+    const lowStockHost = document.getElementById('lowStockList');
+    if(lowStockProducts.length){
+      lowStockHost.innerHTML = lowStockProducts.slice(0, 5).map((product) => `
+        <div class="product-item">
+          <div class="product-avatar">${product.emoji || 'PKG'}</div>
+          <div class="product-info"><div class="product-name">${product.name}</div><div class="product-meta">${product.sku}</div></div>
+          <div class="stock-info"><div class="stock-status ${(Number(product.qty)||0) <= 0 ? 'critical' : 'low'}">${(Number(product.qty)||0) <= 0 ? 'Out' : 'Low Stock'}</div><div class="stock-qty">${Number(product.qty)||0} pcs</div></div>
+        </div>
+      `).join('');
+    }else{
+      renderEmptyState(lowStockHost, 'No low stock products.');
+    }
+
+    const recentSalesHost = document.getElementById('recentSalesList');
+    if(latestSales.length){
+      recentSalesHost.innerHTML = latestSales.map((sale) => `
+        <div class="sale-item">
+          <div class="product-avatar">SALE</div>
+          <div class="sale-info"><div class="sale-name">${sale.customer || 'Customer'}</div><div class="sale-sub">${sale.store || 'Store'}<span class="meta-dot"></span>${formatCurrency(sale.finalTotal)}</div></div>
+          <div class="sale-right"><div class="sale-date">${formatDate(sale.timestamp)}</div><span class="status-pill ${getStatusClass(sale.status)}">${sale.status || 'Delivered'}</span></div>
+        </div>
+      `).join('');
+    }else{
+      renderEmptyState(recentSalesHost, 'No sales recorded yet.');
+    }
+
+    const topCustomersHost = document.getElementById('topCustList');
+    if(topCustomers.length){
+      topCustomersHost.innerHTML = topCustomers.map((customer) => `
+        <div class="top-cust-item">
+          <div class="avatar-sm" style="background:#5b67ca">${(customer.name || 'CU').split(' ').map(x=>x[0]).join('').slice(0,2)}</div>
+          <div class="top-cust-info"><div class="top-cust-name">${customer.name}</div><div class="top-cust-sub">${customer.city || customer.country || 'N/A'}<span class="meta-dot"></span>${Number(customer.totalOrders || 0)} Orders</div></div>
+          <div class="top-cust-amount">${formatCurrency(customer.totalSpent)}</div>
+        </div>
+      `).join('');
+    }else{
+      renderEmptyState(topCustomersHost, 'No customers yet.');
+    }
+
+    const donutCenter = document.querySelector('.donut-center-val');
+    if(donutCenter) donutCenter.textContent = formatCompact(customers.length);
+    const donutLegendValues = document.querySelectorAll('.donut-legend-val');
+    if(donutLegendValues[0]) donutLegendValues[0].textContent = formatCompact(firstTimeCustomers);
+    if(donutLegendValues[1]) donutLegendValues[1].textContent = formatCompact(returnCustomers);
+
+    const categorySales = {};
+    products.forEach((product) => {
+      const category = product.category || 'Uncategorized';
+      categorySales[category] = (categorySales[category] || 0) + (Number(product.qty) || 0);
+    });
+    const categoryEntries = Object.keys(categorySales)
+      .map((key) => ({ label:key, value:categorySales[key] }))
+      .sort((left, right) => right.value - left.value)
+      .slice(0, 3);
+    const categoryTotal = categoryEntries.reduce((sum, entry) => sum + entry.value, 0);
+    const categoryColors = ['#5b67ca','#22c55e','#f59e0b'];
+
+    document.getElementById('catLegend').innerHTML = categoryEntries.length
+      ? categoryEntries.map((entry, index) => `
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:3px;height:30px;border-radius:3px;background:${categoryColors[index]};flex-shrink:0"></div>
+            <div><div style="font-size:14px;font-weight:700">${categoryTotal ? Math.round((entry.value / categoryTotal) * 100) : 0}%</div><div style="font-size:11px;color:var(--text-secondary)">${entry.label}</div></div>
+          </div>`).join('')
+      : '<div style="font-size:12px;color:#9ca3af">No category sales yet.</div>';
+
+    const catCenter = document.querySelector('#catDonut').parentElement.querySelector('div div');
+    if(catCenter) catCenter.textContent = categoryTotal ? '100%' : '0%';
+    const catStatsContainer = document.querySelector('#catLegend').parentElement.nextElementSibling.querySelector('div[style*=\"border:1px solid\"]');
+    if(catStatsContainer){
+      catStatsContainer.innerHTML = categoryEntries.length
+        ? categoryEntries.map((entry, index) => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px${index < categoryEntries.length - 1 ? ';border-bottom:1px solid var(--border-light)' : ''}">
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:7px;height:7px;border-radius:2px;background:${categoryColors[index]}"></div><span style="font-size:12px">${entry.label}</span></div>
+              <span style="font-weight:700;font-size:12.5px">${categoryTotal ? Math.round((entry.value / categoryTotal) * 100) : 0}%</span>
+            </div>`).join('')
+        : '<div style="padding:12px;color:#9ca3af;font-size:12px">No category statistics yet.</div>';
+    }
+
+    destroyChart('salesChart');
+    new Chart(document.getElementById('salesChart').getContext('2d'),{
+      type:'bar',
+      data:{
+        labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets:[
+          {label:'Purchase',data:purchaseByMonth,backgroundColor:'#5b67ca',borderRadius:4,borderSkipped:false,barPercentage:0.5,categoryPercentage:0.7},
+          {label:'Sales',data:salesByMonth,backgroundColor:'#22c55e',borderRadius:4,borderSkipped:false,barPercentage:0.5,categoryPercentage:0.7}
+        ]
+      },
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:(v)=>`$${v}K`,font:{size:10},color:'#9ca3af'}}}}
+    });
+
+    destroyChart('revExpChart');
+    new Chart(document.getElementById('revExpChart').getContext('2d'),{
+      type:'bar',
+      data:{
+        labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets:[
+          {label:'Revenue',data:salesByMonth,backgroundColor:'#5b67ca',borderRadius:4,borderSkipped:false,barPercentage:0.4,categoryPercentage:0.8},
+          {label:'Expense',data:expenseByMonth,backgroundColor:'#fca5a5',borderRadius:4,borderSkipped:false,barPercentage:0.4,categoryPercentage:0.8}
+        ]
+      },
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:(v)=>`$${v}K`,font:{size:10},color:'#9ca3af'}}}}
+    });
+
+    destroyChart('custDonut');
+    new Chart(document.getElementById('custDonut').getContext('2d'),{
+      type:'doughnut',
+      data:{datasets:[{data:[firstTimeCustomers, returnCustomers],backgroundColor:['#5b67ca','#22c55e'],borderWidth:0,hoverOffset:4}]},
+      options:{cutout:'72%',plugins:{legend:{display:false}}}
+    });
+
+    destroyChart('catDonut');
+    new Chart(document.getElementById('catDonut').getContext('2d'),{
+      type:'doughnut',
+      data:{labels:categoryEntries.map((entry)=>entry.label),datasets:[{data:categoryEntries.map((entry)=>entry.value),backgroundColor:categoryColors.slice(0, Math.max(categoryEntries.length,1)),borderWidth:0,hoverOffset:4}]},
+      options:{cutout:'70%',plugins:{legend:{display:false}}}
+    });
+
+    buildHeatmap(document.getElementById('heatmapWrap'));
+    window.renderTransactions('Sale');
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initScopedDashboard);
+  }else{
+    initScopedDashboard();
+  }
+})();
+</script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('topbarAvatar').textContent = initials;
+      document.getElementById('profilePopoverAvatar').textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
 });
 </script>
+
 </body>
 </html>

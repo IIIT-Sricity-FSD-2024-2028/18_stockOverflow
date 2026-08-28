@@ -438,23 +438,83 @@
 
     const submit = document.querySelector('.submit-btn');
     if (submit) {
-      submit.addEventListener('click', (event) => {
+      submit.addEventListener('click', async (event) => {
         event.preventDefault();
-        const reason = document.querySelectorAll('.form-select')[0]?.value || 'Defective';
-        const checked = Array.from(document.querySelectorAll('.item-check-row input:checked'));
+        const reason = document.querySelectorAll('.form-select')[0]?.value || 'Defective / Not Working';
+        const condition = document.querySelectorAll('.form-select')[1]?.value || 'Sealed / Unopened';
+        const refundMethod = document.querySelectorAll('.form-select')[2]?.value || 'Original Payment Method';
+        const notes = document.querySelector('textarea.form-input')?.value?.trim() || '';
+        const checked = Array.from(document.querySelectorAll('.item-check-row input:checked:not(:disabled)'));
+
         if (!checked.length) {
+          const anyChecked = Array.from(document.querySelectorAll('.item-check-row input:checked'));
+          if (anyChecked.length) {
+            toast('A return request has already been submitted for this item.');
+            return;
+          }
           toast('Select at least one item');
           return;
         }
-        state.returns.unshift({
-          items: checked.length,
-          reason,
-          date: new Date().toISOString()
-        });
-        state.returns = state.returns.slice(0, 30);
-        saveState(state);
-        toast('Return request submitted');
-        window.location.replace(FILES.orders);
+
+        // Check backend existing returns
+        let existing = [];
+        try {
+          if (window.ImsApi && typeof window.ImsApi.getReturns === 'function') {
+            existing = await window.ImsApi.getReturns().catch(() => []);
+          } else if (window.IMS_HTTP && typeof window.IMS_HTTP.request === 'function') {
+            existing = await window.IMS_HTTP.request('/returns').catch(() => []);
+          }
+        } catch (_err) {
+          existing = [];
+        }
+
+        for (const checkbox of checked) {
+          const sku = checkbox.getAttribute('data-sku') || '';
+          const alreadyExists = (existing || []).some(r => String(r.sku || '').trim() === String(sku).trim());
+          if (alreadyExists) {
+            toast('A return request has already been submitted for this item.');
+            return;
+          }
+        }
+
+        try {
+          if (window.ImsApi && typeof window.ImsApi.createReturn === 'function') {
+            for (const checkbox of checked) {
+              await window.ImsApi.createReturn({
+                sku: checkbox.getAttribute('data-sku') || '',
+                productName: checkbox.getAttribute('data-name') || 'Product',
+                reason,
+                condition,
+                refundMethod,
+                notes
+              });
+            }
+          } else if (window.IMS_HTTP && typeof window.IMS_HTTP.request === 'function') {
+            for (const checkbox of checked) {
+              await window.IMS_HTTP.request('/returns', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  sku: checkbox.getAttribute('data-sku') || '',
+                  reason,
+                  condition,
+                  refundMethod,
+                  notes
+                })
+              });
+            }
+          }
+
+          toast('Return request submitted');
+          if (typeof window.loadReturnHistory === 'function') {
+            await window.loadReturnHistory();
+          }
+          if (typeof window.renderReturnItems === 'function') {
+            await window.renderReturnItems();
+          }
+        } catch (error) {
+          toast(window.IMS_HTTP ? window.IMS_HTTP.getErrorMessage(error) : 'Unable to submit return');
+        }
       });
     }
 

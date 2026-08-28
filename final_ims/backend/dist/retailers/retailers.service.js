@@ -39,7 +39,7 @@ let RetailersService = class RetailersService {
         return retailer;
     }
     findAll() {
-        return Array.from(this.retailers.values()).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+        return Array.from(this.retailers.values()).sort((a, b) => String(b?.updatedAt || '').localeCompare(String(a?.updatedAt || '')));
     }
     findOne(id) {
         const retailer = this.retailers.get(id);

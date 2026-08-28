@@ -583,6 +583,21 @@ body{
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px}
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
 </style>
 </head>
 <body>
@@ -707,7 +722,7 @@ body{
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+        <a class="sb-item" href="#" onclick="logout()">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -736,7 +751,32 @@ body{
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <div class="tb-avatar">RS</div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button" style="border:none;">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -1006,14 +1046,14 @@ body{
                 <img id="mainImgEl" src="" alt="" style="display:none;width:100%;height:100%;object-fit:contain;padding:10px"/>
               </div>
               <!-- Upload zone -->
-              <div class="upload-zone" id="uploadZone">
-                <input type="file" id="imgInput" accept="image/*" multiple onchange="handleImgUpload(event)"/>
+              <div class="upload-zone" id="uploadZone" onclick="document.getElementById('imgInput').click()">
+                <input type="file" id="imgInput" accept="image/*" multiple onchange="handleImgUpload(event)" onclick="event.stopPropagation()"/>
                 <div class="upload-icon">
                   <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 17s0-2 2-2h10s2 0 2 2"/><line x1="11" y1="4" x2="11" y2="14"/><polyline points="7,8 11,4 15,8"/></svg>
                 </div>
                 <div class="upload-title">Drag &amp; drop to upload</div>
-                <div class="upload-sub">PNG, JPG, WEBP — max 5 MB</div>
-                <span class="upload-browse-btn" onclick="document.getElementById('imgInput').click()">Browse Files</span>
+                <div class="upload-sub">PNG, JPG, WEBP — max 10 MB</div>
+                <span class="upload-browse-btn">Browse Files</span>
               </div>
               <!-- Thumbnail strip -->
               <div class="img-strip" id="imgStrip"></div>
@@ -1080,7 +1120,7 @@ body{
                   <label class="field-label">SKU (Auto-generated)</label>
                   <div class="input-addon">
                     <span class="addon-prefix" style="font-size:11px;padding:0 8px">SKU</span>
-                    <input class="input" id="f-sku" type="text" value="PT016" readonly style="background:#f9fafb;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif;font-weight:700"/>
+                    <input class="input" id="f-sku" type="text" value="" readonly style="background:#f9fafb;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif;font-weight:700"/>
                   </div>
                 </div>
                 <div class="field">
@@ -1132,6 +1172,13 @@ body{
                 <div class="field">
                   <label class="field-label">Reorder Quantity</label>
                   <input class="input" id="f-reorder-qty" type="number" min="0" placeholder="50"/>
+                </div>
+              </div>
+              <div class="field-row col-2" style="margin-top:12px">
+                <div class="field">
+                  <label class="field-label">Stock / Restock Date</label>
+                  <input class="input" id="f-restock-date" type="date"/>
+                  <div class="field-hint">Date when this stock level was recorded or restocked</div>
                 </div>
               </div>
             </div>
@@ -1407,7 +1454,7 @@ body{
   </div>
 </div>
 
-<script src="../js/mockData.js"></script>
+<script src="api-config.js"></script>
 <script src="common-products.js"></script>
 <script>
 /* ═══════════════════════════════════════════
@@ -1415,14 +1462,20 @@ body{
 ═══════════════════════════════════════════ */
 let currentStep = 1;
 const totalSteps = 3;
-let selectedStatus = 'Active';
-let selectedPublish = 'publish-now';
+let selectedStatus = 'active';
+let selectedPublish = 'published';
 let images = []; // {src, name}
 let mainImgIdx = 0;
 let variants = [];
 let customFields = [];
 let tags = [];
 let relatedProducts = [];
+let editorMode = 'create';
+let editingProductId = '';
+let currentProductRecord = null;
+const DEFAULT_CREATOR_NAME = 'Retail Manager';
+const DEFAULT_CREATOR_IMG = 'https://www.figma.com/api/mcp/asset/70e2ee73-c607-4c1f-9c9a-0cbe445512f4';
+const DEFAULT_PRODUCT_EMOJI = '📦';
 
 const STEPS = [
   { label: 'Product Info',    sub: 'Basic details' },
@@ -1435,6 +1488,476 @@ let SAMPLE_PRODUCTS = [
   'Amazon Echo Dot','Sanford Chair Sofa','Red Premium Satchel','iPhone 14 Pro',
   'Gaming Chair','Borealis Backpack','Sony WH-1000XM6','MacBook Air M4',
 ];
+let skuSourceProducts = [];
+let skuRefreshPromise = null;
+
+function getEditorProductId() {
+  var params = new URLSearchParams(window.location.search);
+  return (params.get('id') || '').trim();
+}
+
+function isEditRoute() {
+  return /Edit_Product\.html$/i.test(window.location.pathname || '');
+}
+
+function isEditMode() {
+  return editorMode === 'edit';
+}
+
+function getFieldValue(id) {
+  var field = document.getElementById(id);
+  return field ? String(field.value || '').trim() : '';
+}
+
+function setFieldValue(id, value) {
+  var field = document.getElementById(id);
+  if (field) {
+    field.value = value == null ? '' : String(value);
+  }
+}
+
+function ensureSelectOption(select, value) {
+  if (!select || !value) {
+    return;
+  }
+
+  var normalizedValue = String(value);
+  var hasOption = Array.from(select.options).some(function (option) {
+    return option.value === normalizedValue || option.text === normalizedValue;
+  });
+
+  if (!hasOption) {
+    var option = document.createElement('option');
+    option.value = normalizedValue;
+    option.textContent = normalizedValue;
+    select.appendChild(option);
+  }
+}
+
+function setSelectValue(id, value) {
+  var select = document.getElementById(id);
+  if (!select) {
+    return;
+  }
+
+  var normalizedValue = value == null ? '' : String(value);
+  ensureSelectOption(select, normalizedValue);
+
+  var matched = Array.from(select.options).find(function (option) {
+    return option.value === normalizedValue || option.text === normalizedValue;
+  });
+
+  select.value = matched ? matched.value : '';
+}
+
+function parseOptionalNumber(rawValue, decimals) {
+  var value = String(rawValue == null ? '' : rawValue).trim();
+  if (!value) {
+    return undefined;
+  }
+
+  var parsed = Number(value);
+  if (Number.isNaN(parsed)) {
+    return undefined;
+  }
+
+  if (typeof decimals === 'number') {
+    return Number(parsed.toFixed(decimals));
+  }
+
+  return parsed;
+}
+
+function parseOptionalInteger(rawValue) {
+  var value = String(rawValue == null ? '' : rawValue).trim();
+  if (!value) {
+    return undefined;
+  }
+
+  var parsed = parseInt(value, 10);
+  return Number.isNaN(parsed) ? undefined : parsed;
+}
+
+function normalizeProductStatus(value) {
+  var normalized = String(value || '').trim().toLowerCase();
+  return ['active', 'inactive', 'draft'].includes(normalized)
+    ? normalized
+    : 'active';
+}
+
+function normalizeProductVisibility(value) {
+  var normalized = String(value || '').trim().toLowerCase();
+
+  if (normalized === 'publish-now') {
+    return 'published';
+  }
+
+  return ['published', 'hidden', 'scheduled'].includes(normalized)
+    ? normalized
+    : 'published';
+}
+
+function formatProductStateLabel(value) {
+  var normalized = String(value || '').trim().toLowerCase();
+
+  if (!normalized) {
+    return '—';
+  }
+
+  return normalized
+    .split('-')
+    .map(function (part) {
+      return part ? part.charAt(0).toUpperCase() + part.slice(1) : '';
+    })
+    .join(' ');
+}
+
+function syncSelectedProductState(product) {
+  selectedStatus = normalizeProductStatus(product && product.status);
+  selectedPublish = normalizeProductVisibility(product && product.visibility);
+}
+
+function normalizeStringArray(values) {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+
+  return values
+    .map(function (value) {
+      return String(value || '').trim();
+    })
+    .filter(Boolean);
+}
+
+function normalizeObjectArray(values) {
+  return Array.isArray(values)
+    ? values.filter(function (value) {
+        return value && typeof value === 'object';
+      }).map(function (value) {
+        return Object.assign({}, value);
+      })
+    : [];
+}
+
+function escapeHtmlAttr(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function setDescriptionValue(htmlValue, textValue) {
+  var descEl = document.getElementById('f-desc');
+  if (!descEl) {
+    return;
+  }
+
+  if (htmlValue) {
+    descEl.innerHTML = htmlValue;
+  } else {
+    descEl.textContent = textValue || '';
+  }
+
+  updateDescPlaceholder(descEl);
+}
+
+function buildImageState(product) {
+  var seen = {};
+  var productImages = [];
+
+  normalizeStringArray(product && product.images).forEach(function (src) {
+    if (!seen[src]) {
+      seen[src] = true;
+      productImages.push({ src: src, name: 'Image ' + (productImages.length + 1) });
+    }
+  });
+
+  var mainProductImg = product && product.productImg ? String(product.productImg).trim() : '';
+  if (mainProductImg && !seen[mainProductImg]) {
+    seen[mainProductImg] = true;
+    productImages.unshift({ src: mainProductImg, name: 'Main Image' });
+  }
+
+  return productImages;
+}
+
+function applyEditorChrome() {
+  document.title = isEditMode() ? 'StockOverflow – Edit Product' : 'StockOverflow – Add Product';
+
+  var breadcrumbCurrent = document.querySelector('.tb-breadcrumb .current');
+  if (breadcrumbCurrent) {
+    breadcrumbCurrent.textContent = isEditMode() ? 'Edit Product' : 'Add Product';
+  }
+
+  var pageTitle = document.querySelector('.page-title');
+  if (pageTitle) {
+    pageTitle.textContent = isEditMode() ? 'Edit Product' : 'Add New Product';
+  }
+
+  var pageSubtitle = document.querySelector('.page-subtitle');
+  if (pageSubtitle) {
+    pageSubtitle.textContent = isEditMode()
+      ? 'Products / Edit Product'
+      : 'Products / Add Product';
+  }
+
+  var addNav = document.querySelector('.sb-item[href="Add_New_Product.html"]');
+  var editNav = document.querySelector('.sb-item[href="Edit_Product.html"]');
+  if (addNav && editNav) {
+    addNav.classList.toggle('active', !isEditMode());
+    editNav.classList.toggle('active', isEditMode());
+  }
+}
+
+function rememberSavedProduct(product) {
+  if (!product || !product.sku) {
+    return;
+  }
+
+  currentProductRecord = Object.assign({}, currentProductRecord || {}, product);
+  editingProductId = product.id || editingProductId;
+  syncSelectedProductState(currentProductRecord);
+  rememberCreatedProduct(currentProductRecord);
+}
+
+function sanitizeVariant(variant) {
+  return {
+    attr: String((variant && variant.attr) || 'Color'),
+    name: String((variant && variant.name) || '').trim(),
+    color: String((variant && variant.color) || '#5b67ca'),
+    stock: parseOptionalInteger(variant && variant.stock) || 0,
+    price: parseOptionalNumber(variant && variant.price, 2) || 0,
+    sku_suffix: String((variant && variant.sku_suffix) || '').trim(),
+  };
+}
+
+function buildProductPayload() {
+  var price = parseOptionalNumber(getFieldValue('f-price'), 2);
+  var qty = parseOptionalInteger(getFieldValue('f-qty'));
+  var minStock = parseOptionalInteger(getFieldValue('f-min-stock'));
+  var maxStock = parseOptionalInteger(getFieldValue('f-max-stock'));
+  var descEl = document.getElementById('f-desc');
+  var descriptionText = descEl ? descEl.innerText.trim() : '';
+  var descriptionHtml = descEl ? descEl.innerHTML.trim() : '';
+  var mainImage = images.length ? images[mainImgIdx].src : '';
+  var maxValue = maxStock;
+
+  if (maxValue == null || maxValue <= 0) {
+    maxValue = Math.max(qty || 0, minStock || 0, 100);
+  }
+
+  return {
+    sku: isEditMode() ? getFieldValue('f-sku') : getFieldValue('f-sku') || resolveNextSku(),
+    name: getFieldValue('f-name'),
+    category: getFieldValue('f-category'),
+    subCategory: getFieldValue('f-sub-category'),
+    brand: getFieldValue('f-brand'),
+    price: price,
+    cost: parseOptionalNumber(getFieldValue('f-cost'), 2) || 0,
+    discountType: getFieldValue('f-disc-type') || 'none',
+    discountValue: parseOptionalNumber(getFieldValue('f-discount'), 2) || 0,
+    finalPrice: parseOptionalNumber(getFieldValue('f-final'), 2) || price || 0,
+    taxRate: parseOptionalNumber(getFieldValue('f-tax'), 2) || 0,
+    taxType: getFieldValue('f-tax-type') || 'Inclusive',
+    unit: getFieldValue('f-unit') || 'Pc',
+    qty: qty || 0,
+    min: minStock || 0,
+    max: maxValue,
+    description: descriptionText,
+    descriptionHtml: descriptionHtml,
+    tags: normalizeStringArray(tags),
+    supplier: getFieldValue('f-supplier'),
+    supplierSku: getFieldValue('f-supplier-sku'),
+    barcode: getFieldValue('f-barcode'),
+    warehouse: getFieldValue('f-warehouse'),
+    bin: getFieldValue('f-bin'),
+    reorderPoint: parseOptionalInteger(getFieldValue('f-reorder')) || 0,
+    reorderQty: parseOptionalInteger(getFieldValue('f-reorder-qty')) || 0,
+    hasVariants: !!document.getElementById('sw-variants').checked,
+    variants: variants
+      .map(sanitizeVariant)
+      .filter(function (variant) {
+        return variant.name;
+      }),
+    hasExpiry: !!document.getElementById('sw-expiry').checked,
+    expiryDate: getFieldValue('f-expiry'),
+    batchNumber: getFieldValue('f-batch'),
+    weightKg: parseOptionalNumber(getFieldValue('f-weight'), 2) || 0,
+    lengthCm: parseOptionalNumber(getFieldValue('f-len'), 2) || 0,
+    widthCm: parseOptionalNumber(getFieldValue('f-wid'), 2) || 0,
+    heightCm: parseOptionalNumber(getFieldValue('f-ht'), 2) || 0,
+    shippingClass: getFieldValue('f-ship-class') || 'Standard',
+    customFields: normalizeObjectArray(customFields).map(function (field) {
+      return {
+        key: String(field.key || '').trim(),
+        val: String((field.val != null ? field.val : field.value) || '').trim(),
+      };
+    }).filter(function (field) {
+      return field.key || field.val;
+    }),
+    creator:
+      (currentProductRecord && currentProductRecord.creator) || DEFAULT_CREATOR_NAME,
+    creatorImg:
+      (currentProductRecord && currentProductRecord.creatorImg) || DEFAULT_CREATOR_IMG,
+    productImg: mainImage,
+    images: images.map(function (image) {
+      return image.src;
+    }).filter(Boolean),
+    emoji:
+      (currentProductRecord && currentProductRecord.emoji) || DEFAULT_PRODUCT_EMOJI,
+    soldThisMonth:
+      (currentProductRecord && Number(currentProductRecord.soldThisMonth)) || 0,
+    trend: (currentProductRecord && currentProductRecord.trend) || 'up',
+    status: normalizeProductStatus(
+      (currentProductRecord && currentProductRecord.status) || selectedStatus,
+    ),
+    visibility: normalizeProductVisibility(
+      (currentProductRecord && currentProductRecord.visibility) || selectedPublish,
+    ),
+    restockedAt: getFieldValue('f-restock-date')
+      ? new Date(getFieldValue('f-restock-date')).toISOString()
+      : (currentProductRecord && currentProductRecord.restockedAt) || new Date().toISOString(),
+  };
+}
+
+function populateProductForm(product) {
+  if (!product) {
+    return;
+  }
+
+  currentProductRecord = Object.assign({}, product);
+  editingProductId = product.id || editingProductId;
+  syncSelectedProductState(product);
+
+  setFieldValue('f-name', product.name);
+  setSelectValue('f-category', product.category);
+  setSelectValue('f-sub-category', product.subCategory);
+  setSelectValue('f-brand', product.brand);
+  setSelectValue('f-unit', product.unit || 'Pc');
+  setDescriptionValue(product.descriptionHtml, product.description);
+
+  tags = normalizeStringArray(product.tags);
+  renderTags();
+
+  setFieldValue('f-price', product.price);
+  setFieldValue('f-cost', product.cost);
+  setSelectValue('f-disc-type', product.discountType || 'none');
+  updateDiscountLabel();
+  setFieldValue('f-discount', product.discountValue);
+  setFieldValue('f-tax', product.taxRate);
+  setSelectValue('f-tax-type', product.taxType || 'Inclusive');
+
+  setSelectValue('f-supplier', product.supplier);
+  setFieldValue('f-supplier-sku', product.supplierSku);
+  applySkuFieldValue(product.sku || resolveNextSku());
+  setFieldValue('f-barcode', product.barcode);
+  setFieldValue('f-qty', product.qty);
+  setFieldValue('f-min-stock', product.min);
+  setFieldValue('f-max-stock', product.max);
+  setSelectValue('f-warehouse', product.warehouse);
+  setFieldValue('f-bin', product.bin);
+  setFieldValue('f-reorder', product.reorderPoint);
+  setFieldValue('f-reorder-qty', product.reorderQty);
+  if (product.restockedAt) {
+    try {
+      var dRes = new Date(product.restockedAt);
+      if (!isNaN(dRes.getTime())) {
+        setFieldValue('f-restock-date', dRes.toISOString().split('T')[0]);
+      }
+    } catch (_e) {}
+  }
+
+  images = buildImageState(product);
+  mainImgIdx = 0;
+  if (product.productImg) {
+    var mainIndex = images.findIndex(function (image) {
+      return image.src === product.productImg;
+    });
+    mainImgIdx = mainIndex >= 0 ? mainIndex : 0;
+  }
+  renderImages();
+
+  variants = normalizeObjectArray(product.variants).map(sanitizeVariant);
+  var variantsEnabled = !!product.hasVariants || variants.length > 0;
+  document.getElementById('sw-variants').checked = variantsEnabled;
+  toggleVariants(document.getElementById('sw-variants'));
+  renderVariants();
+
+  document.getElementById('sw-expiry').checked =
+    !!product.hasExpiry || !!product.expiryDate || !!product.batchNumber;
+  toggleExpiry(document.getElementById('sw-expiry'));
+  setFieldValue('f-expiry', product.expiryDate);
+  setFieldValue('f-batch', product.batchNumber);
+
+  setFieldValue('f-weight', product.weightKg);
+  setFieldValue('f-len', product.lengthCm);
+  setFieldValue('f-wid', product.widthCm);
+  setFieldValue('f-ht', product.heightCm);
+  setSelectValue('f-ship-class', product.shippingClass || 'Standard');
+
+  customFields = normalizeObjectArray(product.customFields).map(function (field) {
+    return {
+      key: String(field.key || '').trim(),
+      val: String((field.val != null ? field.val : field.value) || '').trim(),
+    };
+  });
+  renderCustomFields();
+
+  recalc();
+  if (currentStep === totalSteps) {
+    buildSummary();
+  }
+}
+
+async function loadProductForEditing() {
+  if (!editingProductId) {
+    return;
+  }
+
+  var product = await window.RetailerApi.getProduct(editingProductId);
+  rememberSavedProduct(product);
+  populateProductForm(product);
+}
+
+async function initializeProductEditor() {
+  editingProductId = getEditorProductId();
+  editorMode = editingProductId || isEditRoute() ? 'edit' : 'create';
+  applyEditorChrome();
+
+  SAMPLE_PRODUCTS = (window.RetailerProductsData && Array.isArray(window.RetailerProductsData.sampleProductNames))
+    ? window.RetailerProductsData.sampleProductNames.slice()
+    : SAMPLE_PRODUCTS;
+
+  if (isEditMode()) {
+    if (!editingProductId) {
+      showToastMsg('No product was selected for editing. Redirecting…', true);
+      setTimeout(function () {
+        window.location.href = 'Product_List.html';
+      }, 1200);
+      return;
+    }
+
+    try {
+      await loadProductForEditing();
+    } catch (error) {
+      console.error('Error loading product for edit:', error);
+      showToastMsg('Unable to load product details. Redirecting…', true);
+      setTimeout(function () {
+        window.location.href = 'Product_List.html';
+      }, 1500);
+      return;
+    }
+  } else {
+    applySkuFieldValue(resolveNextSku());
+    refreshAutoSku();
+  }
+
+  renderStepper();
+  updateDots();
+  updateDescPlaceholder(document.getElementById('f-desc'));
+  recalc();
+}
 
 function getSharedProducts() {
   if (window.RetailerProductsData && typeof window.RetailerProductsData.getMasterProducts === 'function') {
@@ -1448,25 +1971,100 @@ function getSharedProducts() {
   return [];
 }
 
-function resolveNextSku() {
-  if (window.RetailerProductsData && typeof window.RetailerProductsData.generateNextSku === 'function') {
-    return window.RetailerProductsData.generateNextSku();
-  }
+function cloneProductList(products) {
+  return Array.isArray(products)
+    ? products.map(function (product) {
+        return Object.assign({}, product);
+      })
+    : [];
+}
 
-  var products = getSharedProducts();
+function setSkuSourceProducts(products) {
+  skuSourceProducts = cloneProductList(products);
+  return skuSourceProducts;
+}
+
+function getSkuNumber(value) {
+  var match = /^PT(\d+)$/i.exec(String(value || '').trim());
+  return match ? parseInt(match[1], 10) : 0;
+}
+
+function buildNextSku(products) {
   var maxSkuNum = 0;
   products.forEach(function (product) {
-    var match = /^PT(\d+)$/i.exec(String(product.sku || ''));
-    if (match) {
-      var parsed = parseInt(match[1], 10);
-      if (parsed > maxSkuNum) {
-        maxSkuNum = parsed;
-      }
+    var parsed = getSkuNumber(product && product.sku);
+    if (parsed > maxSkuNum) {
+      maxSkuNum = parsed;
     }
   });
 
   return 'PT' + String(maxSkuNum + 1).padStart(3, '0');
 }
+
+function applySkuFieldValue(sku) {
+  var skuInput = document.getElementById('f-sku');
+  if (skuInput) {
+    skuInput.value = sku;
+  }
+  return sku;
+}
+
+function resolveNextSku(productsOverride) {
+  var hasProductsOverride = Array.isArray(productsOverride);
+  var sourceProducts = hasProductsOverride
+    ? productsOverride
+    : (skuSourceProducts.length ? skuSourceProducts : getSharedProducts());
+
+  if (!hasProductsOverride && !sourceProducts.length && window.RetailerProductsData && typeof window.RetailerProductsData.generateNextSku === 'function') {
+    return window.RetailerProductsData.generateNextSku();
+  }
+
+  return buildNextSku(sourceProducts);
+}
+
+async function refreshAutoSku(forceRefresh) {
+  if (!forceRefresh && skuRefreshPromise) {
+    return skuRefreshPromise;
+  }
+
+  if (!window.RetailerApi || typeof window.RetailerApi.getProducts !== 'function') {
+    return Promise.resolve(applySkuFieldValue(resolveNextSku(setSkuSourceProducts(getSharedProducts()))));
+  }
+
+  skuRefreshPromise = window.RetailerApi.getProducts()
+    .then(function (products) {
+      var freshProducts = setSkuSourceProducts(products);
+      return applySkuFieldValue(resolveNextSku(freshProducts));
+    })
+    .catch(function (error) {
+      console.warn('Failed to refresh auto SKU from API:', error);
+      var fallbackProducts = skuSourceProducts.length ? skuSourceProducts : setSkuSourceProducts(getSharedProducts());
+      return applySkuFieldValue(resolveNextSku(fallbackProducts));
+    })
+    .finally(function () {
+      skuRefreshPromise = null;
+    });
+
+  return skuRefreshPromise;
+}
+
+function rememberCreatedProduct(product) {
+  if (!product || !product.sku) {
+    return;
+  }
+
+  var nextProducts = skuSourceProducts.filter(function (entry) {
+    return entry && entry.sku !== product.sku;
+  });
+  nextProducts.unshift(Object.assign({}, product));
+  setSkuSourceProducts(nextProducts);
+
+  if (window.RetailerProductsData && typeof window.RetailerProductsData.upsertProduct === 'function') {
+    window.RetailerProductsData.upsertProduct(product);
+  }
+}
+
+setSkuSourceProducts(getSharedProducts());
 
 /* ═══════════════════════════════════════════
    STEPPER
@@ -1534,7 +2132,7 @@ function updateDots() {
   document.getElementById('btnPrev').style.display = currentStep > 1 ? 'flex' : 'none';
   const btnNext = document.getElementById('btnNext');
   if (currentStep === totalSteps) {
-    btnNext.innerHTML = `<svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="2,6.5 10,6.5"/><polyline points="7,3.5 10,6.5 7,9.5"/></svg> Publish Product`;
+    btnNext.innerHTML = `<svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="2,6.5 10,6.5"/><polyline points="7,3.5 10,6.5 7,9.5"/></svg> ${isEditMode() ? 'Update Product' : 'Publish Product'}`;
   } else {
     btnNext.innerHTML = `Continue <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="5,2 9,6.5 5,11"/></svg>`;
   }
@@ -1682,45 +2280,219 @@ function removeTag(i) {
 /* ═══════════════════════════════════════════
    IMAGE UPLOAD
 ═══════════════════════════════════════════ */
-function handleImgUpload(e) {
-  Array.from(e.target.files).forEach(f => {
-    if (!f.type.startsWith('image/')) return;
-    const r = new FileReader();
-    r.onload = ev => {
-      images.push({ src: ev.target.result, name: f.name });
-      if (images.length === 1) mainImgIdx = 0;
-      renderImages();
-    };
-    r.readAsDataURL(f);
+const MAX_PRODUCT_IMAGE_EDGE = 1600;
+const MAX_PRODUCT_IMAGE_BYTES = 700 * 1024;
+const PRODUCT_IMAGE_QUALITIES = [0.86, 0.78, 0.7, 0.62];
+
+function estimateDataUrlBytes(dataUrl) {
+  const base64 = String(dataUrl || '').split(',')[1] || '';
+  return Math.ceil(base64.length * 3 / 4);
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = event => resolve(event.target.result);
+    reader.onerror = () => reject(new Error('Could not read image file.'));
+    reader.readAsDataURL(file);
   });
+}
+
+function loadImageFromSrc(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Could not load image preview.'));
+    image.src = src;
+  });
+}
+
+function getScaledImageSize(width, height, maxEdge) {
+  const largestEdge = Math.max(width || 0, height || 0);
+  if (!largestEdge || largestEdge <= maxEdge) {
+    return {
+      width: Math.max(1, Math.round(width || maxEdge)),
+      height: Math.max(1, Math.round(height || maxEdge)),
+    };
+  }
+
+  const scale = maxEdge / largestEdge;
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
+}
+
+async function optimizeImageFile(file) {
+  if (!file || !file.type || !file.type.startsWith('image/')) {
+    return '';
+  }
+
+  if (/svg/i.test(file.type)) {
+    return readFileAsDataUrl(file);
+  }
+
+  const originalSrc = await readFileAsDataUrl(file);
+  const image = await loadImageFromSrc(originalSrc);
+  const size = getScaledImageSize(
+    image.naturalWidth || image.width,
+    image.naturalHeight || image.height,
+    MAX_PRODUCT_IMAGE_EDGE,
+  );
+  const canvas = document.createElement('canvas');
+  canvas.width = size.width;
+  canvas.height = size.height;
+  const context = canvas.getContext('2d');
+
+  if (!context) {
+    return originalSrc;
+  }
+
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, size.width, size.height);
+  context.drawImage(image, 0, 0, size.width, size.height);
+
+  let bestSrc = originalSrc;
+  for (const quality of PRODUCT_IMAGE_QUALITIES) {
+    const candidate = canvas.toDataURL('image/jpeg', quality);
+    bestSrc = candidate;
+    if (estimateDataUrlBytes(candidate) <= MAX_PRODUCT_IMAGE_BYTES) {
+      break;
+    }
+  }
+
+  return estimateDataUrlBytes(bestSrc) < estimateDataUrlBytes(originalSrc)
+    ? bestSrc
+    : originalSrc;
+}
+
+async function appendUploadedImages(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+
+  for (const file of files) {
+    if (!file.type || !file.type.startsWith('image/')) {
+      showToastMsg('Only image files (JPEG, PNG, WEBP, GIF) are allowed.', true);
+      continue;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToastMsg('File size must not exceed 10MB.', true);
+      continue;
+    }
+
+    try {
+      // 1. Generate immediate local Data URL for fast & reliable local display
+      let localDataUrl = '';
+      try {
+        localDataUrl = await optimizeImageFile(file);
+      } catch (_e) {
+        localDataUrl = await readFileAsDataUrl(file);
+      }
+
+      // 2. Attempt backend server upload
+      let serverUrl = '';
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+        const response = await fetch(apiBase + '/api/products/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const payload = await response.json();
+          if (payload && payload.url) {
+            serverUrl = payload.url.startsWith('http')
+              ? payload.url
+              : apiBase + payload.url;
+          }
+        }
+      } catch (uploadErr) {
+        console.warn('Server upload fallback to Data URL:', uploadErr);
+      }
+
+      const finalSrc = serverUrl || localDataUrl;
+      if (!finalSrc) {
+        showToastMsg('Failed to process image file.', true);
+        continue;
+      }
+
+      // Check if existing images are only default SVG card placeholders
+      const hasOnlyPlaceholders = images.length > 0 && images.every(function(img) {
+        return (img.src || '').indexOf('data:image/svg+xml') === 0;
+      });
+
+      if (hasOnlyPlaceholders) {
+        images = [{ src: finalSrc, name: file.name }];
+        mainImgIdx = 0;
+      } else {
+        images.push({ src: finalSrc, name: file.name });
+        mainImgIdx = images.length - 1;
+      }
+
+      showToastMsg('Image added successfully!');
+    } catch (error) {
+      console.error('Error processing image upload:', error);
+      showToastMsg('Error loading image file.', true);
+    }
+  }
+  renderImages();
+}
+
+function handleImgUpload(e) {
+  const files = Array.from(e.target.files || []);
   e.target.value = '';
+  void appendUploadedImages(files);
 }
 
 function renderImages() {
   const strip = document.getElementById('imgStrip');
-  strip.innerHTML = '';
-  images.forEach((img, i) => {
-    const thumb = document.createElement('div');
-    thumb.className = 'img-thumb' + (i===mainImgIdx?' main-thumb':'');
-    thumb.onclick = () => setMainImg(i);
-    thumb.innerHTML = `
-      <img src="${img.src}" alt="${img.name}" style="width:100%;height:100%;object-fit:cover"/>
-      ${i===mainImgIdx?'<div class="main-badge">Main</div>':''}
-      <div class="img-thumb-del" onclick="event.stopPropagation();removeImg(${i})">
-        <svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
-      </div>`;
-    strip.appendChild(thumb);
-  });
-
-  // Main preview
-  if (images.length > 0) {
-    document.getElementById('mainImgPlaceholder').style.display = 'none';
-    document.getElementById('mainImgEl').style.display = 'block';
-    document.getElementById('mainImgEl').src = images[mainImgIdx].src;
-  } else {
-    document.getElementById('mainImgPlaceholder').style.display = 'flex';
-    document.getElementById('mainImgEl').style.display = 'none';
+  if (strip) {
+    strip.innerHTML = '';
+    images.forEach(function(img, i) {
+      const thumb = document.createElement('div');
+      thumb.className = 'img-thumb' + (i === mainImgIdx ? ' main-thumb' : '');
+      thumb.onclick = function() { setMainImg(i); };
+      thumb.innerHTML = `
+        <img src="${img.src}" alt="${img.name || 'Product Image'}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='https://picsum.photos/seed/thumb/200'"/>
+        ${i === mainImgIdx ? '<div class="main-badge">Main</div>' : ''}
+        <div class="img-thumb-del" onclick="event.stopPropagation();removeImg(${i})" title="Remove image">
+          <svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
+        </div>`;
+      strip.appendChild(thumb);
+    });
   }
+
+  // Main preview display
+  const mainPlaceholder = document.getElementById('mainImgPlaceholder');
+  const mainEl = document.getElementById('mainImgEl');
+
+  if (images.length > 0 && images[mainImgIdx]) {
+    if (mainPlaceholder) mainPlaceholder.style.display = 'none';
+    if (mainEl) {
+      mainEl.style.display = 'block';
+      mainEl.src = images[mainImgIdx].src;
+    }
+  } else {
+    if (mainPlaceholder) mainPlaceholder.style.display = 'flex';
+    if (mainEl) mainEl.style.display = 'none';
+  }
+}
+
+function setMainImg(i) {
+  if (i >= 0 && i < images.length) {
+    mainImgIdx = i;
+    renderImages();
+  }
+}
+
+function removeImg(i) {
+  images.splice(i, 1);
+  if (mainImgIdx >= images.length) {
+    mainImgIdx = Math.max(0, images.length - 1);
+  }
+  renderImages();
 }
 
 function setMainImg(i) {
@@ -1741,15 +2513,7 @@ uz.addEventListener('dragleave', () => uz.classList.remove('drag-over'));
 uz.addEventListener('drop', e => {
   e.preventDefault();
   uz.classList.remove('drag-over');
-  Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).forEach(f => {
-    const r = new FileReader();
-    r.onload = ev => {
-      images.push({ src: ev.target.result, name: f.name });
-      if (images.length === 1) mainImgIdx = 0;
-      renderImages();
-    };
-    r.readAsDataURL(f);
-  });
+  void appendUploadedImages(Array.from((e.dataTransfer && e.dataTransfer.files) || []));
 });
 
 /* ═══════════════════════════════════════════
@@ -1758,14 +2522,17 @@ uz.addEventListener('drop', e => {
 function pickStatus(btn, color) {
   document.querySelectorAll('.toggle-group .toggle-pill').forEach(p => p.className = 'toggle-pill');
   btn.className = 'toggle-pill sel-' + color;
-  selectedStatus = btn.dataset.val;
+  selectedStatus = normalizeProductStatus(btn.dataset.val);
 }
 
 function pickPublish(btn, color) {
   btn.closest('.toggle-group').querySelectorAll('.toggle-pill').forEach(p => p.className = 'toggle-pill');
   btn.className = 'toggle-pill sel-' + color;
-  selectedPublish = btn.dataset.val;
-  document.getElementById('scheduleField').style.display = selectedPublish === 'schedule' ? 'block' : 'none';
+  selectedPublish = normalizeProductVisibility(btn.dataset.val);
+  var scheduleField = document.getElementById('scheduleField');
+  if (scheduleField) {
+    scheduleField.style.display = selectedPublish === 'scheduled' ? 'block' : 'none';
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -1843,69 +2610,128 @@ function toggleExpiry(sw) {
   document.getElementById('expiryFields').style.display = sw.checked ? 'block' : 'none';
 }
 
-function addCustomField() {
-  const idx = customFields.length;
-  customFields.push({ key: '', val: '' });
-  document.getElementById('customFieldsEmpty').style.display = 'none';
-  const list = document.getElementById('customFieldsList');
-  const row = document.createElement('div');
-  row.className = 'field-row col-2';
-  row.id = 'cf-' + idx;
-  row.style.marginBottom = '10px';
-  row.innerHTML = `
-    <div class="field">
-      <label class="field-label" style="font-size:12px">Attribute Name</label>
-      <input class="input" placeholder="e.g. Material" onchange="customFields[${idx}].key=this.value"/>
-    </div>
-    <div class="field" style="position:relative">
-      <label class="field-label" style="font-size:12px">Value</label>
-      <div style="display:flex;gap:6px">
-        <input class="input" placeholder="e.g. Aluminum" onchange="customFields[${idx}].val=this.value" style="flex:1"/>
-        <div class="v-del-btn" onclick="removeCustomField(${idx})" style="flex-shrink:0;margin-top:0">
-          <svg viewBox="0 0 12 12" fill="none" stroke-width="1.4"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
-        </div>
+function renderCustomFields() {
+  var list = document.getElementById('customFieldsList');
+  var empty = document.getElementById('customFieldsEmpty');
+
+  if (!list || !empty) {
+    return;
+  }
+
+  list.innerHTML = '';
+  var activeFields = normalizeObjectArray(customFields);
+
+  if (!activeFields.length) {
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  customFields = activeFields.map(function (field) {
+    return {
+      key: String(field.key || '').trim(),
+      val: String((field.val != null ? field.val : field.value) || '').trim(),
+    };
+  });
+
+  customFields.forEach(function (field, idx) {
+    var row = document.createElement('div');
+    row.className = 'field-row col-2';
+    row.style.marginBottom = '10px';
+    row.innerHTML = `
+      <div class="field">
+        <label class="field-label" style="font-size:12px">Attribute Name</label>
+        <input class="input" value="${escapeHtmlAttr(field.key)}" placeholder="e.g. Material" onchange="customFields[${idx}].key=this.value"/>
       </div>
-    </div>`;
-  list.appendChild(row);
+      <div class="field" style="position:relative">
+        <label class="field-label" style="font-size:12px">Value</label>
+        <div style="display:flex;gap:6px">
+          <input class="input" value="${escapeHtmlAttr(field.val)}" placeholder="e.g. Aluminum" onchange="customFields[${idx}].val=this.value" style="flex:1"/>
+          <div class="v-del-btn" onclick="removeCustomField(${idx})" style="flex-shrink:0;margin-top:0">
+            <svg viewBox="0 0 12 12" fill="none" stroke-width="1.4"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
+          </div>
+        </div>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+function addCustomField() {
+  customFields.push({ key: '', val: '' });
+  renderCustomFields();
 }
 
 function removeCustomField(idx) {
-  const row = document.getElementById('cf-' + idx);
-  if (row) row.remove();
-  customFields[idx] = null;
-  if (!customFields.filter(Boolean).length) {
-    document.getElementById('customFieldsEmpty').style.display = 'block';
-  }
+  customFields.splice(idx, 1);
+  renderCustomFields();
 }
 
 /* ═══════════════════════════════════════════
    SEO PREVIEW
 ═══════════════════════════════════════════ */
 function updateSeoPreview() {
-  const title = document.getElementById('f-seo-title').value;
-  const desc  = document.getElementById('f-seo-desc').value;
-  const slug  = document.getElementById('f-slug').value;
+  var titleInput = document.getElementById('f-seo-title');
+  var descInput = document.getElementById('f-seo-desc');
+  var slugInput = document.getElementById('f-slug');
+  var titlePreview = document.getElementById('seo-prev-title');
+  var descPreview = document.getElementById('seo-prev-desc');
+  var slugPreview = document.getElementById('seo-slug-span');
+  var titleCount = document.getElementById('seo-title-count');
+  var descCount = document.getElementById('seo-desc-count');
 
-  document.getElementById('seo-prev-title').textContent = title || 'Your Product Title';
-  document.getElementById('seo-prev-desc').textContent  = desc  || 'Your meta description will appear here. Keep it under 160 characters for best results.';
-  document.getElementById('seo-slug-span').textContent  = slug  || 'your-product-slug';
+  if (
+    !titleInput ||
+    !descInput ||
+    !slugInput ||
+    !titlePreview ||
+    !descPreview ||
+    !slugPreview ||
+    !titleCount ||
+    !descCount
+  ) {
+    return;
+  }
 
-  document.getElementById('seo-title-count').textContent = title.length + ' / 70 chars';
-  document.getElementById('seo-desc-count').textContent  = desc.length  + ' / 160 chars';
+  const title = titleInput.value;
+  const desc  = descInput.value;
+  const slug  = slugInput.value;
+
+  titlePreview.textContent = title || 'Your Product Title';
+  descPreview.textContent  = desc  || 'Your meta description will appear here. Keep it under 160 characters for best results.';
+  slugPreview.textContent  = slug  || 'your-product-slug';
+
+  titleCount.textContent = title.length + ' / 70 chars';
+  descCount.textContent  = desc.length  + ' / 160 chars';
 }
 
 /* Auto-fill SEO from product name */
 document.getElementById('f-name').addEventListener('input', function() {
   const name = this.value;
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  document.getElementById('f-slug').value = slug;
+  const slugField = document.getElementById('f-slug');
+  if (slugField) {
+    slugField.value = slug;
+  }
 
   const seoTitle = document.getElementById('f-seo-title');
-  if (!seoTitle.dataset.edited) seoTitle.value = name;
+  if (seoTitle && !seoTitle.dataset.edited) seoTitle.value = name;
   updateSeoPreview();
 });
-document.getElementById('f-seo-title').addEventListener('input', function() { this.dataset.edited = 'true'; updateSeoPreview(); });
-document.getElementById('f-slug').addEventListener('input', function() { this.dataset.edited = 'true'; updateSeoPreview(); });
+var seoTitleField = document.getElementById('f-seo-title');
+if (seoTitleField) {
+  seoTitleField.addEventListener('input', function() {
+    this.dataset.edited = 'true';
+    updateSeoPreview();
+  });
+}
+
+var seoSlugField = document.getElementById('f-slug');
+if (seoSlugField) {
+  seoSlugField.addEventListener('input', function() {
+    this.dataset.edited = 'true';
+    updateSeoPreview();
+  });
+}
 
 /* ═══════════════════════════════════════════
    RELATED PRODUCTS
@@ -1960,7 +2786,7 @@ function buildSummary() {
     ['Opening Stock', qty + ' units'],
     ['Images',       images.length + ' uploaded'],
     ['Variants',     variants.length + ' option(s)'],
-    ['Status',       selectedStatus],
+    ['Status',       formatProductStateLabel(selectedStatus)],
     ['Tags',         tags.length ? tags.join(', ') : '—'],
   ];
   document.getElementById('summaryBody').innerHTML = `
@@ -1976,86 +2802,50 @@ function buildSummary() {
 /* ═══════════════════════════════════════════
    PUBLISH
 ═══════════════════════════════════════════ */
-function publishProduct() {
-  var skuInput = document.getElementById('f-sku');
-  var nameInput = document.getElementById('f-name');
-  var categoryInput = document.getElementById('f-category');
-  var brandInput = document.getElementById('f-brand');
-  var unitInput = document.getElementById('f-unit');
-  var priceInput = document.getElementById('f-price');
-  var qtyInput = document.getElementById('f-qty');
-  var maxStockInput = document.getElementById('f-max-stock');
-  var minStockInput = document.getElementById('f-min-stock');
+async function publishProduct() {
+  if (!isEditMode()) {
+    var nextSku = await refreshAutoSku(true);
+    if (nextSku) {
+      applySkuFieldValue(nextSku);
+    }
+  }
 
-  var sku = (skuInput.value || '').trim() || resolveNextSku();
-  var name = (nameInput.value || '').trim();
-  var category = categoryInput.value;
-  var brand = brandInput.value;
-  var unit = unitInput.value || 'Pc';
-  var priceUSD = parseFloat(priceInput.value || '0');
-  var qty = parseInt(qtyInput.value || '0', 10);
-  var maxStock = parseInt(maxStockInput.value || '0', 10);
-  var minStock = parseInt(minStockInput.value || '0', 10);
-  var descEl = document.getElementById('f-desc');
-  var productImg = images.length ? images[mainImgIdx].src : '';
-
-  if (!name || !category || !brand || Number.isNaN(priceUSD) || priceUSD < 0) {
+  var payload = buildProductPayload();
+  if (
+    !payload.name ||
+    !payload.category ||
+    !payload.brand ||
+    typeof payload.price !== 'number' ||
+    Number.isNaN(payload.price) ||
+    payload.price < 0
+  ) {
     showToastMsg('Please complete the required fields before publishing.', true);
     return;
   }
 
-  if (Number.isNaN(qty) || qty < 0) {
-    qty = 0;
-  }
-  if (Number.isNaN(maxStock) || maxStock <= 0) {
-    maxStock = Math.max(qty, minStock || 0, 100);
-  }
+  try {
+    var persistedProduct = isEditMode()
+      ? await window.RetailerApi.updateProduct(editingProductId, payload)
+      : await window.RetailerApi.createProduct(payload);
 
-  var existing = getSharedProducts();
-  var duplicate = existing.some(function (product) {
-    return product.sku === sku;
-  });
+    rememberSavedProduct(persistedProduct);
 
-  if (duplicate) {
-    showToastMsg('SKU already exists. Please regenerate SKU.', true);
-    return;
-  }
-
-  var newProduct = {
-    sku: sku,
-    name: name,
-    category: category,
-    brand: brand,
-    priceUSD: Number(priceUSD.toFixed(2)),
-    unit: unit,
-    qty: qty,
-    max: maxStock,
-    creator: 'Retail Manager',
-    creatorImg: 'https://www.figma.com/api/mcp/asset/70e2ee73-c607-4c1f-9c9a-0cbe445512f4',
-    productImg: productImg,
-    emoji: '📦',
-    soldThisMonth: 0,
-    trend: 'up',
-    description: descEl ? descEl.innerText.trim() : ''
-  };
-
-  if (window.RetailerProductsData && typeof window.RetailerProductsData.upsertProduct === 'function') {
-    var saved = window.RetailerProductsData.upsertProduct(newProduct);
-    if (!saved) {
-      showToastMsg('Unable to save product. Please try again.', true);
-      return;
+    if (isEditMode()) {
+      populateProductForm(persistedProduct);
+      showToastMsg('Product updated successfully! Redirecting…');
+    } else {
+      applySkuFieldValue(resolveNextSku());
+      showToastMsg('Product added successfully! Redirecting…');
     }
 
-    showToastMsg('Product added successfully! Redirecting…');
     setTimeout(function () {
       window.location.href = 'Product_List.html';
-    }, 1200);
-    return;
+    }, 1500);
+  } catch (error) {
+    console.error('Error saving product:', error);
+    showToastMsg(error.message || 'Error saving product', true);
   }
-
-  showToastMsg('Unable to save product. Shared data source is unavailable.', true);
 }
-
 function saveDraft() {
   showToastMsg('Product saved as draft.');
 }
@@ -2103,14 +2893,42 @@ function setSbActive(el) {
 /* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
-SAMPLE_PRODUCTS = (window.RetailerProductsData && Array.isArray(window.RetailerProductsData.sampleProductNames))
-  ? window.RetailerProductsData.sampleProductNames.slice()
-  : SAMPLE_PRODUCTS;
-
-document.getElementById('f-sku').value = resolveNextSku();
-
-renderStepper();
-updateDots();
+(async function () {
+  await initializeProductEditor();
+})();
 </script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      const topAvatar = document.getElementById('topbarAvatar');
+      if (topAvatar) topAvatar.textContent = initials;
+      const popAvatar = document.getElementById('profilePopoverAvatar');
+      if (popAvatar) popAvatar.textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
 </body>
 </html>
+

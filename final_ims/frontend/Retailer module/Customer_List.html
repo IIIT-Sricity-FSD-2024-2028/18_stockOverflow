@@ -779,7 +779,7 @@ table.cust-table tbody tr.selected td{background:#f0f6ff}
         <div class="btn-icon" title="Export Excel" onclick="exportAction('excel')">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="10" y1="9" x2="6" y2="13"/></svg>
         </div>
-        <div class="btn-icon" title="Refresh" onclick="location.reload()">
+        <div class="btn-icon" title="Refresh" onclick="if (typeof renderTable === 'function') renderTable();">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13.5 8a5.5 5.5 0 11-1.1-3.3"/><polyline points="13.5,2 13.5,5 10.5,5"/></svg>
         </div>
         <button class="btn btn-primary" onclick="openAddModal()">
@@ -1068,7 +1068,6 @@ table.cust-table tbody tr.selected td{background:#f0f6ff}
   <span id="toastMsg">Done!</span>
 </div>
 
-<script src="../js/so-toast.js"></script>
 <script src="api-config.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════

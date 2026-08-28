@@ -93,6 +93,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .bl-page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;line-height:27px;color:#212b36}
 .bl-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#646b72;margin-top:2px}
 
+/* Pending Requests Card */
+.bl-requests-card{background:#fff;border:1px solid #e6eaed;border-radius:5px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden;margin-bottom:24px}
+.bl-card-header{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #e6eaed;background:#f9fafb}
+.bl-card-header h3{font-family:'Nunito Sans',sans-serif;font-size:16px;font-weight:700;color:#212b36;margin:0}
+.bl-requests-count{background:#f59e0b;color:#fff;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700}
+.bl-requests-list{max-height:400px;overflow-y:auto}
+.bl-request-item{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #e6eaed;background:#fff}
+.bl-request-item:last-child{border-bottom:none}
+.bl-request-info{display:flex;align-items:center;gap:12px;flex:1}
+.bl-request-avatar{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.bl-request-details{flex:1}
+.bl-request-name{font-weight:700;color:#212b36;font-size:14px;margin-bottom:2px}
+.bl-request-meta{font-size:12px;color:#646b72;margin-bottom:1px}
+.bl-request-company{font-size:12px;color:#9ca3af}
+.bl-request-actions{display:flex;gap:8px}
+.bl-request-btn{padding:6px 12px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:background .14s}
+.bl-approve-btn{background:#22c55e;color:#fff}
+.bl-approve-btn:hover{background:#16a34a}
+.bl-reject-btn{background:#ef4444;color:#fff}
+.bl-reject-btn:hover{background:#dc2626}
+
 /* Toolbar buttons */
 .bl-toolbar{display:flex;align-items:center;gap:8px}
 .bl-icon-btn{width:34px;height:34px;border:1px solid #e6eaed;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s}
@@ -157,8 +178,26 @@ table.bl-table tbody tr:hover td{background:#fafafa}
 .act-btn.del:hover{background:#fee2e2;border-color:#fca5a5}
 .act-btn.edit:hover{background:#eef0fd}
 
-/* Table footer / pagination */
-.bl-table-footer{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:#fff;border-top:1px solid #e6eaed}
+/* Pending Requests Card */
+.bl-requests-card{background:#fff;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:24px;overflow:hidden}
+.bl-card-header{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid #e5e7eb}
+.bl-card-header h3{font-size:18px;font-weight:700;color:#1a1d2e;margin:0}
+.bl-requests-count{background:#ef4444;color:#fff;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700}
+.bl-requests-list{padding:0}
+.bl-request-item{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f3f4f6}
+.bl-request-item:last-child{border-bottom:none}
+.bl-request-info{display:flex;align-items:center;gap:12px}
+.bl-request-avatar{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff}
+.bl-request-details{flex:1}
+.bl-request-name{font-size:14px;font-weight:600;color:#1a1d2e;margin-bottom:2px}
+.bl-request-meta{font-size:12px;color:#6b7280;margin-bottom:2px}
+.bl-request-company{font-size:12px;color:#9ca3af}
+.bl-request-actions{display:flex;gap:8px}
+.bl-request-btn{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none}
+.bl-approve-btn{background:#22c55e;color:#fff}
+.bl-approve-btn:hover{background:#16a34a}
+.bl-reject-btn{background:#ef4444;color:#fff}
+.bl-reject-btn:hover{background:#dc2626}
 .bl-rows-per-page{display:flex;align-items:center;gap:8px;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#646b72}
 .bl-rpp-select{display:flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid #e6eaed;border-radius:5px;cursor:pointer;background:#fff}
 .bl-rpp-select span{font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:700;color:#212b36}
@@ -194,6 +233,21 @@ table.bl-table tbody tr:hover td{background:#fafafa}
 .btn-secondary:hover{background:#d4d4d4}
 .btn-danger{display:flex;align-items:center;gap:4px;padding:7px 12px;background:#ef4444;border-radius:5px;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;transition:background .14s}
 .btn-danger:hover{background:#dc2626}
+
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
+
 </style>
 </head>
 <body>
@@ -316,7 +370,7 @@ table.bl-table tbody tr:hover td{background:#fafafa}
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+        <a class="sb-item" href="#" onclick="logout()">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -337,7 +391,32 @@ table.bl-table tbody tr:hover td{background:#fafafa}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <div class="topbar-avatar">RS</div>
+      
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RS</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button onclick="window.location.href='Retailer_Profile.html'" type="button">Edit Profile</button>
+          <button class="btn-primary" onclick="if(window.DB){DB.logout();}window.location.href='../index.html'" type="button">Logout</button>
+        </div>
+      </div>
+
     </div>
   </header>
 
@@ -352,6 +431,9 @@ table.bl-table tbody tr:hover td{background:#fafafa}
         <div class="bl-breadcrumb">Dashboard > Billers</div>
       </div>
       <div class="bl-toolbar">
+        <button class="bl-btn-primary" onclick="loadPendingRequests()">
+          Load Pending Requests
+        </button>
         <button class="bl-btn-primary" onclick="openAddModal()">
           <svg viewBox="0 0 13 13" fill="none" stroke="#fff" stroke-width="1.5">
             <circle cx="6.5" cy="6.5" r="5.5"/>
@@ -360,6 +442,28 @@ table.bl-table tbody tr:hover td{background:#fafafa}
           </svg>
           Add Biller
         </button>
+      </div>
+    </div>
+
+    <!-- PENDING REQUESTS CARD -->
+    <div class="bl-requests-card" id="pendingRequestsCard" style="display: none;">
+      <div class="bl-card-header">
+        <h3>Pending Biller Requests</h3>
+        <span class="bl-requests-count" id="pendingCount">0</span>
+      </div>
+      <div class="bl-requests-list" id="pendingRequestsList">
+        <!-- Pending requests will be loaded here -->
+      </div>
+    </div>
+
+    <!-- PENDING REQUESTS SECTION -->
+    <div class="bl-requests-card" id="pendingRequestsCard" style="display: none;">
+      <div class="bl-card-header">
+        <h3>Pending Biller Requests</h3>
+        <span class="bl-requests-count" id="pendingCount">0</span>
+      </div>
+      <div class="bl-requests-list" id="pendingRequestsList">
+        <!-- Pending requests will be populated here -->
       </div>
     </div>
 
@@ -470,6 +574,7 @@ table.bl-table tbody tr:hover td{background:#fafafa}
   </div>
 </div>
 
+<script src="api-config.js"></script>
 <script>
 // ──────────────────────────────────────────────────────
 // DATA
@@ -486,15 +591,106 @@ const billers = [
   { id: 9, code: 'BI009', name: 'James Higham',    company: 'HomeStyle Furnishings', email: 'james@example.com',     phone: '+13875196482', country: 'Italy',     status: 'active',   avatar: '#FF5722' },
   { id: 10, code: 'BI010', name: 'Sarah Mitchell', company: 'Quantum Solutions',     email: 'sarah@example.com',     phone: '+44201234567', country: 'UK',        status: 'active',   avatar: '#673AB7' },
 ];
+billers.splice(0, billers.length);
 
 let currentPage = 1;
 let rowsPerPage = 10;
 let filteredBillers = [...billers];
 let editingId = null;
+const BILLER_REQUESTS_API_BASE = (window.API_BASE_URL || (
+  window.location && window.location.hostname
+    ? window.location.protocol + '//' + window.location.hostname + ':3001'
+    : 'http://localhost:3001'
+)) + '/api/billers/requests';
 
 // ──────────────────────────────────────────────────────
-// TABLE FUNCTIONS
 // ──────────────────────────────────────────────────────
+// PENDING REQUESTS FUNCTIONS
+// ──────────────────────────────────────────────────────
+async function loadPendingRequests() {
+  try {
+    const response = await fetch(BILLER_REQUESTS_API_BASE);
+    if (!response.ok) {
+      throw new Error('Failed to load pending requests');
+    }
+    const requests = await response.json();
+    const pendingRequests = requests.filter(r => r.status === 'pending');
+    
+    const card = document.getElementById('pendingRequestsCard');
+    const list = document.getElementById('pendingRequestsList');
+    const count = document.getElementById('pendingCount');
+    
+    if (pendingRequests.length > 0) {
+      count.textContent = pendingRequests.length;
+      list.innerHTML = pendingRequests.map(request => `
+        <div class="bl-request-item">
+          <div class="bl-request-info">
+            <div class="bl-request-avatar" style="background: #${Math.floor(Math.random()*16777215).toString(16)}">
+              ${request.name.charAt(0).toUpperCase()}
+            </div>
+            <div class="bl-request-details">
+              <div class="bl-request-name">${request.name}</div>
+              <div class="bl-request-meta">${request.email} • ${request.phone}</div>
+              <div class="bl-request-company">${request.company} • ${request.country}</div>
+            </div>
+          </div>
+          <div class="bl-request-actions">
+            <button class="bl-request-btn bl-approve-btn" onclick="approveRequest('${request.id}')">
+              Approve
+            </button>
+            <button class="bl-request-btn bl-reject-btn" onclick="rejectRequest('${request.id}')">
+              Reject
+            </button>
+          </div>
+        </div>
+      `).join('');
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Error loading pending requests:', error);
+  }
+}
+
+async function approveRequest(id) {
+  try {
+    const response = await fetch(`${BILLER_REQUESTS_API_BASE}/${id}/approve`, {
+      method: 'PUT'
+    });
+    
+    if (response.ok) {
+      alert('Biller request approved successfully!');
+      loadPendingRequests(); // Refresh the list
+      renderTable(); // Refresh the billers table
+    } else {
+      alert('Failed to approve request');
+    }
+  } catch (error) {
+    console.error('Error approving request:', error);
+    alert('Error approving request: ' + error.message);
+  }
+}
+
+async function rejectRequest(id) {
+  try {
+    const response = await fetch(`${BILLER_REQUESTS_API_BASE}/${id}/reject`, {
+      method: 'PUT'
+    });
+    
+    if (response.ok) {
+      alert('Biller request rejected successfully!');
+      loadPendingRequests(); // Refresh the list
+    } else {
+      alert('Failed to reject request');
+    }
+  } catch (error) {
+    console.error('Error rejecting request:', error);
+    alert('Error rejecting request: ' + error.message);
+  }
+}
+
+// TABLE FUNCTIONS
 function renderTable() {
   const tbody = document.getElementById('billersTableBody');
   const start = (currentPage - 1) * rowsPerPage;
@@ -591,12 +787,12 @@ function goPage(p) {
 function filterTable() {
   const q = document.getElementById('searchInput').value.toLowerCase();
   filteredBillers = billers.filter(b =>
-    (b.code || '').toLowerCase().includes(q) ||
-    (b.name || '').toLowerCase().includes(q) ||
-    (b.company || '').toLowerCase().includes(q) ||
-    (b.email || '').toLowerCase().includes(q) ||
-    (b.phone || '').includes(q) ||
-    (b.country || '').toLowerCase().includes(q)
+    b.code.toLowerCase().includes(q) ||
+    b.name.toLowerCase().includes(q) ||
+    b.company.toLowerCase().includes(q) ||
+    b.email.toLowerCase().includes(q) ||
+    b.phone.includes(q) ||
+    b.country.toLowerCase().includes(q)
   );
   currentPage = 1;
   renderTable();
@@ -617,7 +813,6 @@ function openAddModal() {
 }
 
 function editBiller(id) {
-  if(window.event) window.event.stopPropagation();
   const biller = billers.find(b => b.id === id);
   if (!biller) return;
   
@@ -667,7 +862,7 @@ function saveBiller() {
     const newCode = 'BI' + String(billers.length + 1).padStart(3, '0');
     const colors = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63', '#9C27B0', '#F44336', '#00BCD4', '#673AB7'];
     const newBiller = {
-      id: Math.max(...billers.map(b => b.id)) + 1,
+      id: (billers.length ? Math.max(...billers.map(b => b.id)) : 0) + 1,
       code: newCode,
       name: name,
       company: company,
@@ -688,7 +883,6 @@ function saveBiller() {
 }
 
 function deleteBiller(id) {
-  if(window.event) window.event.stopPropagation();
   if (!confirm('Delete this biller?')) return;
   const idx = billers.findIndex(b => b.id === id);
   if (idx !== -1) billers.splice(idx, 1);
@@ -699,7 +893,6 @@ function deleteBiller(id) {
 }
 
 function viewBiller(id) {
-  if(window.event) window.event.stopPropagation();
   const biller = billers.find(b => b.id === id);
   if (biller) {
     alert(`${biller.name}\n${biller.company}\n${biller.email}\n${biller.phone}\n${biller.country}\nStatus: ${biller.status}`);
@@ -725,5 +918,371 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTable();
 });
 </script>
+<script>
+let billerStatusFilter = '';
+
+function syncBillers(nextBillers) {
+  billers.splice(0, billers.length);
+  nextBillers.forEach(function (biller) {
+    billers.push(biller);
+  });
+}
+
+function applyBillerFilters(resetPage) {
+  const shouldResetPage = resetPage !== false;
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  filteredBillers = billers.filter(function (biller) {
+    const matchesQuery =
+      !query ||
+      biller.code.toLowerCase().includes(query) ||
+      biller.name.toLowerCase().includes(query) ||
+      biller.company.toLowerCase().includes(query) ||
+      biller.email.toLowerCase().includes(query) ||
+      biller.phone.toLowerCase().includes(query) ||
+      biller.country.toLowerCase().includes(query);
+    const matchesStatus = !billerStatusFilter || biller.status === billerStatusFilter;
+    return matchesQuery && matchesStatus;
+  });
+
+  if (shouldResetPage) {
+    currentPage = 1;
+  }
+
+  renderTable();
+
+  const button = document.querySelector('.bl-filter-btn');
+  if (button) {
+    button.childNodes[0].textContent = billerStatusFilter
+      ? 'Status: ' + billerStatusFilter
+      : 'Status';
+  }
+}
+
+async function loadBillers() {
+  try {
+    const data = await window.RetailerApi.getBillers();
+    syncBillers(data);
+    applyBillerFilters(true);
+  } catch (error) {
+    console.error('Error loading billers:', error);
+    applyBillerFilters(true);
+    window.RetailerUi.showToast(
+      'Using saved biller list: ' + window.RetailerUi.getErrorMessage(error),
+      'info',
+    );
+  }
+}
+
+filterTable = function () {
+  applyBillerFilters(true);
+};
+
+openAddModal = function () {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Biller';
+  document.getElementById('billerForm').reset();
+  document.getElementById('status').value = 'active';
+  document.getElementById('billerModal').classList.add('active');
+};
+
+editBiller = function (id) {
+  const biller = billers.find(function (entry) {
+    return entry.id === id;
+  });
+  if (!biller) {
+    return;
+  }
+
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Biller';
+  document.getElementById('billerName').value = biller.name;
+  document.getElementById('companyName').value = biller.company;
+  document.getElementById('email').value = biller.email;
+  document.getElementById('phone').value = biller.phone;
+  document.getElementById('country').value = biller.country;
+  document.getElementById('status').value = biller.status;
+  document.getElementById('billerModal').classList.add('active');
+};
+
+saveBiller = async function () {
+  const payload = {
+    name: document.getElementById('billerName').value.trim(),
+    company: document.getElementById('companyName').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    country: document.getElementById('country').value.trim(),
+    status: document.getElementById('status').value,
+  };
+
+  if (!payload.name || !payload.company || !payload.email || !payload.phone || !payload.country) {
+    window.RetailerUi.showToast('Please fill in all fields.', 'error');
+    return;
+  }
+
+  try {
+    if (editingId) {
+      await window.RetailerApi.updateBiller(editingId, payload);
+      window.RetailerUi.showToast('Biller updated successfully.', 'success');
+    } else {
+      await window.RetailerApi.createBiller(payload);
+      window.RetailerUi.showToast('Biller added successfully.', 'success');
+    }
+
+    closeModal();
+    await loadBillers();
+  } catch (error) {
+    window.RetailerUi.showToast(
+      'Could not save biller: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+deleteBiller = async function (id) {
+  if (!confirm('Delete this biller?')) {
+    return;
+  }
+
+  try {
+    await window.RetailerApi.deleteBiller(id);
+    window.RetailerUi.showToast('Biller deleted successfully.', 'success');
+    await loadBillers();
+  } catch (error) {
+    window.RetailerUi.showToast(
+      'Could not delete biller: ' + window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+};
+
+toggleFilter = function () {
+  const values = ['', 'active', 'inactive'];
+  const index = Math.max(0, values.indexOf(billerStatusFilter));
+  billerStatusFilter = values[(index + 1) % values.length];
+  applyBillerFilters(true);
+};
+
+// ──────────────────────────────────────────────────────
+// PENDING REQUESTS FUNCTIONS
+// ──────────────────────────────────────────────────────
+async function loadPendingRequests() {
+  try {
+    const response = await fetch(BILLER_REQUESTS_API_BASE);
+    if (!response.ok) throw new Error('Failed to fetch pending requests');
+    const requests = await response.json();
+    renderPendingRequests(requests);
+  } catch (error) {
+    console.error('Error loading pending requests:', error);
+  }
+}
+
+function renderPendingRequests(requests) {
+  const pendingRequests = requests.filter(r => r.status === 'pending');
+  const card = document.getElementById('pendingRequestsCard');
+  const list = document.getElementById('pendingRequestsList');
+  const count = document.getElementById('pendingCount');
+
+  if (pendingRequests.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = 'block';
+  count.textContent = pendingRequests.length;
+
+  list.innerHTML = pendingRequests.map(request => `
+    <div class="bl-request-item">
+      <div class="bl-request-info">
+        <div class="bl-request-avatar" style="background: #f59e0b;">${request.name.charAt(0).toUpperCase()}</div>
+        <div class="bl-request-details">
+          <div class="bl-request-name">${request.name}</div>
+          <div class="bl-request-meta">${request.email} • ${request.phone}</div>
+          <div class="bl-request-company">${request.company} • ${request.country}</div>
+        </div>
+      </div>
+      <div class="bl-request-actions">
+        <button class="bl-request-btn bl-approve-btn" onclick="approveRequest('${request.id}', this)">Approve</button>
+        <button class="bl-request-btn bl-reject-btn" onclick="rejectRequest('${request.id}', this)">Reject</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function approveRequest(requestId, button) {
+  try {
+    const scope = getPendingRequestScope();
+    const response = await fetch(`${BILLER_REQUESTS_API_BASE}/${requestId}/approve`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(scope),
+    });
+    const result = await response.json().catch(function () {
+      return null;
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        (result && (result.message || result.error)) || 'Failed to approve request.',
+      );
+    }
+
+    window.RetailerUi.showToast('Biller request approved successfully.', 'success');
+    await loadPendingRequests();
+    await loadBillers();
+  } catch (error) {
+    console.error('Error approving request:', error);
+    window.RetailerUi.showToast(
+      window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+}
+
+async function rejectRequest(requestId, button) {
+  try {
+    const response = await fetch(`${BILLER_REQUESTS_API_BASE}/${requestId}/reject`, {
+      method: 'PUT'
+    });
+    const result = await response.json().catch(function () {
+      return null;
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        (result && (result.message || result.error)) || 'Failed to reject request.',
+      );
+    }
+
+    window.RetailerUi.showToast('Biller request rejected.', 'info');
+    await loadPendingRequests();
+  } catch (error) {
+    console.error('Error rejecting request:', error);
+    window.RetailerUi.showToast(
+      window.RetailerUi.getErrorMessage(error),
+      'error',
+    );
+  }
+}
+
+function getPendingRequestScope() {
+  const session =
+    window.RetailerApi && typeof window.RetailerApi.getSession === 'function'
+      ? window.RetailerApi.getSession()
+      : null;
+
+  return {
+    retailerId:
+      session && (session.profileId || session.id)
+        ? String(session.profileId || session.id).trim()
+        : '',
+    storeId:
+      window.RetailerApi && typeof window.RetailerApi.getCurrentStoreId === 'function'
+        ? String(window.RetailerApi.getCurrentStoreId(session) || '').trim()
+        : '',
+  };
+}
+
+function matchesPendingRequestScope(request, scope) {
+  const requestRetailerId = String((request && request.retailerId) || '').trim();
+  const requestStoreId = String((request && request.storeId) || '').trim();
+
+  if (scope.storeId && requestStoreId) {
+    return (
+      requestStoreId === scope.storeId &&
+      (!requestRetailerId || !scope.retailerId || requestRetailerId === scope.retailerId)
+    );
+  }
+
+  if (scope.storeId && !requestStoreId && requestRetailerId === scope.storeId) {
+    return true;
+  }
+
+  if (scope.retailerId && requestRetailerId) {
+    return requestRetailerId === scope.retailerId;
+  }
+
+  return true;
+}
+
+async function loadPendingRequests() {
+  try {
+    const response = await fetch(BILLER_REQUESTS_API_BASE);
+    if (!response.ok) {
+      throw new Error('Failed to load pending requests');
+    }
+    const requests = await response.json();
+    const scope = getPendingRequestScope();
+    
+    const pendingRequests = requests.filter(function (req) {
+      return req.status === 'pending' && matchesPendingRequestScope(req, scope);
+    });
+    
+    const card = document.getElementById('pendingRequestsCard');
+    const list = document.getElementById('pendingRequestsList');
+    const count = document.getElementById('pendingCount');
+    
+    if (pendingRequests.length > 0) {
+      card.style.display = 'block';
+      count.textContent = pendingRequests.length;
+      
+      list.innerHTML = pendingRequests.map(request => `
+        <div class="bl-request-item">
+          <div class="bl-request-info">
+            <div class="bl-request-name">${request.name}</div>
+            <div class="bl-request-details">${request.company} • ${request.email} • ${request.country}</div>
+          </div>
+          <div class="bl-request-actions">
+            <button class="bl-btn-approve" onclick="approveRequest('${request.id}', this)">Approve</button>
+            <button class="bl-btn-reject" onclick="rejectRequest('${request.id}', this)">Reject</button>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      card.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Error loading pending requests:', error);
+  }
+}
+
+showNotification = function (msg) {
+  window.RetailerUi.showToast(msg, 'success');
+};
+
+document.addEventListener('DOMContentLoaded', loadBillers);
+document.addEventListener('DOMContentLoaded', loadPendingRequests);
+console.log('DOMContentLoaded fired');
+</script>
+
+<script>
+function toggleProfilePopover(e) {
+  if (e) e.stopPropagation();
+  const popover = document.getElementById('profilePopover');
+  if (popover) {
+    popover.classList.toggle('open');
+    if (popover.classList.contains('open')) {
+      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
+      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
+      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
+      let initials = 'RS';
+      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('topbarAvatar').textContent = initials;
+      document.getElementById('profilePopoverAvatar').textContent = initials;
+    }
+  }
+}
+document.addEventListener('click', function(e) {
+  const popover = document.getElementById('profilePopover');
+  const avatar = document.getElementById('topbarAvatar');
+  if (popover && popover.classList.contains('open')) {
+    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
+      popover.classList.remove('open');
+    }
+  }
+});
+</script>
+
 </body>
 </html>

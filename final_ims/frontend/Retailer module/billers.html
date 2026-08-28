@@ -574,7 +574,6 @@ table.bl-table tbody tr:hover td{background:#fafafa}
   </div>
 </div>
 
-<script src="../js/so-toast.js"></script>
 <script src="api-config.js"></script>
 <script>
 // ──────────────────────────────────────────────────────
@@ -605,6 +604,7 @@ const BILLER_REQUESTS_API_BASE = (window.API_BASE_URL || (
 )) + '/api/billers/requests';
 
 // ──────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────
 // PENDING REQUESTS FUNCTIONS
 // ──────────────────────────────────────────────────────
 async function loadPendingRequests() {
@@ -614,24 +614,7 @@ async function loadPendingRequests() {
       throw new Error('Failed to load pending requests');
     }
     const requests = await response.json();
-    
-    // Get current retailer session store IDs
-    const session = JSON.parse(localStorage.getItem('so_session') || '{}');
-    const retailerId = (session.profileId || session.id || '').trim();
-    const accessibleStoreIds = Array.isArray(session.accessibleStoreIds)
-      ? session.accessibleStoreIds.map(s => String(s).trim())
-      : [String(session.currentStoreId || session.storeId || '').trim()].filter(Boolean);
-
-    const pendingRequests = requests.filter(r => {
-      if (r.status !== 'pending') return false;
-      const rRetailer = String(r.retailerId || '').trim();
-      const rStore = String(r.storeId || '').trim();
-      
-      const matchesRetailer = retailerId && rRetailer === retailerId;
-      const matchesStore = accessibleStoreIds.length > 0 && accessibleStoreIds.includes(rStore);
-      
-      return matchesRetailer || matchesStore || (!rRetailer && !rStore);
-    });
+    const pendingRequests = requests.filter(r => r.status === 'pending');
     
     const card = document.getElementById('pendingRequestsCard');
     const list = document.getElementById('pendingRequestsList');
@@ -648,7 +631,7 @@ async function loadPendingRequests() {
             <div class="bl-request-details">
               <div class="bl-request-name">${request.name}</div>
               <div class="bl-request-meta">${request.email} • ${request.phone}</div>
-              <div class="bl-request-company">${request.company} • ${request.country} ${request.storeId ? `• Store: ${request.storeId}` : ''}</div>
+              <div class="bl-request-company">${request.company} • ${request.country}</div>
             </div>
           </div>
           <div class="bl-request-actions">
@@ -673,25 +656,19 @@ async function loadPendingRequests() {
 async function approveRequest(id) {
   try {
     const response = await fetch(`${BILLER_REQUESTS_API_BASE}/${id}/approve`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' }
+      method: 'PUT'
     });
     
-    const data = await response.json();
     if (response.ok) {
-      if (window.SOToast) window.SOToast.success('Biller request approved successfully!');
-      else alert('Biller request approved successfully!');
+      alert('Biller request approved successfully!');
       loadPendingRequests(); // Refresh the list
       renderTable(); // Refresh the billers table
     } else {
-      const msg = data.message || 'Failed to approve request';
-      if (window.SOToast) window.SOToast.error(msg);
-      else alert(msg);
+      alert('Failed to approve request');
     }
   } catch (error) {
     console.error('Error approving request:', error);
-    if (window.SOToast) window.SOToast.error(error.message || 'Error approving request');
-    else alert('Error approving request: ' + error.message);
+    alert('Error approving request: ' + error.message);
   }
 }
 
@@ -702,17 +679,14 @@ async function rejectRequest(id) {
     });
     
     if (response.ok) {
-      if (window.SOToast) window.SOToast.info('Biller request rejected.');
-      else alert('Biller request rejected successfully!');
-      loadPendingRequests();
+      alert('Biller request rejected successfully!');
+      loadPendingRequests(); // Refresh the list
     } else {
-      if (window.SOToast) window.SOToast.error('Failed to reject request');
-      else alert('Failed to reject request');
+      alert('Failed to reject request');
     }
   } catch (error) {
     console.error('Error rejecting request:', error);
-    if (window.SOToast) window.SOToast.error(error.message);
-    else alert('Error rejecting request: ' + error.message);
+    alert('Error rejecting request: ' + error.message);
   }
 }
 
@@ -1094,7 +1068,8 @@ toggleFilter = function () {
 // ──────────────────────────────────────────────────────
 async function loadPendingRequests() {
   try {
-    const response = await fetch('http://localhost:3000/billers/requests');
+    const response = await fetch(BILLER_REQUESTS_API_BASE);
+    if (!response.ok) throw new Error('Failed to fetch pending requests');
     const requests = await response.json();
     renderPendingRequests(requests);
   } catch (error) {
