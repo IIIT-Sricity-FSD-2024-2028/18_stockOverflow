@@ -1,5 +1,20 @@
 [
   {
+    "id": "7a5f677f-0b8f-4a39-849b-3e546226fbaa",
+    "name": "Retailer Test",
+    "email": "retailer@test.com",
+    "password": "Password123",
+    "role": "retailer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-30T09:47:29.757Z",
+    "updatedAt": "2026-08-30T09:47:29.757Z"
+  },
+  {
     "id": "cc5be9a4-8874-47cf-b890-8634f291133a",
     "name": "John",
     "email": "john@gamil.com",

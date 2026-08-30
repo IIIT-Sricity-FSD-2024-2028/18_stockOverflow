@@ -521,7 +521,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
     <div class="summary-header">
       <div class="sh-left">
         <div class="sh-stat">
-          <div class="sh-stat-val" id="totalProductsCount">24</div>
+          <div class="sh-stat-val" id="totalProductsCount">0</div>
           <div class="sh-stat-label">Total Products</div>
         </div>
         <div class="sh-divider"></div>
@@ -626,53 +626,67 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
   <span id="toastMsg">Products added!</span>
 </div>
 
+<script src="api-config.js"></script>
+<script src="../js/mockData.js"></script>
 <script>
 'use strict';
 
-/* ── PRODUCT CATALOGUE ─────────────────────────────── */
-const CATALOGUE = [
-  { id:'P001', name:'Office Chair Pro', emoji:'🪑', sku:'OFC-CHR-001', cat:'Furniture',   price:8500,  stock:42, stockStatus:'ok' },
-  { id:'P002', name:'Wireless Mouse',   emoji:'🖱️', sku:'MOUS-WL-002', cat:'Peripherals', price:1200,  stock:120,stockStatus:'ok' },
-  { id:'P003', name:'Mechanical Keyboard', emoji:'⌨️', sku:'KBD-MCH-003', cat:'Peripherals', price:3499, stock:8, stockStatus:'low' },
-  { id:'P004', name:'27" 4K Monitor',   emoji:'🖥️', sku:'MON-4K-004', cat:'Electronics', price:28999, stock:15, stockStatus:'ok' },
-  { id:'P005', name:'USB-C Hub 7-Port', emoji:'🔌', sku:'USB-HUB-005', cat:'Electronics', price:2199,  stock:0,  stockStatus:'out' },
-  { id:'P006', name:'Laptop Stand Alum',emoji:'💻', sku:'LSTND-006',   cat:'Furniture',   price:1899,  stock:35, stockStatus:'ok' },
-  { id:'P007', name:'Webcam HD 1080p',  emoji:'📷', sku:'CAM-HD-007',  cat:'Electronics', price:3899,  stock:22, stockStatus:'ok' },
-  { id:'P008', name:'HDMI Cable 2m',    emoji:'📺', sku:'HDMI-2M-008', cat:'Networking',  price:499,   stock:200,stockStatus:'ok' },
-  { id:'P009', name:'A4 Paper Ream',    emoji:'📄', sku:'PPR-A4-009',  cat:'Office',      price:450,   stock:500,stockStatus:'ok' },
-  { id:'P010', name:'Blue Ballpoint Pens (12)', emoji:'✏️', sku:'PEN-BL-010', cat:'Office', price:180, stock:400,stockStatus:'ok'},
-  { id:'P011', name:'Standing Desk',    emoji:'🏢', sku:'DESK-STD-011',cat:'Furniture',   price:22999, stock:5,  stockStatus:'low' },
-  { id:'P012', name:'Noise-Cancel Headphones', emoji:'🎧', sku:'HEAD-NC-012', cat:'Electronics', price:7499, stock:18, stockStatus:'ok' },
-  { id:'P013', name:'External SSD 1TB', emoji:'💾', sku:'SSD-1T-013',  cat:'Storage',     price:6499,  stock:30, stockStatus:'ok' },
-  { id:'P014', name:'Wireless Charger 15W', emoji:'⚡', sku:'WCH-15W-014', cat:'Electronics', price:1299, stock:7, stockStatus:'low'},
-  { id:'P015', name:'Router Dual-Band', emoji:'📡', sku:'RTR-DB-015',  cat:'Networking',  price:4199,  stock:12, stockStatus:'ok' },
-  { id:'P016', name:'Ergonomic Mouse Pad', emoji:'🖲️', sku:'MPAD-ER-016', cat:'Peripherals', price:899, stock:60, stockStatus:'ok'},
-  { id:'P017', name:'Cable Organiser Kit', emoji:'🔗', sku:'CBL-ORG-017', cat:'Office',   price:349,   stock:150,stockStatus:'ok' },
-  { id:'P018', name:'Monitor Arm Single', emoji:'🦾', sku:'MON-ARM-018', cat:'Furniture', price:3199,  stock:0,  stockStatus:'out'},
-  { id:'P019', name:'USB Flash Drive 64GB', emoji:'🔑', sku:'USB-64G-019', cat:'Storage', price:599,  stock:300,stockStatus:'ok' },
-  { id:'P020', name:'Wireless Keyboard', emoji:'⌨️', sku:'KBD-WL-020',  cat:'Peripherals', price:2299, stock:25,stockStatus:'ok' },
-  { id:'P021', name:'Ethernet Cable 5m', emoji:'🌐', sku:'ETH-5M-021',  cat:'Networking', price:299,   stock:180,stockStatus:'ok' },
-  { id:'P022', name:'Desk Organiser Tray', emoji:'🗂️', sku:'DESK-ORG-022', cat:'Office', price:699,  stock:85, stockStatus:'ok' },
-  { id:'P023', name:'Portable Speaker', emoji:'🔊', sku:'SPK-PT-023',   cat:'Electronics', price:2499, stock:14, stockStatus:'ok' },
-  { id:'P024', name:'Laptop Backpack',   emoji:'🎒', sku:'BAG-LP-024',   cat:'Office',    price:1899,  stock:40, stockStatus:'ok' },
-];
+/* ── PRODUCT CATALOGUE (Live Database Only - No Mock Data) ─── */
+let CATALOGUE = [];
 
 /* ── STATE ─────────────────────────────────────────── */
 let selected = {};   // { productId: { product, qty } }
 let viewMode = 'grid';
 let activeCat = '';
-let filteredProducts = [...CATALOGUE];
+let filteredProducts = [];
+
+// Load live products from backend
+async function initLiveProducts() {
+  if (window.IMS_API && typeof window.IMS_API.getProducts === 'function') {
+    try {
+      const apiProds = await window.IMS_API.getProducts();
+      if (Array.isArray(apiProds)) {
+        CATALOGUE = apiProds.map(p => {
+          const qty = Number(p.qty != null ? p.qty : p.initialQty) || 0;
+          return {
+            id: p.sku || p.id,
+            name: p.name || 'Product',
+            emoji: p.emoji || '📦',
+            sku: p.sku || p.id,
+            cat: p.category || p.cat || 'General',
+            price: Math.round(Number(p.price || p.priceUSD || 0)),
+            stock: qty,
+            stockStatus: qty <= 0 ? 'out' : qty <= 10 ? 'low' : 'ok',
+            brand: p.brand || p.supplier || '',
+            supplier: p.supplier || p.brand || ''
+          };
+        });
+      }
+    } catch(e) {
+      console.warn('Backend products fetch error:', e);
+      CATALOGUE = [];
+    }
+  } else {
+    CATALOGUE = [];
+  }
+  filterProducts();
+  loadExisting();
+}
 
 // Load any pre-existing selections passed from PO page
-(function loadExisting() {
+function loadExisting() {
   try {
     const existing = JSON.parse(localStorage.getItem('po_products') || '[]');
     existing.forEach(item => {
-      const prod = CATALOGUE.find(p => p.id === item.id);
-      if (prod) selected[item.id] = { product: prod, qty: item.qty };
+      const prod = CATALOGUE.find(p => p.id === item.id || p.sku === item.sku);
+      if (prod) selected[prod.id] = { product: prod, qty: item.qty || 1 };
     });
+    updatePanel();
+    updateSummaryHeader();
   } catch(e){}
-})();
+}
+loadExisting();
+initLiveProducts();
 
 /* ── RENDER ─────────────────────────────────────────── */
 function render() {
@@ -681,8 +695,41 @@ function render() {
     ? 'repeat(auto-fill,minmax(260px,1fr))'
     : '1fr';
 
+  const selectedSupplierName = localStorage.getItem('po_selected_supplier_name');
+
+  if (!selectedSupplierName) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center;">
+        <div class="empty-icon" style="font-size: 48px; margin-bottom: 12px;">🏢</div>
+        <div class="empty-title" style="font-size: 18px; font-weight: 700; color: #092c4c; margin-bottom: 6px;">No Supplier Selected</div>
+        <div class="empty-sub" style="font-size: 13px; color: var(--text-secondary); max-width: 420px; margin: 0 auto 18px;">Please return to the Purchase Order page and select a supplier to view their product catalogue.</div>
+        <a href="Create_Purchase_Order.html" class="btn btn-primary" style="display:inline-flex;text-decoration:none;padding:8px 18px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to Purchase Order
+        </a>
+      </div>
+    `;
+    document.getElementById('totalProductsCount').textContent = '0';
+    updatePanel();
+    updateSummaryHeader();
+    return;
+  }
+
+  document.getElementById('totalProductsCount').textContent = filteredProducts.length;
+
   if (!filteredProducts.length) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No products found</div><div class="empty-sub">Try adjusting your filters or search query</div></div>`;
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center;">
+        <div class="empty-icon" style="font-size: 48px; margin-bottom: 12px;">📦</div>
+        <div class="empty-title" style="font-size: 18px; font-weight: 700; color: #092c4c; margin-bottom: 6px;">No products available for "${selectedSupplierName}"</div>
+        <div class="empty-sub" style="font-size: 13px; color: var(--text-secondary); max-width: 420px; margin: 0 auto 18px;">There are currently no products associated with this supplier in your inventory database.</div>
+        <a href="Create_Purchase_Order.html" class="btn btn-outline" style="display:inline-flex;text-decoration:none;padding:8px 18px;">
+          Back to Purchase Order
+        </a>
+      </div>
+    `;
+    updatePanel();
+    updateSummaryHeader();
     return;
   }
 
@@ -841,8 +888,20 @@ function filterProducts() {
   const cat   = document.getElementById('catFilter').value || activeCat;
   const stock = document.getElementById('stockFilter').value;
   const sort  = document.getElementById('sortFilter').value;
+  const selectedSupplierName = localStorage.getItem('po_selected_supplier_name');
+
+  if (!selectedSupplierName) {
+    filteredProducts = [];
+    render();
+    return;
+  }
 
   filteredProducts = CATALOGUE.filter(p => {
+    const sName = selectedSupplierName.toLowerCase().trim();
+    const pSup = String(p.supplier || '').toLowerCase().trim();
+    const pBrand = String(p.brand || '').toLowerCase().trim();
+    if (!pSup.includes(sName) && !pBrand.includes(sName)) return false;
+
     if (q && !p.name.toLowerCase().includes(q) && !p.sku.toLowerCase().includes(q)) return false;
     if (cat && p.cat !== cat) return false;
     if (stock && p.stockStatus !== stock) return false;

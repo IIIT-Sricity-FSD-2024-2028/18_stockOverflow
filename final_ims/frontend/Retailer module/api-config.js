@@ -527,11 +527,256 @@
       .replace(/'/g, '&#39;');
   }
 
+  /* ═══════════════════════════════════════════════════════
+     GLOBAL TOPBAR STYLES & CONTROLLERS (PROFILE & NOTIFICATIONS)
+  ═══════════════════════════════════════════════════════ */
+  function injectGlobalTopbarStyles() {
+    if (document.getElementById('so-topbar-global-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'so-topbar-global-styles';
+    style.textContent = `
+      .profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:9999;text-align:left;font-family:'Nunito Sans',sans-serif;}
+      .profile-popover.open{display:block;}
+      .profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+      .profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:#2e6bc5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+      .profile-popover-name{font-size:15px;font-weight:700;color:#111827;}
+      .profile-popover-sub{font-size:11.5px;color:#6b7280;margin-top:2px;}
+      .profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px;}
+      .profile-popover-item{background:#f9fafb;border-radius:8px;padding:8px 10px;}
+      .profile-popover-label{font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:2px;}
+      .profile-popover-value{font-size:12px;font-weight:600;color:#111827;word-break:break-word;}
+      .profile-popover-actions{display:flex;gap:8px;}
+      .profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #e5e7eb;background:#fff;color:#111827;}
+      .profile-popover-actions button.btn-primary{background:#2e6bc5;color:#fff;border:none;}
+
+      /* NOTIFICATION POPOVER */
+      .so-notif-popover{position:absolute;top:54px;right:66px;width:340px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 16px 36px rgba(0,0,0,0.12);display:none;z-index:9999;font-family:'Nunito Sans',sans-serif;text-align:left;overflow:hidden;}
+      .so-notif-popover.open{display:block;}
+      .so-notif-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f3f4f6;background:#fafbfc;}
+      .so-notif-head-title{font-size:13.5px;font-weight:800;color:#111827;display:flex;align-items:center;gap:6px;}
+      .so-notif-badge{background:#ef4444;color:#fff;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:10px;}
+      .so-notif-clear{background:none;border:none;font-size:11.5px;font-weight:700;color:#6b7280;cursor:pointer;}
+      .so-notif-clear:hover{color:#ef4444;}
+      .so-notif-list{max-height:300px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;}
+      .so-notif-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:#f9fafb;border:1px solid #f3f4f6;position:relative;transition:background .12s;}
+      .so-notif-item:hover{background:#f3f4f6;}
+      .so-notif-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+      .so-notif-icon.return{background:#eff6ff;color:#2563eb;}
+      .so-notif-icon.stock{background:#fff7ed;color:#ea580c;}
+      .so-notif-body{flex:1;min-width:0;}
+      .so-notif-title{font-size:12.5px;font-weight:700;color:#111827;margin-bottom:2px;}
+      .so-notif-msg{font-size:11.5px;color:#4b5563;line-height:1.4;word-break:break-word;}
+      .so-notif-time{font-size:10.5px;color:#9ca3af;margin-top:4px;font-weight:600;}
+      .so-notif-close{border:none;background:none;color:#9ca3af;font-size:14px;cursor:pointer;padding:2px 4px;border-radius:4px;line-height:1;transition:color .12s;}
+      .so-notif-close:hover{color:#ef4444;background:#fee2e2;}
+      .so-notif-empty{padding:26px 16px;text-align:center;color:#9ca3af;font-size:12.5px;}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function setupGlobalProfilePopover() {
+    window.toggleProfilePopover = function(e) {
+      if (e) e.stopPropagation();
+      var popover = document.getElementById('profilePopover');
+      if (popover) {
+        popover.classList.toggle('open');
+        if (popover.classList.contains('open')) {
+          var notifPop = document.getElementById('retailerNotifPopover');
+          if (notifPop) notifPop.classList.remove('open');
+          var session = readSession() || {};
+          var name = session.name || (session.profile && session.profile.name) || 'Retailer Profile';
+          var email = session.email || '-';
+          var phone = session.phone || (session.profile && session.profile.businessPhone) || '-';
+          var initials = buildInitials(name);
+
+          var nameEl = document.getElementById('profilePopoverName');
+          if (nameEl) nameEl.textContent = name;
+          var emailEl = document.getElementById('profilePopoverEmail');
+          if (emailEl) emailEl.textContent = email;
+          var phoneEl = document.getElementById('profilePopoverPhone');
+          if (phoneEl) phoneEl.textContent = phone;
+          var popAvatar = document.getElementById('profilePopoverAvatar');
+          if (popAvatar) popAvatar.textContent = initials;
+          var codeEl = document.getElementById('profilePopoverCode');
+          if (codeEl) codeEl.textContent = (session.profile && session.profile.business && session.profile.business.retailerCode) || 'Retailer';
+        }
+      }
+    };
+  }
+
+  var activeRetailerNotifications = [];
+
+  async function fetchAndRenderNotifications() {
+    try {
+      var dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
+      var [returns, products] = await Promise.all([
+        request(buildScopedPath('/api/returns')).catch(function() { return []; }),
+        request(buildScopedPath('/api/products')).catch(function() { return []; })
+      ]);
+
+      var returnList = Array.isArray(returns) ? returns : [];
+      var prodList = Array.isArray(products) ? products : [];
+
+      var notifs = [];
+
+      // 1. Pending Returns
+      returnList.forEach(function(r) {
+        var status = String(r.status || '').toLowerCase();
+        if (status === 'pending') {
+          var id = 'return-' + (r.id || Math.random());
+          if (!dismissed.includes(id)) {
+            notifs.push({
+              id: id,
+              type: 'return',
+              title: 'Return Request Pending',
+              msg: 'Customer ' + (r.customer || 'Consumer') + ' requested return for ' + (r.product || 'item') + (r.qty ? ' (Qty: ' + r.qty + ')' : ''),
+              time: r.date ? new Date(r.date).toLocaleDateString('en-IN') : 'Recent',
+              link: 'Returns_Management.html'
+            });
+          }
+        }
+      });
+
+      // 2. Low Stock Alerts
+      prodList.forEach(function(p) {
+        var qty = Number(p.qty != null ? p.qty : (p.initialQty || 0));
+        var min = Number(p.min != null ? p.min : (p.minStockAlert != null ? p.minStockAlert : (p.reorderPoint != null ? p.reorderPoint : 10)));
+        if (qty <= min) {
+          var id = 'stock-' + (p.sku || p.id);
+          if (!dismissed.includes(id)) {
+            notifs.push({
+              id: id,
+              type: 'stock',
+              title: qty === 0 ? 'Out of Stock Alert' : 'Low Stock Alert',
+              msg: (p.name || 'Product') + ' is at ' + qty + ' units (Min Alert: ' + min + ')',
+              time: 'Inventory Alert',
+              link: 'Low_Stocks.html'
+            });
+          }
+        }
+      });
+
+      activeRetailerNotifications = notifs;
+      updateNotificationUi();
+    } catch(err) {
+      console.warn('Could not load notifications:', err);
+    }
+  }
+
+  function updateNotificationUi() {
+    var count = activeRetailerNotifications.length;
+    document.querySelectorAll('.notif-dot').forEach(function(dot) {
+      dot.style.display = count > 0 ? 'block' : 'none';
+    });
+
+    var popover = document.getElementById('retailerNotifPopover');
+    if (!popover) return;
+
+    var badge = popover.querySelector('.so-notif-badge');
+    if (badge) badge.textContent = count;
+
+    var listEl = popover.querySelector('.so-notif-list');
+    if (!listEl) return;
+
+    if (count === 0) {
+      listEl.innerHTML = '<div class="so-notif-empty">🎉 All caught up! No unread notifications.</div>';
+      return;
+    }
+
+    listEl.innerHTML = activeRetailerNotifications.map(function(n) {
+      var icon = n.type === 'return' ? '↩️' : '⚠️';
+      return (
+        '<div class="so-notif-item" id="notif-' + escapeHtml(n.id) + '">' +
+          '<div class="so-notif-icon ' + escapeHtml(n.type) + '">' + icon + '</div>' +
+          '<div class="so-notif-body" onclick="window.location.href=\'' + escapeHtml(n.link) + '\'" style="cursor:pointer;">' +
+            '<div class="so-notif-title">' + escapeHtml(n.title) + '</div>' +
+            '<div class="so-notif-msg">' + escapeHtml(n.msg) + '</div>' +
+            '<div class="so-notif-time">' + escapeHtml(n.time) + '</div>' +
+          '</div>' +
+          '<button class="so-notif-close" title="Dismiss and delete" onclick="dismissRetailerNotification(event, \'' + escapeHtml(n.id) + '\')">✕</button>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  window.dismissRetailerNotification = function(e, id) {
+    if (e) e.stopPropagation();
+    var dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
+    if (!dismissed.includes(id)) {
+      dismissed.push(id);
+      localStorage.setItem('so_dismissed_notifications', JSON.stringify(dismissed));
+    }
+    activeRetailerNotifications = activeRetailerNotifications.filter(function(n) { return n.id !== id; });
+    updateNotificationUi();
+  };
+
+  window.clearAllRetailerNotifications = function(e) {
+    if (e) e.stopPropagation();
+    var dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
+    activeRetailerNotifications.forEach(function(n) {
+      if (!dismissed.includes(n.id)) dismissed.push(n.id);
+    });
+    localStorage.setItem('so_dismissed_notifications', JSON.stringify(dismissed));
+    activeRetailerNotifications = [];
+    updateNotificationUi();
+  };
+
+  function setupGlobalNotificationPopover() {
+    var topbarRight = document.querySelector('.topbar-right');
+    if (topbarRight && !document.getElementById('retailerNotifPopover')) {
+      var pop = document.createElement('div');
+      pop.id = 'retailerNotifPopover';
+      pop.className = 'so-notif-popover';
+      pop.innerHTML = (
+        '<div class="so-notif-head">' +
+          '<div class="so-notif-head-title">Notifications <span class="so-notif-badge">0</span></div>' +
+          '<button class="so-notif-clear" onclick="clearAllRetailerNotifications(event)">Clear All</button>' +
+        '</div>' +
+        '<div class="so-notif-list">' +
+          '<div class="so-notif-empty">Loading notifications...</div>' +
+        '</div>'
+      );
+      topbarRight.appendChild(pop);
+    }
+
+    document.querySelectorAll('.tb-icon-btn, .topbar-icon-btn').forEach(function(btn) {
+      btn.style.cursor = 'pointer';
+      btn.onclick = function(e) {
+        if (e) e.stopPropagation();
+        var p = document.getElementById('retailerNotifPopover');
+        if (p) {
+          p.classList.toggle('open');
+          var profPop = document.getElementById('profilePopover');
+          if (profPop) profPop.classList.remove('open');
+        }
+      };
+    });
+
+    document.addEventListener('click', function(e) {
+      var notifPop = document.getElementById('retailerNotifPopover');
+      var profPop = document.getElementById('profilePopover');
+      if (notifPop && notifPop.classList.contains('open') && !notifPop.contains(e.target)) {
+        notifPop.classList.remove('open');
+      }
+      if (profPop && profPop.classList.contains('open') && !profPop.contains(e.target)) {
+        var topAv = document.getElementById('topbarAvatar');
+        if (!topAv || !topAv.contains(e.target)) {
+          profPop.classList.remove('open');
+        }
+      }
+    });
+
+    fetchAndRenderNotifications();
+  }
+
   async function initializeRetailerUi() {
     var session = guardRetailerSession();
     if (!session) return;
     var refreshedSession = await refreshRetailerSession();
     if (!refreshedSession) return;
+    injectGlobalTopbarStyles();
+    setupGlobalProfilePopover();
+    setupGlobalNotificationPopover();
     applyAvatarAndProfileUi();
     buildStoreSwitcher();
     renderProfileModal();
@@ -681,6 +926,8 @@
       return session ? session.profile || null : null;
     },
   };
+
+  window.IMS_API = window.RetailerApi;
 
   window.RetailerApiUtils = {
     getStockStatus: getStockStatus,

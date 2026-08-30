@@ -29,3 +29,10 @@
 [2026-08-28T15:15:08.017Z] [ERROR] GET /favicon.ico 404 - Cannot GET /favicon.ico
 [2026-08-29T10:32:44.001Z] [ERROR] POST /api/users/login 401 - Invalid email or password
 [2026-08-29T10:32:56.698Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-30T09:48:16.647Z] [ERROR] GET /api-json 404 - Cannot GET /api-json
+[2026-08-30T09:48:19.085Z] [ERROR] GET /api 404 - Cannot GET /api
+[2026-08-30T09:48:22.021Z] [ERROR] GET /api/auth/profile 404 - Cannot GET /api/auth/profile
+[2026-08-30T09:48:22.029Z] [ERROR] GET /api/auth/users 404 - Cannot GET /api/auth/users
+[2026-08-30T09:49:44.509Z] [ERROR] GET /api/purchase-returns 404 - Cannot GET /api/purchase-returns
+[2026-08-30T09:49:44.514Z] [ERROR] GET /api/purchase-orders/returns 404 - Purchase order not found
+[2026-08-30T09:49:44.530Z] [ERROR] GET /api/returns/purchase 404 - Return request not found

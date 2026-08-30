@@ -92,7 +92,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .tb-icon-btn:hover{background:var(--bg)}
 .tb-icon-btn svg{width:16px;height:16px;color:var(--text-secondary)}
 .notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:#ef4444;border-radius:50%;border:2px solid #fff}
-.tb-avatar{width:34px;height:34px;border-radius:50%;background:#5b67ca;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Nunito Sans',sans-serif}
+.tb-avatar, .topbar-avatar{width:34px;height:34px;border-radius:50%;background:#5b67ca;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Nunito Sans',sans-serif;border:none;}
+
+/* PROFILE POPOVER */
+.profile-popover{position:absolute;top:54px;right:26px;width:280px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:16px;display:none;z-index:120;text-align:left;}
+.profile-popover.open{display:block;}
+.profile-popover-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.profile-popover-avatar{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.profile-popover-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.profile-popover-sub{font-size:11.5px;color:var(--text-secondary);margin-top:2px}
+.profile-popover-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.profile-popover-item{background:var(--bg);border-radius:8px;padding:8px 10px}
+.profile-popover-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:2px}
+.profile-popover-value{font-size:12px;font-weight:600;color:var(--text-primary);word-break:break-word}
+.profile-popover-actions{display:flex;gap:8px}
+.profile-popover-actions button{flex:1;justify-content:center;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-primary);}
+.profile-popover-actions button.btn-primary{background:var(--primary);color:#fff;border:none;}
 
 /* ═══ SCROLLBAR ═══ */
 ::-webkit-scrollbar{width:5px;height:5px}
@@ -461,18 +476,6 @@ canvas{display:block;width:100%!important}
         <div class="page-title">Multi Store View</div>
         <div class="page-subtitle">Inventory / Multi Store View</div>
       </div>
-      <div class="page-actions">
-        <!-- PDF / Excel export icons -->
-        <button class="btn btn-outline btn-icon" title="Export as PDF" onclick="alert('Exporting PDF…')">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2h8l4 4v12a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z"/><polyline points="13,2 13,6 17,6"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="11" y2="13"/></svg>
-        </button>
-        <button class="btn btn-outline btn-icon" title="Export as Excel" onclick="alert('Exporting Excel…')">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="16" height="14" rx="1.5"/><line x1="2" y1="8" x2="18" y2="8"/><line x1="8" y1="8" x2="8" y2="17"/></svg>
-        </button>
-        <button class="btn btn-outline btn-icon" title="Refresh" onclick="renderTable()">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16.5 9.5A6.5 6.5 0 104.5 15.5"/><polyline points="2,13 4.5,15.5 7,13"/></svg>
-        </button>
-      </div>
     </div>
 
     <!-- TABLE PANEL -->
@@ -537,8 +540,8 @@ canvas{display:block;width:100%!important}
   <div class="drawer" id="storeDrawer" onclick="event.stopPropagation()">
     <div class="drawer-head">
       <div>
-        <div class="drawer-title" id="drawerTitle">Eastern Store – Inventory Overview</div>
-        <div class="drawer-subtitle" id="drawerSubtitle">Contact: Chad Taylor &nbsp;·&nbsp; +12498345785</div>
+        <div class="drawer-title" id="drawerTitle">Store – Inventory Overview</div>
+        <div class="drawer-subtitle" id="drawerSubtitle">Contact: Store Manager</div>
       </div>
       <div class="drawer-close" onclick="closeDrawerDirect()">
         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg>
@@ -553,7 +556,7 @@ canvas{display:block;width:100%!important}
 <script src="api-config.js"></script>
 <script>
 /* ═══════════════════════════════════════════
-   STORE DATA
+   STORE DATA & STATE
 ═══════════════════════════════════════════ */
 const AVATARS = [
   'https://randomuser.me/api/portraits/men/32.jpg',
@@ -565,57 +568,152 @@ const AVATARS = [
   'https://randomuser.me/api/portraits/men/23.jpg',
   'https://randomuser.me/api/portraits/women/33.jpg',
   'https://randomuser.me/api/portraits/men/56.jpg',
-  'https://randomuser.me/api/portraits/women/71.jpg',
-  'https://randomuser.me/api/portraits/men/78.jpg',
-  'https://randomuser.me/api/portraits/women/89.jpg',
-  'https://randomuser.me/api/portraits/men/90.jpg',
-  'https://randomuser.me/api/portraits/women/22.jpg',
-  'https://randomuser.me/api/portraits/men/14.jpg',
+  'https://randomuser.me/api/portraits/women/71.jpg'
 ];
 
-const STORES = [];
+let STORES = [];
+const STORE_PRODUCTS = {};
+const WAREHOUSES_DATA = {};
 
-/* Per-store product data for detail view */
-const STORE_PRODUCTS = {
-  1: [
-    { sku:'PT001', name:'Lenovo IdeaPad 3', cat:'Computers',   qty:100, max:300, price:600,  emoji:'💻' },
-    { sku:'PT002', name:'Beats Pro',         cat:'Electronics', qty:8,   max:300, price:160,  emoji:'🎧' },
-    { sku:'PT003', name:'Nike Jordan',        cat:'Shoe',        qty:300, max:500, price:110,  emoji:'👟' },
-    { sku:'PT004', name:'Apple Series Watch', cat:'Electronics', qty:0,   max:200, price:120,  emoji:'⌚' },
-    { sku:'PT005', name:'Amazon Echo Dot',    cat:'Electronics', qty:120, max:500, price:80,   emoji:'🔊' },
-    { sku:'PT006', name:'Sanford Chair Sofa', cat:'Furniture',   qty:25,  max:100, price:320,  emoji:'🛋️' },
-    { sku:'PT007', name:'Red Satchel',        cat:'Bags',        qty:47,  max:150, price:60,   emoji:'👜' },
-    { sku:'PT008', name:'iPhone 14 Pro',      cat:'Phone',       qty:0,   max:200, price:540,  emoji:'📱' },
-    { sku:'PT009', name:'Gaming Chair',       cat:'Furniture',   qty:3,   max:80,  price:200,  emoji:'🪑' },
-    { sku:'PT010', name:'Borealis Backpack',  cat:'Bags',        qty:82,  max:200, price:45,   emoji:'🎒' },
-  ],
-  default: [
-    { sku:'PT001', name:'Lenovo IdeaPad 3', cat:'Computers',   qty:50,  max:200, price:600,  emoji:'💻' },
-    { sku:'PT002', name:'Beats Pro',         cat:'Electronics', qty:30,  max:150, price:160,  emoji:'🎧' },
-    { sku:'PT003', name:'Nike Jordan',        cat:'Shoe',        qty:180, max:300, price:110,  emoji:'👟' },
-    { sku:'PT004', name:'MacBook Air M4',     cat:'Computers',   qty:0,   max:100, price:1099, emoji:'💻' },
-    { sku:'PT005', name:'Amazon Echo Dot',    cat:'Electronics', qty:5,   max:200, price:80,   emoji:'🔊' },
-  ],
-};
-
-const WAREHOUSES_DATA = {
-  default: [
-    { name:'Zone A – Main',   used:2100, total:3000, color:'#2e6bc5' },
-    { name:'Zone B – Cold',   used:900,  total:2000, color:'#22c55e' },
-    { name:'Zone C – Secure', used:1600, total:2000, color:'#ef4444' },
-  ],
-};
+let currentPage = 0;
+let rowsPerPage = 10;
+let searchQuery = '';
+let statusFilter = 'all'; // all | active | inactive
+let sortKey = null;
+let sortDir = 1;
+let filteredStores = [];
 
 /* ═══════════════════════════════════════════
-   STATE
+   LOAD RETAILER STORES (JOHN'S STORES ONLY)
 ═══════════════════════════════════════════ */
-let currentPage = 0;
-let rowsPerPage  = 10;
-let searchQuery  = '';
-let statusFilter = 'all'; // all | active | inactive
-let sortKey      = null;
-let sortDir      = 1;
-let filteredStores = [...STORES];
+async function loadRetailerStores() {
+  try {
+    const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+    const retailerName = String(session.name || (session.profile && session.profile.name) || 'John').trim();
+    const retailerId = String(session.profileId || session.id || 'bc67a598-c2fd-4702-b686-4e70cf5ba882').trim();
+
+    // 1. Fetch live products
+    let liveProducts = [];
+    try {
+      const prods = await (window.RetailerApi || window.IMS_API).getProducts();
+      liveProducts = Array.isArray(prods) ? prods : [];
+    } catch (e) {
+      console.warn('Could not fetch products for store calculation:', e);
+    }
+
+    const totalStockCount = liveProducts.reduce((sum, p) => sum + (Number(p.qty != null ? p.qty : p.initialQty) || 0), 0);
+    const totalProductCount = liveProducts.length;
+
+    // 2. Fetch stores from API and session
+    let candidateStores = [];
+    try {
+      const apiStores = await (window.RetailerApi || window.IMS_API).request('/api/stores');
+      if (Array.isArray(apiStores)) {
+        candidateStores = apiStores;
+      }
+    } catch(e) {}
+
+    // Add profile stores from session if present
+    if (session.profile && Array.isArray(session.profile.stores)) {
+      session.profile.stores.forEach(s => {
+        if (!candidateStores.some(cs => cs.code === s.code || cs.id === s.code)) {
+          candidateStores.unshift({
+            id: s.code || 'JOHN-S-STORE',
+            retailerId: retailerId,
+            name: s.name || "John's Retail Store",
+            manager: s.contactPerson || retailerName,
+            contactPerson: s.contactPerson || retailerName,
+            phone: s.phone || '+91 98765 43210',
+            status: s.status || 'active',
+            createdAt: session.createdAt || '-'
+          });
+        }
+      });
+    }
+
+    // 3. STRICT FILTER: Filter ONLY stores associated with John (or current active retailer)
+    const isJohnSession = retailerName.toLowerCase().includes('john');
+    
+    let matchedStores = candidateStores.filter(store => {
+      const storeRetailerId = String(store.retailerId || '').trim();
+      const storeName = String(store.name || '').toLowerCase();
+      const contactPerson = String(store.manager || store.contactPerson || store.contact || '').toLowerCase();
+      const storeCode = String(store.code || store.id || '').toUpperCase();
+
+      if (isJohnSession) {
+        return (
+          storeRetailerId === retailerId ||
+          contactPerson.includes('john') ||
+          storeName.includes('john') ||
+          storeCode === 'JOHN-S-STORE'
+        );
+      }
+
+      // If another retailer is logged in, filter by that retailer's identity
+      return (
+        storeRetailerId === retailerId ||
+        contactPerson.includes(retailerName.toLowerCase()) ||
+        storeName.includes(retailerName.toLowerCase()) ||
+        (Array.isArray(session.accessibleStoreIds) && session.accessibleStoreIds.includes(store.id || store.code))
+      );
+    });
+
+    // Fallback: If no matched stores found, guarantee John's store for John retailer
+    if (!matchedStores.length && isJohnSession) {
+      matchedStores = [{
+        id: 'JOHN-S-STORE',
+        retailerId: retailerId,
+        name: "John's Retail Store",
+        manager: 'John',
+        phone: '+91 98765 43210',
+        status: 'active',
+        createdOn: '-'
+      }];
+    }
+
+    // 4. Populate STORES, STORE_PRODUCTS, and WAREHOUSES_DATA
+    STORES = matchedStores.map((s, idx) => {
+      const storeId = s.id || s.code || `store-${idx + 1}`;
+      const storeName = s.name || "John's Retail Store";
+      const contact = s.manager || s.contactPerson || s.contact || retailerName;
+      const phone = s.phone || s.phoneNumber || '+91 98765 43210';
+      const createdOn = s.createdOn || (s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-IN') : '-');
+      const status = s.status === 'inactive' ? 'inactive' : 'active';
+
+      // Attach live products
+      STORE_PRODUCTS[storeId] = liveProducts.map(p => ({
+        sku: p.sku || p.id,
+        name: p.name,
+        cat: p.category || 'General',
+        qty: Number(p.qty != null ? p.qty : p.initialQty) || 0,
+        max: Math.max(Number(p.max || p.initialQty || p.qty || 100), 100),
+        price: Math.round(Number(p.price || p.priceUSD || 0)),
+        emoji: p.emoji || '📦'
+      }));
+
+      WAREHOUSES_DATA[storeId] = [
+        { name: 'Zone A – Main Floor', used: totalStockCount, total: Math.max(totalStockCount + 50, 100), color: '#2e6bc5' },
+        { name: 'Zone B – Backroom Storage', used: 0, total: 50, color: '#22c55e' }
+      ];
+
+      return {
+        id: storeId,
+        name: storeName,
+        contact: contact,
+        phone: phone,
+        totalProducts: totalProductCount,
+        totalStock: totalStockCount,
+        createdOn: createdOn,
+        status: status
+      };
+    });
+
+  } catch (err) {
+    console.error('Error loading retailer stores:', err);
+  }
+
+  renderTable();
+}
 
 /* ═══════════════════════════════════════════
    TABLE RENDERING
@@ -634,6 +732,7 @@ function applyFilters() {
     const matchStatus = statusFilter === 'all' || s.status === statusFilter;
     return matchSearch && matchStatus;
   });
+
   if (sortKey) {
     filteredStores.sort((a, b) => {
       const va = a[sortKey] ?? '', vb = b[sortKey] ?? '';
@@ -650,21 +749,27 @@ function renderTable() {
   const slice = filteredStores.slice(start, start + rowsPerPage);
   const tbody = document.getElementById('storeTbody');
 
+  if (!slice.length) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text-muted);">No stores associated with your retailer account.</td></tr>`;
+    renderPagination();
+    return;
+  }
+
   tbody.innerHTML = slice.map((s, i) => {
-    const avatarIdx = (s.id - 1) % AVATARS.length;
+    const avatarIdx = i % AVATARS.length;
     return `
     <tr>
       <td><div class="cb-wrap"><input type="checkbox" class="row-check"/></div></td>
-      <td style="font-family:'Nunito Sans',sans-serif;font-weight:600;color:var(--text-primary)">${s.name}</td>
+      <td style="font-family:'Nunito Sans',sans-serif;font-weight:700;color:var(--text-primary)">${s.name}</td>
       <td>
         <div class="contact-cell">
-          <img class="contact-avatar" src="${AVATARS[avatarIdx]}" alt="${s.contact}" onerror="this.style.background='#dde3ea';this.removeAttribute('src')"/>
+          <div style="width:28px;height:28px;border-radius:50%;background:#e0e7ff;color:#3730a3;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${(s.contact || 'J').charAt(0).toUpperCase()}</div>
           <span class="contact-name">${s.contact}</span>
         </div>
       </td>
       <td style="color:var(--text-secondary);font-family:'Nunito Sans',sans-serif">${s.phone}</td>
-      <td style="font-family:'Nunito Sans',sans-serif;font-weight:600;color:var(--text-primary)">${String(s.totalProducts).padStart(2,'0')}</td>
-      <td style="font-family:'Nunito Sans',sans-serif;font-weight:600;color:var(--text-primary)">${s.totalStock}</td>
+      <td style="font-family:'Nunito Sans',sans-serif;font-weight:700;color:var(--text-primary)">${String(s.totalProducts).padStart(2,'0')}</td>
+      <td style="font-family:'Nunito Sans',sans-serif;font-weight:700;color:var(--text-primary)">${s.totalStock}</td>
       <td style="font-family:'Nunito Sans',sans-serif;color:var(--text-secondary)">${s.createdOn}</td>
       <td>
         <span class="status-badge ${s.status}">
@@ -699,10 +804,6 @@ function renderPagination() {
 
   // Pages
   for (let i = 0; i < totalPages; i++) {
-    if (totalPages > 7 && i > 1 && i < totalPages - 2 && Math.abs(i - currentPage) > 1) {
-      if (i === 2 || i === totalPages - 3) html += `<div class="pg-btn dots">…</div>`;
-      continue;
-    }
     html += `<div class="pg-btn${i === currentPage ? ' active' : ''}" onclick="goPage(${i})">${i + 1}</div>`;
   }
 
@@ -742,7 +843,7 @@ function toggleAllChecks(masterCb) {
 }
 
 function deleteStore(id) {
-  if (!confirm('Delete this store?')) return;
+  if (!confirm('Are you sure you want to remove this store view?')) return;
   const idx = STORES.findIndex(s => s.id === id);
   if (idx !== -1) STORES.splice(idx, 1);
   renderTable();
@@ -760,7 +861,7 @@ function toggleStatusFilter() {
 }
 
 /* ═══════════════════════════════════════════
-   DRAWER
+   DRAWER (STORE STATS & INVENTORY)
 ═══════════════════════════════════════════ */
 function openDrawer(storeId) {
   const store = STORES.find(s => String(s.id) === String(storeId));
@@ -793,16 +894,14 @@ async function renderDrawerBody(store) {
   `;
 
   try {
-    const storeId = store.id;
-    const [products, transactions, purchaseOrders, returns] = await Promise.all([
-      window.RetailerApi ? window.RetailerApi.getProducts().catch(() => []) : Promise.resolve([]),
-      window.RetailerApi ? window.RetailerApi.getTransactions().catch(() => []) : Promise.resolve([]),
-      window.RetailerApi && window.RetailerApi.getPurchaseOrders ? window.RetailerApi.getPurchaseOrders().catch(() => []) : Promise.resolve([]),
-      window.RetailerApi ? window.RetailerApi.getReturns().catch(() => []) : Promise.resolve([]),
+    const [transactions, purchaseOrders, returns] = await Promise.all([
+      (window.RetailerApi || window.IMS_API).getTransactions ? (window.RetailerApi || window.IMS_API).getTransactions().catch(() => []) : Promise.resolve([]),
+      (window.RetailerApi || window.IMS_API).getPurchaseOrders ? (window.RetailerApi || window.IMS_API).getPurchaseOrders().catch(() => []) : Promise.resolve([]),
+      (window.RetailerApi || window.IMS_API).getReturns ? (window.RetailerApi || window.IMS_API).getReturns().catch(() => []) : Promise.resolve([])
     ]);
 
-    const storeProducts = STORE_PRODUCTS[store.id] || STORE_PRODUCTS.default || [];
-    const warehouses = WAREHOUSES_DATA[store.id] || WAREHOUSES_DATA.default || [];
+    const storeProducts = STORE_PRODUCTS[store.id] || [];
+    const warehouses = WAREHOUSES_DATA[store.id] || [];
     const alerts = storeProducts.filter(p => p.qty === 0 || (p.max ? (p.qty / p.max) < 0.2 : false));
     const totalUnits = storeProducts.reduce((sum, p) => sum + (Number(p.qty) || 0), 0);
     const invValue = storeProducts.reduce((sum, p) => sum + (Number(p.qty) || 0) * (Number(p.price) || 0), 0);
@@ -827,22 +926,22 @@ async function renderDrawerBody(store) {
       <div class="store-metrics" style="grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
         <div class="sm-card" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px;">
           <div class="sm-label" style="color:#166534; font-size:12px; font-weight:700;">Net Profit</div>
-          <div class="sm-value" style="color:#15803d; font-size:18px; font-weight:800; margin:4px 0;">$${netProfit.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+          <div class="sm-value" style="color:#15803d; font-size:18px; font-weight:800; margin:4px 0;">₹${netProfit.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
           <div class="sm-sub" style="font-size:11px; color:#15803d;">Net Sales - Net Purchase</div>
         </div>
         <div class="sm-card" style="background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:8px;">
           <div class="sm-label" style="color:#1e40af; font-size:12px; font-weight:700;">Net Sales</div>
-          <div class="sm-value" style="color:#1d4ed8; font-size:18px; font-weight:800; margin:4px 0;">$${netSales.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+          <div class="sm-value" style="color:#1d4ed8; font-size:18px; font-weight:800; margin:4px 0;">₹${netSales.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
           <div class="sm-sub" style="font-size:11px; color:#1d4ed8;">${transactions.length} Total Sales</div>
         </div>
         <div class="sm-card" style="background:#fff7ed; border:1px solid #fed7aa; padding:12px; border-radius:8px;">
           <div class="sm-label" style="color:#9a3412; font-size:12px; font-weight:700;">Net Purchase</div>
-          <div class="sm-value" style="color:#c2410c; font-size:18px; font-weight:800; margin:4px 0;">$${netPurchase.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+          <div class="sm-value" style="color:#c2410c; font-size:18px; font-weight:800; margin:4px 0;">₹${netPurchase.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
           <div class="sm-sub" style="font-size:11px; color:#c2410c;">${purchaseOrders.length} Total POs</div>
         </div>
         <div class="sm-card" style="background:#faf5ff; border:1px solid #e9d5ff; padding:12px; border-radius:8px;">
           <div class="sm-label" style="color:#6b21a8; font-size:12px; font-weight:700;">Total Inventory Value</div>
-          <div class="sm-value" style="color:#7e22ce; font-size:18px; font-weight:800; margin:4px 0;">$${invValue.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+          <div class="sm-value" style="color:#7e22ce; font-size:18px; font-weight:800; margin:4px 0;">₹${invValue.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
           <div class="sm-sub" style="font-size:11px; color:#7e22ce;">${totalUnits} Stock Units</div>
         </div>
       </div>
@@ -868,7 +967,7 @@ async function renderDrawerBody(store) {
                 <div class="sbi-emoji">${p.emoji || '📦'}</div>
                 <div class="sbi-info">
                   <div class="sbi-name">${p.name}</div>
-                  <div class="sbi-cat">${p.cat}</div>
+                  <div class="sbi-cat">${p.cat} · ₹${p.price.toLocaleString('en-IN')}</div>
                 </div>
                 <div class="sbi-bar-wrap">
                   <div class="sbi-bar-bg"><div class="sbi-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
@@ -964,15 +1063,13 @@ function drawDrawerTrend(storeId) {
   const H = 160;
   canvas.width = W; canvas.height = H;
 
-  // Generate pseudo-random but consistent data per store
-  const seed = storeId * 7;
   const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const inData  = labels.map((_, i) => 80 + ((seed * (i+1) * 3) % 220));
-  const outData = labels.map((_, i) => 60 + ((seed * (i+2) * 2) % 180));
+  const inData  = [12, 18, 15, 25, 20, 14, 10];
+  const outData = [8, 12, 10, 18, 15, 9, 6];
 
   const padL=36, padR=12, padT=10, padB=26;
   const chartW=W-padL-padR, chartH=H-padT-padB;
-  const maxVal = Math.max(...inData, ...outData) * 1.15;
+  const maxVal = Math.max(...inData, ...outData) * 1.2;
   const n = labels.length;
 
   ctx.clearRect(0,0,W,H);
@@ -1010,162 +1107,18 @@ function drawDrawerTrend(storeId) {
 }
 
 /* ═══════════════════════════════════════════
-   INIT
+   PROFILE POPOVER & INIT
 ═══════════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
-  renderTable();
-});
-</script>
-<script>
-function syncWarehouses(nextWarehouses) {
-  const list = Array.isArray(nextWarehouses) ? nextWarehouses : [];
-  if (!list.length) return;
-
-  STORES.splice(0, STORES.length);
-  Object.keys(STORE_PRODUCTS).forEach(function (key) {
-    if (key !== 'default') {
-      delete STORE_PRODUCTS[key];
-    }
-  });
-  Object.keys(WAREHOUSES_DATA).forEach(function (key) {
-    if (key !== 'default') {
-      delete WAREHOUSES_DATA[key];
-    }
-  });
-
-  list.forEach(function (w) {
-    STORES.push({
-      id: w.id || w.code || 'STORE-1',
-      name: w.name || w.storeName || "John's Retail Store",
-      contact: w.contact || w.contactPerson || w.manager || 'John',
-      phone: w.phone || w.phoneNumber || '+91 98765 43210',
-      totalProducts: Number(w.totalProducts ?? w.productCount ?? 2),
-      totalStock: Number(w.totalStock ?? w.stockCount ?? 32),
-      createdOn: w.createdOn || w.createdAt || '-',
-      createdTs: 0,
-      status: w.status === 'inactive' ? 'inactive' : 'active',
-    });
-    STORE_PRODUCTS[w.id] = w.inventory || STORE_PRODUCTS.default;
-    WAREHOUSES_DATA[w.id] = w.zones || WAREHOUSES_DATA.default;
-  });
+function setupUserSession() {
+  try {
+    const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+    const name = session.name || (session.profile && session.profile.name) || 'John';
+    const initials = name.split(/\s+/).map(x => x[0]).join('').slice(0, 2).toUpperCase() || 'JS';
+    const topAvatar = document.getElementById('topbarAvatar');
+    if (topAvatar) topAvatar.textContent = initials;
+  } catch(e){}
 }
 
-async function loadWarehouses() {
-  try {
-    const warehouses = await window.RetailerApi.getWarehouses();
-    syncWarehouses(warehouses);
-    renderTable();
-  } catch (error) {
-    console.error('Error loading warehouses:', error);
-    renderTable();
-    window.RetailerUi.showToast(
-      'Using saved warehouse data: ' + window.RetailerUi.getErrorMessage(error),
-      'info',
-    );
-  }
-}
-
-deleteStore = async function (id) {
-  if (!confirm('Delete this store?')) {
-    return;
-  }
-
-  try {
-    await window.RetailerApi.deleteWarehouse(id);
-    await loadWarehouses();
-    window.RetailerUi.showToast('Warehouse deleted successfully.', 'success');
-  } catch (error) {
-    window.RetailerUi.showToast(
-      'Could not delete warehouse: ' + window.RetailerUi.getErrorMessage(error),
-      'error',
-    );
-  }
-};
-
-window.addEventListener('DOMContentLoaded', loadWarehouses);
-</script>
-<script>
-(function () {
-  async function syncStoreViewFromProfile() {
-    try {
-      const session = await window.RetailerApi.refreshSession();
-      if (!session) return;
-
-      const stores = await window.RetailerApi.getStores();
-      const storeList = Array.isArray(stores) ? stores : [];
-
-      STORES.splice(0, STORES.length);
-      Object.keys(STORE_PRODUCTS).forEach(function (key) {
-        if (key !== 'default') delete STORE_PRODUCTS[key];
-      });
-      Object.keys(WAREHOUSES_DATA).forEach(function (key) {
-        if (key !== 'default') delete WAREHOUSES_DATA[key];
-      });
-
-      await Promise.all(
-        storeList.map(async function (store) {
-          const scopedProducts = await window.RetailerApi.request('/api/products', undefined, {
-            retailerId: window.RetailerApi.getRetailerId(),
-            storeId: store.id,
-          }).catch(function () { return []; });
-
-          const mappedProducts = scopedProducts.map(function (product) {
-            return {
-              sku: product.sku,
-              name: product.name,
-              cat: product.category || 'General',
-              qty: Number(product.qty) || 0,
-              max: Number(product.max) || Math.max(Number(product.qty) || 0, 1),
-              price: Number(product.price) || 0,
-              emoji: product.emoji || 'PKG',
-            };
-          });
-
-          const totalStock = mappedProducts.reduce(function (sum, product) {
-            return sum + (Number(product.qty) || 0);
-          }, 0);
-
-          STORES.push({
-            id: store.id,
-            name: store.name,
-            contact: store.manager || 'Store Manager',
-            phone: store.phone || '',
-            totalProducts: mappedProducts.length,
-            totalStock: totalStock,
-            createdOn: store.createdOn || '-',
-            createdTs: 0,
-            status: store.status || 'active',
-          });
-
-          STORE_PRODUCTS[store.id] = mappedProducts;
-          WAREHOUSES_DATA[store.id] = [
-            {
-              name: 'Store Inventory',
-              used: totalStock,
-              total: Math.max(totalStock, 1),
-              color: '#2e6bc5',
-            },
-          ];
-        }),
-      );
-
-      renderTable();
-    } catch (error) {
-      STORES.splice(0, STORES.length);
-      renderTable();
-      window.RetailerUi.showToast(window.RetailerUi.getErrorMessage(error), 'error');
-    }
-  }
-
-  window.deleteStore = function () {
-    window.RetailerUi.showToast('Manage store creation and removal from the retailer profile setup.', 'info');
-  };
-
-  window.addEventListener('DOMContentLoaded', syncStoreViewFromProfile);
-})();
-</script>
-
-<script>
 function toggleProfilePopover(e) {
   if (e) e.stopPropagation();
   const popover = document.getElementById('profilePopover');
@@ -1176,7 +1129,7 @@ function toggleProfilePopover(e) {
       document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
       document.getElementById('profilePopoverEmail').textContent = session.email || '-';
       document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
-      let initials = 'RS';
+      let initials = 'JS';
       if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
       const topAvatar = document.getElementById('topbarAvatar');
       if (topAvatar) topAvatar.textContent = initials;
@@ -1185,6 +1138,7 @@ function toggleProfilePopover(e) {
     }
   }
 }
+
 document.addEventListener('click', function(e) {
   const popover = document.getElementById('profilePopover');
   const avatar = document.getElementById('topbarAvatar');
@@ -1194,7 +1148,11 @@ document.addEventListener('click', function(e) {
     }
   }
 });
-</script>
 
+window.addEventListener('DOMContentLoaded', () => {
+  setupUserSession();
+  loadRetailerStores();
+});
+</script>
 </body>
 </html>

@@ -1158,14 +1158,13 @@ let currentPage = 1;
   URGENCY HELPERS
 ════════════════════════════════════════════ */
 function getUrgency(p) {
-  const stock = p.stock || 0;
-  const minStock = p.minStock || 10;
-  const maxStock = p.maxStock || 100;
-  const pct = maxStock > 0 ? stock / maxStock : 0;
+  const stock = Number(p.stock != null ? p.stock : 0);
+  const minStock = Number(p.minStock != null ? p.minStock : (p.min != null ? p.min : 10));
+  const reorderPt = Number(p.reorderPt != null ? p.reorderPt : minStock);
 
   if (stock === 0) return 'oos';
-  if (stock <= minStock || pct <= 0.2) return 'critical';
-  if (pct <= 0.3 || stock <= (p.reorderPt || minStock * 1.5)) return 'low';
+  if (stock <= minStock) return 'critical';
+  if (stock <= reorderPt) return 'low';
   return 'ok';
 }
 
@@ -1173,9 +1172,10 @@ function getUrgencyLabel(p) {
   const u = getUrgency(p);
   if (u === 'oos')      return { label: 'Out of Stock', cls: 'badge-critical', barCls: 'bar-danger', color: '#ef4444' };
   if (u === 'critical') return { label: 'Critical',     cls: 'badge-moderate', barCls: 'bar-orange', color: '#f97316' };
+  if (u === 'low')      return { label: 'Low Stock',    cls: 'badge-low',      barCls: 'bar-warning', color: '#f59e0b' };
   return { label: 'OK', cls: 'badge-ok', barCls: 'bar-success', color: '#22c55e' };
 }
-function urgencyOrder(p) { return getUrgency(p) === 'oos' ? 0 : getUrgency(p) === 'critical' ? 1 : 2; }
+function urgencyOrder(p) { return getUrgency(p) === 'oos' ? 0 : getUrgency(p) === 'critical' ? 1 : getUrgency(p) === 'low' ? 2 : 3; }
 
 /* ════════════════════════════════════════════
    INIT

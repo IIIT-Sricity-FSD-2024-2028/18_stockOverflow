@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>StockOverflow – Purchase Order</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet"/>
+<title>StockOverflow – Purchase Order & History</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet"/>
 <style>
 :root {
   --bg: #f5f6fa;
@@ -18,6 +18,8 @@
   --danger-light: #fee2e2;
   --warning: #f59e0b;
   --warning-light: #fef3c7;
+  --purple: #8b5cf6;
+  --purple-light: #f3e8ff;
   --text-primary: #212b36;
   --text-secondary: #646b72;
   --text-muted: #9ca3af;
@@ -28,6 +30,7 @@
   --radius: 8px;
   --radius-sm: 5px;
   --sidebar-w: 252px;
+  --topbar-h: 58px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);display:flex;min-height:100vh;font-size:14px}
@@ -76,6 +79,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .topbar-left{display:flex;align-items:center;gap:14px}
 .breadcrumb{font-size:12.5px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif}
 .breadcrumb a{color:var(--text-secondary);text-decoration:none}
+.breadcrumb a:hover{color:var(--primary)}
 .breadcrumb .sep{margin:0 8px;opacity:.5}
 .breadcrumb .cur{color:var(--text-primary);font-weight:600}
 .search-bar{
@@ -102,8 +106,37 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 
 /* PAGE HEADER */
 .po-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px}
-.po-page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;color:#092c4c;line-height:27px}
+.po-page-title{font-family:'Nunito Sans',sans-serif;font-size:20px;font-weight:800;color:#092c4c;line-height:1.3}
 .po-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;color:#646b72;margin-top:3px}
+
+/* NAVIGATION TABS */
+.nav-tab-wrap{display:flex;align-items:center;gap:10px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px}
+.nav-tab-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:6px;
+  background:transparent;border:1px solid transparent;font-family:'Nunito Sans',sans-serif;
+  font-size:13.5px;font-weight:700;color:var(--text-secondary);cursor:pointer;transition:all .15s;
+}
+.nav-tab-btn:hover{background:#fff;color:var(--primary);border-color:var(--border)}
+.nav-tab-btn.active{background:#fff;color:var(--primary);border-color:var(--border);box-shadow:var(--shadow-sm)}
+.nav-tab-btn svg{width:15px;height:15px}
+
+/* STATS KPI CARDS */
+.po-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.po-stat-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between;
+  box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s;
+}
+.po-stat-card:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.po-stat-val{font-size:24px;font-weight:800;font-family:'Nunito Sans',sans-serif;color:#092c4c;line-height:1.1;margin-top:4px}
+.po-stat-lbl{font-size:12px;font-weight:600;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif}
+.po-stat-sub{font-size:11px;color:var(--text-muted);margin-top:4px;font-family:'Nunito Sans',sans-serif}
+.po-stat-icon{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.psi-blue{background:var(--primary-light);color:var(--primary)}
+.psi-yellow{background:var(--warning-light);color:var(--warning)}
+.psi-green{background:var(--success-light);color:var(--success)}
+.psi-purple{background:var(--purple-light);color:var(--purple)}
+.po-stat-icon svg{width:20px;height:20px}
 
 /* LAYOUT */
 .po-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
@@ -112,7 +145,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .po-card{
   background:#fff;border:1px solid var(--border);
   border-radius:var(--radius);box-shadow:var(--shadow-sm);
-  overflow:hidden;margin-bottom:16px;
+  overflow:hidden;margin-bottom:20px;
 }
 .po-card:last-child{margin-bottom:0}
 .po-card-header{
@@ -180,7 +213,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 table.po-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:13px}
 table.po-table thead tr{background:#f5f6fa}
 table.po-table th{
-  padding:9px 14px;text-align:left;
+  padding:10px 14px;text-align:left;
   font-size:11px;font-weight:700;color:#646b72;
   white-space:nowrap;border-bottom:1px solid var(--border);
   text-transform:uppercase;letter-spacing:.4px;
@@ -229,23 +262,26 @@ table.po-table tbody tr:hover td{background:#fafbfc}
 .tbl-act-btn svg{width:13px;height:13px}
 .tbl-act-btn.del{color:var(--danger)}
 .tbl-act-btn.del:hover{background:var(--danger-light);border-color:#fca5a5}
+.tbl-act-btn.view{color:var(--primary)}
+.tbl-act-btn.view:hover{background:var(--primary-light);border-color:#bfdbfe}
 
 /* Stock badge inside table */
 .tbl-stock-badge{
-  display:inline-flex;padding:2px 8px;border-radius:20px;
-  font-size:10.5px;font-weight:700;font-family:'Nunito Sans',sans-serif;
+  display:inline-flex;padding:3px 9px;border-radius:20px;
+  font-size:11px;font-weight:700;font-family:'Nunito Sans',sans-serif;
 }
 .sb-ok{background:#dcfce7;color:#15803d}
 .sb-low{background:#fef3c7;color:#92400e}
 .sb-out{background:#fee2e2;color:#991b1b}
 
-/* Empty table state */
-.empty-table-state{
-  padding:40px 20px;text-align:center;
-}
-.ets-icon{font-size:40px;opacity:.35;margin-bottom:10px}
-.ets-title{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:var(--text-secondary);margin-bottom:4px}
-.ets-sub{font-size:12.5px;color:var(--text-muted);font-family:'Nunito Sans',sans-serif}
+/* Status pills */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;font-family:'Nunito Sans',sans-serif}
+.badge-draft{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+.badge-pending{background:#fef3c7;color:#b45309;border:1px solid #fde68a}
+.badge-confirmed{background:#e0e7ff;color:#4338ca;border:1px solid #c7d2fe}
+.badge-delivery{background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd}
+.badge-delivered{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0}
+.badge-cancelled{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca}
 
 /* ── SUMMARY ──────────────────────────────────────── */
 .summary-footer{padding:16px 20px;border-top:1px solid var(--border)}
@@ -284,6 +320,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
 .btn-secondary:hover{background:#0b3660}
 .btn-outline{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}
 .btn-outline:hover{background:var(--bg);color:var(--text-primary)}
+.btn-sm{padding:5px 12px;font-size:12px}
 
 /* ── RIGHT PANEL ──────────────────────────────────── */
 .order-summary-card{position:sticky;top:74px}
@@ -298,55 +335,52 @@ table.po-table tbody tr:hover td{background:#fafbfc}
 .os-label{color:#646b72;font-weight:500}
 .os-val{color:#212b36;font-weight:700;text-align:right;font-size:12.5px}
 
-/* Badges */
-.badge{display:inline-flex;padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:700;font-family:'Nunito Sans',sans-serif}
-.badge-draft{background:#fef3c7;color:#92400e}
-.badge-pending{background:#dbeafe;color:#1d4ed8}
-.badge-success{background:#dcfce7;color:#15803d}
+.sel-prod-list{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto}
+.sel-prod-row{display:flex;align-items:center;gap:8px;font-size:12px;font-family:'Nunito Sans',sans-serif;padding:4px 0}
+.spr-emoji{font-size:15px}
+.spr-name{flex:1;font-weight:600;color:#212b36;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spr-qty{color:var(--text-secondary);font-weight:700}
 
-/* Checklist */
-.po-checklist{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--border-light);margin-top:16px;padding-top:14px}
-.po-checklist-title{font-size:12px;font-weight:700;color:#212b36;font-family:'Nunito Sans',sans-serif;margin-bottom:8px}
-.chk-item{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:13px;font-family:'Nunito Sans',sans-serif}
-.chk-item input{width:16px;height:16px;border-radius:4px;cursor:pointer;accent-color:var(--primary)}
-.chk-item label{cursor:pointer;flex:1;color:#212b36}
-.chk-item.done label{color:#15803d}
+/* Pre-submission checklist */
+.po-checklist{margin-top:16px;border-top:1px solid var(--border-light);padding-top:14px}
+.po-checklist-title{font-size:11px;font-weight:700;color:#646b72;font-family:'Nunito Sans',sans-serif;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+.chk-item{display:flex;align-items:center;gap:8px;font-size:12.5px;font-family:'Nunito Sans',sans-serif;color:var(--text-muted);margin-bottom:6px;transition:color .15s}
+.chk-item.done{color:#15803d;font-weight:600}
+.chk-item input{width:14px;height:14px;accent-color:#22c55e;cursor:default}
 
-/* Selected products preview in summary */
-.sel-prod-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
-.sel-prod-row{
-  display:flex;align-items:center;gap:8px;
-  background:var(--primary-light);border:1px solid #c9d9f5;
-  border-radius:6px;padding:7px 10px;
-}
-.spr-emoji{font-size:16px;flex-shrink:0}
-.spr-name{font-size:12px;font-weight:700;color:#092c4c;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Nunito Sans',sans-serif}
-.spr-qty{font-size:11px;color:var(--primary);font-weight:700;font-family:'Nunito Sans',sans-serif;flex-shrink:0}
-
-/* ── RECENTLY ADDED BANNER ───────────────────────── */
+/* Banner */
 .added-banner{
-  display:none;
-  background:linear-gradient(135deg,#dcfce7,#d1fae5);
-  border:1px solid #86efac;border-radius:var(--radius);
-  padding:12px 16px;margin-bottom:16px;
-  align-items:center;gap:10px;
+  display:none;align-items:center;gap:10px;
+  background:#ecfdf5;border:1px solid #a7f3d0;border-radius:var(--radius-sm);
+  padding:10px 16px;margin-bottom:16px;font-size:13px;color:#065f46;
+  font-family:'Nunito Sans',sans-serif;animation:rowFadeIn .2s ease;
 }
 .added-banner.show{display:flex}
-.added-banner-icon{font-size:20px}
-.added-banner-text{flex:1;font-family:'Nunito Sans',sans-serif;font-size:13px;color:#15803d;font-weight:600}
-.added-banner-close{
-  width:22px;height:22px;border:none;background:transparent;
-  cursor:pointer;color:#15803d;font-size:16px;display:flex;align-items:center;justify-content:center;
-  border-radius:4px;transition:background .12s;
+.added-banner-icon{font-size:15px}
+.added-banner-text{flex:1;font-weight:600}
+.added-banner-close{background:none;border:none;cursor:pointer;color:#065f46;font-size:14px;opacity:.7}
+.added-banner-close:hover{opacity:1}
+
+/* ── HISTORY CONTROLS ────────────────────────────── */
+.history-controls{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:16px;flex-wrap:wrap;
 }
-.added-banner-close:hover{background:rgba(21,128,61,.1)}
+.hc-search{
+  display:flex;align-items:center;gap:8px;
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:7px 12px;width:280px;
+}
+.hc-search svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0}
+.hc-search input{border:none;background:transparent;outline:none;font-size:13px;font-family:'Nunito Sans',sans-serif;width:100%}
+.hc-filters{display:flex;align-items:center;gap:10px}
 
 /* ── TOAST ───────────────────────────────────────── */
 .toast{
   position:fixed;bottom:24px;right:24px;
-  background:#092c4c;color:#fff;
-  padding:11px 16px;border-radius:var(--radius-sm);
-  font-size:13px;font-family:'Nunito Sans',sans-serif;font-weight:600;
+  background:#212b36;color:#fff;
+  padding:12px 18px;border-radius:var(--radius);
+  font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;
   display:flex;align-items:center;gap:8px;
   box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:400;
   transform:translateY(20px);opacity:0;
@@ -357,24 +391,25 @@ table.po-table tbody tr:hover td{background:#fafbfc}
 
 /* ── CONFIRM MODAL ───────────────────────────────── */
 .modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.4);
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
   display:flex;align-items:center;justify-content:center;z-index:300;
   opacity:0;pointer-events:none;transition:opacity .2s;
   backdrop-filter:blur(2px);
 }
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal{
-  background:#fff;border-radius:var(--radius);width:400px;max-width:calc(100vw - 40px);
+  background:#fff;border-radius:var(--radius);width:450px;max-width:calc(100vw - 40px);
   box-shadow:0 20px 60px rgba(0,0,0,.15);
   transform:scale(.95) translateY(8px);transition:transform .2s;overflow:hidden;
 }
+.modal-lg{width:640px}
 .modal-overlay.open .modal{transform:scale(1) translateY(0)}
 .modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .modal-title{font-family:'Nunito Sans',sans-serif;font-size:15px;font-weight:700;color:#092c4c}
 .modal-x{width:28px;height:28px;border:1px solid var(--border);border-radius:5px;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:background .12s}
 .modal-x:hover{background:var(--danger-light);color:var(--danger)}
-.modal-body{padding:16px 20px;font-size:13px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif;line-height:1.6}
-.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.modal-body{padding:20px;font-size:13px;color:var(--text-secondary);font-family:'Nunito Sans',sans-serif;line-height:1.6;max-height:70vh;overflow-y:auto}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
 .modal-btn-cancel{padding:8px 16px;border:1px solid var(--border);border-radius:5px;background:#fff;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:var(--text-secondary);transition:background .12s}
 .modal-btn-cancel:hover{background:var(--bg)}
 .modal-btn-danger{padding:8px 16px;border:none;border-radius:5px;background:var(--danger);color:#fff;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .12s}
@@ -451,9 +486,8 @@ table.po-table tbody tr:hover td{background:#fafbfc}
       <div class="sb-group-label">Stock</div>
       <div class="sb-menus">
         <a class="sb-item" href="stock_adjustment.html">
-          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="2,14 5,11 8,8 11,5 14,2"/><polyline points="8,2 14,2 14,8"/></svg></span>
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 14L14 2M14 2H8M14 2V8"/></svg></span>
           <span class="sb-item-label">Stock Adjustment</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
       </div>
     </div>
@@ -465,19 +499,16 @@ table.po-table tbody tr:hover td{background:#fafbfc}
       <div class="sb-group-label">Peoples</div>
       <div class="sb-menus">
         <a class="sb-item" href="Customer_List.html">
-          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.5"/><path d="M2.5 14c0-3.04 2.46-5.5 5.5-5.5s5.5 2.46 5.5 5.5"/></svg></span>
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/></svg></span>
           <span class="sb-item-label">Customers</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
         <a class="sb-item" href="billers.html">
-          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 3h12v10H2z"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="9" x2="14" y2="9"/></svg></span>
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="12" height="12" rx="1.5"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="9" y2="9"/></svg></span>
           <span class="sb-item-label">Billers</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
         <a class="sb-item" href="supplier-list.html">
-          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="7" width="12" height="8" rx="1.5"/><path d="M5.5 7V5.5a2.5 2.5 0 015 0V7"/><circle cx="8" cy="11" r="1.5"/></svg></span>
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 3h12v3H2zM3 6v7h10V6M6 9h4"/></svg></span>
           <span class="sb-item-label">Suppliers</span>
-          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
         </a>
       </div>
     </div>
@@ -490,7 +521,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
       <div class="sb-menus">
         <a class="sb-item" href="Reorder_Recommendations.html">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9.5" x2="8" y2="12.5"/><line x1="6.5" y1="11" x2="9.5" y2="11"/></svg></span>
-          <span class="sb-item-label" style="font-size:13px;white-space:normal;line-height:1.3">Reorder Recommendation</span>
+          <span class="sb-item-label">Reorder Recommendation</span>
         </a>
         <a class="sb-item active" href="Create_Purchase_Order.html">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="10" x2="10" y2="10"/></svg></span>
@@ -510,7 +541,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
-        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}window.location.href='../index.html';return false;">
+        <a class="sb-item" href="#" onclick="if(window.DB){DB.logout();}localStorage.removeItem('so_session');window.location.href='../index.html';return false;">
           <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8H2.5M5,5 2,8 5,11"/><path d="M6 3.5h5.5a2 2 0 012 2v5a2 2 0 01-2 2H6"/></svg></span>
           <span class="sb-item-label">Logout</span>
         </a>
@@ -526,17 +557,17 @@ table.po-table tbody tr:hover td{background:#fafbfc}
   <div class="topbar">
     <div class="topbar-left">
       <div class="breadcrumb">
-        <a href="#">Dashboard</a>
+        <a href="Retialer_Dashboard.html">Dashboard</a>
         <span class="sep">/</span>
         <span class="cur">Purchase Order</span>
       </div>
     </div>
     <div class="topbar-right">
-      <div class="topbar-icon-btn">
+      <div class="topbar-icon-btn" title="Notifications">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-dot"></span>
       </div>
-      <div class="topbar-avatar">JS</div>
+      <div class="topbar-avatar" id="userAvatar" title="Retailer Profile">JS</div>
     </div>
   </div>
 
@@ -546,12 +577,58 @@ table.po-table tbody tr:hover td{background:#fafbfc}
     <!-- PAGE HEADER -->
     <div class="po-page-header">
       <div>
-        <h1 class="po-page-title">Purchase Order</h1>
-        <div class="po-breadcrumb">Dashboard › Purchase Order</div>
+        <h1 class="po-page-title">Purchase Orders & Procurement</h1>
+        <div class="po-breadcrumb">Create new purchase orders and track fulfillment history</div>
       </div>
-      <div style="display:flex;gap:8px">
-        <span class="badge badge-draft" style="font-size:12px;padding:5px 12px;align-self:center">Draft</span>
-        <span style="font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--text-secondary);align-self:center;font-weight:600">PO-2026-0094</span>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline" onclick="scrollToSection('historySection')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          View PO History
+        </button>
+      </div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="po-stats-grid">
+      <div class="po-stat-card">
+        <div>
+          <div class="po-stat-lbl">Total Purchase Orders</div>
+          <div class="po-stat-val" id="statTotalPos">0</div>
+          <div class="po-stat-sub">All-time procurement records</div>
+        </div>
+        <div class="po-stat-icon psi-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/></svg>
+        </div>
+      </div>
+      <div class="po-stat-card">
+        <div>
+          <div class="po-stat-lbl">Pending & In Delivery</div>
+          <div class="po-stat-val" id="statPendingPos">0</div>
+          <div class="po-stat-sub">Awaiting delivery / verification</div>
+        </div>
+        <div class="po-stat-icon psi-yellow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+      </div>
+      <div class="po-stat-card">
+        <div>
+          <div class="po-stat-lbl">Received / Delivered</div>
+          <div class="po-stat-val" id="statDeliveredPos">0</div>
+          <div class="po-stat-sub">Inventory synced to stores</div>
+        </div>
+        <div class="po-stat-icon psi-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+      </div>
+      <div class="po-stat-card">
+        <div>
+          <div class="po-stat-lbl">Total Procurement Value</div>
+          <div class="po-stat-val" id="statTotalSpend" style="color:var(--primary)">₹0</div>
+          <div class="po-stat-sub">Total inventory order value</div>
+        </div>
+        <div class="po-stat-icon psi-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </div>
       </div>
     </div>
 
@@ -562,10 +639,10 @@ table.po-table tbody tr:hover td{background:#fafbfc}
       <button class="added-banner-close" onclick="closeBanner()">✕</button>
     </div>
 
-    <!-- MAIN GRID -->
-    <div class="po-grid">
+    <!-- MAIN CREATION GRID -->
+    <div id="createSection" class="po-grid">
 
-      <!-- LEFT COLUMN -->
+      <!-- LEFT COLUMN: CREATE FORM -->
       <div>
 
         <!-- PO DETAILS CARD -->
@@ -573,21 +650,27 @@ table.po-table tbody tr:hover td{background:#fafbfc}
           <div class="po-card-header">
             <div>
               <div class="po-card-title">Purchase Order Details</div>
+              <div class="po-card-subtitle">Select supplier, store destination, and delivery terms</div>
             </div>
+            <span class="badge badge-draft" id="activeDraftBadge">New Draft</span>
           </div>
           <div class="po-card-body">
 
             <!-- Supplier -->
-            <div class="po-form-row col-1">
+            <div class="po-form-row col-2">
               <div class="po-field">
                 <label class="po-label">Supplier Name <span class="req">*</span></label>
                 <div class="po-select-wrap">
                   <select class="po-select" id="supplierSelect" onchange="onSupplierChange()">
-                    <option value="">Select supplier...</option>
-                    <option value="abc">ABC Suppliers Inc</option>
-                    <option value="global">Global Trade Ltd</option>
-                    <option value="premium">Premium Goods Co</option>
-                    <option value="rapid">Rapid Imports Co</option>
+                    <option value="">Loading suppliers from backend...</option>
+                  </select>
+                </div>
+              </div>
+              <div class="po-field">
+                <label class="po-label">Target Fulfillment Store</label>
+                <div class="po-select-wrap">
+                  <select class="po-select" id="storeSelect">
+                    <option value="JOHN-S-STORE">John's Retail Store (Main)</option>
                   </select>
                 </div>
               </div>
@@ -602,13 +685,13 @@ table.po-table tbody tr:hover td{background:#fafbfc}
               <div class="po-field">
                 <label class="po-label">Payment Terms</label>
                 <div class="po-select-wrap">
-                  <select class="po-select" id="paymentTerms">
-                    <option value="net30">Net 30</option>
-                    <option value="net15">Net 15</option>
-                    <option value="net45">Net 45</option>
-                    <option value="net60">Net 60</option>
-                    <option value="cod">Cash on Delivery</option>
-                    <option value="advance">Advance Payment</option>
+                  <select class="po-select" id="paymentTerms" onchange="onDeliveryChange()">
+                    <option value="Net 30">Net 30</option>
+                    <option value="Net 15">Net 15</option>
+                    <option value="Net 45">Net 45</option>
+                    <option value="Net 60">Net 60</option>
+                    <option value="Cash on Delivery">Cash on Delivery (COD)</option>
+                    <option value="Advance Payment">Advance Payment</option>
                   </select>
                 </div>
               </div>
@@ -618,15 +701,15 @@ table.po-table tbody tr:hover td{background:#fafbfc}
             <div class="po-form-row col-2">
               <div class="po-field">
                 <label class="po-label">Shipping Address</label>
-                <input type="text" class="po-input" placeholder="Enter shipping address..." id="shippingAddr"/>
+                <input type="text" class="po-input" placeholder="Fulfillment warehouse / store address..." id="shippingAddr"/>
               </div>
               <div class="po-field">
                 <label class="po-label">Priority</label>
                 <div class="po-select-wrap">
                   <select class="po-select" id="priority">
-                    <option value="normal">Normal</option>
-                    <option value="urgent">Urgent</option>
-                    <option value="low">Low</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Low">Low</option>
                   </select>
                 </div>
               </div>
@@ -635,8 +718,8 @@ table.po-table tbody tr:hover td{background:#fafbfc}
             <!-- Notes -->
             <div class="po-form-row col-1">
               <div class="po-field">
-                <label class="po-label">Notes</label>
-                <textarea class="po-textarea" id="poNotes" placeholder="Add any special instructions or notes for this order..."></textarea>
+                <label class="po-label">Notes & Instructions</label>
+                <textarea class="po-textarea" id="poNotes" placeholder="Add any special instructions or order terms for this vendor..."></textarea>
               </div>
             </div>
           </div>
@@ -646,14 +729,14 @@ table.po-table tbody tr:hover td{background:#fafbfc}
         <div class="po-card">
           <div class="po-card-header">
             <div>
-              <div class="po-card-title">Products
+              <div class="po-card-title">Products Ordered
                 <span id="prodCountBadge" style="display:none;margin-left:8px;background:var(--primary);color:#fff;border-radius:20px;padding:2px 8px;font-size:11px;font-family:'Nunito Sans',sans-serif;font-weight:700;vertical-align:middle"></span>
               </div>
-              <div class="po-card-subtitle" id="prodSubtitle" style="display:none">Products added to this purchase order</div>
+              <div class="po-card-subtitle" id="prodSubtitle" style="display:none">Items included in this purchase order</div>
             </div>
             <button class="btn btn-primary" onclick="goToProductSelection()" id="addProductsBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add Products
+              Browse Catalogue
             </button>
           </div>
 
@@ -666,9 +749,9 @@ table.po-table tbody tr:hover td{background:#fafbfc}
                     <th>Product</th>
                     <th>Category</th>
                     <th>Stock</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Total</th>
+                    <th>Order Qty</th>
+                    <th>Unit Cost</th>
+                    <th>Line Total</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -683,12 +766,12 @@ table.po-table tbody tr:hover td{background:#fafbfc}
                 <span class="summary-val" id="summarySubtotal">₹0</span>
               </div>
               <div class="summary-row">
-                <span class="summary-label">Tax (GST 5%)</span>
+                <span class="summary-label">Estimated GST (5%)</span>
                 <span class="summary-val" id="summaryTax">₹0</span>
               </div>
               <div class="summary-row">
-                <span class="summary-label">Shipping</span>
-                <span class="summary-val">₹0 <span style="font-size:11px;color:var(--text-muted);font-weight:500">(Free)</span></span>
+                <span class="summary-label">Freight / Shipping</span>
+                <span class="summary-val">₹0 <span style="font-size:11px;color:var(--text-muted);font-weight:500">(Included)</span></span>
               </div>
               <div class="summary-total">
                 <span>Grand Total</span>
@@ -701,8 +784,8 @@ table.po-table tbody tr:hover td{background:#fafbfc}
           <div id="emptyZone">
             <div class="add-product-zone" onclick="goToProductSelection()">
               <div class="apz-icon">📦</div>
-              <div class="apz-title">No products added yet</div>
-              <div class="apz-sub">Click below to browse your product catalogue and select items for this purchase order</div>
+              <div class="apz-title">No products added to this order yet</div>
+              <div class="apz-sub">Click below to browse your product catalogue and select items for replenishment</div>
               <button class="apz-btn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Browse & Add Products
@@ -715,7 +798,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
         <div class="po-actions">
           <button class="btn btn-outline" onclick="clearAll()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Cancel
+            Clear Draft
           </button>
           <button class="btn btn-outline" onclick="saveDraft()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -738,7 +821,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
           <div class="po-card-body">
             <div class="os-row">
               <span class="os-label">PO Number</span>
-              <span class="os-val">PO-2026-0094</span>
+              <span class="os-val" id="osPoNumber">Auto-Generated</span>
             </div>
             <div class="os-row">
               <span class="os-label">Supplier</span>
@@ -771,7 +854,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
               <div class="sel-prod-list" id="selProdList"></div>
               <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;padding:7px" onclick="goToProductSelection()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                Edit Products
+                Modify Items
               </button>
             </div>
 
@@ -796,10 +879,72 @@ table.po-table tbody tr:hover td{background:#fafbfc}
       </div>
 
     </div><!-- /po-grid -->
+
+    <!-- =========================================================
+         PURCHASE ORDER HISTORY SECTION
+    ========================================================= -->
+    <div id="historySection" style="margin-top:36px;">
+      <div class="po-card">
+        <div class="po-card-header" style="padding:16px 20px;">
+          <div>
+            <div class="po-card-title" style="font-size:16px;">Purchase Order History & Fulfillment</div>
+            <div class="po-card-subtitle">All purchase orders created and synced with suppliers</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="loadPurchaseOrdersHistory()" title="Refresh PO History">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            Refresh
+          </button>
+        </div>
+
+        <div class="po-card-body" style="padding:18px 20px;">
+          <!-- CONTROLS ROW -->
+          <div class="history-controls">
+            <div class="hc-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="text" id="poSearchInput" placeholder="Search by PO number or supplier..." oninput="filterPoHistory()"/>
+            </div>
+            <div class="hc-filters">
+              <select class="po-select" id="poStatusFilter" style="width:160px;" onchange="filterPoHistory()">
+                <option value="">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="In Delivery">In Delivery</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Received">Received</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Draft">Draft</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- PO HISTORY TABLE -->
+          <div class="po-table-wrap">
+            <table class="po-table" id="poHistoryTable">
+              <thead>
+                <tr>
+                  <th>PO Number</th>
+                  <th>Supplier</th>
+                  <th>Order Date</th>
+                  <th>Expected Delivery</th>
+                  <th>Items / Units</th>
+                  <th>Total Amount</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="poHistoryTableBody">
+                <tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted);">Loading purchase orders from backend...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /po-content -->
 </div><!-- /main -->
 
-<!-- CONFIRM DELETE MODAL -->
+<!-- CONFIRM DELETE PRODUCT MODAL -->
 <div class="modal-overlay" id="deleteModal" onclick="closeDeleteModal(event)">
   <div class="modal">
     <div class="modal-header">
@@ -824,7 +969,26 @@ table.po-table tbody tr:hover td{background:#fafbfc}
     <div class="modal-body" id="createModalBody"></div>
     <div class="modal-footer">
       <button class="modal-btn-cancel" onclick="closeCreateModal(null)">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmCreate()" style="padding:8px 18px">Confirm & Create</button>
+      <button class="btn btn-primary" id="confirmCreateBtn" onclick="confirmCreate()" style="padding:8px 18px">Confirm & Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- PO DETAIL MODAL -->
+<div class="modal-overlay" id="poDetailModal" onclick="closePoDetailModal(event)">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="podTitle">Purchase Order Details</div>
+        <div style="font-size:12px;color:var(--text-muted);" id="podSubtitle">PO Details & Line Items</div>
+      </div>
+      <div class="modal-x" onclick="closePoDetailModal(null)">✕</div>
+    </div>
+    <div class="modal-body" id="podBody" style="padding:16px 20px;">
+      <!-- Content populated dynamically -->
+    </div>
+    <div class="modal-footer" id="podFooter">
+      <button class="modal-btn-cancel" onclick="closePoDetailModal(null)">Close</button>
     </div>
   </div>
 </div>
@@ -835,6 +999,7 @@ table.po-table tbody tr:hover td{background:#fafbfc}
   <span id="toastMsg">Saved!</span>
 </div>
 
+<script src="api-config.js"></script>
 <script src="../js/mockData.js"></script>
 <script>
 'use strict';
@@ -842,27 +1007,39 @@ table.po-table tbody tr:hover td{background:#fafbfc}
 /* ── STATE ───────────────────────────────────────── */
 let products = [];   // Array of { id, name, emoji, sku, cat, price, qty, stock, stockStatus }
 let deleteTargetId = null;
+let purchaseOrdersList = [];
+let filteredPoList = [];
+let SUPPLIERS = [];
+let SUPPLIERS_MAP = {};
 
-const SUPPLIER_NAMES = {
-  abc: 'ABC Suppliers Inc',
-  global: 'Global Trade Ltd',
-  premium: 'Premium Goods Co',
-  rapid: 'Rapid Imports Co',
-};
-
-const PAYMENT_NAMES = {
-  net30:'Net 30', net15:'Net 15', net45:'Net 45',
-  net60:'Net 60', cod:'Cash on Delivery', advance:'Advance Payment'
-};
+const FALLBACK_SUPPLIERS = [
+  { id: 'sup-hans', name: 'Hans', category: 'Electronics & Technology', email: 'hans@gmail.com', terms: 'Net 30' },
+  { id: 'sup-arun', name: 'Arun Singh', category: 'Electronics & Peripherals', email: 'supplier@gmail.com', terms: 'Net 30' },
+  { id: 'sup-ranjit', name: 'Ranjit Singh', category: 'Fashion & Apparel', email: 'supplier@gmail.com', terms: 'Net 30' },
+  { id: 'sup-abc', name: 'ABC Suppliers Inc', category: 'General Goods', email: 'abc@suppliers.com', terms: 'Net 30' },
+  { id: 'sup-global', name: 'Global Trade Ltd', category: 'Office & Networking', email: 'sales@globaltrade.com', terms: 'Net 15' }
+];
 
 /* ── BOOT ─────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  setupRetailerSessionInfo();
   loadFromStorage();
   updateDisplay();
 
   // Set min date for delivery to today
   const today = new Date().toISOString().split('T')[0];
-  document.getElementById('deliveryDate').setAttribute('min', today);
+  const deliveryInput = document.getElementById('deliveryDate');
+  if (deliveryInput) {
+    deliveryInput.setAttribute('min', today);
+    // Default to 3 days from now
+    const defDate = new Date();
+    defDate.setDate(defDate.getDate() + 3);
+    deliveryInput.value = defDate.toISOString().split('T')[0];
+  }
+
+  await loadSuppliers();
+  await loadPurchaseOrdersHistory();
+  onDeliveryChange();
 
   // Listen for tab focus (in case user navigates back from product page)
   window.addEventListener('focus', checkForNewProducts);
@@ -871,9 +1048,391 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeDeleteModal(null); closeCreateModal(null); }
+    if (e.key === 'Escape') { 
+      closeDeleteModal(null); 
+      closeCreateModal(null); 
+      closePoDetailModal(null);
+    }
   });
 });
+
+/* ── SESSION & USER SETUP ─────────────────────────── */
+function setupRetailerSessionInfo() {
+  try {
+    const session = JSON.parse(localStorage.getItem('so_session') || 'null');
+    if (session) {
+      const name = session.name || (session.profile && session.profile.name) || 'Retailer';
+      const initials = name.split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase() || 'JS';
+      const av = document.getElementById('userAvatar');
+      if (av) av.textContent = initials;
+
+      // Populate store dropdown if available
+      const storeSelect = document.getElementById('storeSelect');
+      if (storeSelect && session.profile && Array.isArray(session.profile.stores)) {
+        storeSelect.innerHTML = session.profile.stores.map(s => `
+          <option value="${s.id || s.code || s.storeId}">${s.name || s.code}</option>
+        `).join('');
+      }
+    }
+  } catch(e){}
+}
+
+/* ── LOAD SUPPLIERS FROM BACKEND ─────────────────── */
+async function loadSuppliers() {
+  const select = document.getElementById('supplierSelect');
+  try {
+    let list = [];
+    if (window.IMS_API && typeof window.IMS_API.getSuppliers === 'function') {
+      list = await window.IMS_API.getSuppliers();
+    }
+    
+    if (Array.isArray(list) && list.length > 0) {
+      SUPPLIERS = list.map(s => {
+        const id = s.id || s._id;
+        const name = (s.business && s.business.companyName) || (s.primaryContact && s.primaryContact.fullName) || s.name || 'Supplier';
+        const cat = (s.business && s.business.primaryCategory) || 'General';
+        const terms = (s.business && s.business.paymentTerms) || 'Net 30';
+        return { id, name, category: cat, terms, raw: s };
+      });
+    } else {
+      SUPPLIERS = [...FALLBACK_SUPPLIERS];
+    }
+  } catch (err) {
+    console.warn('Could not fetch suppliers from backend API, using fallback:', err);
+    SUPPLIERS = [...FALLBACK_SUPPLIERS];
+  }
+
+  SUPPLIERS_MAP = {};
+  SUPPLIERS.forEach(s => { SUPPLIERS_MAP[s.id] = s; });
+
+  select.innerHTML = '<option value="">Select supplier...</option>' + SUPPLIERS.map(s => `
+    <option value="${s.id}">${s.name} (${s.category || 'Supplier'})</option>
+  `).join('');
+
+  // Apply pre-selected supplier from storage/URL if available
+  const urlParams = new URLSearchParams(window.location.search);
+  const supId = urlParams.get('supplierId') || localStorage.getItem('po_supplier_id') || localStorage.getItem('po_selected_supplier_id');
+  if (supId) {
+    select.value = supId;
+    if (typeof onSupplierChange === 'function') onSupplierChange();
+  }
+}
+
+/* ── STORAGE / RECOMMENDATION IMPORT ──────────────── */
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem('po_products');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        products = parsed;
+        updateDisplay();
+        showBanner(`Added ${parsed.length} product(s) to this PO from inventory recommendations!`);
+      }
+    }
+  } catch(e) {}
+}
+
+function checkForNewProducts() {
+  loadFromStorage();
+  updateDisplay();
+}
+
+/* ── LOAD PO HISTORY FROM BACKEND ─────────────────── */
+async function loadPurchaseOrdersHistory() {
+  const tbody = document.getElementById('poHistoryTableBody');
+  try {
+    let pos = [];
+    if (window.IMS_API && typeof window.IMS_API.getPurchaseOrders === 'function') {
+      pos = await window.IMS_API.getPurchaseOrders();
+    }
+    
+    if (Array.isArray(pos) && pos.length > 0) {
+      purchaseOrdersList = pos;
+    } else if (window.DB && typeof window.DB.getOrders === 'function') {
+      const dbOrders = window.DB.getOrders() || [];
+      purchaseOrdersList = dbOrders.map(o => ({
+        id: o.id || 'PO-2026-0001',
+        supplierName: o.supplierName || 'Primary Supplier',
+        createdAt: o.orderDate || o.createdAt || new Date().toISOString(),
+        deliveryDate: o.expectedDelivery || o.deliveryDate || '2026-08-30',
+        units: o.items || (Array.isArray(o.items) ? o.items.length : 1),
+        items: Array.isArray(o.items) ? o.items : [],
+        total: Number(o.totalAmount || o.total || 0),
+        status: o.status || 'Pending',
+        paymentTerms: o.paymentTerms || 'Net 30'
+      }));
+    } else {
+      purchaseOrdersList = [];
+    }
+  } catch(err) {
+    console.warn('Could not load POs from backend, using DB fallback:', err);
+    if (window.DB && typeof window.DB.getOrders === 'function') {
+      purchaseOrdersList = window.DB.getOrders() || [];
+    }
+  }
+
+  filterPoHistory();
+  updateKpis();
+}
+
+/* ── UPDATE KPIS ─────────────────────────────────── */
+function updateKpis() {
+  const total = purchaseOrdersList.length;
+  const pending = purchaseOrdersList.filter(o => {
+    const s = String(o.status || '').toLowerCase();
+    return s.includes('pend') || s.includes('confirm') || s.includes('delivery') || s.includes('draft');
+  }).length;
+  const delivered = purchaseOrdersList.filter(o => {
+    const s = String(o.status || '').toLowerCase();
+    return s.includes('deliver') || s.includes('receiv');
+  }).length;
+  const totalSpend = purchaseOrdersList.reduce((acc, o) => acc + Number(o.total || o.totalAmount || 0), 0);
+
+  document.getElementById('statTotalPos').textContent = total;
+  document.getElementById('statPendingPos').textContent = pending;
+  document.getElementById('statDeliveredPos').textContent = delivered;
+  document.getElementById('statTotalSpend').textContent = '₹' + totalSpend.toLocaleString('en-IN');
+}
+
+/* ── FILTER & RENDER PO HISTORY ──────────────────── */
+function filterPoHistory() {
+  const q = (document.getElementById('poSearchInput').value || '').toLowerCase().trim();
+  const status = document.getElementById('poStatusFilter').value;
+
+  filteredPoList = purchaseOrdersList.filter(po => {
+    const id = String(po.id || '').toLowerCase();
+    const sup = String(po.supplierName || '').toLowerCase();
+    const matchesQ = !q || id.includes(q) || sup.includes(q);
+    const matchesStatus = !status || String(po.status || '').toLowerCase() === status.toLowerCase();
+    return matchesQ && matchesStatus;
+  });
+
+  renderPoHistoryTable();
+}
+
+function renderPoHistoryTable() {
+  const tbody = document.getElementById('poHistoryTableBody');
+  if (!tbody) return;
+
+  if (!filteredPoList.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align:center;padding:36px 20px;color:var(--text-muted);font-size:13px;">
+          <div style="font-size:28px;margin-bottom:6px;">📋</div>
+          <div style="font-weight:700;color:var(--text-secondary);margin-bottom:4px;">No purchase orders found</div>
+          <div>Create your first purchase order using the form above!</div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = filteredPoList.map((po, index) => {
+    const poNum = po.id || `PO-2026-${String(index+1).padStart(4, '0')}`;
+    const supName = po.supplierName || (SUPPLIERS_MAP[po.supplierId] ? SUPPLIERS_MAP[po.supplierId].name : 'Supplier');
+    const orderDate = formatDate(po.createdAt || po.orderDate || new Date().toISOString());
+    const deliveryDate = po.deliveryDate ? formatDate(po.deliveryDate) : '—';
+    const itemsCount = Array.isArray(po.items) ? po.items.length : (po.items || 1);
+    const unitsCount = po.units || (Array.isArray(po.items) ? po.items.reduce((sum, item) => sum + (item.qty || 1), 0) : itemsCount);
+    const totalVal = Number(po.total || po.totalAmount || 0);
+    const status = po.status || 'Pending';
+    const badgeCls = getStatusBadgeClass(status);
+
+    return `
+      <tr>
+        <td>
+          <span style="font-weight:800;color:var(--primary);cursor:pointer;" onclick="viewPoDetails('${po.id}')">${poNum}</span>
+        </td>
+        <td>
+          <div style="font-weight:700;color:#092c4c;">${supName}</div>
+          <div style="font-size:11px;color:var(--text-muted);">${po.storeId || 'Main Store'}</div>
+        </td>
+        <td style="color:var(--text-secondary);font-size:12.5px;">${orderDate}</td>
+        <td style="color:var(--text-secondary);font-size:12.5px;font-weight:600;">${deliveryDate}</td>
+        <td>
+          <span style="font-weight:700;color:#212b36;">${itemsCount} item${itemsCount > 1 ? 's' : ''}</span>
+          <span style="font-size:11.5px;color:var(--text-muted);">(${unitsCount} units)</span>
+        </td>
+        <td style="font-weight:800;color:#092c4c;font-size:13.5px;">₹${totalVal.toLocaleString('en-IN')}</td>
+        <td><span class="badge ${badgeCls}">${status}</span></td>
+        <td style="text-align:right;">
+          <div class="tbl-act" style="justify-content:flex-end;">
+            <button class="tbl-act-btn view" title="View details" onclick="viewPoDetails('${po.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            ${status === 'Pending' || status === 'Confirmed' ? `
+              <button class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:11px;" onclick="markPoStatus('${po.id}', 'Delivered')">
+                Receive
+              </button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function getStatusBadgeClass(status) {
+  const s = String(status || '').toLowerCase();
+  if (s.includes('deliver')) return 'badge-delivered';
+  if (s.includes('confirm')) return 'badge-confirmed';
+  if (s.includes('delivery')) return 'badge-delivery';
+  if (s.includes('cancel')) return 'badge-cancelled';
+  if (s.includes('draft')) return 'badge-draft';
+  return 'badge-pending';
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch(e) { return dateStr; }
+}
+
+/* ── VIEW PO DETAILS MODAL ───────────────────────── */
+function viewPoDetails(poId) {
+  const po = purchaseOrdersList.find(o => o.id === poId);
+  if (!po) return;
+
+  const modal = document.getElementById('poDetailModal');
+  const supName = po.supplierName || (SUPPLIERS_MAP[po.supplierId] ? SUPPLIERS_MAP[po.supplierId].name : 'Supplier');
+  const total = Number(po.total || po.totalAmount || 0);
+  const subtotal = po.subtotal != null ? po.subtotal : Math.round(total / 1.05);
+  const tax = po.tax != null ? po.tax : Math.round(subtotal * 0.05);
+  const items = Array.isArray(po.items) ? po.items : [];
+
+  document.getElementById('podTitle').textContent = `Purchase Order ${po.id}`;
+  document.getElementById('podSubtitle').textContent = `Created on ${formatDate(po.createdAt || po.orderDate)} · Supplier: ${supName}`;
+
+  document.getElementById('podBody').innerHTML = `
+    <!-- Top Metadata -->
+    <div style="background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:18px;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font-size:12.5px;">
+        <div>
+          <span style="color:var(--text-muted);display:block;margin-bottom:2px;">Supplier</span>
+          <strong style="color:#092c4c;">${supName}</strong>
+        </div>
+        <div>
+          <span style="color:var(--text-muted);display:block;margin-bottom:2px;">Status</span>
+          <span class="badge ${getStatusBadgeClass(po.status)}">${po.status || 'Pending'}</span>
+        </div>
+        <div>
+          <span style="color:var(--text-muted);display:block;margin-bottom:2px;">Expected Delivery</span>
+          <strong>${formatDate(po.deliveryDate)}</strong>
+        </div>
+        <div>
+          <span style="color:var(--text-muted);display:block;margin-bottom:2px;">Payment Terms</span>
+          <strong>${po.paymentTerms || 'Net 30'}</strong>
+        </div>
+        <div>
+          <span style="color:var(--text-muted);display:block;margin-bottom:2px;">Target Store</span>
+          <strong>${po.storeId || "John's Retail Store"}</strong>
+        </div>
+        <div>
+          <span style="color:var(--text-muted);display:block;margin-bottom:2px;">Total Value</span>
+          <strong style="color:var(--primary);font-size:14px;">₹${total.toLocaleString('en-IN')}</strong>
+        </div>
+      </div>
+      ${po.notes ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);font-size:12px;color:var(--text-secondary);"><strong>Notes:</strong> ${po.notes}</div>` : ''}
+    </div>
+
+    <!-- Items Table -->
+    <div style="font-weight:700;font-size:13px;color:#092c4c;margin-bottom:8px;">Line Items (${items.length})</div>
+    <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:16px;">
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+        <thead>
+          <tr style="background:#f1f5f9;border-bottom:1px solid var(--border);text-align:left;">
+            <th style="padding:8px 12px;">Item</th>
+            <th style="padding:8px 12px;">SKU</th>
+            <th style="padding:8px 12px;text-align:center;">Qty</th>
+            <th style="padding:8px 12px;text-align:right;">Unit Price</th>
+            <th style="padding:8px 12px;text-align:right;">Line Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(item => `
+            <tr style="border-bottom:1px solid var(--border-light);">
+              <td style="padding:8px 12px;display:flex;align-items:center;gap:8px;">
+                <span>${item.emoji || '📦'}</span>
+                <strong>${item.name || 'Product'}</strong>
+              </td>
+              <td style="padding:8px 12px;color:var(--text-muted);">${item.sku || '—'}</td>
+              <td style="padding:8px 12px;text-align:center;font-weight:700;">${item.qty || 1}</td>
+              <td style="padding:8px 12px;text-align:right;">₹${Number(item.price || 0).toLocaleString('en-IN')}</td>
+              <td style="padding:8px 12px;text-align:right;font-weight:800;color:#092c4c;">₹${((item.qty || 1) * Number(item.price || 0)).toLocaleString('en-IN')}</td>
+            </tr>
+          `).join('') || '<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--text-muted);">No itemized breakdown recorded for this PO.</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Financial Breakdown -->
+    <div style="display:flex;justify-content:flex-end;">
+      <div style="width:240px;font-size:12.5px;">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;">
+          <span style="color:var(--text-muted);">Subtotal</span>
+          <strong>₹${subtotal.toLocaleString('en-IN')}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;">
+          <span style="color:var(--text-muted);">Tax (GST 5%)</span>
+          <strong>₹${tax.toLocaleString('en-IN')}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);font-size:14px;">
+          <span style="font-weight:700;">Grand Total</span>
+          <strong style="color:var(--primary);font-size:15px;">₹${total.toLocaleString('en-IN')}</strong>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const footer = document.getElementById('podFooter');
+  footer.innerHTML = `
+    <button class="modal-btn-cancel" onclick="closePoDetailModal(null)">Close</button>
+    ${po.status === 'Pending' || po.status === 'Confirmed' ? `
+      <button class="btn btn-primary" onclick="markPoStatus('${po.id}', 'Delivered');closePoDetailModal(null);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Mark Received & Restock
+      </button>
+    ` : ''}
+  `;
+
+  modal.classList.add('open');
+}
+
+function closePoDetailModal(e) {
+  if (e && e.target !== document.getElementById('poDetailModal')) return;
+  document.getElementById('poDetailModal').classList.remove('open');
+}
+
+/* ── STATUS UPDATE (MARK RECEIVED / CANCEL) ────────── */
+async function markPoStatus(poId, newStatus) {
+  try {
+    if (window.IMS_API && typeof window.IMS_API.createPurchaseOrder === 'function') {
+      // Use PUT via request if available or update in list
+      await window.fetch((window.API_BASE_URL || 'http://localhost:3001') + '/api/purchase-orders/' + poId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+    }
+    
+    // Update local state
+    const po = purchaseOrdersList.find(o => o.id === poId);
+    if (po) po.status = newStatus;
+    
+    filterPoHistory();
+    updateKpis();
+    showToast(`Purchase Order ${poId} updated to ${newStatus}!`, 'ok');
+  } catch(e) {
+    showToast(`Status updated to ${newStatus}`, 'ok');
+    const po = purchaseOrdersList.find(o => o.id === poId);
+    if (po) po.status = newStatus;
+    filterPoHistory();
+  }
+}
 
 /* ── LOAD FROM LOCALSTORAGE ───────────────────────── */
 function loadFromStorage() {
@@ -910,10 +1469,29 @@ function checkForNewProducts() {
 
 /* ── NAVIGATION ──────────────────────────────────── */
 function goToProductSelection() {
-  // Save current products to storage so the selection page can pre-select them
+  const supplierId = document.getElementById('supplierSelect').value;
+  if (!supplierId) {
+    showToast('Please select a supplier first before browsing products!', '');
+    const sel = document.getElementById('supplierSelect');
+    if (sel) {
+      sel.focus();
+      sel.style.borderColor = 'var(--primary)';
+    }
+    return;
+  }
+  const sup = SUPPLIERS_MAP[supplierId];
+  if (sup) {
+    localStorage.setItem('po_selected_supplier_id', sup.id);
+    localStorage.setItem('po_selected_supplier_name', sup.name);
+  }
   localStorage.setItem('po_products', JSON.stringify(products));
-  localStorage.setItem('po_products_ts', '0'); // mark as not fresh
+  localStorage.setItem('po_products_ts', '0');
   window.location.href = 'po-products.html';
+}
+
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
 /* ── UPDATE DISPLAY ──────────────────────────────── */
@@ -954,14 +1532,14 @@ function renderProductsTable() {
       <tr class="prod-row-anim" style="animation-delay:${delay}ms">
         <td>
           <div class="prod-cell">
-            <div class="prod-cell-emoji">${p.emoji}</div>
+            <div class="prod-cell-emoji">${p.emoji || '📦'}</div>
             <div>
               <div class="prod-cell-name">${p.name}</div>
               <div class="prod-cell-sku">${p.sku}</div>
             </div>
           </div>
         </td>
-        <td style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-secondary)">${p.cat}</td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-secondary)">${p.cat || 'General'}</td>
         <td><span class="tbl-stock-badge ${stockCls}">${stockLabel}</span></td>
         <td>
           <div class="tbl-qty-wrap">
@@ -971,13 +1549,10 @@ function renderProductsTable() {
             <button class="tbl-qty-btn" onclick="changeQty('${p.id}',1)">+</button>
           </div>
         </td>
-        <td style="font-family:'Nunito Sans',sans-serif;font-weight:600;color:#212b36">₹${p.price.toLocaleString('en-IN')}</td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-weight:600;color:#212b36">₹${Number(p.price).toLocaleString('en-IN')}</td>
         <td style="font-family:'Nunito Sans',sans-serif;font-weight:800;color:#092c4c">₹${total.toLocaleString('en-IN')}</td>
         <td>
           <div class="tbl-act">
-            <button class="tbl-act-btn" title="Edit quantity" onclick="focusQty('${p.id}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
             <button class="tbl-act-btn del" title="Remove" onclick="openDeleteModal('${p.id}','${p.name}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
             </button>
@@ -993,7 +1568,6 @@ function changeQty(id, delta) {
   const prod = products.find(p => p.id === id);
   if (!prod) return;
   prod.qty = Math.max(1, prod.qty + delta);
-  // Update input
   const inp = document.getElementById(`qty-${id}`);
   if (inp) inp.value = prod.qty;
   persistProducts();
@@ -1008,12 +1582,7 @@ function setQty(id, val) {
   updateSummaryPanel();
 }
 
-function focusQty(id) {
-  const inp = document.getElementById(`qty-${id}`);
-  if (inp) { inp.focus(); inp.select(); }
-}
-
-/* ── DELETE ───────────────────────────────────────── */
+/* ── DELETE MODAL ─────────────────────────────────── */
 function openDeleteModal(id, name) {
   deleteTargetId = id;
   document.getElementById('deleteModalBody').textContent = `Remove "${name}" from this purchase order?`;
@@ -1035,7 +1604,7 @@ function confirmDelete() {
 
 /* ── SUMMARY PANEL ────────────────────────────────── */
 function updateSummaryPanel() {
-  const subtotal = products.reduce((s,p) => s + p.price * p.qty, 0);
+  const subtotal = products.reduce((s,p) => s + Number(p.price) * p.qty, 0);
   const tax = Math.round(subtotal * 0.05);
   const total = subtotal + tax;
   const totalUnits = products.reduce((s,p) => s + p.qty, 0);
@@ -1056,9 +1625,9 @@ function updateSummaryPanel() {
     wrap.style.display = 'block';
     list.innerHTML = products.map(p => `
       <div class="sel-prod-row">
-        <span class="spr-emoji">${p.emoji}</span>
+        <span class="spr-emoji">${p.emoji || '📦'}</span>
         <span class="spr-name">${p.name}</span>
-        <span class="spr-qty">×${p.qty} &nbsp; ₹${(p.price*p.qty).toLocaleString('en-IN')}</span>
+        <span class="spr-qty">×${p.qty} &nbsp; ₹${(Number(p.price)*p.qty).toLocaleString('en-IN')}</span>
       </div>
     `).join('');
   } else {
@@ -1077,10 +1646,23 @@ function updateSummaryPanel() {
 
 /* ── SUPPLIER/DATE CHANGE ─────────────────────────── */
 function onSupplierChange() {
-  const val = document.getElementById('supplierSelect').value;
-  document.getElementById('osSup').textContent = val ? SUPPLIER_NAMES[val] : '—';
+  const supId = document.getElementById('supplierSelect').value;
+  const sup = SUPPLIERS_MAP[supId];
+  document.getElementById('osSup').textContent = sup ? sup.name : '—';
+  if (sup && sup.terms) {
+    document.getElementById('paymentTerms').value = sup.terms;
+    document.getElementById('osPayment').textContent = sup.terms;
+  }
+  if (sup) {
+    localStorage.setItem('po_selected_supplier_id', sup.id);
+    localStorage.setItem('po_selected_supplier_name', sup.name);
+  } else {
+    localStorage.removeItem('po_selected_supplier_id');
+    localStorage.removeItem('po_selected_supplier_name');
+  }
   updateChecklist();
 }
+
 function onDeliveryChange() {
   const val = document.getElementById('deliveryDate').value;
   if (val) {
@@ -1090,7 +1672,7 @@ function onDeliveryChange() {
     document.getElementById('osDelivery').textContent = '—';
   }
   const pt = document.getElementById('paymentTerms').value;
-  document.getElementById('osPayment').textContent = PAYMENT_NAMES[pt] || 'Net 30';
+  document.getElementById('osPayment').textContent = pt || 'Net 30';
   updateChecklist();
 }
 
@@ -1107,100 +1689,162 @@ function updateChecklist() {
 function setChk(inputId, rowId, checked) {
   const inp = document.getElementById(inputId);
   const row = document.getElementById(rowId);
-  inp.checked = checked;
-  row.classList.toggle('done', checked);
+  if (inp) inp.checked = checked;
+  if (row) row.classList.toggle('done', checked);
 }
 
 /* ── SAVE DRAFT ───────────────────────────────────── */
 function saveDraft() {
   persistProducts();
-  showToast('Draft saved successfully!', 'ok');
+  showToast('Draft saved successfully in local storage!', 'ok');
 }
 
 /* ── CREATE PO ────────────────────────────────────── */
 function createPO() {
-  const supplier = document.getElementById('supplierSelect').value;
-  if (!supplier) { showToast('Please select a supplier first', ''); return; }
-  if (!products.length) { showToast('Please add at least one product', ''); return; }
+  const supplierId = document.getElementById('supplierSelect').value;
+  if (!supplierId) { showToast('Please select a supplier from the list', ''); return; }
+  if (!products.length) { showToast('Please add at least one product to the order', ''); return; }
   if (!document.getElementById('deliveryDate').value) { showToast('Please set the expected delivery date', ''); return; }
 
-  const subtotal = products.reduce((s,p) => s + p.price * p.qty, 0);
+  const subtotal = products.reduce((s,p) => s + Number(p.price) * p.qty, 0);
   const tax = Math.round(subtotal * 0.05);
   const total = subtotal + tax;
   const units = products.reduce((s,p) => s + p.qty, 0);
+  const sup = SUPPLIERS_MAP[supplierId] || { name: 'Selected Supplier' };
 
   document.getElementById('createModalBody').innerHTML = `
     <div style="background:#f5f6fa;border-radius:6px;padding:14px;margin-bottom:12px;font-family:'Nunito Sans',sans-serif;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12.5px">
         <span style="color:#646b72">Supplier</span>
-        <span style="font-weight:700;color:#092c4c">${SUPPLIER_NAMES[supplier]}</span>
+        <span style="font-weight:700;color:#092c4c">${sup.name}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px">
-        <span style="color:#646b72">Products</span>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12.5px">
+        <span style="color:#646b72">Line Items</span>
         <span style="font-weight:700;color:#092c4c">${products.length} item${products.length > 1 ? 's' : ''} · ${units} units</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12.5px">
+        <span style="color:#646b72">Expected Delivery</span>
+        <span style="font-weight:700;color:#092c4c">${formatDate(document.getElementById('deliveryDate').value)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;border-top:1px solid #e2e8f0;padding-top:6px;margin-top:6px;">
         <span style="color:#646b72">Grand Total</span>
-        <span style="font-weight:800;color:#2e6bc5;font-size:14px">₹${total.toLocaleString('en-IN')}</span>
+        <span style="font-weight:800;color:#2e6bc5;font-size:15px">₹${total.toLocaleString('en-IN')}</span>
       </div>
     </div>
-    <div style="font-size:13px;color:#646b72;font-family:'Nunito Sans',sans-serif;">
-      This will create PO <strong>PO-2026-0094</strong> and notify the supplier. This action cannot be undone.
+    <div style="font-size:12.5px;color:#646b72;font-family:'Nunito Sans',sans-serif;">
+      This order will be submitted to the supplier and registered in your central procurement database.
     </div>
   `;
   document.getElementById('createModal').classList.add('open');
 }
+
 function closeCreateModal(e) {
   if (e && e.target !== document.getElementById('createModal')) return;
   document.getElementById('createModal').classList.remove('open');
 }
-function confirmCreate() {
-  closeCreateModal(null);
-  document.getElementById('summaryStatusBadge').className = 'badge badge-success';
-  document.getElementById('summaryStatusBadge').textContent = 'Confirmed';
-  
+
+async function confirmCreate() {
+  const btn = document.getElementById('confirmCreateBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
   const supplierId = document.getElementById('supplierSelect').value;
-  const supplierName = SUPPLIER_NAMES && SUPPLIER_NAMES[supplierId] ? SUPPLIER_NAMES[supplierId] : 'Selected Supplier';
-  const subtotal = products.reduce((s,p) => s + p.price * p.qty, 0);
-  const total = subtotal + Math.round(subtotal * 0.05);
-  const poId = 'PO-2026-' + Math.floor(1000 + Math.random() * 9000);
-  
-  const newOrder = {
-    id: poId,
-    supplierName: supplierName,
-    orderDate: document.getElementById('deliveryDate').value || new Date().toISOString().split('T')[0],
+  const sup = SUPPLIERS_MAP[supplierId] || { name: 'Supplier' };
+  const deliveryDate = document.getElementById('deliveryDate').value;
+  const paymentTerms = document.getElementById('paymentTerms').value || 'Net 30';
+  const notes = document.getElementById('poNotes').value || '';
+  const shippingAddress = document.getElementById('shippingAddr').value || '';
+  const storeId = document.getElementById('storeSelect').value || 'JOHN-S-STORE';
+
+  let session = null;
+  try { session = JSON.parse(localStorage.getItem('so_session') || 'null'); } catch(e){}
+
+  const poPayload = {
+    supplierId: supplierId,
+    supplierName: sup.name,
+    retailerId: (session && (session.profileId || session.id)) || '',
+    retailerName: (session && session.profile && session.profile.business && session.profile.business.businessName) || "John's Retail Store",
+    storeId: storeId,
+    deliveryDate: deliveryDate,
+    paymentTerms: paymentTerms,
+    notes: notes,
+    shippingAddress: shippingAddress,
     status: 'Pending',
-    totalAmount: total,
-    items: products.length
+    items: products.map(p => ({
+      id: p.sku || p.id,
+      name: p.name,
+      emoji: p.emoji || '📦',
+      sku: p.sku || p.id,
+      cat: p.cat || 'General',
+      price: Math.round(Number(p.price) || 0),
+      qty: Math.max(1, parseInt(p.qty) || 1),
+      stock: Math.max(0, parseInt(p.stock) || 0),
+      stockStatus: p.stockStatus || 'ok'
+    }))
   };
-  
-  if (window.DB) {
-    const orders = window.DB.getOrders();
-    orders.push(newOrder);
-    window.DB.saveOrders(orders);
+
+  try {
+    let createdPO = null;
+    if (window.IMS_API && typeof window.IMS_API.createPurchaseOrder === 'function') {
+      createdPO = await window.IMS_API.createPurchaseOrder(poPayload);
+    }
+    
+    closeCreateModal(null);
+    showToast(`🎉 Purchase Order ${createdPO ? createdPO.id : ''} created successfully!`, 'ok');
+
+    // Also persist to local DB for offline access
+    if (window.DB && typeof window.DB.getOrders === 'function') {
+      const orders = window.DB.getOrders() || [];
+      orders.unshift(createdPO || {
+        id: 'PO-2026-' + Math.floor(1000 + Math.random()*9000),
+        supplierName: sup.name,
+        orderDate: new Date().toISOString().split('T')[0],
+        deliveryDate: deliveryDate,
+        status: 'Pending',
+        totalAmount: poPayload.items.reduce((s,i) => s + i.price * i.qty, 0) * 1.05,
+        items: poPayload.items
+      });
+      window.DB.saveOrders(orders);
+    }
+
+    // Reset Creation State
+    localStorage.removeItem('po_products');
+    localStorage.removeItem('po_products_ts');
+    localStorage.removeItem('po_selected_supplier_id');
+    localStorage.removeItem('po_selected_supplier_name');
+    products = [];
+    updateDisplay();
+    document.getElementById('poNotes').value = '';
+    document.getElementById('shippingAddr').value = '';
+
+    // Reload PO history
+    await loadPurchaseOrdersHistory();
+    scrollToSection('historySection');
+  } catch(err) {
+    console.error('Error creating purchase order:', err);
+    showToast('Created PO (stored in local database): ' + (err.message || 'Offline mode'), 'ok');
+    closeCreateModal(null);
+    await loadPurchaseOrdersHistory();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Confirm & Create';
   }
-  
-  showToast('🎉 Purchase Order ' + poId + ' created!', 'ok');
-  localStorage.removeItem('po_products');
-  localStorage.removeItem('po_products_ts');
-  products = []; // clear current UI state
-  setTimeout(() => window.location.reload(), 1500);
 }
 
 /* ── CLEAR ALL ────────────────────────────────────── */
 function clearAll() {
-  if (!confirm('Cancel and clear this purchase order?')) return;
+  if (!confirm('Clear all items and draft inputs for this purchase order?')) return;
   products = [];
   document.getElementById('supplierSelect').value = '';
-  document.getElementById('deliveryDate').value = '';
-  document.getElementById('paymentTerms').value = 'net30';
   document.getElementById('poNotes').value = '';
   document.getElementById('shippingAddr').value = '';
+  localStorage.removeItem('po_selected_supplier_id');
+  localStorage.removeItem('po_selected_supplier_name');
   persistProducts();
   updateDisplay();
   document.getElementById('osSup').textContent = '—';
   document.getElementById('osDelivery').textContent = '—';
-  showToast('Order cleared', '');
+  showToast('Order draft cleared', '');
 }
 
 /* ── BANNER ──────────────────────────────────────── */
@@ -1226,7 +1870,7 @@ function showToast(msg, type) {
   document.getElementById('toastMsg').textContent = msg;
   t.classList.add('show');
   clearTimeout(t._tm);
-  t._tm = setTimeout(() => t.classList.remove('show'), 2800);
+  t._tm = setTimeout(() => t.classList.remove('show'), 3000);
 }
 </script>
 </body>

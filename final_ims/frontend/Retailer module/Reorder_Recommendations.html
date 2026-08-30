@@ -491,8 +491,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 <script src="api-config.js"></script>
 <script src="common-products.js"></script>
 <script>
-const STORE_NAMES = ['YAS Store', 'Central Storage', 'Eastern Branch', 'Western Branch', 'Northern Branch', 'Southern Branch'];
-const SUPPLIERS = ['Tech Supply Ltd', 'Apple Distributors', 'Prime Wholesale', 'FastSupply Inc.', 'DirectSource LLC'];
+'use strict';
 
 function getBadgeClass(priority) {
   if (priority === 'Urgent') return 'badge-urgent';
@@ -500,488 +499,201 @@ function getBadgeClass(priority) {
   return 'badge-medium';
 }
 
-function computeReorderRows() {
-  const shared = window.RetailerProductsData;
-  const products = shared && Array.isArray(shared.inventoryProducts) ? shared.inventoryProducts : [];
+let reorderRowsData = [];
 
-  return products
-    .map(function (p, idx) {
-      const demand = Math.max(2, Math.round((p.soldThisMonth || 0) / 7));
-      const safety = Math.max(20, Math.round((p.max || 0) * 0.25));
-      const reorderPoint = Math.max(30, safety + demand * 3);
-      const reorderQty = Math.max(0, reorderPoint + demand * 5 - (p.qty || 0));
-      const ratio = p.max ? (p.qty / p.max) : 0;
-      const priority = ratio <= 0.05 ? 'Urgent' : ratio <= 0.2 ? 'High' : 'Medium';
+async function loadReorderData() {
+  const tbody = document.getElementById('reorderTableBody');
+  if (tbody) {
+    tbody.innerHTML = '<tr><td colspan="11" style="padding:28px;text-align:center;color:#6b7280">Calculating demand and reorder metrics...</td></tr>';
+  }
+
+  try {
+    const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+    const storeName = session.store || (session.profile && session.profile.stores && session.profile.stores[0] && session.profile.stores[0].name) || "John's Retail Store";
+
+    const [products, transactions, suppliers] = await Promise.all([
+      (window.RetailerApi || window.IMS_API).getProducts().catch(() => []),
+      (window.RetailerApi || window.IMS_API).getTransactions ? (window.RetailerApi || window.IMS_API).getTransactions().catch(() => []) : Promise.resolve([]),
+      (window.RetailerApi || window.IMS_API).getSuppliers ? (window.RetailerApi || window.IMS_API).getSuppliers().catch(() => []) : Promise.resolve([])
+    ]);
+
+    const prodsList = Array.isArray(products) ? products : [];
+    const txList = Array.isArray(transactions) ? transactions : [];
+    const supList = Array.isArray(suppliers) ? suppliers : [];
+
+    // 1. Calculate sales velocity per SKU from transactions
+    const salesBySku = {};
+    txList.forEach(tx => {
+      const items = Array.isArray(tx.items) ? tx.items : [];
+      const txDate = tx.timestamp || tx.createdAt || tx.date || new Date().toISOString();
+      items.forEach(item => {
+        const sku = String(item.sku || item.id || '').trim();
+        if (!sku) return;
+        if (!salesBySku[sku]) {
+          salesBySku[sku] = { totalQty: 0, earliest: txDate };
+        }
+        salesBySku[sku].totalQty += Number(item.quantity || item.qty || 1);
+        if (new Date(txDate).getTime() < new Date(salesBySku[sku].earliest).getTime()) {
+          salesBySku[sku].earliest = txDate;
+        }
+      });
+    });
+
+    // 2. Map suppliers
+    function findSupplierForProduct(p) {
+      const pSku = String(p.sku || '').toLowerCase();
+      const pName = String(p.name || '').toLowerCase();
+      const pSupplier = String(p.supplier || '').toLowerCase();
+
+      for (let s of supList) {
+        const sName = String((s.business && s.business.companyName) || s.name || (s.primaryContact && s.primaryContact.fullName) || '').toLowerCase();
+        const sProducts = Array.isArray(s.products) ? s.products : [];
+        const match = sProducts.find(sp => {
+          const spSku = String(sp.sku || sp.id || '').toLowerCase();
+          const spName = String(sp.name || '').toLowerCase();
+          return (pSku && spSku === pSku) || (pName && spName === pName);
+        });
+        if (match) {
+          return { id: s.id, name: (s.business && s.business.companyName) || s.name || 'Supplier', product: match };
+        }
+        if (pSupplier && (sName.includes(pSupplier) || pSupplier.includes(sName))) {
+          return { id: s.id, name: (s.business && s.business.companyName) || s.name || 'Supplier', product: null };
+        }
+      }
+
+      return { id: 'sup-hans', name: p.supplier || 'Hans', product: null };
+    }
+
+    // 3. Compute reorder metrics for each product
+    reorderRowsData = prodsList.map(p => {
+      const sku = p.sku || p.id;
+      const name = p.name || 'Product';
+      const emoji = p.emoji || '📦';
+      const currentStock = Number(p.qty != null ? p.qty : (p.initialQty || 0));
+      const minAlert = Number(p.min != null ? p.min : (p.minStockAlert != null ? p.minStockAlert : (p.reorderPoint != null ? p.reorderPoint : 10)));
+      const maxCap = Number(p.max || 100);
+
+      const sales = salesBySku[sku] || { totalQty: 0, earliest: new Date().toISOString() };
+      const observedDays = Math.max(1, Math.ceil((Date.now() - new Date(sales.earliest).getTime()) / 86400000));
+      
+      let avgDemand = 0;
+      if (sales.totalQty > 0) {
+        avgDemand = Number((sales.totalQty / observedDays).toFixed(1));
+      } else if (currentStock <= minAlert) {
+        avgDemand = 1.0; // Baseline demand estimation
+      }
+
+      const leadDays = Number(p.leadDays || 7);
+      const safetyStock = Math.max(minAlert, Math.ceil(avgDemand * 3));
+      const reorderPoint = Math.max(minAlert, Math.ceil(avgDemand * leadDays) + safetyStock);
+      
+      let reorderQty = 0;
+      if (currentStock <= reorderPoint) {
+        reorderQty = Math.max(5, Math.ceil(avgDemand * 14) + safetyStock - currentStock);
+        if (maxCap && (currentStock + reorderQty > maxCap)) {
+          reorderQty = Math.max(1, maxCap - currentStock);
+        }
+      }
+
+      const priority = currentStock === 0 ? 'Urgent' : (currentStock <= minAlert ? 'High' : (currentStock <= reorderPoint ? 'Medium' : 'OK'));
+      const sup = findSupplierForProduct(p);
+
       return {
-        sku: p.sku,
-        name: p.name,
-        emoji: p.emoji || '📦',
-        store: STORE_NAMES[idx % STORE_NAMES.length],
-        currentStock: p.qty || 0,
-        avgDemand: demand,
-        safetyStock: safety,
+        sku: sku,
+        name: name,
+        emoji: emoji,
+        store: storeName,
+        currentStock: currentStock,
+        avgDemand: avgDemand,
+        safetyStock: safetyStock,
         reorderPoint: reorderPoint,
         reorderQty: reorderQty,
-        supplier: SUPPLIERS[idx % SUPPLIERS.length],
-        priority: priority
+        supplier: sup.name,
+        supplierId: sup.id,
+        supplierProduct: sup.product,
+        priority: priority,
+        rawProduct: p
       };
     })
-    .filter(function (r) {
-      return r.reorderQty > 0 || r.priority !== 'Medium';
-    })
-    .sort(function (a, b) {
+    .filter(r => r.priority !== 'OK' && r.reorderQty > 0)
+    .sort((a, b) => {
       const score = { Urgent: 0, High: 1, Medium: 2 };
-      return score[a.priority] - score[b.priority] || a.currentStock - b.currentStock;
+      return (score[a.priority] ?? 3) - (score[b.priority] ?? 3) || a.currentStock - b.currentStock;
     });
+
+    renderReorderTable();
+  } catch(err) {
+    console.error('Error computing reorder recommendations:', err);
+    if (tbody) tbody.innerHTML = '<tr><td colspan="11" style="padding:20px;text-align:center;color:#ef4444">Could not load reorder analysis: ' + (err.message || 'Error') + '</td></tr>';
+  }
 }
 
 function renderReorderTable() {
   const tbody = document.getElementById('reorderTableBody');
-  const rows = computeReorderRows();
   if (!tbody) return;
 
-  if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="11" style="padding:20px;text-align:center;color:#6b7280">No reorder recommendations at this time.</td></tr>';
+  if (!reorderRowsData.length) {
+    tbody.innerHTML = '<tr><td colspan="11" style="padding:28px;text-align:center;color:#6b7280;font-size:13.5px;">✓ All inventory stock levels are healthy! No reorder needed at this time.</td></tr>';
     return;
   }
 
-  tbody.innerHTML = rows.map(function (r) {
-    return `
-      <tr>
-        <td>${r.sku}</td>
-        <td><div class="product-cell"><div class="product-img">${r.emoji}</div><div class="product-name"><strong>${r.name}</strong></div></div></td>
-        <td>${r.store}</td>
-        <td>${r.currentStock}</td>
-        <td>${r.avgDemand}/day</td>
-        <td>${r.safetyStock}</td>
-        <td>${r.reorderPoint}</td>
-        <td><strong>${r.reorderQty}</strong></td>
-        <td>${r.supplier}</td>
-        <td><span class="badge ${getBadgeClass(r.priority)}">${r.priority}</span></td>
-        <td><div class="action-cell"><button class="icon-btn" title="Order" data-sku="${r.sku}">→</button></div></td>
-      </tr>`;
-  }).join('');
+  tbody.innerHTML = reorderRowsData.map(r => `
+    <tr>
+      <td style="font-weight:700;color:var(--text-primary)">${r.sku}</td>
+      <td>
+        <div class="product-cell">
+          <div class="product-img">${r.emoji}</div>
+          <div class="product-name"><strong>${r.name}</strong></div>
+        </div>
+      </td>
+      <td style="color:var(--text-secondary)">${r.store}</td>
+      <td style="font-weight:800;color:${r.currentStock === 0 ? '#ef4444' : (r.currentStock <= r.safetyStock ? '#f97316' : 'var(--text-primary)')}">${r.currentStock}</td>
+      <td style="color:var(--text-secondary)">${r.avgDemand}/day</td>
+      <td style="color:var(--text-secondary)">${r.safetyStock}</td>
+      <td style="color:var(--text-secondary)">${r.reorderPoint}</td>
+      <td style="font-weight:800;color:var(--primary)">${r.reorderQty}</td>
+      <td style="font-weight:600">${r.supplier}</td>
+      <td><span class="badge ${getBadgeClass(r.priority)}">${r.priority}</span></td>
+      <td>
+        <div class="action-cell">
+          <button type="button" class="btn btn-primary" style="padding:6px 14px;font-size:12px;border-radius:6px;font-weight:700;cursor:pointer;background:#2e6bc5;color:#fff;border:none;" onclick="createPOFromRecommendation('${r.sku}')">
+            Order
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
 }
-
-// Navigation functionality
-function setSbActive(element) {
-  document.querySelectorAll('.sb-item').forEach(item => item.classList.remove('active'));
-  element.classList.add('active');
-}
-
-document.querySelectorAll('.sb-item').forEach(item => {
-  item.addEventListener('click', function(e) {
-    if(this.href && !this.href.startsWith('#')) {
-      window.location.href = this.href;
-    }
-  });
-});
-
-// Action button functionality
-document.addEventListener('click', function (e) {
-  const btn = e.target.closest('.icon-btn');
-  if (!btn) return;
-  e.preventDefault();
-  const rowSKU = btn.getAttribute('data-sku') || btn.closest('tr').querySelector('td:first-child').textContent;
-  alert(`Order initiated for SKU: ${rowSKU}`);
-});
-
-// Export functionality
-document.querySelectorAll('.export-btn, .action-btn[title="Export as PDF"], .action-btn[title="Export as Excel"]').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const type = this.title.includes('PDF') ? 'PDF' : 'Excel';
-    alert(`Exporting as ${type}...`);
-  });
-});
-
-// Search functionality
-const searchInput = document.querySelector('.topbar-search input');
-if(searchInput) {
-  searchInput.addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    document.querySelectorAll('.data-table tbody tr').forEach(row => {
-      const text = row.textContent.toLowerCase();
-      row.style.display = text.includes(searchTerm) ? '' : 'none';
-    });
-  });
-}
-
-// Refresh button
-const refreshBtn = document.querySelector('.action-btn[title="Refresh"]');
-if(refreshBtn) {
-  refreshBtn.addEventListener('click', function() {
-    renderReorderTable();
-    alert('Data refreshed!');
-  });
-}
-
-window.addEventListener('DOMContentLoaded', renderReorderTable);
-</script>
-<script>
-let reorderProducts = [];
-
-async function loadReorderProducts() {
-  try {
-    const products = await window.RetailerApi.getProducts();
-    reorderProducts = products.map(function (product) {
-      return window.RetailerApiUtils.toInventoryProduct(product);
-    });
-  } catch (error) {
-    console.error('Error loading reorder products:', error);
-    const shared = window.RetailerProductsData;
-    reorderProducts =
-      shared && Array.isArray(shared.inventoryProducts)
-        ? shared.inventoryProducts.slice()
-        : [];
-    window.RetailerUi.showToast(
-      'Using saved reorder data: ' + window.RetailerUi.getErrorMessage(error),
-      'info',
-    );
-  }
-}
-
-computeReorderRows = function () {
-  return reorderProducts
-    .map(function (product, index) {
-      const demand = Math.max(2, Math.round((product.soldThisMonth || 0) / 7));
-      const safety = Math.max(20, Math.round((product.max || 0) * 0.25));
-      const reorderPoint = Math.max(30, safety + demand * 3);
-      const reorderQty = Math.max(0, reorderPoint + demand * 5 - (product.qty || 0));
-      const ratio = product.max ? product.qty / product.max : 0;
-      const priority = ratio <= 0.05 ? 'Urgent' : ratio <= 0.2 ? 'High' : 'Medium';
-      return {
-        sku: product.sku,
-        name: product.name,
-        emoji: product.emoji || '📦',
-        store: STORE_NAMES[index % STORE_NAMES.length],
-        currentStock: product.qty || 0,
-        avgDemand: demand,
-        safetyStock: safety,
-        reorderPoint: reorderPoint,
-        reorderQty: reorderQty,
-        supplier: SUPPLIERS[index % SUPPLIERS.length],
-        priority: priority,
-      };
-    })
-    .filter(function (row) {
-      return row.reorderQty > 0 || row.priority !== 'Medium';
-    })
-    .sort(function (a, b) {
-      const score = { Urgent: 0, High: 1, Medium: 2 };
-      return score[a.priority] - score[b.priority] || a.currentStock - b.currentStock;
-    });
-};
-
-renderReorderTable = function () {
-  const tbody = document.getElementById('reorderTableBody');
-  const rows = computeReorderRows();
-
-  if (!rows.length) {
-    tbody.innerHTML =
-      '<tr><td colspan="11" style="padding:20px;text-align:center;color:#6b7280">No reorder recommendations at this time.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = rows
-    .map(function (row) {
-      return `
-        <tr>
-          <td>${row.sku}</td>
-          <td><div class="product-cell"><div class="product-img">${row.emoji}</div><div class="product-name"><strong>${row.name}</strong></div></div></td>
-          <td>${row.store}</td>
-          <td>${row.currentStock}</td>
-          <td>${row.avgDemand}/day</td>
-          <td>${row.safetyStock}</td>
-          <td>${row.reorderPoint}</td>
-          <td><strong>${row.reorderQty}</strong></td>
-          <td>${row.supplier}</td>
-          <td><span class="badge ${getBadgeClass(row.priority)}">${row.priority}</span></td>
-          <td><div class="action-cell"><button type="button" style="border:none;background:#eef2ff;color:#2e6bc5;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer" onclick="createPOFromRecommendation('${row.sku}')">Order</button></div></td>
-        </tr>`;
-    })
-    .join('');
-};
 
 function createPOFromRecommendation(sku) {
-  const product = reorderProducts.find(function (entry) {
-    return entry.sku === sku;
-  });
+  const row = reorderRowsData.find(r => r.sku === sku);
+  if (!row) return;
 
-  if (!product) {
-    return;
-  }
+  const product = row.rawProduct;
+  const supplierProduct = row.supplierProduct;
 
-  localStorage.setItem(
-    'po_products',
-    JSON.stringify([
-      {
-        id: sku,
-        name: product.name,
-        emoji: product.emoji || '📦',
-        sku: product.sku,
-        cat: product.cat,
-        price: Number(product.price) || 0,
-        qty: Math.max(1, Math.round((product.max || product.qty || 1) - (product.qty || 0))),
-        stock: Number(product.qty) || 0,
-        stockStatus: window.RetailerApiUtils.getStockStatus(product),
-      },
-    ]),
-  );
+  localStorage.setItem('po_supplier_id', String(row.supplierId));
+  localStorage.setItem('po_products', JSON.stringify([
+    {
+      id: supplierProduct && (supplierProduct.id || supplierProduct.sku) ? (supplierProduct.id || supplierProduct.sku) : (product.id || product.sku),
+      name: supplierProduct && supplierProduct.name ? supplierProduct.name : product.name,
+      emoji: supplierProduct && supplierProduct.emoji ? supplierProduct.emoji : (product.emoji || '📦'),
+      sku: supplierProduct && supplierProduct.sku ? supplierProduct.sku : product.sku,
+      cat: supplierProduct && (supplierProduct.category || supplierProduct.cat) ? (supplierProduct.category || supplierProduct.cat) : (product.category || 'General'),
+      price: Number(supplierProduct && (supplierProduct.unitPrice || supplierProduct.price) ? (supplierProduct.unitPrice || supplierProduct.price) : (product.price || 0)),
+      qty: Math.max(1, Number(row.reorderQty) || 1),
+      stock: Number(product.qty) || 0,
+      stockStatus: product.qty === 0 ? 'out' : (product.qty <= (product.min || 10) ? 'low' : 'ok')
+    }
+  ]));
   localStorage.setItem('po_products_ts', String(Date.now()));
-  window.location.href = 'Create_Purchase_Order.html';
+
+  window.location.href = 'Create_Purchase_Order.html?supplierId=' + encodeURIComponent(row.supplierId);
 }
 
-window.addEventListener('DOMContentLoaded', function () {
-  loadReorderProducts().then(renderReorderTable);
+window.addEventListener('DOMContentLoaded', () => {
+  loadReorderData();
 });
 </script>
-<script>
-(function () {
-  let scopedReorderProducts = [];
-  let scopedReorderTransactions = [];
-  let scopedReorderSuppliers = [];
-
-  async function loadScopedReorderData() {
-    try {
-      const results = await Promise.all([
-        window.RetailerApi.getProducts(),
-        window.RetailerApi.getTransactions(),
-        window.RetailerApi.getSuppliers(),
-      ]);
-      scopedReorderProducts = results[0].map(function (product) {
-        return window.RetailerApiUtils.toInventoryProduct(product);
-      });
-      scopedReorderTransactions = Array.isArray(results[1]) ? results[1] : [];
-      scopedReorderSuppliers = Array.isArray(results[2]) ? results[2] : [];
-    } catch (error) {
-      scopedReorderProducts = [];
-      scopedReorderTransactions = [];
-      scopedReorderSuppliers = [];
-      window.RetailerUi.showToast(window.RetailerUi.getErrorMessage(error), 'error');
-    }
-  }
-
-  function findSupplierProductMatch(product) {
-    var normalizedSku = String(product && product.sku || '').trim().toLowerCase();
-    var normalizedName = String(product && product.name || '').trim().toLowerCase();
-    var normalizedSupplier = String(product && product.supplier || '').trim().toLowerCase();
-
-    for (var i = 0; i < scopedReorderSuppliers.length; i += 1) {
-      var supplier = scopedReorderSuppliers[i];
-      var supplierProducts = Array.isArray(supplier && supplier.products)
-        ? supplier.products
-        : [];
-      var matchedProduct = supplierProducts.find(function (entry) {
-        var entrySku = String(entry && entry.sku || '').trim().toLowerCase();
-        var entryName = String(entry && entry.name || '').trim().toLowerCase();
-        return (
-          (normalizedSku && entrySku === normalizedSku) ||
-          (normalizedName && entryName === normalizedName)
-        );
-      });
-
-      if (matchedProduct) {
-        return {
-          supplier: supplier,
-          supplierProduct: matchedProduct,
-        };
-      }
-    }
-
-    if (!normalizedSupplier) {
-      return null;
-    }
-
-    var fallbackSupplier = scopedReorderSuppliers.find(function (supplier) {
-      var companyName =
-        supplier && supplier.business && supplier.business.companyName
-          ? supplier.business.companyName
-          : supplier.companyName || supplier.name || '';
-      return companyName && companyName.toLowerCase() === normalizedSupplier;
-    }) || null;
-
-    return fallbackSupplier
-      ? { supplier: fallbackSupplier, supplierProduct: null }
-      : null;
-  }
-
-  window.computeReorderRows = function () {
-    const currentStore = window.RetailerApi.getCurrentStore();
-    const salesBySku = {};
-
-    scopedReorderTransactions.forEach(function (transaction) {
-      (transaction.items || []).forEach(function (item) {
-        if (!item.sku) return;
-        if (!salesBySku[item.sku]) {
-          salesBySku[item.sku] = {
-            totalQty: 0,
-            earliest: transaction.timestamp || new Date().toISOString(),
-          };
-        }
-        salesBySku[item.sku].totalQty += Number(item.quantity) || 0;
-        if (new Date(transaction.timestamp || 0).getTime() < new Date(salesBySku[item.sku].earliest).getTime()) {
-          salesBySku[item.sku].earliest = transaction.timestamp || salesBySku[item.sku].earliest;
-        }
-      });
-    });
-
-    return scopedReorderProducts
-      .map(function (product) {
-        const sales = salesBySku[product.sku] || { totalQty: 0, earliest: new Date().toISOString() };
-        const observedDays = Math.max(1, Math.ceil((Date.now() - new Date(sales.earliest).getTime()) / 86400000));
-        const avgDemand = Number((sales.totalQty / observedDays).toFixed(1));
-        const safetyStock = Math.max(Number(product.min || 0), Math.ceil(avgDemand * 3));
-        const reorderPoint = Math.max(Number(product.min || 0), Math.ceil(avgDemand * 7) + safetyStock);
-        const reorderQty = sales.totalQty > 0
-          ? Math.max(0, Math.ceil(avgDemand * 14) + safetyStock - (product.qty || 0))
-          : 0;
-        const supplierMatch = findSupplierProductMatch(product);
-        const priority =
-          (product.qty || 0) <= 0
-            ? 'Urgent'
-            : (product.qty || 0) <= reorderPoint
-              ? 'High'
-              : 'Medium';
-
-        return {
-          sku: product.sku,
-          name: product.name,
-          emoji: product.emoji || 'PKG',
-          store: currentStore ? currentStore.name : '',
-          currentStock: Number(product.qty) || 0,
-          avgDemand: avgDemand,
-          safetyStock: safetyStock,
-          reorderPoint: reorderPoint,
-          reorderQty: reorderQty,
-          supplier: supplierMatch
-            ? (supplierMatch.supplier.business && supplierMatch.supplier.business.companyName
-              ? supplierMatch.supplier.business.companyName
-              : supplierMatch.supplier.companyName || supplierMatch.supplier.name || '')
-            : 'No supplier found',
-          supplierId: supplierMatch ? supplierMatch.supplier.id : '',
-          supplierProduct: supplierMatch ? supplierMatch.supplierProduct : null,
-          priority: priority,
-        };
-      })
-      .filter(function (row) {
-        return row.reorderQty > 0;
-      })
-      .sort(function (a, b) {
-        const score = { Urgent: 0, High: 1, Medium: 2 };
-        return score[a.priority] - score[b.priority] || a.currentStock - b.currentStock;
-      });
-  };
-
-  window.renderReorderTable = function () {
-    const tbody = document.getElementById('reorderTableBody');
-    const rows = window.computeReorderRows();
-
-    if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="11" style="padding:20px;text-align:center;color:#6b7280">No reorder recommendations at this time.</td></tr>';
-      return;
-    }
-
-    tbody.innerHTML = rows.map(function (row) {
-      return `
-        <tr>
-          <td>${row.sku}</td>
-          <td><div class="product-cell"><div class="product-img">${row.emoji}</div><div class="product-name"><strong>${row.name}</strong></div></div></td>
-          <td>${row.store}</td>
-          <td>${row.currentStock}</td>
-          <td>${row.avgDemand}/day</td>
-          <td>${row.safetyStock}</td>
-          <td>${row.reorderPoint}</td>
-          <td><strong>${row.reorderQty}</strong></td>
-          <td>${row.supplier}</td>
-          <td><span class="badge ${getBadgeClass(row.priority)}">${row.priority}</span></td>
-          <td><div class="action-cell"><button type="button" style="border:none;background:#eef2ff;color:#2e6bc5;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer" onclick="createPOFromRecommendation('${row.sku}')">Order</button></div></td>
-        </tr>`;
-    }).join('');
-  };
-
-  window.createPOFromRecommendation = function (sku) {
-    const row = window.computeReorderRows().find(function (entry) {
-      return entry.sku === sku;
-    });
-    const product = scopedReorderProducts.find(function (entry) {
-      return entry.sku === sku;
-    });
-
-    if (!product || !row) {
-      window.RetailerUi.showToast('Unable to find that product in the current product list.', 'error');
-      return;
-    }
-
-    if (!row.supplierId) {
-      window.RetailerUi.showToast("Can't find the product for any supplier.", 'error');
-      return;
-    }
-
-    var supplierProduct = row.supplierProduct || null;
-    localStorage.setItem('po_supplier_id', String(row.supplierId));
-    localStorage.setItem('po_products', JSON.stringify([
-      {
-        id: supplierProduct && (supplierProduct.id || supplierProduct.sku) ? (supplierProduct.id || supplierProduct.sku) : (product.id || product.sku),
-        name: supplierProduct && supplierProduct.name ? supplierProduct.name : product.name,
-        emoji: supplierProduct && supplierProduct.emoji ? supplierProduct.emoji : (product.emoji || 'PKG'),
-        sku: supplierProduct && supplierProduct.sku ? supplierProduct.sku : product.sku,
-        cat: supplierProduct && (supplierProduct.category || supplierProduct.cat) ? (supplierProduct.category || supplierProduct.cat) : product.cat,
-        price: Number(
-          supplierProduct && (supplierProduct.unitPrice || supplierProduct.price)
-            ? (supplierProduct.unitPrice || supplierProduct.price)
-            : product.price,
-        ) || 0,
-        qty: Math.max(1, Number(row.reorderQty) || 1),
-        stock: Number(product.qty) || 0,
-        stockStatus: window.RetailerApiUtils.getStockStatus(product),
-      },
-    ]));
-    localStorage.setItem('po_products_ts', String(Date.now()));
-    window.location.href = 'Create_Purchase_Order.html?supplierId=' + encodeURIComponent(row.supplierId);
-  };
-
-  window.addEventListener('DOMContentLoaded', function () {
-    const refreshBtn = document.querySelector('.action-btn[title="Refresh"]');
-    if (refreshBtn) refreshBtn.style.display = 'none';
-    document.querySelectorAll('.export-btn, .action-btn[title="Export as PDF"], .action-btn[title="Export as Excel"]').forEach(function (button) {
-      button.style.display = 'none';
-    });
-    loadScopedReorderData().then(window.renderReorderTable);
-  });
-})();
-</script>
-
-
-<script>
-function toggleProfilePopover(e) {
-  if (e) e.stopPropagation();
-  const popover = document.getElementById('profilePopover');
-  if (popover) {
-    popover.classList.toggle('open');
-    if (popover.classList.contains('open')) {
-      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
-      document.getElementById('profilePopoverName').textContent = session.name || 'Retailer Profile';
-      document.getElementById('profilePopoverEmail').textContent = session.email || '-';
-      document.getElementById('profilePopoverPhone').textContent = session.phone || '-';
-      let initials = 'RS';
-      if (session.name) initials = session.name.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();
-      const topAvatar = document.getElementById('topbarAvatar');
-      if (topAvatar) topAvatar.textContent = initials;
-      const popAvatar = document.getElementById('profilePopoverAvatar');
-      if (popAvatar) popAvatar.textContent = initials;
-    }
-  }
-}
-document.addEventListener('click', function(e) {
-  const popover = document.getElementById('profilePopover');
-  const avatar = document.getElementById('topbarAvatar');
-  if (popover && popover.classList.contains('open')) {
-    if (!popover.contains(e.target) && (!avatar || !avatar.contains(e.target))) {
-      popover.classList.remove('open');
-    }
-  }
-});
-</script>
-
 </body>
 </html>
