@@ -103,10 +103,10 @@
         <div class="item-list" id="receiptItems"></div>
 
         <div class="totals">
-          <div class="total-row"><span>Subtotal</span><span id="subtotalValue">$0</span></div>
-          <div class="total-row"><span>Tax</span><span id="taxValue">$0</span></div>
-          <div class="total-row"><span>Discount</span><span id="discountValue">-$0</span></div>
-          <div class="total-row grand"><span>TOTAL</span><span id="grandTotalValue">$0</span></div>
+          <div class="total-row"><span>Subtotal</span><span id="subtotalValue">₹0</span></div>
+          <div class="total-row"><span>Tax</span><span id="taxValue">₹0</span></div>
+          <div class="total-row"><span>Discount</span><span id="discountValue">-₹0</span></div>
+          <div class="total-row grand"><span>TOTAL</span><span id="grandTotalValue">₹0</span></div>
         </div>
 
         <div class="pay-method" id="payMethod">Paid via card</div>
@@ -237,15 +237,15 @@
               <span class="item-name">${item.name}</span>
               <span class="item-qty">x${item.quantity}</span>
             </div>
-            <div class="item-price">$${Number(item.total || 0).toLocaleString()}</div>
+            <div class="item-price">₹${Number(item.total || 0).toLocaleString('en-IN')}</div>
           </div>
         `;
       }).join('');
 
-      document.getElementById('subtotalValue').textContent = '$' + Number(latest.subtotal || 0).toLocaleString();
-      document.getElementById('taxValue').textContent = '$' + Number(latest.tax || 0).toLocaleString();
-      document.getElementById('discountValue').textContent = '-$' + Number(latest.discount || 0).toLocaleString();
-      document.getElementById('grandTotalValue').textContent = '$' + Number(latest.finalTotal || 0).toLocaleString();
+      document.getElementById('subtotalValue').textContent = '₹' + Number(latest.subtotal || 0).toLocaleString('en-IN');
+      document.getElementById('taxValue').textContent = '₹' + Number(latest.tax || 0).toLocaleString('en-IN');
+      document.getElementById('discountValue').textContent = '-₹' + Number(latest.discount || 0).toLocaleString('en-IN');
+      document.getElementById('grandTotalValue').textContent = '₹' + Number(latest.finalTotal || 0).toLocaleString('en-IN');
     }
 
     document.addEventListener('DOMContentLoaded', async function() {

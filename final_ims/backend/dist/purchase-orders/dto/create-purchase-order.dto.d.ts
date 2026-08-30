@@ -9,6 +9,7 @@ declare class PurchaseOrderItemDto implements PurchaseOrderItem {
     qty: number;
     stock: number;
     stockStatus: string;
+    profitMargin?: number;
 }
 export declare class CreatePurchaseOrderDto {
     supplierId: string;

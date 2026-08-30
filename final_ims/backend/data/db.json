@@ -8,7 +8,7 @@
       "category": "Electronics",
       "subcategory": "General",
       "subCategory": "General",
-      "brand": "Beats",
+      "brand": "Nike",
       "priceUSD": 34567,
       "price": 34567,
       "cost": 0,
@@ -88,42 +88,42 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T06:56:40.524Z",
-      "updatedAt": "2026-08-30T17:04:25.857Z",
+      "updatedAt": "2026-08-30T19:23:34.799Z",
       "restockedAt": "2026-08-28T06:56:40.517Z",
       "lastStockChangeAt": "2026-08-28T06:56:40.524Z"
     },
     {
       "id": "e71339f7-6294-49e9-90d9-2c198daa8e3c",
       "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
-      "sku": "OP3-BLK-2026",
+      "sku": "PT002",
       "name": "op3",
       "category": "General",
       "subcategory": "General",
       "subCategory": "General",
-      "brand": "Hans",
-      "priceUSD": 682.5,
-      "price": 682.5,
-      "cost": 0,
+      "brand": "OnePlus",
+      "priceUSD": 577.5,
+      "price": 577.5,
+      "cost": 525,
       "discountType": "none",
       "discountValue": 0,
-      "finalPrice": 682.5,
+      "finalPrice": 577.5,
       "taxRate": 0,
       "taxType": "Inclusive",
       "unit": "Pc",
-      "qty": 3,
-      "initialQty": 6,
+      "qty": 4,
+      "initialQty": 7,
       "min": 5,
       "max": 5,
       "creator": "Retail Manager",
       "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
-      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20OP3-BLK-2026%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "http://127.0.0.1:3001/uploads/products/prod-1788113362534-412026785.jpg",
       "galleryImages": [
-        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20OP3-BLK-2026%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "http://127.0.0.1:3001/uploads/products/prod-1788113362534-412026785.jpg",
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "images": [
-        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20OP3-BLK-2026%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "http://127.0.0.1:3001/uploads/products/prod-1788113362534-412026785.jpg",
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
@@ -132,8 +132,8 @@
       "trend": "up",
       "description": "",
       "descriptionHtml": "",
-      "supplier": "Hans",
-      "supplierSku": "",
+      "supplier": "StockOverflow Supply",
+      "supplierSku": "OP3-BLK-2026",
       "barcode": "",
       "warehouse": "",
       "bin": "",
@@ -157,13 +157,13 @@
       "storeInventory": [
         {
           "storeId": "JOHN-S-STORE",
-          "qty": 3
+          "qty": 4
         }
       ],
       "initialStoreInventory": [
         {
           "storeId": "JOHN-S-STORE",
-          "qty": 6
+          "qty": 7
         }
       ],
       "feedback": [],
@@ -176,17 +176,38 @@
       },
       "ratingCount": 0,
       "ratingAvg": 0,
-      "revenue": 2047.5,
+      "revenue": 1732.5,
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T05:05:37.997Z",
-      "updatedAt": "2026-08-30T17:04:25.857Z",
-      "restockedAt": "2026-08-30T15:38:39.074Z",
-      "lastStockChangeAt": "2026-08-30T15:38:39.074Z"
+      "updatedAt": "2026-08-30T19:23:34.799Z",
+      "restockedAt": "2026-08-30T00:00:00.000Z",
+      "lastStockChangeAt": "2026-08-30T18:08:35.999Z"
     }
   ],
   "stores": [],
   "customers": [
+    {
+      "id": "eaae8f04-d217-481c-9420-ddf87843169a",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "storeId": "JOHN-S-STORE",
+      "name": "jones",
+      "fname": "jones",
+      "lname": "",
+      "email": "jones@gmail.com",
+      "phone": "",
+      "city": "",
+      "country": "India",
+      "store": "Downtown Store",
+      "status": "Active",
+      "totalOrders": 1,
+      "totalSpent": 1155,
+      "orders": 1,
+      "spent": 1155,
+      "created": "Aug 31, 2026",
+      "rating": 3,
+      "notes": ""
+    },
     {
       "id": "d240c107-b88c-4d79-af91-64e7bb505a4d",
       "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
@@ -200,10 +221,10 @@
       "country": "India",
       "store": "Downtown Store",
       "status": "Active",
-      "totalOrders": 4,
-      "totalSpent": 12047.5,
-      "orders": 4,
-      "spent": 12047.5,
+      "totalOrders": 5,
+      "totalSpent": 12625,
+      "orders": 5,
+      "spent": 12625,
       "created": "Aug 28, 2026",
       "rating": 3,
       "notes": ""
@@ -242,6 +263,38 @@
   "suppliers": [],
   "warehouses": [],
   "purchaseOrders": [
+    {
+      "id": "PO-2026-0004",
+      "supplierId": "0ccceb67-958d-4957-9728-e023994a8e8d",
+      "supplierName": "Hans",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "items": [
+        {
+          "id": "OP3-BLK-2026",
+          "name": "op3",
+          "emoji": "📦",
+          "sku": "OP3-BLK-2026",
+          "cat": "Electronics",
+          "price": 525,
+          "profitMargin": 10,
+          "qty": 1,
+          "stock": 149,
+          "stockStatus": "ok"
+        }
+      ],
+      "deliveryDate": "2026-09-02",
+      "paymentTerms": "Net 30",
+      "notes": "",
+      "shippingAddress": "",
+      "subtotal": 525,
+      "tax": 26,
+      "total": 551,
+      "units": 1,
+      "status": "Delivered",
+      "createdAt": "2026-08-30T18:08:16.394Z"
+    },
     {
       "id": "PO-2026-0003",
       "supplierId": "0ccceb67-958d-4957-9728-e023994a8e8d",
@@ -339,6 +392,40 @@
   "reservations": [],
   "reservationRequests": [
     {
+      "requestId": "req-1788117536009-95509",
+      "sku": "PT002",
+      "productName": "op3",
+      "qty": 1,
+      "customer": "James",
+      "customerEmail": "james@gmail.com",
+      "customerId": "d240c107-b88c-4d79-af91-64e7bb505a4d",
+      "storeId": "JOHN-S-STORE",
+      "store": "John's Retail Store",
+      "paymentMethod": "Card",
+      "status": "completed",
+      "createdAt": "2026-08-30T19:18:56.009Z",
+      "orderId": "ORD615353",
+      "completedAt": "2026-08-30T19:23:34.794Z",
+      "completedBy": "biller"
+    },
+    {
+      "requestId": "req-1788115657405-22075",
+      "sku": "PT002",
+      "productName": "op3",
+      "qty": 2,
+      "customer": "jones",
+      "customerEmail": "jones@gmail.com",
+      "customerId": "eaae8f04-d217-481c-9420-ddf87843169a",
+      "storeId": "JOHN-S-STORE",
+      "store": "John's Retail Store",
+      "paymentMethod": "Card",
+      "status": "completed",
+      "createdAt": "2026-08-30T18:47:37.405Z",
+      "orderId": "ORD840499",
+      "completedAt": "2026-08-30T18:59:11.321Z",
+      "completedBy": "biller"
+    },
+    {
       "requestId": "req-1787904437257-54174",
       "sku": "OP3-BLK-2026",
       "productName": "op3",
@@ -391,6 +478,76 @@
     }
   ],
   "transactions": [
+    {
+      "orderId": "ORD615353",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "timestamp": "2026-08-30T19:23:34.790Z",
+      "customer": "James",
+      "customerEmail": "james@gmail.com",
+      "customerId": "d240c107-b88c-4d79-af91-64e7bb505a4d",
+      "store": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "paymentMethod": "💵 Cash",
+      "items": [
+        {
+          "sku": "PT002",
+          "name": "op3",
+          "quantity": 1,
+          "price": 577.5,
+          "total": 577.5,
+          "isReserved": true,
+          "requestIds": [
+            "req-1788117536009-95509"
+          ]
+        }
+      ],
+      "subtotal": 577.5,
+      "shipping": 0,
+      "tax": 0,
+      "coupon": 0,
+      "discount": 0,
+      "roundoff": 0,
+      "finalTotal": 577.5,
+      "platformFee": 11.55,
+      "netRetailerAmount": 565.95,
+      "status": "Delivered",
+      "receiptUrl": ""
+    },
+    {
+      "orderId": "ORD840499",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "timestamp": "2026-08-30T18:59:11.316Z",
+      "customer": "jones",
+      "customerEmail": "jones@gmail.com",
+      "customerId": "eaae8f04-d217-481c-9420-ddf87843169a",
+      "store": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "paymentMethod": "💵 Cash",
+      "items": [
+        {
+          "sku": "PT002",
+          "name": "op3",
+          "quantity": 2,
+          "price": 577.5,
+          "total": 1155,
+          "isReserved": true,
+          "requestIds": [
+            "req-1788115657405-22075"
+          ]
+        }
+      ],
+      "subtotal": 1155,
+      "shipping": 0,
+      "tax": 0,
+      "coupon": 0,
+      "discount": 0,
+      "roundoff": 0,
+      "finalTotal": 1155,
+      "platformFee": 23.1,
+      "netRetailerAmount": 1131.9,
+      "status": "Delivered",
+      "receiptUrl": ""
+    },
     {
       "orderId": "ORD154403",
       "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
@@ -610,6 +767,40 @@
   "employeeAssignments": [],
   "userQueries": [],
   "platformCommissions": [
+    {
+      "id": "comm-98f26a35-50f6-4e79-b824-74455ec96ce7",
+      "transactionId": "ORD615353",
+      "orderId": "ORD615353",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "storeName": "John's Retail Store",
+      "customerName": "James",
+      "orderTotal": 577.5,
+      "commissionRate": 0.02,
+      "commissionAmount": 11.55,
+      "netRetailerAmount": 565.95,
+      "currency": "INR",
+      "timestamp": "2026-08-30T19:23:34.790Z",
+      "status": "settled"
+    },
+    {
+      "id": "comm-9015a0a3-b337-4664-8ed4-2da9d329de8d",
+      "transactionId": "ORD840499",
+      "orderId": "ORD840499",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "storeName": "John's Retail Store",
+      "customerName": "jones",
+      "orderTotal": 1155,
+      "commissionRate": 0.02,
+      "commissionAmount": 23.1,
+      "netRetailerAmount": 1131.9,
+      "currency": "INR",
+      "timestamp": "2026-08-30T18:59:11.316Z",
+      "status": "settled"
+    },
     {
       "id": "comm-7632564c-b3c3-4193-a3e7-7435a8036175",
       "transactionId": "ORD154403",

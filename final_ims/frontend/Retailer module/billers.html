@@ -88,10 +88,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 
 /* ─── BILLERS PAGE STYLES ─────────────────────── */
-.bl-content{padding:24px 28px 40px;max-width:1400px}
-.bl-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.bl-content{padding:22px 26px 40px;max-width:1240px;width:100%}
+.bl-page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
 .bl-page-title{font-family:'Nunito Sans',sans-serif;font-size:18px;font-weight:700;line-height:27px;color:#212b36}
-.bl-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#646b72;margin-top:2px}
+.bl-breadcrumb{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;color:#646b72;margin-top:2px}
 
 /* Pending Requests Card */
 .bl-requests-card{background:#fff;border:1px solid #e6eaed;border-radius:5px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden;margin-bottom:24px}
@@ -124,29 +124,29 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .bl-btn-primary svg{width:13px;height:13px}
 
 /* Table card */
-.bl-table-card{background:#fff;border:1px solid #e6eaed;border-radius:5px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden}
+.bl-table-card{background:#fff;border:1px solid #e6eaed;border-radius:5px;box-shadow:0 1px 1px rgba(198,198,198,.2);overflow:hidden;width:100%}
 
 /* Table toolbar */
-.bl-table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #e6eaed;gap:16px}
-.bl-search{display:flex;align-items:center;gap:8px;border:1px solid #e6eaed;border-radius:5px;padding:4px 8px;width:200px;background:#fff}
+.bl-table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #e6eaed;gap:16px}
+.bl-search{display:flex;align-items:center;gap:8px;border:1px solid #e6eaed;border-radius:5px;padding:6px 10px;width:240px;background:#fff}
 .bl-search svg{width:14px;height:14px;color:#a6aaaf;flex-shrink:0}
-.bl-search input{border:none;outline:none;font-family:'Nunito Sans',sans-serif;font-size:14px;color:#212b36;background:transparent;width:100%}
-.bl-search input::placeholder{color:#a6aaaf;font-weight:700}
+.bl-search input{border:none;outline:none;font-family:'Nunito Sans',sans-serif;font-size:13px;color:#212b36;background:transparent;width:100%}
+.bl-search input::placeholder{color:#a6aaaf;font-weight:600}
 .bl-filter-group{display:flex;align-items:center;gap:8px;margin-left:auto}
-.bl-filter-btn{display:flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid #e6eaed;border-radius:5px;background:#fff;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:14px;font-weight:700;color:#212b36;transition:background .14s}
+.bl-filter-btn{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #e6eaed;border-radius:5px;background:#fff;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:700;color:#212b36;transition:background .14s}
 .bl-filter-btn:hover{background:#f5f6fa}
 .bl-filter-btn svg{width:14px;height:14px;color:#646b72}
 
 /* Table proper */
-.bl-table-wrap{overflow-x:auto}
-table.bl-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:13px}
+.bl-table-wrap{overflow-x:auto;width:100%}
+table.bl-table{width:100%;border-collapse:collapse;font-family:'Nunito Sans',sans-serif;font-size:13px;table-layout:fixed}
 table.bl-table thead tr{background:#f2f2f2}
-table.bl-table th{padding:8px 15px;text-align:left;font-size:11px;font-weight:700;color:#212b36;white-space:nowrap;border-bottom:1px solid #e6eaed;height:33px;letter-spacing:.5px;text-transform:uppercase}
-table.bl-table th.th-check{width:60px;padding:8px 12px}
+table.bl-table th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:#212b36;white-space:nowrap;border-bottom:1px solid #e6eaed;height:36px;letter-spacing:.5px;text-transform:uppercase}
+table.bl-table th.th-check{width:45px;padding:10px 12px}
 table.bl-table th .sort-icon{display:inline-flex;align-items:center;gap:4px}
 table.bl-table th .sort-icon svg{width:10px;height:10px;color:#646b72;vertical-align:middle}
-table.bl-table td{padding:10px 15px;border-bottom:1px solid #e6eaed;vertical-align:middle;height:50px;background:#fff}
-table.bl-table td:first-child{width:60px}
+table.bl-table td{padding:12px 12px;border-bottom:1px solid #e6eaed;vertical-align:middle;height:50px;background:#fff;word-break:break-word}
+table.bl-table td:first-child{width:45px}
 table.bl-table tbody tr:last-child td{border-bottom:none}
 table.bl-table tbody tr:hover td{background:#fafafa}
 
@@ -420,8 +420,7 @@ table.bl-table tbody tr:hover td{background:#fafafa}
     </div>
   </header>
 
-<!-- BILLERS MAIN -->
-<div class="main">
+<!-- BILLERS CONTENT -->
   <div class="bl-content">
 
     <!-- PAGE HEADER -->
@@ -456,17 +455,6 @@ table.bl-table tbody tr:hover td{background:#fafafa}
       </div>
     </div>
 
-    <!-- PENDING REQUESTS SECTION -->
-    <div class="bl-requests-card" id="pendingRequestsCard" style="display: none;">
-      <div class="bl-card-header">
-        <h3>Pending Biller Requests</h3>
-        <span class="bl-requests-count" id="pendingCount">0</span>
-      </div>
-      <div class="bl-requests-list" id="pendingRequestsList">
-        <!-- Pending requests will be populated here -->
-      </div>
-    </div>
-
     <!-- TABLE CARD -->
     <div class="bl-table-card">
 
@@ -492,17 +480,17 @@ table.bl-table tbody tr:hover td{background:#fafafa}
         <table class="bl-table" id="billersTable">
           <thead>
             <tr>
-              <th class="th-check">
+              <th class="th-check" style="width:45px">
                 <input type="checkbox" class="bl-checkbox" id="selectAll" onchange="toggleAll(this)"/>
               </th>
-              <th>Code</th>
-              <th>Biller</th>
-              <th>Company Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Country</th>
-              <th>Status</th>
-              <th></th>
+              <th style="width:90px">Code</th>
+              <th style="width:20%">Biller</th>
+              <th style="width:18%">Company Name</th>
+              <th style="width:22%">Email</th>
+              <th style="width:14%">Phone</th>
+              <th style="width:12%">Country</th>
+              <th style="width:10%">Status</th>
+              <th style="width:90px;text-align:center">Actions</th>
             </tr>
           </thead>
           <tbody id="billersTableBody">

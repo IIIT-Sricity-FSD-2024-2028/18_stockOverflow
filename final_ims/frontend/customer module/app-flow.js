@@ -7,6 +7,8 @@
     restock: 'restockalert.html',
     feedback: 'feedback.html',
     detail: 'product-detail.html',
+    cart: 'cart.html',
+    checkout: 'checkout.html',
     pos: '../biller module/pos.html',
     sale: 'sale-confirmation.html'
   };
@@ -17,6 +19,7 @@
     alerts: [],
     returns: [],
     feedback: [],
+    cart: [],
     lastOrderSummary: null
   };
 
@@ -29,8 +32,8 @@
     }
   };
 
-  const saveState = (state) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const saveState = (s) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
   };
 
   const state = loadState();
@@ -81,23 +84,108 @@
     };
   })();
 
+  // Global Cart API
+  window.getCart = () => {
+    const currentState = loadState();
+    return Array.isArray(currentState.cart) ? currentState.cart : [];
+  };
+
+  window.updateCartBadge = () => {
+    const currentCart = window.getCart();
+    const totalCount = currentCart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+
+    document.querySelectorAll('.cart-badge').forEach((badge) => {
+      badge.textContent = totalCount;
+      if (badge.classList.contains('cart-badge-inline')) {
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = totalCount > 0 ? 'flex' : 'none';
+      }
+    });
+  };
+
+  window.addToCart = (product) => {
+    if (!product || !product.sku) return;
+    const currentState = loadState();
+    if (!Array.isArray(currentState.cart)) currentState.cart = [];
+
+    const existingIndex = currentState.cart.findIndex(
+      (item) => item.sku === product.sku && (!product.storeId || item.storeId === product.storeId)
+    );
+
+    const qtyToAdd = Number(product.qty) || 1;
+
+    if (existingIndex > -1) {
+      currentState.cart[existingIndex].qty = (Number(currentState.cart[existingIndex].qty) || 0) + qtyToAdd;
+    } else {
+      currentState.cart.push({
+        sku: product.sku,
+        name: product.name || 'Product',
+        price: Number(product.price || product.priceUSD || 0),
+        qty: qtyToAdd,
+        productImg: product.productImg || product.image || '',
+        storeId: product.storeId || '',
+        storeName: product.storeName || ''
+      });
+    }
+
+    saveState(currentState);
+    window.updateCartBadge();
+    return currentState.cart;
+  };
+
+  window.updateCartItem = (sku, qty) => {
+    const currentState = loadState();
+    if (!Array.isArray(currentState.cart)) currentState.cart = [];
+    const index = currentState.cart.findIndex((item) => item.sku === sku);
+    if (index > -1) {
+      const newQty = Number(qty);
+      if (newQty <= 0) {
+        currentState.cart.splice(index, 1);
+      } else {
+        currentState.cart[index].qty = newQty;
+      }
+      saveState(currentState);
+      window.updateCartBadge();
+    }
+  };
+
+  window.removeFromCart = (sku) => {
+    const currentState = loadState();
+    if (!Array.isArray(currentState.cart)) currentState.cart = [];
+    currentState.cart = currentState.cart.filter((item) => item.sku !== sku);
+    saveState(currentState);
+    window.updateCartBadge();
+  };
+
+  window.clearCart = () => {
+    const currentState = loadState();
+    currentState.cart = [];
+    saveState(currentState);
+    window.updateCartBadge();
+  };
+
   const wireGlobalNav = () => {
     document.querySelectorAll('.nav-item').forEach((item) => {
-      item.addEventListener('click', () => {
+      item.addEventListener('click', (e) => {
+        if (item.tagName === 'A' && item.getAttribute('href')) return;
         const text = item.textContent.toLowerCase();
         if (text.includes('product')) go(FILES.products);
         if (text.includes('order')) go(FILES.orders);
         if (text.includes('return')) go(FILES.returns);
         if (text.includes('restock')) go(FILES.restock);
         if (text.includes('dashboard')) go(FILES.consumerProducts);
+        if (text.includes('reservation') || text.includes('cart')) go(FILES.cart);
       });
     });
 
     document.querySelectorAll('.nav-link').forEach((item) => {
-      item.addEventListener('click', () => {
+      item.addEventListener('click', (e) => {
+        if (item.tagName === 'A' && item.getAttribute('href')) return;
         const text = item.textContent.toLowerCase();
         if (text.includes('product')) go(FILES.consumerProducts);
         if (text.includes('order')) go(FILES.orders);
+        if (text.includes('reservation') || text.includes('cart')) go(FILES.cart);
       });
     });
 
@@ -110,6 +198,7 @@
     });
 
     document.querySelectorAll('.avatar, .icon-btn, .icon-btn2').forEach((button) => {
+      if (button.tagName === 'A' || button.closest('a')) return;
       button.addEventListener('click', () => {
         if ((button.textContent || '').includes('🔔')) {
           go(FILES.restock);
@@ -235,16 +324,6 @@
             main.textContent = thumb.textContent;
           }
         });
-      });
-    }
-
-    const reserve = document.querySelector('.reserve-btn');
-    if (reserve) {
-      reserve.addEventListener('click', () => {
-        const product = document.querySelector('.prod-name-h')?.textContent?.trim() || 'Item';
-        localStorage.setItem('imsReservedProduct', product);
-        toast(`${product} reserved`);
-        setTimeout(() => go(FILES.pos), 300);
       });
     }
   };
@@ -474,8 +553,15 @@
 
   wireGlobalNav();
   wireUploadZones();
-
   wireDelegatedActions();
+  window.updateCartBadge();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      window.updateCartBadge();
+    });
+  }
+
   if (currentPath.includes(FILES.consumerProducts)) wireConsumerLanding();
   if (currentPath.includes(FILES.products)) wireProductListing();
   if (currentPath.includes(FILES.detail)) wireProductDetail();

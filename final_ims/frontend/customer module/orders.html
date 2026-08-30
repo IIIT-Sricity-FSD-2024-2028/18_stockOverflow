@@ -199,7 +199,7 @@
             <div class="order-meta">
               <div class="order-delivery ${order.isPending ? 'pending' : ''}">${statusText}</div>
               <div class="order-name">${order.name}</div>
-              <div class="order-price">$${Number(order.totalSpent || 0).toLocaleString()} · Qty ${order.totalQty} · ${order.sku}</div>
+              <div class="order-price">₹${Number(order.totalSpent || 0).toLocaleString('en-IN')} · Qty ${order.totalQty} · ${order.sku}</div>
             </div>
             <div class="order-actions">
               <button class="order-btn btn-review" data-sku="${order.sku}" data-order-id="${actionOrderId}" ${order.isPending ? 'disabled' : ''}>Write a Review</button>

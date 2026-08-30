@@ -209,9 +209,10 @@
             <div class="prod-body">
               <div class="prod-cat">${product.category} · ${product.brand} · ${product.sku}</div>
               <div class="prod-name">${product.name}</div>
+              <div style="font-size:11.5px;color:#0284c7;font-weight:600;margin-top:2px;">Store: ${product.retailerName || "John's Retail Store"}</div>
               <hr class="prod-divider" />
               <div class="prod-footer">
-                <div class="prod-price">$${product.priceUSD.toLocaleString()}</div>
+                <div class="prod-price">₹${Number(product.priceUSD ?? product.price ?? 0).toLocaleString('en-IN')}</div>
                 ${stock.key === 'low' ? '<div class="low-stock-label">Low stock</div>' : ''}
               </div>
               <button class="view-btn" data-sku="${product.sku}" onclick="event.stopPropagation();openProductDetailBySku('${product.sku}', '${escapedName}')">View Details →</button>

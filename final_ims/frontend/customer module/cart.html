@@ -109,9 +109,8 @@
         </div>
         <div class="summary-card">
           <div class="summary-title">Reservation Summary</div>
-          <div class="summary-row"><span>Estimated Subtotal</span> <span id="summarySubtotal">$0.00</span></div>
-          <div class="summary-row"><span>Est. Taxes (8%)</span> <span id="summaryTaxes">$0.00</span></div>
-          <div class="summary-row total"><span>Est. Total</span> <span id="summaryTotal">$0.00</span></div>
+          <div class="summary-row"><span>Estimated Subtotal</span> <span id="summarySubtotal">₹0.00</span></div>
+          <div class="summary-row total"><span>Est. Total</span> <span id="summaryTotal">₹0.00</span></div>
           <p style="font-size:12px; color:#6b7280; margin-top:12px; line-height:1.4;">* Payment is not required now. Final amount will be collected at your selected store during pickup.</p>
           <a href="checkout.html" class="checkout-btn" id="checkoutBtn">Proceed to Checkout</a>
         </div>
@@ -120,18 +119,19 @@
   </div>
 
   
+  <script src="../js/api-config.js"></script>
+  <script src="../js/commerce-api.js"></script>
   <script src="app-flow.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('cartItemsContainer');
       const subtotalEl = document.getElementById('summarySubtotal');
-      const taxesEl = document.getElementById('summaryTaxes');
       const totalEl = document.getElementById('summaryTotal');
       const checkoutBtn = document.getElementById('checkoutBtn');
 
-      const renderCart = () => {
+      window.renderCart = () => {
         const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
-        const cart = state.cart || [];
+        const cart = Array.isArray(state.cart) ? state.cart : [];
         
         container.innerHTML = '';
         if (cart.length === 0) {
@@ -142,9 +142,8 @@
               <a href="productsearch.html">Browse Catalog</a>
             </div>
           `;
-          subtotalEl.textContent = '$0.00';
-          taxesEl.textContent = '$0.00';
-          totalEl.textContent = '$0.00';
+          subtotalEl.textContent = '₹0.00';
+          totalEl.textContent = '₹0.00';
           checkoutBtn.style.opacity = '0.5';
           checkoutBtn.style.pointerEvents = 'none';
           return;
@@ -152,7 +151,9 @@
 
         let subtotal = 0;
         cart.forEach(item => {
-          subtotal += item.price * item.qty;
+          const itemPrice = Number(item.price) || 0;
+          const itemQty = Number(item.qty) || 1;
+          subtotal += itemPrice * itemQty;
           const div = document.createElement('div');
           div.className = 'cart-item';
           div.innerHTML = `
@@ -166,26 +167,24 @@
               ${item.storeName ? `<div style="font-size:11px;color:#059669;font-weight:600;margin-top:2px;">📦 Reserving at: ${item.storeName}</div>` : ''}
             </div>
             <div class="qty-control">
-              <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${item.qty - 1}); renderCart();">-</button>
-              <div class="qty-val">${item.qty}</div>
-              <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${item.qty + 1}); renderCart();">+</button>
+              <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${itemQty - 1}); window.renderCart();">-</button>
+              <div class="qty-val">${itemQty}</div>
+              <button class="qty-btn" onclick="window.updateCartItem('${item.sku}', ${itemQty + 1}); window.renderCart();">+</button>
             </div>
-            <div class="item-price">$${(item.price * item.qty).toFixed(2)}</div>
-            <button class="remove-btn" onclick="window.removeFromCart('${item.sku}'); renderCart();">Remove</button>
+            <div class="item-price">₹${(itemPrice * itemQty).toFixed(2)}</div>
+            <button class="remove-btn" onclick="window.removeFromCart('${item.sku}'); window.renderCart();">Remove</button>
           `;
           container.appendChild(div);
         });
 
-        const taxes = subtotal * 0.08; // 8% mock tax
-        const total = subtotal + taxes;
+        const total = subtotal;
         
-        subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-        taxesEl.textContent = `$${taxes.toFixed(2)}`;
-        totalEl.textContent = `$${total.toFixed(2)}`;
+        subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
+        totalEl.textContent = `₹${total.toFixed(2)}`;
         
         // Save to order summary for receipt
         state.lastOrderSummary = {
-           total: `$${total.toFixed(2)}`,
+           total: `₹${total.toFixed(2)}`,
            date: new Date().toISOString(),
            source: 'store-reservation'
         };
@@ -195,7 +194,7 @@
         checkoutBtn.style.pointerEvents = 'auto';
       };
 
-      renderCart();
+      window.renderCart();
     });
   </script>
 </body>

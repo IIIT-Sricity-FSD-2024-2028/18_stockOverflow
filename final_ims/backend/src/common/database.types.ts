@@ -226,6 +226,7 @@ export interface PurchaseOrderItem {
   qty: number;
   stock: number;
   stockStatus: PurchaseOrderStockStatus | string;
+  profitMargin?: number;
 }
 
 export interface PurchaseOrder {

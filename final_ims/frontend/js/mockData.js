@@ -59,7 +59,7 @@ function writeTable(name, data) {
 }
 
 function formatMoney(value) {
-  return '$' + (Number(value) || 0).toLocaleString();
+  return '₹' + (Number(value) || 0).toLocaleString('en-IN');
 }
 
 function ensureStoreValue(name) {
@@ -202,7 +202,7 @@ window.applyUserIsolation = function () {
 
   window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.metric-value, .rev-stat-val, .ts-val, .overall-stat-val, .fin-card-val, .donut-center-val, .donut-center-total, .product-meta, .sale-sub, .top-cust-amount').forEach((el) => {
-      if (el.textContent.includes('$')) el.textContent = '$0';
+      if (el.textContent.includes('$') || el.textContent.includes('₹')) el.textContent = '₹0';
       else if (el.textContent.includes('x')) el.textContent = '0x';
       else if (el.textContent.includes(' sold')) el.textContent = '0 sold';
       else el.textContent = '0';

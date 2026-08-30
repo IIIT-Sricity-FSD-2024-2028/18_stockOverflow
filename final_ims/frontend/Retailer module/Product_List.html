@@ -882,7 +882,7 @@ function formatDetailValue(value, formatter) {
 
 function formatMoneyValue(value) {
   var num = Number(value);
-  return Number.isNaN(num) ? '—' : '$' + num.toFixed(2);
+  return Number.isNaN(num) ? '—' : '₹' + num.toFixed(2);
 }
 
 function formatNumberValue(value, suffix) {
@@ -1265,7 +1265,7 @@ renderTable = function () {
           </td>
           <td><span class="cell-text">${escapeProductHtml(product.category)}</span></td>
           <td><span class="cell-text">${escapeProductHtml(product.brand)}</span></td>
-          <td><span class="cell-text">$${Number(product.price || 0).toFixed(2)}</span></td>
+          <td><span class="cell-text">₹${Number(product.price || 0).toFixed(2)}</span></td>
           <td><span class="cell-text">${escapeProductHtml(product.unit)}</span></td>
           <td><span class="cell-text">${Number(product.qty || 0)}</span></td>
           <td>

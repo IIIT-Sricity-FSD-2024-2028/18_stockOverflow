@@ -1364,7 +1364,7 @@ function completeSetup(){
           phoneNumber: document.getElementById('b-phone').value.trim() || undefined,
           taxId: document.getElementById('b-tax').value.trim() || undefined,
           retailerCode: retailerCode,
-          currency: document.getElementById('b-currency').value || 'USD',
+          currency: (document.getElementById('b-currency') && document.getElementById('b-currency').value) || 'INR',
           fiscalYear: document.getElementById('b-fiscal').value || undefined,
           businessAddress: document.getElementById('b-addr').value.trim() || undefined,
           website: document.getElementById('b-web').value.trim() || undefined,

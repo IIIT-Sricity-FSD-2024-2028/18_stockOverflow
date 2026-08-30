@@ -3,6 +3,7 @@ import {
   IsArray,
   IsIn,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   Min,
@@ -68,6 +69,12 @@ class PurchaseOrderItemDto implements PurchaseOrderItem {
 
   @IsIn(STOCK_STATUSES)
   stockStatus!: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  profitMargin?: number;
 }
 
 export class CreatePurchaseOrderDto {

@@ -55,3 +55,13 @@
 [2026-08-30T17:03:54.026Z] [ERROR] POST /api/transactions 400 - property orderId should not exist, property total should not exist, property finalTotal should not exist, items.0.property id should not exist, items.0.property qty should not exist, items.0.sku must be a string, items.0.quantity must not be less than 1, items.0.quantity must be a number conforming to the specified constraints
 [2026-08-30T17:04:08.526Z] [ERROR] POST /api/transactions 400 - property total should not exist, property finalTotal should not exist
 [2026-08-30T17:04:15.044Z] [ERROR] POST /api/transactions 400 - property total should not exist, property finalTotal should not exist, store must be a string
+[2026-08-30T17:23:48.624Z] [ERROR] GET / 404 - Cannot GET /
+[2026-08-30T17:23:48.749Z] [ERROR] GET /favicon.ico 404 - Cannot GET /favicon.ico
+[2026-08-30T18:07:06.878Z] [ERROR] GET / 404 - Cannot GET /
+[2026-08-30T18:07:07.017Z] [ERROR] GET /favicon.ico 404 - Cannot GET /favicon.ico
+[2026-08-30T18:07:21.804Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-30T18:07:26.447Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-30T19:02:18.353Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-30T19:02:22.471Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-30T19:02:40.578Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-30T19:24:02.096Z] [ERROR] POST /api/users/login 400 - email must be an email

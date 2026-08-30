@@ -5,7 +5,7 @@
       "businessType": "Partnership",
       "businessEmail": "abhirajaaayush@gmail.com",
       "retailerCode": "RET-947",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {
@@ -34,7 +34,7 @@
       "businessType": "Sole Proprietorship",
       "businessEmail": "r11@gmail.com",
       "retailerCode": "RET-765",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {
@@ -70,7 +70,7 @@
       "businessType": "Sole Proprietorship",
       "businessEmail": "r10@gmail.com",
       "retailerCode": "RET-005",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {
@@ -106,7 +106,7 @@
       "businessType": "Sole Proprietorship",
       "businessEmail": "r8@gmail.com",
       "retailerCode": "RET-680",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {
@@ -142,7 +142,7 @@
       "businessType": "Sole Proprietorship",
       "businessEmail": "r7@gmail.com",
       "retailerCode": "RET-567",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {
@@ -178,7 +178,7 @@
       "businessType": "Partnership",
       "businessEmail": "r2@gmail.com",
       "retailerCode": "RET-923",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {
@@ -214,7 +214,7 @@
       "businessType": "Partnership",
       "businessEmail": "r1@gmail.com",
       "retailerCode": "RET-127",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {
@@ -243,7 +243,7 @@
       "businessType": "Sole Proprietorship",
       "businessEmail": "abhirajaaayush@gmail.com",
       "retailerCode": "RET-468",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {
@@ -279,7 +279,7 @@
       "businessName": "Abhiraj Aayush",
       "businessEmail": "retailer@stockoverflow.com",
       "retailerCode": "RET-031",
-      "currency": "USD",
+      "currency": "INR",
       "fiscalYear": "January"
     },
     "primaryContact": {

@@ -1214,7 +1214,7 @@ function renderRow(c) {
     <td>
       <span class="td-orders">${c.orders}</span>
     </td>
-    <td class="td-money">$${c.spent.toLocaleString()}</td>
+    <td class="td-money">₹${c.spent.toLocaleString('en-IN')}</td>
     <td><span class="status-pill ${spClass}">${spLabel}</span></td>
     <td class="td-muted" style="font-size:12px">${c.created}</td>
     <td onclick="event.stopPropagation()">
@@ -1447,11 +1447,11 @@ function openDrawer(id) {
         <div class="ds-lbl">Orders</div>
       </div>
       <div class="ds-item">
-        <div class="ds-val">$${c.spent.toLocaleString()}</div>
+        <div class="ds-val">₹${c.spent.toLocaleString('en-IN')}</div>
         <div class="ds-lbl">Total Spent</div>
       </div>
       <div class="ds-item">
-        <div class="ds-val">$${c.orders ? Math.round(c.spent / c.orders).toLocaleString() : 0}</div>
+        <div class="ds-val">₹${c.orders ? Math.round(c.spent / c.orders).toLocaleString('en-IN') : 0}</div>
         <div class="ds-lbl">Avg. Order</div>
       </div>
     </div>
@@ -1473,7 +1473,7 @@ function openDrawer(id) {
       ${recentOrders.map(o => `
       <div class="drawer-order-item">
         <span class="doi-num">${o.num}</span>
-        <span class="doi-amount">$${o.amount.toLocaleString()}</span>
+        <span class="doi-amount">₹${o.amount.toLocaleString('en-IN')}</span>
         <span class="doi-date">${o.date}</span>
       </div>`).join('')}
     </div>

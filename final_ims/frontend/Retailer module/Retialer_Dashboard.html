@@ -97,7 +97,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 /* SECTION LABEL */
 .section-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
 /* CARDS GRID */
-.cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.cards-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+@media (max-width: 1200px) {
+  .cards-grid{grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));}
+}
 .metric-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow-sm);transition:box-shadow .2s,transform .2s;cursor:pointer}
 .metric-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
 .metric-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -106,6 +109,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .metric-icon.red{background:var(--danger-light)}.metric-icon.red svg{color:var(--danger)}
 .metric-icon.green{background:var(--success-light)}.metric-icon.green svg{color:var(--success)}
 .metric-icon.orange{background:var(--warning-light)}.metric-icon.orange svg{color:var(--warning)}
+.metric-icon.purple{background:#ede9fe}.metric-icon.purple svg{color:#8b5cf6}
 .metric-info{flex:1;min-width:0}
 .metric-label{font-size:12px;color:var(--text-secondary);font-weight:500;margin-bottom:5px}
 .metric-value-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
@@ -252,6 +256,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
 .cards-grid .metric-card:nth-child(2){animation-delay:.09s}
 .cards-grid .metric-card:nth-child(3){animation-delay:.14s}
 .cards-grid .metric-card:nth-child(4){animation-delay:.19s}
+.cards-grid .metric-card:nth-child(5){animation-delay:.24s}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
@@ -465,7 +470,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
         <div class="metric-info">
           <div class="metric-label">Total Sales</div>
           <div class="metric-value-row">
-            <div class="metric-value">$0</div>
+            <div class="metric-value">₹0</div>
             <span class="badge up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18,15 12,9 6,15"/></svg>0.0%</span>
           </div>
         </div>
@@ -475,7 +480,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
         <div class="metric-info">
           <div class="metric-label">Sales Return</div>
           <div class="metric-value-row">
-            <div class="metric-value">$0</div>
+            <div class="metric-value">₹0</div>
             <span class="badge down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>0.0%</span>
           </div>
         </div>
@@ -485,7 +490,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
         <div class="metric-info">
           <div class="metric-label">Total Purchase</div>
           <div class="metric-value-row">
-            <div class="metric-value">$0</div>
+            <div class="metric-value">₹0</div>
             <span class="badge up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18,15 12,9 6,15"/></svg>0.0%</span>
           </div>
         </div>
@@ -495,8 +500,18 @@ tr:hover td{background:rgba(91,103,202,.03)}
         <div class="metric-info">
           <div class="metric-label">Purchase Return</div>
           <div class="metric-value-row">
-            <div class="metric-value">$0</div>
+            <div class="metric-value">₹0</div>
             <span class="badge neutral">0.0%</span>
+          </div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5a2.5 2.5 0 0 0-5 0v5a2.5 2.5 0 0 0 5 0"/><path d="M9 12h6"/></svg></div>
+        <div class="metric-info">
+          <div class="metric-label">2% Commission</div>
+          <div class="metric-value-row">
+            <div class="metric-value">₹0</div>
+            <span class="badge up" style="background:#ede9fe;color:#6d28d9;">2.0%</span>
           </div>
         </div>
       </div>
@@ -507,7 +522,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
     <div class="fin-cards-grid">
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$0</div><div class="fin-card-label">Net Profit</div></div>
+          <div><div class="fin-card-val">₹0</div><div class="fin-card-label">Net Profit</div></div>
           <div class="fin-card-icon" id="netProfitIcon" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
@@ -515,7 +530,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$0</div><div class="fin-card-label">Invoice Due</div></div>
+          <div><div class="fin-card-val">₹0</div><div class="fin-card-label">Invoice Due</div></div>
           <div class="fin-card-icon" style="background:#fee2e2"><svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
@@ -523,7 +538,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$0</div><div class="fin-card-label">Total Expenses</div></div>
+          <div><div class="fin-card-val">₹0</div><div class="fin-card-label">Total Expenses</div></div>
           <div class="fin-card-icon" style="background:#fef3c7"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
@@ -531,7 +546,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
-          <div><div class="fin-card-val">$0</div><div class="fin-card-label">Payment Returns</div></div>
+          <div><div class="fin-card-val">₹0</div><div class="fin-card-label">Payment Returns</div></div>
           <div class="fin-card-icon" style="background:#dbeafe"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
@@ -556,8 +571,8 @@ tr:hover td{background:rgba(91,103,202,.03)}
         </div>
         <div class="chart-area">
           <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#5b67ca"></div><div><div class="legend-val">$0</div><div class="legend-lbl">Total Purchase</div></div></div>
-            <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div><div><div class="legend-val">$0</div><div class="legend-lbl">Total Sales</div></div></div>
+            <div class="legend-item"><div class="legend-dot" style="background:#5b67ca"></div><div><div class="legend-val">₹0</div><div class="legend-lbl">Total Purchase</div></div></div>
+            <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div><div><div class="legend-val">₹0</div><div class="legend-lbl">Total Sales</div></div></div>
           </div>
           <canvas id="salesChart" height="190"></canvas>
         </div>
@@ -630,8 +645,8 @@ tr:hover td{background:rgba(91,103,202,.03)}
         </div>
         <div class="rev-exp-header">
           <div class="rev-exp-stats">
-            <div><div class="rev-stat-badge"><div class="rev-stat-val">$56,247</div><span class="badge up">+12.4%</span></div><div class="rev-stat-lbl">Total Revenue</div></div>
-            <div><div class="rev-stat-badge"><div class="rev-stat-val">$24,630</div><span class="badge down">-3.1%</span></div><div class="rev-stat-lbl">Total Expense</div></div>
+            <div><div class="rev-stat-badge"><div class="rev-stat-val">₹56,247</div><span class="badge up">+12.4%</span></div><div class="rev-stat-lbl">Total Revenue</div></div>
+            <div><div class="rev-stat-badge"><div class="rev-stat-val">₹24,630</div><span class="badge down">-3.1%</span></div><div class="rev-stat-lbl">Total Expense</div></div>
           </div>
         </div>
         <div style="padding:0 18px 18px"><canvas id="revExpChart" height="190"></canvas></div>
@@ -712,11 +727,11 @@ tr:hover td{background:rgba(91,103,202,.03)}
 <script>
 // DATA
 const topSelling=[
-  {name:'iPhone 15 Pro Max',price:'$1,199',sales:'128 sold',pct:'+8%',up:true,emoji:'📱'},
-  {name:'Nike Air Max 2025',price:'$189',sales:'95 sold',pct:'+5%',up:true,emoji:'👟'},
-  {name:'Sony WH-1000XM6',price:'$349',sales:'74 sold',pct:'-2%',up:false,emoji:'🎧'},
-  {name:'MacBook Air M4',price:'$1,099',sales:'61 sold',pct:'+11%',up:true,emoji:'💻'},
-  {name:"Levi's 512 Jeans",price:'$79',sales:'48 sold',pct:'+1%',up:true,emoji:'👖'},
+  {name:'iPhone 15 Pro Max',price:'₹1,199',sales:'128 sold',pct:'+8%',up:true,emoji:'📱'},
+  {name:'Nike Air Max 2025',price:'₹189',sales:'95 sold',pct:'+5%',up:true,emoji:'👟'},
+  {name:'Sony WH-1000XM6',price:'₹349',sales:'74 sold',pct:'-2%',up:false,emoji:'🎧'},
+  {name:'MacBook Air M4',price:'₹1,099',sales:'61 sold',pct:'+11%',up:true,emoji:'💻'},
+  {name:"Levi's 512 Jeans",price:'₹79',sales:'48 sold',pct:'+1%',up:true,emoji:'👖'},
 ];
 const lowStock=[
   {name:'Samsung Galaxy S25',id:'#PRD-00412',status:'Low Stock',qty:'8 pcs',statusClass:'low',emoji:'📱'},
@@ -726,50 +741,50 @@ const lowStock=[
   {name:'Dyson V16 Vacuum',id:'#PRD-00198',status:'Low Stock',qty:'7 pcs',statusClass:'low',emoji:'🌀'},
 ];
 const recentSales=[
-  {name:'Wireless Headphones',category:'Electronics',price:'$129.99',date:'15 Jan 2025',status:'completed',emoji:'🎧'},
-  {name:'Running Shoes Pro',category:'Footwear',price:'$89.50',date:'14 Jan 2025',status:'pending',emoji:'👟'},
-  {name:'Smart Watch Series',category:'Gadgets',price:'$249.00',date:'13 Jan 2025',status:'completed',emoji:'⌚'},
-  {name:'Laptop Stand Deluxe',category:'Accessories',price:'$45.00',date:'12 Jan 2025',status:'processing',emoji:'💻'},
-  {name:'Yoga Mat Premium',category:'Lifestyles',price:'$87.56',date:'11 Jan 2025',status:'completed',emoji:'🧘'},
+  {name:'Wireless Headphones',category:'Electronics',price:'₹129.99',date:'15 Jan 2025',status:'completed',emoji:'🎧'},
+  {name:'Running Shoes Pro',category:'Footwear',price:'₹89.50',date:'14 Jan 2025',status:'pending',emoji:'👟'},
+  {name:'Smart Watch Series',category:'Gadgets',price:'₹249.00',date:'13 Jan 2025',status:'completed',emoji:'⌚'},
+  {name:'Laptop Stand Deluxe',category:'Accessories',price:'₹45.00',date:'12 Jan 2025',status:'processing',emoji:'💻'},
+  {name:'Yoga Mat Premium',category:'Lifestyles',price:'₹87.56',date:'11 Jan 2025',status:'completed',emoji:'🧘'},
 ];
 const transData={
   Sale:[
-    {date:'15 Jan 2025',name:'Alex Johnson',id:'#C-001',color:'#5b67ca',status:'completed',total:'$1,240'},
-    {date:'14 Jan 2025',name:'Sarah Williams',id:'#C-002',color:'#22c55e',status:'pending',total:'$890'},
-    {date:'13 Jan 2025',name:'Michael Brown',id:'#C-003',color:'#f59e0b',status:'cancelled',total:'$450'},
-    {date:'12 Jan 2025',name:'Emma Davis',id:'#C-004',color:'#ef4444',status:'completed',total:'$2,100'},
+    {date:'15 Jan 2025',name:'Alex Johnson',id:'#C-001',color:'#5b67ca',status:'completed',total:'₹1,240'},
+    {date:'14 Jan 2025',name:'Sarah Williams',id:'#C-002',color:'#22c55e',status:'pending',total:'₹890'},
+    {date:'13 Jan 2025',name:'Michael Brown',id:'#C-003',color:'#f59e0b',status:'cancelled',total:'₹450'},
+    {date:'12 Jan 2025',name:'Emma Davis',id:'#C-004',color:'#ef4444',status:'completed',total:'₹2,100'},
   ],
   Purchase:[
-    {date:'15 Jan 2025',name:'TechSupply Co.',id:'#S-001',color:'#3b82f6',status:'completed',total:'$5,800'},
-    {date:'14 Jan 2025',name:'Global Parts Ltd',id:'#S-002',color:'#8b5cf6',status:'processing',total:'$3,200'},
-    {date:'12 Jan 2025',name:'QuickShip Inc.',id:'#S-003',color:'#14b8a6',status:'pending',total:'$1,500'},
-    {date:'10 Jan 2025',name:'Premium Goods',id:'#S-004',color:'#ec4899',status:'completed',total:'$7,100'},
+    {date:'15 Jan 2025',name:'TechSupply Co.',id:'#S-001',color:'#3b82f6',status:'completed',total:'₹5,800'},
+    {date:'14 Jan 2025',name:'Global Parts Ltd',id:'#S-002',color:'#8b5cf6',status:'processing',total:'₹3,200'},
+    {date:'12 Jan 2025',name:'QuickShip Inc.',id:'#S-003',color:'#14b8a6',status:'pending',total:'₹1,500'},
+    {date:'10 Jan 2025',name:'Premium Goods',id:'#S-004',color:'#ec4899',status:'completed',total:'₹7,100'},
   ],
   Quotation:[
-    {date:'14 Jan 2025',name:'Raj Enterprises',id:'#Q-001',color:'#f59e0b',status:'pending',total:'$3,400'},
-    {date:'13 Jan 2025',name:'Singh & Co.',id:'#Q-002',color:'#5b67ca',status:'processing',total:'$890'},
-    {date:'11 Jan 2025',name:'Metro Retail',id:'#Q-003',color:'#22c55e',status:'completed',total:'$6,200'},
-    {date:'09 Jan 2025',name:'City Merchants',id:'#Q-004',color:'#ef4444',status:'cancelled',total:'$1,100'},
+    {date:'14 Jan 2025',name:'Raj Enterprises',id:'#Q-001',color:'#f59e0b',status:'pending',total:'₹3,400'},
+    {date:'13 Jan 2025',name:'Singh & Co.',id:'#Q-002',color:'#5b67ca',status:'processing',total:'₹890'},
+    {date:'11 Jan 2025',name:'Metro Retail',id:'#Q-003',color:'#22c55e',status:'completed',total:'₹6,200'},
+    {date:'09 Jan 2025',name:'City Merchants',id:'#Q-004',color:'#ef4444',status:'cancelled',total:'₹1,100'},
   ],
   Expenses:[
-    {date:'15 Jan 2025',name:'Office Rentals',id:'#E-001',color:'#6b7280',status:'completed',total:'$4,000'},
-    {date:'13 Jan 2025',name:'Marketing Spend',id:'#E-002',color:'#ef4444',status:'pending',total:'$1,200'},
-    {date:'10 Jan 2025',name:'Logistics Fees',id:'#E-003',color:'#f59e0b',status:'completed',total:'$780'},
-    {date:'08 Jan 2025',name:'Software Subs.',id:'#E-004',color:'#3b82f6',status:'completed',total:'$350'},
+    {date:'15 Jan 2025',name:'Office Rentals',id:'#E-001',color:'#6b7280',status:'completed',total:'₹4,000'},
+    {date:'13 Jan 2025',name:'Marketing Spend',id:'#E-002',color:'#ef4444',status:'pending',total:'₹1,200'},
+    {date:'10 Jan 2025',name:'Logistics Fees',id:'#E-003',color:'#f59e0b',status:'completed',total:'₹780'},
+    {date:'08 Jan 2025',name:'Software Subs.',id:'#E-004',color:'#3b82f6',status:'completed',total:'₹350'},
   ],
   Invoices:[
-    {date:'15 Jan 2025',name:'Client A Corp.',id:'#I-001',color:'#5b67ca',status:'pending',total:'$8,500'},
-    {date:'12 Jan 2025',name:'Client B Ltd.',id:'#I-002',color:'#22c55e',status:'completed',total:'$3,200'},
-    {date:'10 Jan 2025',name:'Acme Holdings',id:'#I-003',color:'#f59e0b',status:'processing',total:'$5,700'},
-    {date:'07 Jan 2025',name:'Nova Ventures',id:'#I-004',color:'#14b8a6',status:'completed',total:'$2,100'},
+    {date:'15 Jan 2025',name:'Client A Corp.',id:'#I-001',color:'#5b67ca',status:'pending',total:'₹8,500'},
+    {date:'12 Jan 2025',name:'Client B Ltd.',id:'#I-002',color:'#22c55e',status:'completed',total:'₹3,200'},
+    {date:'10 Jan 2025',name:'Acme Holdings',id:'#I-003',color:'#f59e0b',status:'processing',total:'₹5,700'},
+    {date:'07 Jan 2025',name:'Nova Ventures',id:'#I-004',color:'#14b8a6',status:'completed',total:'₹2,100'},
   ],
 };
 const topCustomers=[
-  {name:'Alex Johnson',location:'Mumbai',orders:'34 Orders',amount:'$8,965',color:'#5b67ca',init:'AJ'},
-  {name:'Sarah Williams',location:'Delhi',orders:'28 Orders',amount:'$7,412',color:'#22c55e',init:'SW'},
-  {name:'Michael Brown',location:'Bangalore',orders:'21 Orders',amount:'$5,890',color:'#f59e0b',init:'MB'},
-  {name:'Emma Davis',location:'Chennai',orders:'19 Orders',amount:'$4,340',color:'#ef4444',init:'ED'},
-  {name:'James Wilson',location:'Hyderabad',orders:'15 Orders',amount:'$3,120',color:'#8b5cf6',init:'JW'},
+  {name:'Alex Johnson',location:'Mumbai',orders:'34 Orders',amount:'₹8,965',color:'#5b67ca',init:'AJ'},
+  {name:'Sarah Williams',location:'Delhi',orders:'28 Orders',amount:'₹7,412',color:'#22c55e',init:'SW'},
+  {name:'Michael Brown',location:'Bangalore',orders:'21 Orders',amount:'₹5,890',color:'#f59e0b',init:'MB'},
+  {name:'Emma Davis',location:'Chennai',orders:'19 Orders',amount:'₹4,340',color:'#ef4444',init:'ED'},
+  {name:'James Wilson',location:'Hyderabad',orders:'15 Orders',amount:'₹3,120',color:'#8b5cf6',init:'JW'},
 ];
 const catData=[
   {label:'Electronics',pct:45,color:'#5b67ca'},
@@ -832,7 +847,7 @@ function initSalesChart(){
   new Chart(ctx,{type:'bar',data:{labels:months,datasets:[
     {label:'Purchase',data:[28000,22000,32000,28000,24000,30000,19000,26000,31000,22000,29000,24000],backgroundColor:'#5b67ca',borderRadius:4,borderSkipped:false,barPercentage:0.5,categoryPercentage:0.7},
     {label:'Sales',data:[45000,38000,52000,48000,42000,55000,34000,44000,58000,38000,50000,40000],backgroundColor:'#22c55e',borderRadius:4,borderSkipped:false,barPercentage:0.5,categoryPercentage:0.7}
-  ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${(c.raw/1000).toFixed(0)}K`}}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:v=>`$${(v/1000).toFixed(0)}K`,font:{size:10},color:'#9ca3af'}}}}});
+  ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ₹${(c.raw/1000).toFixed(0)}K`}}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:v=>`₹${(v/1000).toFixed(0)}K`,font:{size:10},color:'#9ca3af'}}}}});
 }
 function initRevExpChart(){
   const canvas=document.getElementById('revExpChart');
@@ -842,7 +857,7 @@ function initRevExpChart(){
   new Chart(ctx,{type:'bar',data:{labels:months,datasets:[
     {label:'Revenue',data:[18000,28000,26000,22000,24000,22000,28000,20000,28000,15000,8000,24000],backgroundColor:'#5b67ca',borderRadius:4,borderSkipped:false,barPercentage:0.4,categoryPercentage:0.8},
     {label:'Expense',data:[-14000,-20000,-10000,-22000,-22000,-11000,-22000,-20000,-11000,-15000,-18000,-22000],backgroundColor:'#fca5a5',borderRadius:4,borderSkipped:false,barPercentage:0.4,categoryPercentage:0.8}
-  ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` $${(Math.abs(c.raw)/1000).toFixed(0)}K`}}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:v=>`$${(Math.abs(v)/1000).toFixed(0)}K`,font:{size:10},color:'#9ca3af'}}}}});
+  ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ₹${(Math.abs(c.raw)/1000).toFixed(0)}K`}}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:v=>`₹${(Math.abs(v)/1000).toFixed(0)}K`,font:{size:10},color:'#9ca3af'}}}}});
 }
 function initCustDonut(){
   const canvas=document.getElementById('custDonut');
@@ -995,12 +1010,12 @@ function logout() {
   function formatCurrency(value){
     const num = Number(value || 0);
     if (num < 0) {
-      return '-$' + Math.abs(num).toLocaleString('en-US', {
+      return '-₹' + Math.abs(num).toLocaleString('en-IN', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
       });
     }
-    return '$' + num.toLocaleString('en-US', {
+    return '₹' + num.toLocaleString('en-IN', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     });
@@ -1170,6 +1185,8 @@ function logout() {
     const popAvatar = document.getElementById('profilePopoverAvatar');
     if (popAvatar) popAvatar.textContent = initials;
 
+    const commission = totalSales * 0.02;
+
     const metricCards = document.querySelectorAll('.metric-card');
     if(metricCards[0]){
       metricCards[0].querySelector('.metric-value').textContent = formatCurrency(totalSales);
@@ -1186,6 +1203,10 @@ function logout() {
     if(metricCards[3]){
       metricCards[3].querySelector('.metric-value').textContent = formatCurrency(purchaseReturn);
       metricCards[3].querySelector('.badge').textContent = '0.0%';
+    }
+    if(metricCards[4]){
+      metricCards[4].querySelector('.metric-value').textContent = formatCurrency(commission);
+      metricCards[4].querySelector('.badge').textContent = '2.0%';
     }
 
     const finCards = document.querySelectorAll('.fin-card');
@@ -1393,7 +1414,7 @@ function logout() {
           plugins: { legend: { display: false } },
           scales: {
             x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 }, color: '#9ca3af' } },
-            y: { grid: { color: '#f3f4f6' }, border: { display: false }, ticks: { callback: (v) => `$${v}K`, font: { size: 10 }, color: '#9ca3af' } }
+            y: { grid: { color: '#f3f4f6' }, border: { display: false }, ticks: { callback: (v) => `₹${v}K`, font: { size: 10 }, color: '#9ca3af' } }
           }
         }
       });
@@ -1421,7 +1442,7 @@ function logout() {
           {label:'Expense',data:expenseByMonth,backgroundColor:'#fca5a5',borderRadius:4,borderSkipped:false,barPercentage:0.4,categoryPercentage:0.8}
         ]
       },
-      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:(v)=>`$${v}K`,font:{size:10},color:'#9ca3af'}}}}
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:(v)=>`₹${v}K`,font:{size:10},color:'#9ca3af'}}}}
     });
 
     destroyChart('custDonut');

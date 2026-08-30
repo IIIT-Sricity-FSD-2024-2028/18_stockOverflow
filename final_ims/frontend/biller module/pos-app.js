@@ -60,7 +60,7 @@
   const reservedList = document.getElementById('reservedList');
 
   const parsePrice = (priceText) => Number(String(priceText || '').replace(/[^\d.]/g, '')) || 0;
-  const toUsd = (price) => '$' + Number(price || 0).toFixed(2);
+  const toInr = (price) => '₹' + Number(price || 0).toFixed(2);
   const formatInr = (amount) => currencyFormatter.format(amount);
 
   let retailerProducts = [];

@@ -34,7 +34,7 @@ function getRatingMeta(product) {
  * Format currency
  */
 function formatPrice(val) {
-  return '$' + Number(val || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return '₹' + Number(val || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 /**

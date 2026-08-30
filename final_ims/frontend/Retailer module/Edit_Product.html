@@ -952,7 +952,7 @@ body{
                 <div class="field">
                   <label class="field-label">Selling Price <span class="req">*</span></label>
                   <div class="input-addon">
-                    <span class="addon-prefix">$</span>
+                    <span class="addon-prefix">₹</span>
                     <input class="input" id="f-price" type="number" min="0" step="0.01" placeholder="0.00"/>
                   </div>
                   <div class="field-error" id="e-price">Please enter a valid price</div>
@@ -960,7 +960,7 @@ body{
                 <div class="field">
                   <label class="field-label">Cost Price</label>
                   <div class="input-addon">
-                    <span class="addon-prefix">$</span>
+                    <span class="addon-prefix">₹</span>
                     <input class="input" id="f-cost" type="number" min="0" step="0.01" placeholder="0.00"/>
                   </div>
                 </div>
@@ -980,7 +980,7 @@ body{
                     <select class="select" id="f-disc-type" onchange="updateDiscountLabel()">
                       <option value="none">No Discount</option>
                       <option value="percent">Percentage (%)</option>
-                      <option value="fixed">Fixed Amount ($)</option>
+                      <option value="fixed">Fixed Amount (₹)</option>
                     </select>
                   </div>
                 </div>
@@ -994,7 +994,7 @@ body{
                 <div class="field">
                   <label class="field-label">Final Price</label>
                   <div class="input-addon">
-                    <span class="addon-prefix">$</span>
+                    <span class="addon-prefix">₹</span>
                     <input class="input" id="f-final" type="text" placeholder="—" readonly style="background:#f9fafb;color:var(--text-secondary)"/>
                   </div>
                   <div class="field-hint">After discount</div>
@@ -1443,7 +1443,7 @@ body{
         <input class="input" id="v-stock-input" type="number" min="0" value="0"/>
       </div>
       <div class="field">
-        <label class="field-label" style="font-size:12.5px">Price Adj. ($)</label>
+        <label class="field-label" style="font-size:12.5px">Price Adj. (₹)</label>
         <input class="input" id="v-price-input" type="number" step="0.01" value="0" placeholder="0.00"/>
       </div>
     </div>
@@ -2237,7 +2237,7 @@ function updateDiscountLabel() {
     input.style.background = '#f9fafb';
     input.value = '';
   } else {
-    prefix.textContent = type === 'percent' ? '%' : '$';
+    prefix.textContent = type === 'percent' ? '%' : '₹';
     input.disabled = false;
     input.style.background = '#fff';
   }
@@ -2585,7 +2585,7 @@ function renderVariants() {
       </td>
       <td>
         <div class="input-addon" style="border:1px solid var(--border);border-radius:4px;overflow:hidden">
-          <span style="background:#f5f6fa;padding:0 6px;font-size:12px;font-family:'Nunito Sans',sans-serif;color:var(--text-secondary);display:flex;align-items:center;border-right:1px solid var(--border)">$</span>
+          <span style="background:#f5f6fa;padding:0 6px;font-size:12px;font-family:'Nunito Sans',sans-serif;color:var(--text-secondary);display:flex;align-items:center;border-right:1px solid var(--border)">₹</span>
           <input class="v-input" type="number" step="0.01" value="${v.price}" style="border:none;width:70px" onchange="variants[${i}].price=this.value"/>
         </div>
       </td>
@@ -2782,7 +2782,7 @@ function buildSummary() {
     ['Product Name', name],
     ['Category',     cat],
     ['Brand',        brand],
-    ['Selling Price','$' + (price||'—')],
+    ['Selling Price','₹' + (price||'—')],
     ['Opening Stock', qty + ' units'],
     ['Images',       images.length + ' uploaded'],
     ['Variants',     variants.length + ' option(s)'],

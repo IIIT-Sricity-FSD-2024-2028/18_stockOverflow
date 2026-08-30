@@ -751,6 +751,8 @@ table.po-table tbody tr:hover td{background:#fafbfc}
                     <th>Stock</th>
                     <th>Order Qty</th>
                     <th>Unit Cost</th>
+                    <th>Profit Margin (%)</th>
+                    <th>Selling Price</th>
                     <th>Line Total</th>
                     <th></th>
                   </tr>
@@ -1457,9 +1459,7 @@ function checkForNewProducts() {
     const raw = localStorage.getItem('po_products');
     if (!raw) return;
     const parsed = JSON.parse(raw);
-    const ts = parseInt(localStorage.getItem('po_products_ts') || '0');
-    const age = Date.now() - ts;
-    if (Array.isArray(parsed) && age < 5000) {
+    if (Array.isArray(parsed) && JSON.stringify(parsed) !== JSON.stringify(products)) {
       products = parsed;
       updateDisplay();
       showBanner(`${products.length} product${products.length > 1 ? 's' : ''} updated from catalogue!`);
@@ -1467,23 +1467,24 @@ function checkForNewProducts() {
   } catch(e) {}
 }
 
-/* ── NAVIGATION ──────────────────────────────────── */
 function goToProductSelection() {
-  const supplierId = document.getElementById('supplierSelect').value;
+  const sel = document.getElementById('supplierSelect');
+  const supplierId = sel ? sel.value : '';
   if (!supplierId) {
     showToast('Please select a supplier first before browsing products!', '');
-    const sel = document.getElementById('supplierSelect');
     if (sel) {
       sel.focus();
       sel.style.borderColor = 'var(--primary)';
     }
     return;
   }
-  const sup = SUPPLIERS_MAP[supplierId];
-  if (sup) {
-    localStorage.setItem('po_selected_supplier_id', sup.id);
-    localStorage.setItem('po_selected_supplier_name', sup.name);
-  }
+  const selectedText = sel.options && sel.selectedIndex >= 0 && sel.options[sel.selectedIndex] 
+    ? sel.options[sel.selectedIndex].text.split('(')[0].trim() 
+    : 'Hans';
+  const sup = (SUPPLIERS_MAP && SUPPLIERS_MAP[supplierId]) || { id: supplierId, name: selectedText };
+  
+  localStorage.setItem('po_selected_supplier_id', sup.id || supplierId);
+  localStorage.setItem('po_selected_supplier_name', sup.name || selectedText);
   localStorage.setItem('po_products', JSON.stringify(products));
   localStorage.setItem('po_products_ts', '0');
   window.location.href = 'po-products.html';
@@ -1524,6 +1525,9 @@ function renderProductsTable() {
   subtitle.style.display = 'block';
 
   tbody.innerHTML = products.map((p, i) => {
+    p.profitMargin = p.profitMargin != null ? p.profitMargin : 10;
+    const margin = p.profitMargin;
+    const sellingPrice = Number((Number(p.price) * (1 + margin / 100)).toFixed(2));
     const total = p.price * p.qty;
     const stockCls = p.stockStatus === 'ok' ? 'sb-ok' : p.stockStatus === 'low' ? 'sb-low' : 'sb-out';
     const stockLabel = p.stockStatus === 'ok' ? 'In Stock' : p.stockStatus === 'low' ? 'Low Stock' : 'Out of Stock';
@@ -1550,6 +1554,17 @@ function renderProductsTable() {
           </div>
         </td>
         <td style="font-family:'Nunito Sans',sans-serif;font-weight:600;color:#212b36">₹${Number(p.price).toLocaleString('en-IN')}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <input type="number" class="po-input" style="width:64px;height:30px;padding:0 6px;text-align:center;font-weight:700;"
+                   value="${margin}" min="0" max="500" step="1"
+                   onchange="setProfitMargin('${p.id}',this.value)" id="margin-${p.id}"/>
+            <span style="font-size:12px;font-weight:700;color:var(--text-secondary)">%</span>
+          </div>
+        </td>
+        <td style="font-family:'Nunito Sans',sans-serif;font-weight:700;color:#2e6bc5" id="selling-price-${p.id}">
+          ₹${sellingPrice.toLocaleString('en-IN')}
+        </td>
         <td style="font-family:'Nunito Sans',sans-serif;font-weight:800;color:#092c4c">₹${total.toLocaleString('en-IN')}</td>
         <td>
           <div class="tbl-act">
@@ -1561,6 +1576,19 @@ function renderProductsTable() {
       </tr>
     `;
   }).join('');
+}
+
+/* ── MARGIN MANAGEMENT ────────────────────────────── */
+function setProfitMargin(id, val) {
+  const prod = products.find(p => p.id === id);
+  if (!prod) return;
+  prod.profitMargin = Math.max(0, parseFloat(val) || 0);
+  persistProducts();
+  const spEl = document.getElementById(`selling-price-${id}`);
+  if (spEl) {
+    const sp = Number((Number(prod.price) * (1 + prod.profitMargin / 100)).toFixed(2));
+    spEl.textContent = `₹${sp.toLocaleString('en-IN')}`;
+  }
 }
 
 /* ── QTY MANAGEMENT ───────────────────────────────── */
@@ -1777,6 +1805,7 @@ async function confirmCreate() {
       sku: p.sku || p.id,
       cat: p.cat || 'General',
       price: Math.round(Number(p.price) || 0),
+      profitMargin: typeof p.profitMargin === 'number' ? p.profitMargin : (parseFloat(p.profitMargin) || 10),
       qty: Math.max(1, parseInt(p.qty) || 1),
       stock: Math.max(0, parseInt(p.stock) || 0),
       stockStatus: p.stockStatus || 'ok'

@@ -39,8 +39,12 @@ let ProductsService = class ProductsService {
     create(createProductDto) {
         const products = this.getProducts();
         let sku = this.normalizeSku(createProductDto.sku || '');
+        const isStandardPT = /^PT\d+$/i.test(sku);
         const isDuplicate = products.some((p) => p.sku.toLowerCase() === sku.toLowerCase());
-        if (!sku || isDuplicate) {
+        if (!sku || isDuplicate || !isStandardPT) {
+            if (sku && !isStandardPT && !createProductDto.supplierSku) {
+                createProductDto.supplierSku = sku;
+            }
             sku = this.generateNextSku(products, createProductDto.retailerId);
         }
         const created = this.buildProductRecord(createProductDto, {

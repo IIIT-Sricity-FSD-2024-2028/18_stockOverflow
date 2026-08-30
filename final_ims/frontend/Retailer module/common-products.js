@@ -746,7 +746,7 @@
         name: p.name,
         category: p.category,
         brand: p.brand,
-        price: '$' + p.priceUSD,
+        price: '₹' + p.priceUSD,
         unit: p.unit,
         qty: p.qty,
         creator: p.creator,

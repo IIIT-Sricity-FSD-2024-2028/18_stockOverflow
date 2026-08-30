@@ -372,7 +372,7 @@
             <div class="spec-row"><span class="spec-key">SKU</span><span class="spec-val" id="spec-sku">MBP-M3-14</span></div>
             <div class="spec-row"><span class="spec-key">Brand</span><span class="spec-val" id="spec-brand">Apple</span></div>
             <div class="spec-row"><span class="spec-key">Unit</span><span class="spec-val" id="spec-unit">Pc</span></div>
-            <div class="spec-row"><span class="spec-key">Price (USD)</span><span class="spec-val" id="spec-price">$1,999</span></div>
+            <div class="spec-row"><span class="spec-key">Price</span><span class="spec-val" id="spec-price">₹1,999</span></div>
             <div class="spec-row"><span class="spec-key">Min Order Qty</span><span class="spec-val">1 unit</span></div>
             <div class="spec-row"><span class="spec-key">Lead Time</span><span class="spec-val">5–7 days</span></div>
           </div>
@@ -848,10 +848,10 @@
       document.getElementById('spec-brand').textContent = product.brand || 'N/A';
       document.getElementById('spec-unit').textContent = product.unit || 'N/A';
 
-      const numericPrice = Number(product.priceUSD);
+      const numericPrice = Number(product.priceUSD ?? product.price);
       document.getElementById('spec-price').textContent = Number.isFinite(numericPrice)
-        ? `$${numericPrice.toLocaleString()}`
-        : '$0';
+        ? `₹${numericPrice.toLocaleString('en-IN')}`
+        : '₹0';
 
       document.getElementById('stock-total').textContent = qty;
 
@@ -1104,7 +1104,7 @@
               <div class="rec-card" onclick="window.location.href='product-detail.html?sku=' + encodeURIComponent('${p.sku}')">
                 <img src="${p.productImg || 'https://picsum.photos/seed/' + p.sku + '/200'}" class="rec-img" alt="${p.name}">
                 <div class="rec-name" title="${p.name}">${p.name}</div>
-                <div class="rec-price">$${Number(p.price || 0).toFixed(2)}</div>
+                <div class="rec-price">₹${Number(p.price || 0).toFixed(2)}</div>
               </div>
             `).join('');
           }
@@ -1115,6 +1115,74 @@
       const reserveModal = document.getElementById('reserveModal');
       const reserveCancelBtn = document.getElementById('reserveCancelBtn');
       const reservePlaceBtn = document.getElementById('reservePlaceBtn');
+      const addToCartBtn = document.getElementById('addToCartBtn');
+
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          if (!selectedProductForReserve) {
+            alert('Product data is still loading.');
+            return;
+          }
+
+          const inStockStores = (selectedStoreAvailability || []).filter(s => Number(s.qty || 0) > 0);
+          if (inStockStores.length === 0) {
+            alert('This product is currently out of stock.');
+            return;
+          }
+
+          const storeSelect = document.getElementById('detailStoreSelect');
+          let selectedStoreId = storeSelect ? storeSelect.value : '';
+          let chosenStore = inStockStores.find(s => s.storeId === selectedStoreId);
+
+          if (!chosenStore) {
+            if (inStockStores.length === 1) {
+              chosenStore = inStockStores[0];
+              if (storeSelect) storeSelect.value = chosenStore.storeId;
+            } else {
+              alert('Please select a store to reserve from.');
+              if (storeSelect) storeSelect.focus();
+              return;
+            }
+          }
+
+          if (chosenStore && chosenStore.storeId) {
+            localStorage.setItem('imsSelectedStoreId', chosenStore.storeId);
+          }
+
+          const priceUSD = selectedProductForReserve.priceUSD !== undefined 
+            ? Number(selectedProductForReserve.priceUSD) 
+            : Number(selectedProductForReserve.price || 0);
+
+          const img = selectedProductForReserve.productImg 
+            || selectedProductForReserve.image 
+            || (Array.isArray(selectedProductForReserve.gallery) && selectedProductForReserve.gallery[0]) 
+            || '';
+
+          window.addToCart({
+            sku: selectedProductForReserve.sku,
+            name: selectedProductForReserve.name || 'Product',
+            price: priceUSD,
+            qty: 1,
+            productImg: img,
+            storeId: chosenStore.storeId || '',
+            storeName: chosenStore.storeName || chosenStore.name || 'Store'
+          });
+
+          window.location.href = 'cart.html';
+        });
+      }
+
+      const detailStoreSelectEl = document.getElementById('detailStoreSelect');
+      if (detailStoreSelectEl) {
+        detailStoreSelectEl.addEventListener('change', function() {
+          if (detailStoreSelectEl.value) {
+            localStorage.setItem('imsSelectedStoreId', detailStoreSelectEl.value);
+          }
+        });
+      }
 
       if (reserveCancelBtn) {
         reserveCancelBtn.addEventListener('click', closeReserveModal);

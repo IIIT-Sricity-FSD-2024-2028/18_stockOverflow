@@ -51,10 +51,14 @@ export class ProductsService {
   create(createProductDto: CreateProductDto): ProductRecord {
     const products = this.getProducts();
     let sku = this.normalizeSku(createProductDto.sku || '');
+    const isStandardPT = /^PT\d+$/i.test(sku);
 
-    // If SKU is blank or already exists in database, generate next unique SKU automatically
+    // If SKU is blank, duplicate, or non-standard vendor code, standardize to next PTxxx
     const isDuplicate = products.some((p) => p.sku.toLowerCase() === sku.toLowerCase());
-    if (!sku || isDuplicate) {
+    if (!sku || isDuplicate || !isStandardPT) {
+      if (sku && !isStandardPT && !createProductDto.supplierSku) {
+        createProductDto.supplierSku = sku;
+      }
       sku = this.generateNextSku(products, createProductDto.retailerId);
     }
 

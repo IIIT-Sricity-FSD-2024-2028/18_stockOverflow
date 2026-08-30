@@ -642,33 +642,95 @@ let filteredProducts = [];
 
 // Load live products from backend
 async function initLiveProducts() {
+  const selectedSupplierId = localStorage.getItem('po_selected_supplier_id') || '';
+  const selectedSupplierName = localStorage.getItem('po_selected_supplier_name') || 'Hans';
+  let catalogueItems = [];
+
+  // 1. Fetch supplier data from backend
+  try {
+    const suppliersRes = await fetch((window.API_BASE_URL || 'http://localhost:3001') + '/api/suppliers');
+    if (suppliersRes.ok) {
+      const suppliers = await suppliersRes.json();
+      if (Array.isArray(suppliers)) {
+        const sNameLower = selectedSupplierName.toLowerCase().trim();
+        const sup = suppliers.find(s => {
+          if (selectedSupplierId && s.id === selectedSupplierId) return true;
+          const name = ((s.business && s.business.companyName) || (s.primaryContact && s.primaryContact.fullName) || s.name || '').toLowerCase().trim();
+          return name === sNameLower || name.includes(sNameLower) || sNameLower.includes(name);
+        });
+
+        if (sup && Array.isArray(sup.products) && sup.products.length > 0) {
+          sup.products.forEach(sp => {
+            catalogueItems.push({
+              id: sp.sku || sp.id || ('SUP-' + sp.name),
+              name: sp.name || 'Product',
+              emoji: sp.emoji || '📦',
+              sku: sp.sku || 'SKU-001',
+              cat: sp.category || 'Electronics',
+              price: Math.round(Number(sp.unitPrice || sp.price || 500)),
+              stock: Number(sp.stockAvailable || sp.stock || 100),
+              stockStatus: Number(sp.stockAvailable || 100) > 10 ? 'ok' : Number(sp.stockAvailable || 100) > 0 ? 'low' : 'out',
+              brand: sp.brand || selectedSupplierName,
+              supplier: selectedSupplierName,
+              profitMargin: 10
+            });
+          });
+        }
+      }
+    }
+  } catch(e) {
+    console.warn('Suppliers fetch error:', e);
+  }
+
+  // 2. Fetch retailer products from backend
   if (window.IMS_API && typeof window.IMS_API.getProducts === 'function') {
     try {
       const apiProds = await window.IMS_API.getProducts();
       if (Array.isArray(apiProds)) {
-        CATALOGUE = apiProds.map(p => {
+        apiProds.forEach(p => {
           const qty = Number(p.qty != null ? p.qty : p.initialQty) || 0;
-          return {
-            id: p.sku || p.id,
-            name: p.name || 'Product',
-            emoji: p.emoji || '📦',
-            sku: p.sku || p.id,
-            cat: p.category || p.cat || 'General',
-            price: Math.round(Number(p.price || p.priceUSD || 0)),
-            stock: qty,
-            stockStatus: qty <= 0 ? 'out' : qty <= 10 ? 'low' : 'ok',
-            brand: p.brand || p.supplier || '',
-            supplier: p.supplier || p.brand || ''
-          };
+          const pSup = String(p.supplier || '').toLowerCase();
+          const pBrand = String(p.brand || '').toLowerCase();
+          const sName = selectedSupplierName.toLowerCase();
+          
+          // If already added via supplier catalogue, avoid duplicates
+          if (catalogueItems.some(item => item.sku === p.sku || (p.supplierSku && item.sku === p.supplierSku))) {
+            return;
+          }
+
+          if (pSup.includes(sName) || pBrand.includes(sName) || !catalogueItems.length) {
+            catalogueItems.push({
+              id: p.sku || p.id,
+              name: p.name || 'Product',
+              emoji: p.emoji || '📦',
+              sku: p.sku || p.id,
+              cat: p.category || p.cat || 'General',
+              price: Math.round(Number(p.cost || p.price || p.priceUSD || 0)),
+              stock: qty,
+              stockStatus: qty <= 0 ? 'out' : qty <= 10 ? 'low' : 'ok',
+              brand: p.brand || selectedSupplierName,
+              supplier: selectedSupplierName,
+              profitMargin: 10
+            });
+          }
         });
       }
     } catch(e) {
       console.warn('Backend products fetch error:', e);
-      CATALOGUE = [];
     }
-  } else {
-    CATALOGUE = [];
   }
+
+  // 3. Fallback catalogue if supplier has no database products yet
+  if (!catalogueItems.length && selectedSupplierName) {
+    catalogueItems = [
+      { id: 'OP3-BLK-2026', name: 'op3', emoji: '📦', sku: 'OP3-BLK-2026', cat: 'Electronics', price: 525, stock: 149, stockStatus: 'ok', brand: 'OnePlus', supplier: selectedSupplierName, profitMargin: 10 },
+      { id: 'WL-MO-001', name: 'Wireless Mouse Pro', emoji: '🖱️', sku: 'WL-MO-001', cat: 'Electronics', price: 100, stock: 50, stockStatus: 'ok', brand: 'TechPro', supplier: selectedSupplierName, profitMargin: 10 },
+      { id: 'KB-MECH-002', name: 'RGB Mechanical Keyboard', emoji: '⌨️', sku: 'KB-MECH-002', cat: 'Peripherals', price: 1200, stock: 45, stockStatus: 'ok', brand: 'KeyTech', supplier: selectedSupplierName, profitMargin: 10 },
+      { id: 'HUB-USB8-003', name: '8-in-1 USB-C Hub', emoji: '🔌', sku: 'HUB-USB8-003', cat: 'Accessories', price: 850, stock: 60, stockStatus: 'ok', brand: 'ConnectPro', supplier: selectedSupplierName, profitMargin: 10 }
+    ];
+  }
+
+  CATALOGUE = catalogueItems;
   filterProducts();
   loadExisting();
 }
@@ -679,7 +741,10 @@ function loadExisting() {
     const existing = JSON.parse(localStorage.getItem('po_products') || '[]');
     existing.forEach(item => {
       const prod = CATALOGUE.find(p => p.id === item.id || p.sku === item.sku);
-      if (prod) selected[prod.id] = { product: prod, qty: item.qty || 1 };
+      if (prod) {
+        if (item.profitMargin != null) prod.profitMargin = Number(item.profitMargin);
+        selected[prod.id] = { product: prod, qty: item.qty || 1 };
+      }
     });
     updatePanel();
     updateSummaryHeader();
@@ -688,32 +753,31 @@ function loadExisting() {
 loadExisting();
 initLiveProducts();
 
+/* ── MARGIN SETTER ──────────────────────────────────── */
+function setMargin(id, val) {
+  const m = Math.max(0, Math.min(500, parseFloat(val) || 0));
+  const prod = CATALOGUE.find(p => p.id === id);
+  if (prod) {
+    prod.profitMargin = m;
+    const retailEl = document.getElementById(`retail-preview-${id}`);
+    if (retailEl) {
+      const retailPrice = Math.round(prod.price * (1 + m / 100));
+      retailEl.textContent = `Retail: ₹${retailPrice.toLocaleString('en-IN')}`;
+    }
+  }
+  if (selected[id]) {
+    selected[id].product.profitMargin = m;
+  }
+}
+
 /* ── RENDER ─────────────────────────────────────────── */
 function render() {
   const grid = document.getElementById('productsGrid');
   grid.style.gridTemplateColumns = viewMode === 'grid'
-    ? 'repeat(auto-fill,minmax(260px,1fr))'
+    ? 'repeat(auto-fill,minmax(280px,1fr))'
     : '1fr';
 
-  const selectedSupplierName = localStorage.getItem('po_selected_supplier_name');
-
-  if (!selectedSupplierName) {
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1; padding: 60px 20px; text-align: center;">
-        <div class="empty-icon" style="font-size: 48px; margin-bottom: 12px;">🏢</div>
-        <div class="empty-title" style="font-size: 18px; font-weight: 700; color: #092c4c; margin-bottom: 6px;">No Supplier Selected</div>
-        <div class="empty-sub" style="font-size: 13px; color: var(--text-secondary); max-width: 420px; margin: 0 auto 18px;">Please return to the Purchase Order page and select a supplier to view their product catalogue.</div>
-        <a href="Create_Purchase_Order.html" class="btn btn-primary" style="display:inline-flex;text-decoration:none;padding:8px 18px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-          Back to Purchase Order
-        </a>
-      </div>
-    `;
-    document.getElementById('totalProductsCount').textContent = '0';
-    updatePanel();
-    updateSummaryHeader();
-    return;
-  }
+  const selectedSupplierName = localStorage.getItem('po_selected_supplier_name') || 'Hans';
 
   document.getElementById('totalProductsCount').textContent = filteredProducts.length;
 
@@ -736,6 +800,8 @@ function render() {
   grid.innerHTML = filteredProducts.map((p, i) => {
     const isSel = !!selected[p.id];
     const qty   = isSel ? selected[p.id].qty : 1;
+    const margin = p.profitMargin != null ? p.profitMargin : 10;
+    const retailPrice = Math.round(p.price * (1 + margin / 100));
     const stockLabel = p.stockStatus === 'ok' ? 'In Stock' : p.stockStatus === 'low' ? 'Low Stock' : 'Out of Stock';
     const stockCls   = `stock-${p.stockStatus}`;
     const delay = Math.min(i * 30, 300);
@@ -753,11 +819,26 @@ function render() {
           </div>
           <div class="product-info">
             <div class="product-name">${p.name}</div>
-            <div class="product-sku">${p.sku}</div>
+            <div class="product-sku">${p.sku} · <span style="color:#2563eb;font-weight:600;">${p.brand || selectedSupplierName}</span></div>
             <div class="product-cat">${p.cat}</div>
+
+            <!-- Margin Rate & Selling Price Field -->
+            <div class="margin-ctrl" onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:6px;margin-top:6px;background:#f8fafc;padding:5px 8px;border-radius:6px;border:1px solid #e2e8f0;">
+              <span style="font-size:11px;font-weight:700;color:#475569;">Margin:</span>
+              <input type="number" class="margin-input" id="margin-input-${p.id}" value="${margin}" min="0" max="500" step="1"
+                     oninput="setMargin('${p.id}', this.value)" onclick="event.stopPropagation()"
+                     style="width:48px;height:24px;border:1px solid #cbd5e1;border-radius:4px;text-align:center;font-weight:700;font-size:12px;color:#0f172a;background:#fff;" />
+              <span style="font-size:11px;font-weight:700;color:#64748b;">%</span>
+              <span style="margin-left:auto;font-size:11px;font-weight:800;color:#0284c7;" id="retail-preview-${p.id}">
+                Retail: ₹${retailPrice.toLocaleString('en-IN')}
+              </span>
+            </div>
           </div>
           <div class="product-footer">
-            <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
+            <div>
+              <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;">Unit Cost</div>
+              <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
+            </div>
             ${isSel
               ? `<div class="qty-control" onclick="event.stopPropagation()">
                    <button class="qty-btn" onclick="changeQty('${p.id}',-1)">−</button>
@@ -765,7 +846,7 @@ function render() {
                           onchange="setQty('${p.id}',this.value)" onclick="event.stopPropagation()"/>
                    <button class="qty-btn" onclick="changeQty('${p.id}',1)">+</button>
                  </div>`
-              : `<div class="product-stock-num">${p.stock > 0 ? p.stock + ' in stock' : 'Reorder needed'}</div>`
+              : `<div class="product-stock-num">${p.stock > 0 ? p.stock + ' in stock' : 'Wholesale available'}</div>`
             }
           </div>
         </div>`;
@@ -783,8 +864,22 @@ function render() {
             <div style="display:flex;gap:10px;margin-top:2px">
               <span class="product-sku">${p.sku}</span>
               <span class="product-cat">${p.cat}</span>
+              <span style="color:#2563eb;font-weight:600;font-size:11px;">${p.brand || selectedSupplierName}</span>
             </div>
           </div>
+          
+          <!-- List View Margin Field -->
+          <div onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:6px;background:#f8fafc;padding:4px 8px;border-radius:6px;border:1px solid #e2e8f0;">
+            <span style="font-size:11px;font-weight:700;color:#475569;">Margin:</span>
+            <input type="number" class="margin-input" value="${margin}" min="0" max="500" step="1"
+                   oninput="setMargin('${p.id}', this.value)" onclick="event.stopPropagation()"
+                   style="width:44px;height:22px;border:1px solid #cbd5e1;border-radius:4px;text-align:center;font-weight:700;font-size:11px;" />
+            <span style="font-size:11px;font-weight:700;color:#64748b;">%</span>
+            <span style="font-size:11px;font-weight:800;color:#0284c7;" id="retail-preview-${p.id}">
+              ₹${retailPrice.toLocaleString('en-IN')}
+            </span>
+          </div>
+
           <span class="stock-badge ${stockCls}" style="position:relative;bottom:auto;left:auto">${stockLabel}</span>
           <div class="product-price" style="min-width:90px;text-align:right">₹${p.price.toLocaleString('en-IN')}</div>
           ${isSel
@@ -794,7 +889,7 @@ function render() {
                         onchange="setQty('${p.id}',this.value)" onclick="event.stopPropagation()"/>
                  <button class="qty-btn" onclick="changeQty('${p.id}',1)">+</button>
                </div>`
-            : `<div class="product-stock-num" style="min-width:80px;text-align:right">${p.stock > 0 ? p.stock+' in stock' : 'Reorder needed'}</div>`
+            : `<div class="product-stock-num" style="min-width:80px;text-align:right">${p.stock > 0 ? p.stock+' in stock' : 'Wholesale'}</div>`
           }
         </div>`;
     }
@@ -888,20 +983,8 @@ function filterProducts() {
   const cat   = document.getElementById('catFilter').value || activeCat;
   const stock = document.getElementById('stockFilter').value;
   const sort  = document.getElementById('sortFilter').value;
-  const selectedSupplierName = localStorage.getItem('po_selected_supplier_name');
-
-  if (!selectedSupplierName) {
-    filteredProducts = [];
-    render();
-    return;
-  }
 
   filteredProducts = CATALOGUE.filter(p => {
-    const sName = selectedSupplierName.toLowerCase().trim();
-    const pSup = String(p.supplier || '').toLowerCase().trim();
-    const pBrand = String(p.brand || '').toLowerCase().trim();
-    if (!pSup.includes(sName) && !pBrand.includes(sName)) return false;
-
     if (q && !p.name.toLowerCase().includes(q) && !p.sku.toLowerCase().includes(q)) return false;
     if (cat && p.cat !== cat) return false;
     if (stock && p.stockStatus !== stock) return false;
@@ -937,23 +1020,28 @@ function addToPO() {
   const ids = Object.keys(selected);
   if (!ids.length) { showToast('No products selected', 'err'); return; }
 
-  const payload = ids.map(id => ({
-    id,
-    name: selected[id].product.name,
-    emoji: selected[id].product.emoji,
-    sku: selected[id].product.sku,
-    cat: selected[id].product.cat,
-    price: selected[id].product.price,
-    qty: selected[id].qty,
-    stock: selected[id].product.stock,
-    stockStatus: selected[id].product.stockStatus,
-  }));
+  const payload = ids.map(id => {
+    const item = selected[id];
+    const margin = item.product.profitMargin != null ? Number(item.product.profitMargin) : 10;
+    return {
+      id,
+      name: item.product.name,
+      emoji: item.product.emoji,
+      sku: item.product.sku,
+      cat: item.product.cat,
+      price: item.product.price,
+      profitMargin: margin,
+      qty: item.qty,
+      stock: item.product.stock,
+      stockStatus: item.product.stockStatus,
+    };
+  });
 
   localStorage.setItem('po_products', JSON.stringify(payload));
-  localStorage.setItem('po_products_ts', Date.now());
+  localStorage.setItem('po_products_ts', Date.now().toString());
 
   showToast(`${ids.length} product${ids.length > 1 ? 's' : ''} added to PO!`, 'ok');
-  setTimeout(() => { window.location.href = 'Create_Purchase_Order.html'; }, 900);
+  setTimeout(() => { window.location.href = 'Create_Purchase_Order.html'; }, 800);
 }
 
 function cancelAndReturn() {

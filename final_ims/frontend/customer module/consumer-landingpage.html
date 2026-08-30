@@ -605,7 +605,7 @@
   }
 
   function formatPrice(value) {
-    return '$' + Number(value || 0).toLocaleString();
+    return '₹' + Number(value || 0).toLocaleString('en-IN');
   }
 
   function getRatingMeta(product) {
@@ -674,6 +674,7 @@
           </div>
           <div class="card-name">${product.name}</div>
           <div class="card-meta">${product.category} · ${product.brand} · ${product.sku}</div>
+          <div class="card-meta" style="color:#0284c7;font-weight:600;">Store: ${product.retailerName || "John's Retail Store"}</div>
           <div class="card-meta">Rating ${rating.avg ? rating.avg.toFixed(1) : '0.0'} (${rating.count})</div>
           <div class="card-price">${formatPrice(product.priceUSD)}</div>
           <div class="card-stock ${stock.key === 'low' ? 'low' : stock.key === 'out' ? 'out' : ''}">${stock.label} • ${Number(product.qty || 0)} units</div>

@@ -1,29 +1,5 @@
 [
   {
-    "business": {
-      "currency": "INR",
-      "paymentTerms": "Net 30",
-      "sellingType": "Wholesale",
-      "companyName": "John",
-      "businessType": "Distributor",
-      "businessEmail": "john@gmail.com",
-      "state": "Gujarat",
-      "primaryCategory": "Electronics & Technology"
-    },
-    "primaryContact": {
-      "fullName": "John",
-      "directEmail": "john@gmail.com"
-    },
-    "retailers": [],
-    "products": [],
-    "documents": [],
-    "id": "fcda8cfb-cb35-41fc-86ac-59a4387708bc",
-    "status": "completed",
-    "profileStatus": "active",
-    "createdAt": "2026-08-30T15:48:50.561Z",
-    "updatedAt": "2026-08-30T15:48:50.561Z"
-  },
-  {
     "id": "0ccceb67-958d-4957-9728-e023994a8e8d",
     "status": "completed",
     "profileStatus": "active",
@@ -31,7 +7,7 @@
     "assignedEmployeeId": "EMP-1001",
     "assignedAt": "2026-08-27T19:26:09.950Z",
     "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-28T05:39:52.386Z",
+    "updatedAt": "2026-08-30T18:08:36.004Z",
     "business": {
       "companyName": "Hans",
       "businessType": "Distributor",
@@ -59,12 +35,12 @@
       {
         "sku": "OP3-BLK-2026",
         "name": "op3",
-        "brand": "Hans",
+        "brand": "OnePlus",
         "variant": "Standard",
         "category": "Electronics",
         "unitPrice": 525,
         "minOrderQty": 1,
-        "stockAvailable": 149,
+        "stockAvailable": 148,
         "unit": "Piece",
         "description": "Product op3 supplied by Hans"
       }
@@ -74,6 +50,30 @@
     "documents": [],
     "rating": 4,
     "avgRating": 4
+  },
+  {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "John",
+      "businessType": "Distributor",
+      "businessEmail": "john@gmail.com",
+      "state": "Gujarat",
+      "primaryCategory": "Electronics & Technology"
+    },
+    "primaryContact": {
+      "fullName": "John",
+      "directEmail": "john@gmail.com"
+    },
+    "retailers": [],
+    "products": [],
+    "documents": [],
+    "id": "fcda8cfb-cb35-41fc-86ac-59a4387708bc",
+    "status": "completed",
+    "profileStatus": "active",
+    "createdAt": "2026-08-30T15:48:50.561Z",
+    "updatedAt": "2026-08-30T15:48:50.561Z"
   },
   {
     "id": "50c1c24d-9efa-4fd6-acdb-137f8cc8936f",
@@ -226,7 +226,7 @@
   },
   {
     "business": {
-      "currency": "USD",
+      "currency": "INR",
       "paymentTerms": "Net 30",
       "sellingType": "Wholesale",
       "companyName": "s10",
@@ -264,7 +264,7 @@
   },
   {
     "business": {
-      "currency": "USD",
+      "currency": "INR",
       "paymentTerms": "Net 30",
       "sellingType": "Wholesale",
       "companyName": "s8",
@@ -379,7 +379,7 @@
   },
   {
     "business": {
-      "currency": "USD",
+      "currency": "INR",
       "paymentTerms": "Net 30",
       "sellingType": "Wholesale",
       "companyName": "s1",

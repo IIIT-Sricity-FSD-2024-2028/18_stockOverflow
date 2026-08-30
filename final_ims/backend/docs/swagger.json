@@ -6831,6 +6831,9 @@
                 "price": {
                   "type": "number"
                 },
+                "profitMargin": {
+                  "type": "number"
+                },
                 "qty": {
                   "type": "number"
                 },
@@ -8590,6 +8593,10 @@
                   "minimum": 0,
                   "type": "integer"
                 },
+                "profitMargin": {
+                  "minimum": 0,
+                  "type": "number"
+                },
                 "qty": {
                   "minimum": 1,
                   "type": "integer"
@@ -8685,6 +8692,10 @@
                 "price": {
                   "minimum": 0,
                   "type": "integer"
+                },
+                "profitMargin": {
+                  "minimum": 0,
+                  "type": "number"
                 },
                 "qty": {
                   "minimum": 1,

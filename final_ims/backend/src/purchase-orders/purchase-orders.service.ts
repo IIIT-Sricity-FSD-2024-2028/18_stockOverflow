@@ -134,26 +134,57 @@ export class PurchaseOrdersService extends JsonCollectionService<
 
   private syncInventoryOnDelivery(order: PurchaseOrder) {
     order.items.forEach((item) => {
+      const margin = typeof item.profitMargin === 'number' ? item.profitMargin : 10;
+      const sellingPrice = Number((item.price * (1 + margin / 100)).toFixed(2));
+
       try {
-        // Try to adjust existing product in retailer's inventory
-        this.productsService.applyInventoryAdjustment(
-          item.sku,
-          item.qty,
-          order.storeId,
-          order.retailerId,
+        // Check if existing product is in retailer's inventory by sku, supplierSku, or name
+        const allProducts = this.productsService.findAll(order.retailerId, order.storeId);
+        const existingProd = allProducts.find(
+          (p) =>
+            p.sku.toLowerCase() === item.sku.toLowerCase() ||
+            (p.supplierSku && p.supplierSku.toLowerCase() === item.sku.toLowerCase()) ||
+            p.name.toLowerCase() === item.name.toLowerCase(),
         );
+
+        if (existingProd) {
+          this.productsService.applyInventoryAdjustment(
+            existingProd.sku,
+            item.qty,
+            order.storeId,
+            order.retailerId,
+          );
+          this.productsService.update(existingProd.id, {
+            priceUSD: sellingPrice,
+            price: sellingPrice,
+            finalPrice: sellingPrice,
+            cost: item.price,
+          });
+        } else {
+          throw new Error('Product not found, create new');
+        }
       } catch {
-        // If product doesn't exist for this retailer, create it
+        // If product doesn't exist for this retailer, create it with consistent PT SKU & selling price
+        const brandName = item.name.toLowerCase().includes('nike')
+          ? 'Nike'
+          : item.cat && item.cat !== 'General'
+          ? item.cat
+          : 'StockOverflow';
+
         this.productsService.create({
-          sku: item.sku,
+          sku: '', // auto-generates next PT00x
           name: item.name,
           retailerId: order.retailerId,
           storeId: order.storeId,
-          priceUSD: item.price * 1.3, // 30% markup for retail
+          priceUSD: sellingPrice,
+          price: sellingPrice,
+          finalPrice: sellingPrice,
+          cost: item.price,
           qty: item.qty,
-          brand: order.supplierName,
-          category: 'General',
+          brand: brandName,
+          category: item.cat || 'General',
           supplier: order.supplierName,
+          supplierSku: item.sku,
           visibility: 'published',
         });
       }

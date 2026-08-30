@@ -339,7 +339,7 @@
       products.forEach(function(product) {
         const option = document.createElement('option');
         option.value = product.sku;
-        option.textContent = product.name + ' ($' + Number(product.priceUSD || product.price || 0).toFixed(2) + ')';
+        option.textContent = product.name + ' (₹' + Number(product.priceUSD || product.price || 0).toFixed(2) + ')';
         selector.appendChild(option);
       });
       selector.onchange = function(event) {
