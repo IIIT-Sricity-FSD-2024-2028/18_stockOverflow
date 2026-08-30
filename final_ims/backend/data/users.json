@@ -14,7 +14,6 @@
     "createdAt": "2026-08-30T09:47:29.757Z",
     "updatedAt": "2026-08-30T09:47:29.757Z"
   },
-
   {
     "id": "eaae8f04-d217-481c-9420-ddf87843169a",
     "name": "jones",
@@ -1060,6 +1059,36 @@
     "role": "consumer",
     "status": "Active",
     "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "u-employee-1",
+    "name": "Alex Morgan",
+    "email": "employee@stockoverflow.com",
+    "password": "pass1234",
+    "role": "employee",
+    "status": "Active",
+    "store": "Global Hub",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "u-employee-2",
+    "name": "Sarah Chen",
+    "email": "sarah.employee@stockoverflow.com",
+    "password": "pass1234",
+    "role": "employee",
+    "status": "Active",
+    "store": "Global Hub",
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],

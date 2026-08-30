@@ -50,6 +50,28 @@ const DEFAULT_USERS = [
         updatedAt: '2026-01-01T00:00:00.000Z',
     },
     {
+        id: 'u-employee-1',
+        name: 'Alex Morgan',
+        email: 'employee@stockoverflow.com',
+        password: 'pass1234',
+        role: 'employee',
+        status: 'Active',
+        store: 'Global Hub',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-01T00:00:00.000Z',
+    },
+    {
+        id: 'u-employee-2',
+        name: 'Sarah Chen',
+        email: 'sarah.employee@stockoverflow.com',
+        password: 'pass1234',
+        role: 'employee',
+        status: 'Active',
+        store: 'Global Hub',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-01T00:00:00.000Z',
+    },
+    {
         id: 'u-consumer-1',
         name: 'Primary Customer',
         email: 'customer@stockoverflow.com',
@@ -98,6 +120,9 @@ let UsersService = class UsersService {
         const users = this.readAll();
         const email = this.normalizeEmail(createUserDto.email);
         const role = this.normalizeRole(createUserDto.role);
+        if (role === 'admin') {
+            throw new common_1.ForbiddenException('Admin accounts cannot be created.');
+        }
         if (users.some((entry) => this.normalizeEmail(entry.email) === email)) {
             throw new common_1.ConflictException('Email already exists');
         }
@@ -134,13 +159,22 @@ let UsersService = class UsersService {
         if (users.some((entry) => entry.id !== id && this.normalizeEmail(entry.email) === nextEmail)) {
             throw new common_1.ConflictException('Email already exists');
         }
+        const targetRole = updateUserDto.role
+            ? this.normalizeRole(updateUserDto.role)
+            : existing.role;
+        if (existing.role === 'admin' && targetRole !== 'admin') {
+            throw new common_1.ForbiddenException('Admin role cannot be modified.');
+        }
+        if (existing.role !== 'admin' && targetRole === 'admin') {
+            throw new common_1.ForbiddenException('Cannot elevate user to admin role.');
+        }
         const updated = {
             ...existing,
             ...updateUserDto,
             name: this.normalizeText(updateUserDto.name, existing.name),
             email: nextEmail,
             password: this.normalizeText(updateUserDto.password, existing.password),
-            role: this.normalizeRole(updateUserDto.role || existing.role),
+            role: targetRole,
             status: this.normalizeText(updateUserDto.status, existing.status || 'Active'),
             store: this.normalizeText(updateUserDto.store, existing.store),
             storeId: this.normalizeText(updateUserDto.storeId, existing.storeId),
@@ -168,19 +202,20 @@ let UsersService = class UsersService {
         if (index === -1) {
             throw new common_1.NotFoundException('User not found');
         }
+        const existing = users[index];
+        if (existing.role === 'admin') {
+            throw new common_1.ForbiddenException('Admin account cannot be deleted.');
+        }
         users.splice(index, 1);
         this.writeAll(users);
         return true;
     }
     login(email, password) {
         const normalizedEmail = this.normalizeEmail(email);
-        let user = this.readAll().find((entry) => {
+        const user = this.readAll().find((entry) => {
             return (this.normalizeEmail(entry.email) === normalizedEmail &&
                 entry.password === password);
         });
-        if (!user) {
-            user = this.tryAutoProvisionUserFromProfiles(normalizedEmail, password);
-        }
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid email or password');
         }
@@ -188,36 +223,6 @@ let UsersService = class UsersService {
             throw new common_1.UnauthorizedException('Account is inactive');
         }
         return this.toPublicUser(this.syncLinkedProfileForUserId(user.id));
-    }
-    tryAutoProvisionUserFromProfiles(email, password) {
-        const suppliers = this.readRecordsFromFile(this.suppliersFile);
-        const supplier = suppliers.find((item) => {
-            const bEmail = this.normalizeEmail(item.business?.businessEmail);
-            const dEmail = this.normalizeEmail(item.primaryContact?.directEmail);
-            return bEmail === email || dEmail === email;
-        });
-        if (supplier) {
-            const newUser = {
-                id: supplier.id || (0, node_crypto_1.randomUUID)(),
-                name: supplier.business?.companyName || supplier.primaryContact?.fullName || 'Supplier',
-                email,
-                password,
-                role: 'supplier',
-                status: 'Active',
-                store: supplier.business?.companyName || 'Supplier Store',
-                storeId: supplier.id,
-                currentStoreId: supplier.id,
-                accessibleStoreIds: [supplier.id],
-                profileId: supplier.id,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-            };
-            const users = this.readAll();
-            users.push(newUser);
-            this.writeAll(users);
-            return newUser;
-        }
-        return null;
     }
     syncLinkedProfileForUserId(id) {
         const users = this.readAll();
@@ -493,6 +498,13 @@ let UsersService = class UsersService {
             source.forEach((user) => {
                 const normalized = this.normalizeStoredUser(user);
                 this.users.set(normalized.id, normalized);
+            });
+            DEFAULT_USERS.forEach((defUser) => {
+                const exists = Array.from(this.users.values()).some((u) => this.normalizeEmail(u.email) === this.normalizeEmail(defUser.email));
+                if (!exists) {
+                    const normalized = this.normalizeStoredUser(defUser);
+                    this.users.set(normalized.id, normalized);
+                }
             });
             this.persistToDisk();
         }

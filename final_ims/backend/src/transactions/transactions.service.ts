@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { CustomersService } from '../customers/customers.service';
 import {
   ProductRecord,
@@ -72,6 +73,29 @@ export class TransactionsService {
     const transactions = this.findAll();
     transactions.unshift(normalized);
     this.db.saveCollection('transactions', transactions);
+
+    // Record Platform Revenue Commission (2%)
+    try {
+      const commissions = this.db.getCollection('platformCommissions') || [];
+      commissions.unshift({
+        id: `comm-${randomUUID()}`,
+        transactionId: normalized.orderId,
+        orderId: normalized.orderId,
+        retailerId: normalized.retailerId || 'ret-default',
+        retailerName: normalized.store || 'Retailer Store',
+        storeId: normalized.storeId,
+        storeName: normalized.store,
+        customerName: normalized.customer,
+        orderTotal: normalized.finalTotal,
+        commissionRate: 0.02,
+        commissionAmount: normalized.platformFee || 0,
+        netRetailerAmount: normalized.netRetailerAmount || normalized.finalTotal,
+        currency: 'INR',
+        timestamp: normalized.timestamp,
+        status: 'settled',
+      });
+      this.db.saveCollection('platformCommissions', commissions);
+    } catch (_commErr) {}
 
     const requestIds = this.collectTransactionRequestIds(
       normalized.items,
@@ -278,6 +302,8 @@ export class TransactionsService {
     const finalTotal = this.toMoney(
       subtotal + shipping + tax - coupon - discount + roundoff,
     );
+    const platformFee = this.toMoney(finalTotal * 0.02); // 2% StockOverflow Platform Commission
+    const netRetailerAmount = this.toMoney(finalTotal - platformFee);
 
     return {
       orderId,
@@ -297,6 +323,8 @@ export class TransactionsService {
       discount,
       roundoff,
       finalTotal,
+      platformFee,
+      netRetailerAmount,
       status: this.normalizeText(payload.status, 'Delivered'),
       receiptUrl: this.normalizeText(payload.receiptUrl),
     };

@@ -75,7 +75,7 @@ let SuppliersService = class SuppliersService {
             documents: createSupplierSetupDto.documents ?? [],
             id: createSupplierSetupDto.id || (0, crypto_1.randomUUID)(),
             status: 'completed',
-            profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
+            profileStatus: createSupplierSetupDto.profileStatus ?? 'pending',
             createdAt: now,
             updatedAt: now,
         };
@@ -84,8 +84,16 @@ let SuppliersService = class SuppliersService {
         this.persistToDisk();
         return supplier;
     }
+    updateProfileStatus(id, status) {
+        const supplier = this.findOne(id);
+        supplier.profileStatus = status;
+        supplier.updatedAt = new Date().toISOString();
+        this.suppliers.set(id, supplier);
+        this.persistToDisk();
+        return supplier;
+    }
     findAll() {
-        return Array.from(this.suppliers.values()).sort((a, b) => String(b?.updatedAt || '').localeCompare(String(a?.updatedAt || '')));
+        return Array.from(this.suppliers.values()).sort((a, b) => String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || '')));
     }
     findOne(id) {
         const supplier = this.suppliers.get(id);
@@ -127,10 +135,6 @@ let SuppliersService = class SuppliersService {
         if (updateSupplierSetupDto.contactPerson) {
             primaryContact.fullName = updateSupplierSetupDto.contactPerson;
         }
-        const existingFeedbacks = Array.isArray(supplier.feedbacks) ? supplier.feedbacks : [];
-        const nextFeedbacks = updateSupplierSetupDto.feedback
-            ? [updateSupplierSetupDto.feedback, ...existingFeedbacks]
-            : existingFeedbacks;
         const updatedSupplier = {
             ...supplier,
             ...updateSupplierSetupDto,
@@ -141,9 +145,6 @@ let SuppliersService = class SuppliersService {
             pricingPolicies: updateSupplierSetupDto.pricingPolicies ?? supplier.pricingPolicies,
             bankDetails: updateSupplierSetupDto.bankDetails ?? supplier.bankDetails,
             profileStatus: updateSupplierSetupDto.profileStatus ?? supplier.profileStatus ?? 'active',
-            rating: updateSupplierSetupDto.rating ?? supplier.rating,
-            avgRating: updateSupplierSetupDto.avgRating ?? updateSupplierSetupDto.rating ?? supplier.avgRating,
-            feedbacks: nextFeedbacks,
             updatedAt: new Date().toISOString(),
         };
         this.suppliers.set(id, updatedSupplier);
@@ -230,13 +231,8 @@ let SuppliersService = class SuppliersService {
         return newDoc;
     }
     getDocuments(supplierId) {
-        try {
-            const supplier = this.findOne(supplierId);
-            return supplier.documents || [];
-        }
-        catch {
-            return [];
-        }
+        const supplier = this.findOne(supplierId);
+        return supplier.documents || [];
     }
     removeDocument(supplierId, docId) {
         const supplier = this.findOne(supplierId);
@@ -276,12 +272,15 @@ let SuppliersService = class SuppliersService {
         try {
             const suppliers = JSON.parse(raw);
             suppliers.forEach((supplier) => {
+                const now = new Date().toISOString();
                 this.suppliers.set(supplier.id, {
                     ...supplier,
                     retailers: supplier.retailers ?? [],
                     products: supplier.products ?? [],
                     documents: supplier.documents ?? [],
                     profileStatus: supplier.profileStatus ?? 'active',
+                    createdAt: supplier.createdAt || now,
+                    updatedAt: supplier.updatedAt || now,
                 });
             });
         }

@@ -154,7 +154,7 @@ __decorate([
 ], RetailerStoreDto.prototype, "notes", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(['active', 'inactive']),
+    (0, class_validator_1.IsIn)(['active', 'inactive', 'pending', 'rejected']),
     __metadata("design:type", String)
 ], RetailerStoreDto.prototype, "status", void 0);
 class RetailerSupplierDto {
@@ -301,7 +301,7 @@ __decorate([
 ], CreateRetailerSetupDto.prototype, "primaryContact", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(['active', 'inactive']),
+    (0, class_validator_1.IsIn)(['active', 'inactive', 'pending', 'rejected']),
     __metadata("design:type", String)
 ], CreateRetailerSetupDto.prototype, "profileStatus", void 0);
 __decorate([

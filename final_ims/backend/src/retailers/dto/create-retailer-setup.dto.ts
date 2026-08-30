@@ -134,8 +134,8 @@ export class RetailerStoreDto {
   notes?: string;
 
   @IsOptional()
-  @IsIn(['active', 'inactive'])
-  status?: 'active' | 'inactive';
+  @IsIn(['active', 'inactive', 'pending', 'rejected'])
+  status?: 'active' | 'inactive' | 'pending' | 'rejected';
 }
 
 export class RetailerSupplierDto {
@@ -255,8 +255,8 @@ export class CreateRetailerSetupDto {
   primaryContact!: RetailerPrimaryContactDto;
 
   @IsOptional()
-  @IsIn(['active', 'inactive'])
-  profileStatus?: 'active' | 'inactive';
+  @IsIn(['active', 'inactive', 'pending', 'rejected'])
+  profileStatus?: 'active' | 'inactive' | 'pending' | 'rejected';
 
   @IsOptional()
   @IsArray()

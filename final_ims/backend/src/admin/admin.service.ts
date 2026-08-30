@@ -278,6 +278,7 @@ export class AdminService {
     const suppliers = allUsers.filter((u) => String(u.role).toLowerCase() === 'supplier').length;
     const consumers = allUsers.filter((u) => String(u.role).toLowerCase() === 'consumer').length;
     const billers = allUsers.filter((u) => String(u.role).toLowerCase() === 'biller').length;
+    const employees = allUsers.filter((u) => String(u.role).toLowerCase() === 'employee').length;
 
     const lowStockProducts = products.filter((p: any) => {
       const qty = Number(p.qty || 0);
@@ -291,12 +292,16 @@ export class AdminService {
       return sum + Number(t.finalTotal || 0);
     }, 0);
 
+    const platformCommission = Number((totalRevenue * 0.02).toFixed(2));
+    const netRetailerPayout = Number((totalRevenue - platformCommission).toFixed(2));
+
     // Role distribution for chart
     const roleDistribution = {
       retailers,
       suppliers,
       consumers,
       billers,
+      employees,
       admins: allUsers.filter((u) => String(u.role).toLowerCase() === 'admin').length,
     };
 
@@ -305,12 +310,16 @@ export class AdminService {
       totalSuppliers: suppliers,
       totalConsumers: consumers,
       totalBillers: billers,
+      totalEmployees: employees,
       totalStores: stores.length,
       totalProducts: products.length,
       totalTransactions: transactions.length,
       lowStockAlerts: lowStockProducts,
       outOfStockAlerts: outOfStockProducts,
       totalRevenue,
+      platformCommission,
+      platformRevenue: platformCommission,
+      netRetailerPayout,
       roleDistribution,
     };
   }
@@ -323,6 +332,7 @@ export class AdminService {
     const stores = this.getAllStores();
 
     const totalRevenue = transactions.reduce((sum: number, t: any) => sum + Number(t.finalTotal || 0), 0);
+    const platformCommission = Number((totalRevenue * 0.02).toFixed(2));
     const totalOrders = transactions.length;
     const productsSold = products.reduce((sum: number, p: any) => sum + Number(p.soldThisMonth || 0), 0);
     const lowStockItems = products.filter((p: any) => Number(p.qty || 0) > 0 && Number(p.qty || 0) <= Number(p.min || 10)).length;
@@ -353,6 +363,8 @@ export class AdminService {
 
     return {
       totalRevenue,
+      platformCommission,
+      platformRevenue: platformCommission,
       totalOrders,
       productsSold,
       lowStockItems,
@@ -456,8 +468,8 @@ export class AdminService {
       lowStockAlertEnabled: true,
       autoReorderEnabled: false,
       maxOrderQuantity: 100,
-      currency: 'USD',
-      timezone: 'UTC',
+      currency: 'INR',
+      timezone: 'Asia/Kolkata',
       updatedAt: new Date().toISOString(),
     };
   }

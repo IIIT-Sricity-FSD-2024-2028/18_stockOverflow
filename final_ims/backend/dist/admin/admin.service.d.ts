@@ -38,22 +38,29 @@ export declare class AdminService {
         totalSuppliers: number;
         totalConsumers: number;
         totalBillers: number;
+        totalEmployees: number;
         totalStores: number;
         totalProducts: number;
         totalTransactions: number;
         lowStockAlerts: number;
         outOfStockAlerts: number;
         totalRevenue: number;
+        platformCommission: number;
+        platformRevenue: number;
+        netRetailerPayout: number;
         roleDistribution: {
             retailers: number;
             suppliers: number;
             consumers: number;
             billers: number;
+            employees: number;
             admins: number;
         };
     };
     getReportsSummary(): {
         totalRevenue: any;
+        platformCommission: number;
+        platformRevenue: number;
         totalOrders: number;
         productsSold: any;
         lowStockItems: number;

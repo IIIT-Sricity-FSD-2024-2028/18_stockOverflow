@@ -105,6 +105,18 @@ export class JsonDbService implements OnModuleInit {
         systemSettings: Array.isArray(parsed.systemSettings)
           ? parsed.systemSettings
           : structuredClone(INITIAL_DB.systemSettings),
+        employeeAssignments: Array.isArray(parsed.employeeAssignments)
+          ? parsed.employeeAssignments
+          : [],
+        userQueries: Array.isArray(parsed.userQueries)
+          ? parsed.userQueries
+          : [],
+        platformCommissions: Array.isArray(parsed.platformCommissions)
+          ? parsed.platformCommissions
+          : [],
+        subscriptions: Array.isArray(parsed.subscriptions)
+          ? parsed.subscriptions
+          : structuredClone(INITIAL_DB.subscriptions),
       };
     } catch {
       return structuredClone(INITIAL_DB);

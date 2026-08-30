@@ -1,65 +1,50 @@
-import { BillersService } from '../billers/billers.service';
+import { EmployeeAssignment, UserQuery } from '../common/database.types';
+import { JsonDbService } from '../common/json-db.service';
 import { RetailersService } from '../retailers/retailers.service';
 import { SuppliersService } from '../suppliers/suppliers.service';
+import { StoresService } from '../stores/stores.service';
 import { UsersService } from '../users/users.service';
-import { EmployeeActionDto } from './dto/employee-action.dto';
+import { CreateQueryDto } from './dto/create-query.dto';
+import { ResolveAssignmentDto } from './dto/resolve-assignment.dto';
+import { ResolveQueryDto } from './dto/resolve-query.dto';
 export declare class EmployeesService {
+    private readonly db;
     private readonly usersService;
     private readonly retailersService;
     private readonly suppliersService;
-    private readonly billersService;
-    constructor(usersService: UsersService, retailersService: RetailersService, suppliersService: SuppliersService, billersService: BillersService);
-    getWork(employeeId: string): {
-        employee: {
-            id: string;
-            name: string;
-            email: string;
-            role: string;
-            status: string;
-            store?: string;
-            storeId?: string;
-            currentStoreId?: string;
-            accessibleStoreIds?: string[];
-            profileId?: string;
-            profile?: Record<string, unknown>;
-            createdAt?: string;
-            updatedAt?: string;
-        };
-        stats: {
-            retailerRegistrations: number;
-            retailerStores: number;
-            suppliers: number;
-            billerRequests: number;
-            pending: number;
-        };
-        retailerRegistrations: any[];
-        retailerStores: any[];
-        suppliers: any[];
-        billerRequests: any[];
+    private readonly storesService;
+    constructor(db: JsonDbService, usersService: UsersService, retailersService: RetailersService, suppliersService: SuppliersService, storesService: StoresService);
+    distributePendingWork(): {
+        message: string;
+        assignedCount: number;
+        totalAssignments?: undefined;
+    } | {
+        message: string;
+        assignedCount: number;
+        totalAssignments: number;
     };
-    approveRetailer(employeeId: string, retailerId: string): {
-        status: string;
+    getAssignments(employeeId?: string, status?: string): EmployeeAssignment[];
+    getAssignmentById(id: string): EmployeeAssignment;
+    resolveAssignment(id: string, dto: ResolveAssignmentDto): {
+        message: string;
+        assignment: EmployeeAssignment;
     };
-    rejectRetailer(employeeId: string, retailerId: string, actionDto?: EmployeeActionDto): {
-        status: string;
+    getQueries(employeeId?: string, status?: string): UserQuery[];
+    createQuery(dto: CreateQueryDto): UserQuery;
+    resolveQuery(id: string, dto: ResolveQueryDto): {
+        message: string;
+        query: UserQuery;
     };
-    approveRetailerStore(employeeId: string, retailerId: string, storeCode: string): {
-        status: string;
+    getStats(employeeId?: string): {
+        totalAssigned: number;
+        pendingValidations: number;
+        approvedCount: number;
+        rejectedCount: number;
+        totalQueries: number;
+        pendingQueries: number;
+        resolvedQueries: number;
+        retailerValidations: number;
+        supplierValidations: number;
+        storeValidations: number;
     };
-    rejectRetailerStore(employeeId: string, retailerId: string, storeCode: string, actionDto?: EmployeeActionDto): {
-        status: string;
-    };
-    approveSupplier(employeeId: string, supplierId: string): {
-        status: string;
-    };
-    rejectSupplier(employeeId: string, supplierId: string, actionDto?: EmployeeActionDto): {
-        status: string;
-    };
-    approveBillerRequest(employeeId: string, requestId: string, actionDto?: EmployeeActionDto): {
-        status: string;
-    };
-    rejectBillerRequest(employeeId: string, requestId: string, actionDto?: EmployeeActionDto): {
-        status: string;
-    };
-    private requireEmployee;
 }

@@ -359,7 +359,7 @@ __decorate([
 ], CreateSupplierSetupDto.prototype, "primaryContact", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(['active', 'inactive']),
+    (0, class_validator_1.IsIn)(['active', 'inactive', 'pending', 'rejected']),
     __metadata("design:type", String)
 ], CreateSupplierSetupDto.prototype, "profileStatus", void 0);
 __decorate([

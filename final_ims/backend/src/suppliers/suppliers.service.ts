@@ -82,7 +82,7 @@ export class SuppliersService {
       documents: createSupplierSetupDto.documents ?? [],
       id: createSupplierSetupDto.id || randomUUID(),
       status: 'completed',
-      profileStatus: createSupplierSetupDto.profileStatus ?? 'active',
+      profileStatus: createSupplierSetupDto.profileStatus ?? 'pending',
       createdAt: now,
       updatedAt: now,
     };
@@ -93,9 +93,23 @@ export class SuppliersService {
     return supplier;
   }
 
+  updateProfileStatus(
+    id: string,
+    status: 'active' | 'inactive' | 'pending' | 'rejected',
+  ): SupplierRecord {
+    const supplier = this.findOne(id);
+    supplier.profileStatus = status;
+    supplier.updatedAt = new Date().toISOString();
+    this.suppliers.set(id, supplier);
+    this.persistToDisk();
+    return supplier;
+  }
+
   findAll(): SupplierRecord[] {
     return Array.from(this.suppliers.values()).sort((a, b) =>
-      String(b?.updatedAt || '').localeCompare(String(a?.updatedAt || '')),
+      String(b.updatedAt || b.createdAt || '').localeCompare(
+        String(a.updatedAt || a.createdAt || ''),
+      ),
     );
   }
 
@@ -129,7 +143,7 @@ export class SuppliersService {
   }
 
   update(id: string, updateSupplierSetupDto: any): SupplierRecord {
-    const supplier: any = this.findOne(id);
+    const supplier = this.findOne(id);
 
     const business = {
       ...supplier.business,
@@ -153,12 +167,7 @@ export class SuppliersService {
       primaryContact.fullName = updateSupplierSetupDto.contactPerson;
     }
 
-    const existingFeedbacks = Array.isArray(supplier.feedbacks) ? supplier.feedbacks : [];
-    const nextFeedbacks = updateSupplierSetupDto.feedback
-      ? [updateSupplierSetupDto.feedback, ...existingFeedbacks]
-      : existingFeedbacks;
-
-    const updatedSupplier: any = {
+    const updatedSupplier: SupplierRecord = {
       ...supplier,
       ...updateSupplierSetupDto,
       business,
@@ -170,9 +179,6 @@ export class SuppliersService {
       bankDetails: updateSupplierSetupDto.bankDetails ?? supplier.bankDetails,
       profileStatus:
         updateSupplierSetupDto.profileStatus ?? supplier.profileStatus ?? 'active',
-      rating: updateSupplierSetupDto.rating ?? supplier.rating,
-      avgRating: updateSupplierSetupDto.avgRating ?? updateSupplierSetupDto.rating ?? supplier.avgRating,
-      feedbacks: nextFeedbacks,
       updatedAt: new Date().toISOString(),
     };
 
@@ -286,12 +292,8 @@ export class SuppliersService {
   }
 
   getDocuments(supplierId: string): SupplierDocument[] {
-    try {
-      const supplier = this.findOne(supplierId);
-      return supplier.documents || [];
-    } catch {
-      return [];
-    }
+    const supplier = this.findOne(supplierId);
+    return supplier.documents || [];
   }
 
   removeDocument(supplierId: string, docId: string): void {
@@ -342,12 +344,15 @@ export class SuppliersService {
       const suppliers = JSON.parse(raw) as SupplierRecord[];
 
       suppliers.forEach((supplier) => {
+        const now = new Date().toISOString();
         this.suppliers.set(supplier.id, {
           ...supplier,
           retailers: supplier.retailers ?? [],
           products: supplier.products ?? [],
           documents: supplier.documents ?? [],
           profileStatus: supplier.profileStatus ?? 'active',
+          createdAt: supplier.createdAt || now,
+          updatedAt: supplier.updatedAt || now,
         });
       });
     } catch {

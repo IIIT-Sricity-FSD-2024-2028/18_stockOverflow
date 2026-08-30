@@ -7300,3 +7300,101 @@
 [2026-08-30T15:59:22.756Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
 [2026-08-30T15:59:22.760Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
 [2026-08-30T15:59:22.763Z] [GET] /api/stores?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:32:52.710Z] [POST] /api/users/login 201 - 17ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:32:53.577Z] [GET] /api/admin/dashboard/stats 200 - 97ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:32:53.637Z] [AUDIT] Action invoked on route: [GET] /api/transactions?limit=5
+[2026-08-30T16:32:53.640Z] [GET] /api/transactions?limit=5 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:33:16.563Z] [GET] /api/platform-revenue/summary 200 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:33:37.430Z] [GET] /api/admin/users 200 - 71ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:33:56.843Z] [GET] /api/stores 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:37:01.593Z] [POST] /api/users/login 201 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:37:01.666Z] [GET] /api/employees/assignments?employeeId=u-employee-1 200 - 9ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:37:01.727Z] [GET] /api/employees/queries?employeeId=u-employee-1 200 - 20ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:37:01.735Z] [GET] /api/employees/stats?employeeId=u-employee-1 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:37:46.212Z] [GET] /api/employees/assignments?employeeId=u-employee-1 304 - 29ms - IP: ::ffff:127.0.0.1
+[2026-08-30T16:38:10.398Z] [GET] /api/employees/queries?employeeId=u-employee-1 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:00:11.863Z] [POST] /api/users/login 201 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:00:12.042Z] [GET] /api/admin/dashboard/stats 304 - 25ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:00:12.250Z] [AUDIT] Action invoked on route: [GET] /api/transactions?limit=5
+[2026-08-30T17:00:12.252Z] [GET] /api/transactions?limit=5 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:00:22.711Z] [GET] /api/platform-revenue/summary 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:00:43.951Z] [GET] /api/admin/users 304 - 78ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:00:54.527Z] [GET] /api/stores 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:01:04.795Z] [GET] /api/admin/roles 200 - 10ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.410Z] [POST] /api/users/login 201 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.417Z] [POST] /api/users/login 201 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.421Z] [POST] /api/users/login 201 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.427Z] [POST] /api/users/login 201 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.429Z] [POST] /api/users/login 201 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.436Z] [POST] /api/users/login 201 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.456Z] [GET] /api/admin/dashboard 404 - 14ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.462Z] [GET] /api/admin/system-settings 404 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.471Z] [GET] /api/admin/roles 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.484Z] [GET] /api/admin/reports 404 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.504Z] [GET] /api/admin/stores-summary 404 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.558Z] [GET] /api/platform-revenue/dashboard 404 - 52ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.560Z] [GET] /api/platform-revenue/commissions 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.581Z] [GET] /api/platform-revenue/subscriptions 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.588Z] [GET] /api/platform-revenue/tiers 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.617Z] [GET] /api/employees/dashboard 404 - 9ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.629Z] [GET] /api/employees/assignments 200 - 9ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.656Z] [GET] /api/employees/queries 200 - 20ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.671Z] [GET] /api/products 200 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.680Z] [GET] /api/stores 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.682Z] [GET] /api/retailers 200 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.688Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Unknown-Client
+[2026-08-30T17:03:16.689Z] [GET] /api/suppliers 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.698Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/directory | Client: Unknown-Client
+[2026-08-30T17:03:16.700Z] [GET] /api/suppliers/directory 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.703Z] [AUDIT] Action invoked on route: [GET] /api/billers
+[2026-08-30T17:03:16.704Z] [GET] /api/billers 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.707Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-08-30T17:03:16.709Z] [GET] /api/transactions 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.713Z] [GET] /api/returns 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.724Z] [GET] /api/purchase-orders 200 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.719Z] [GET] /api/warehouses 200 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.726Z] [GET] /api/reservations 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:16.742Z] [GET] /api/admin/dashboard 404 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.111Z] [GET] /api/admin/dashboard/stats 200 - 28ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.116Z] [GET] /api/admin/reports/summary 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.155Z] [GET] /api/admin/users 200 - 38ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.160Z] [GET] /api/admin/roles 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.162Z] [GET] /api/admin/stores 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.172Z] [GET] /api/admin/settings 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.174Z] [GET] /api/platform-revenue/summary 200 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.176Z] [GET] /api/platform-revenue/commissions 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.179Z] [GET] /api/platform-revenue/subscriptions 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.187Z] [GET] /api/platform-revenue/tiers 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.202Z] [GET] /api/employees/stats 200 - 8ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.209Z] [GET] /api/employees/assignments 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.214Z] [GET] /api/employees/queries 200 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.220Z] [GET] /api/products 200 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.223Z] [GET] /api/stores 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.224Z] [GET] /api/retailers 200 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.240Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/directory | Client: Unknown-Client
+[2026-08-30T17:03:41.242Z] [GET] /api/suppliers/directory 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.243Z] [AUDIT] Action invoked on route: [GET] /api/billers
+[2026-08-30T17:03:41.248Z] [GET] /api/billers 200 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.249Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-08-30T17:03:41.250Z] [GET] /api/transactions 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.252Z] [GET] /api/returns 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.254Z] [GET] /api/warehouses 200 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.261Z] [GET] /api/purchase-orders 200 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:41.263Z] [GET] /api/reservations 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:54.001Z] [GET] /api/products 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:54.013Z] [AUDIT] Action invoked on route: [POST] /api/transactions
+[2026-08-30T17:03:54.034Z] [POST] /api/transactions 400 - 22ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:54.054Z] [GET] /api/platform-revenue/summary 200 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:54.064Z] [POST] /api/employees/assignments/distribute 201 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:03:54.073Z] [GET] /api/employees/assignments 200 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:04:08.521Z] [GET] /api/products 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:04:08.525Z] [AUDIT] Action invoked on route: [POST] /api/transactions
+[2026-08-30T17:04:08.527Z] [POST] /api/transactions 400 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:04:08.529Z] [GET] /api/platform-revenue/commissions 200 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:04:15.038Z] [GET] /api/products 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:04:15.042Z] [AUDIT] Action invoked on route: [POST] /api/transactions
+[2026-08-30T17:04:15.044Z] [POST] /api/transactions 400 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:04:25.845Z] [GET] /api/products 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:04:25.849Z] [AUDIT] Action invoked on route: [POST] /api/transactions
+[2026-08-30T17:04:25.866Z] [POST] /api/transactions 201 - 17ms - IP: ::ffff:127.0.0.1
+[2026-08-30T17:04:25.869Z] [GET] /api/platform-revenue/commissions 200 - 0ms - IP: ::ffff:127.0.0.1

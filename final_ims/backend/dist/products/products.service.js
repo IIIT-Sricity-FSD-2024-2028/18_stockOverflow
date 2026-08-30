@@ -18,11 +18,7 @@ let ProductsService = class ProductsService {
         this.db = db;
     }
     findAll(retailerId, storeId) {
-        const list = this.filterProducts(this.getProducts(), retailerId, storeId);
-        if (!list.length && retailerId) {
-            return this.ensureInitialProductsForRetailer(retailerId, storeId);
-        }
-        return list;
+        return this.filterProducts(this.getProducts(), retailerId, storeId);
     }
     findOne(id, retailerId, storeId) {
         const product = this.filterProducts(this.getProducts(), retailerId, storeId).find((entry) => entry.id === id);
@@ -206,15 +202,10 @@ let ProductsService = class ProductsService {
     }
     filterProducts(products, retailerId, storeId) {
         const normalizedStoreId = this.normalizeText(storeId);
-        const normalizedRetailerId = this.normalizeText(retailerId);
         return products
             .filter((product) => this.matchesRetailerScope(product.retailerId, retailerId))
             .filter((product) => {
             if (!normalizedStoreId) {
-                return true;
-            }
-            const isUnscoped = !product.retailerId || product.retailerId === normalizedRetailerId;
-            if (isUnscoped) {
                 return true;
             }
             return (product.storeInventory.some((entry) => this.normalizeText(entry.storeId) === normalizedStoreId) ||
@@ -701,10 +692,10 @@ let ProductsService = class ProductsService {
         const initialStore = product.initialStoreInventory.find((entry) => entry.storeId === normalizedStoreId) || null;
         return {
             ...product,
-            qty: currentStore ? this.toSafeInteger(currentStore.qty) : product.qty,
+            qty: currentStore ? this.toSafeInteger(currentStore.qty) : 0,
             initialQty: initialStore
                 ? this.toSafeInteger(initialStore.qty)
-                : this.toSafeInteger(currentStore?.qty || product.initialQty),
+                : this.toSafeInteger(currentStore?.qty || 0),
         };
     }
     matchesRetailerScope(candidateRetailerId, retailerId) {
@@ -713,7 +704,7 @@ let ProductsService = class ProductsService {
         if (!normalizedRetailerId) {
             return true;
         }
-        return !normalizedCandidate || normalizedCandidate === normalizedRetailerId;
+        return normalizedCandidate === normalizedRetailerId;
     }
     isSameRetailerScope(leftRetailerId, rightRetailerId) {
         return (this.normalizeText(leftRetailerId) === this.normalizeText(rightRetailerId));
@@ -754,35 +745,6 @@ let ProductsService = class ProductsService {
         return typeof value === 'number' && Number.isFinite(value)
             ? this.toMoney(value)
             : undefined;
-    }
-    ensureInitialProductsForRetailer(retailerId, storeId) {
-        const defaultCatalog = [
-            { sku: 'PT001', name: 'Lenovo IdeaPad 3', category: 'Computers', brand: 'Lenovo', price: 600, priceUSD: 600, qty: 100, min: 20, max: 300, emoji: '💻' },
-            { sku: 'PT002', name: 'Beats Pro', category: 'Audio', brand: 'Beats', price: 160, priceUSD: 160, qty: 140, min: 24, max: 300, emoji: '🎧' },
-            { sku: 'PT003', name: 'Nike Jordan', category: 'Footwear', brand: 'Nike', price: 110, priceUSD: 110, qty: 300, min: 50, max: 500, emoji: '👟' },
-            { sku: 'PT004', name: 'Apple Series 5 Watch', category: 'Wearables', brand: 'Apple', price: 120, priceUSD: 120, qty: 450, min: 40, max: 500, emoji: '⌚' },
-            { sku: 'PT005', name: 'Amazon Echo Dot', category: 'Smart Home', brand: 'Amazon', price: 80, priceUSD: 80, qty: 320, min: 40, max: 500, emoji: '🔊' },
-            { sku: 'PT006', name: 'Sanford Chair Sofa', category: 'Furniture', brand: 'Modern Wave', price: 320, priceUSD: 320, qty: 650, min: 60, max: 800, emoji: '🪑' },
-            { sku: 'PT007', name: 'Red Premium Satchel', category: 'Accessories', brand: 'Dior', price: 60, priceUSD: 60, qty: 700, min: 50, max: 800, emoji: '👜' },
-            { sku: 'PT008', name: 'iPhone 14 Pro', category: 'Mobiles', brand: 'Apple', price: 540, priceUSD: 540, qty: 630, min: 70, max: 800, emoji: '📱' },
-            { sku: 'PT009', name: 'Gaming Chair', category: 'Furniture', brand: 'Arlime', price: 200, priceUSD: 200, qty: 410, min: 40, max: 500, emoji: '🪑' },
-            { sku: 'PT010', name: 'Borealis Backpack', category: 'Accessories', brand: 'The North Face', price: 45, priceUSD: 45, qty: 550, min: 50, max: 800, emoji: '🎒' },
-        ];
-        const currentProducts = this.getProducts();
-        const targetStoreId = storeId || 'JOHN-S-STORE';
-        defaultCatalog.forEach((item) => {
-            const record = this.buildProductRecord({
-                ...item,
-                retailerId,
-                storeInventory: [{ storeId: targetStoreId, qty: item.qty }],
-            }, {
-                id: (0, node_crypto_1.randomUUID)(),
-                sku: `${item.sku}-${retailerId.slice(0, 4)}`,
-            });
-            currentProducts.unshift(record);
-        });
-        this.saveProducts(currentProducts);
-        return this.filterProducts(currentProducts, retailerId, storeId);
     }
 };
 exports.ProductsService = ProductsService;

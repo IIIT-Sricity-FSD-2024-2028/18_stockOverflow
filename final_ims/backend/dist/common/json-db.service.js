@@ -95,6 +95,18 @@ let JsonDbService = class JsonDbService {
                 systemSettings: Array.isArray(parsed.systemSettings)
                     ? parsed.systemSettings
                     : structuredClone(seed_data_1.INITIAL_DB.systemSettings),
+                employeeAssignments: Array.isArray(parsed.employeeAssignments)
+                    ? parsed.employeeAssignments
+                    : [],
+                userQueries: Array.isArray(parsed.userQueries)
+                    ? parsed.userQueries
+                    : [],
+                platformCommissions: Array.isArray(parsed.platformCommissions)
+                    ? parsed.platformCommissions
+                    : [],
+                subscriptions: Array.isArray(parsed.subscriptions)
+                    ? parsed.subscriptions
+                    : structuredClone(seed_data_1.INITIAL_DB.subscriptions),
             };
         }
         catch {

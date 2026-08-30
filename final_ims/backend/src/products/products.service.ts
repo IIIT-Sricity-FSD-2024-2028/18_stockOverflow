@@ -17,11 +17,7 @@ export class ProductsService {
   constructor(private readonly db: JsonDbService) {}
 
   findAll(retailerId?: string, storeId?: string): ProductRecord[] {
-    const list = this.filterProducts(this.getProducts(), retailerId, storeId);
-    if (!list.length && retailerId) {
-      return this.ensureInitialProductsForRetailer(retailerId, storeId);
-    }
-    return list;
+    return this.filterProducts(this.getProducts(), retailerId, storeId);
   }
 
   findOne(id: string, retailerId?: string, storeId?: string): ProductRecord {
@@ -294,7 +290,6 @@ export class ProductsService {
     storeId?: string,
   ) {
     const normalizedStoreId = this.normalizeText(storeId);
-    const normalizedRetailerId = this.normalizeText(retailerId);
 
     return products
       .filter((product) =>
@@ -302,11 +297,6 @@ export class ProductsService {
       )
       .filter((product) => {
         if (!normalizedStoreId) {
-          return true;
-        }
-
-        const isUnscoped = !product.retailerId || product.retailerId === normalizedRetailerId;
-        if (isUnscoped) {
           return true;
         }
 
@@ -1015,10 +1005,10 @@ export class ProductsService {
 
     return {
       ...product,
-      qty: currentStore ? this.toSafeInteger(currentStore.qty) : product.qty,
+      qty: currentStore ? this.toSafeInteger(currentStore.qty) : 0,
       initialQty: initialStore
         ? this.toSafeInteger(initialStore.qty)
-        : this.toSafeInteger(currentStore?.qty || product.initialQty),
+        : this.toSafeInteger(currentStore?.qty || 0),
     };
   }
 
@@ -1033,7 +1023,7 @@ export class ProductsService {
       return true;
     }
 
-    return !normalizedCandidate || normalizedCandidate === normalizedRetailerId;
+    return normalizedCandidate === normalizedRetailerId;
   }
 
   private isSameRetailerScope(
@@ -1086,38 +1076,5 @@ export class ProductsService {
     return typeof value === 'number' && Number.isFinite(value)
       ? this.toMoney(value)
       : undefined;
-  }
-
-  private ensureInitialProductsForRetailer(retailerId: string, storeId?: string): ProductRecord[] {
-    const defaultCatalog = [
-      { sku: 'PT001', name: 'Lenovo IdeaPad 3', category: 'Computers', brand: 'Lenovo', price: 600, priceUSD: 600, qty: 100, min: 20, max: 300, emoji: '💻' },
-      { sku: 'PT002', name: 'Beats Pro', category: 'Audio', brand: 'Beats', price: 160, priceUSD: 160, qty: 140, min: 24, max: 300, emoji: '🎧' },
-      { sku: 'PT003', name: 'Nike Jordan', category: 'Footwear', brand: 'Nike', price: 110, priceUSD: 110, qty: 300, min: 50, max: 500, emoji: '👟' },
-      { sku: 'PT004', name: 'Apple Series 5 Watch', category: 'Wearables', brand: 'Apple', price: 120, priceUSD: 120, qty: 450, min: 40, max: 500, emoji: '⌚' },
-      { sku: 'PT005', name: 'Amazon Echo Dot', category: 'Smart Home', brand: 'Amazon', price: 80, priceUSD: 80, qty: 320, min: 40, max: 500, emoji: '🔊' },
-      { sku: 'PT006', name: 'Sanford Chair Sofa', category: 'Furniture', brand: 'Modern Wave', price: 320, priceUSD: 320, qty: 650, min: 60, max: 800, emoji: '🪑' },
-      { sku: 'PT007', name: 'Red Premium Satchel', category: 'Accessories', brand: 'Dior', price: 60, priceUSD: 60, qty: 700, min: 50, max: 800, emoji: '👜' },
-      { sku: 'PT008', name: 'iPhone 14 Pro', category: 'Mobiles', brand: 'Apple', price: 540, priceUSD: 540, qty: 630, min: 70, max: 800, emoji: '📱' },
-      { sku: 'PT009', name: 'Gaming Chair', category: 'Furniture', brand: 'Arlime', price: 200, priceUSD: 200, qty: 410, min: 40, max: 500, emoji: '🪑' },
-      { sku: 'PT010', name: 'Borealis Backpack', category: 'Accessories', brand: 'The North Face', price: 45, priceUSD: 45, qty: 550, min: 50, max: 800, emoji: '🎒' },
-    ];
-
-    const currentProducts = this.getProducts();
-    const targetStoreId = storeId || 'JOHN-S-STORE';
-
-    defaultCatalog.forEach((item) => {
-      const record = this.buildProductRecord({
-        ...item,
-        retailerId,
-        storeInventory: [{ storeId: targetStoreId, qty: item.qty }],
-      }, {
-        id: randomUUID(),
-        sku: `${item.sku}-${retailerId.slice(0, 4)}`,
-      });
-      currentProducts.unshift(record);
-    });
-
-    this.saveProducts(currentProducts);
-    return this.filterProducts(currentProducts, retailerId, storeId);
   }
 }

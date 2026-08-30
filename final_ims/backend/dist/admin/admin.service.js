@@ -228,6 +228,7 @@ let AdminService = class AdminService {
         const suppliers = allUsers.filter((u) => String(u.role).toLowerCase() === 'supplier').length;
         const consumers = allUsers.filter((u) => String(u.role).toLowerCase() === 'consumer').length;
         const billers = allUsers.filter((u) => String(u.role).toLowerCase() === 'biller').length;
+        const employees = allUsers.filter((u) => String(u.role).toLowerCase() === 'employee').length;
         const lowStockProducts = products.filter((p) => {
             const qty = Number(p.qty || 0);
             const min = Number(p.min || 10);
@@ -237,11 +238,14 @@ let AdminService = class AdminService {
         const totalRevenue = transactions.reduce((sum, t) => {
             return sum + Number(t.finalTotal || 0);
         }, 0);
+        const platformCommission = Number((totalRevenue * 0.02).toFixed(2));
+        const netRetailerPayout = Number((totalRevenue - platformCommission).toFixed(2));
         const roleDistribution = {
             retailers,
             suppliers,
             consumers,
             billers,
+            employees,
             admins: allUsers.filter((u) => String(u.role).toLowerCase() === 'admin').length,
         };
         return {
@@ -249,12 +253,16 @@ let AdminService = class AdminService {
             totalSuppliers: suppliers,
             totalConsumers: consumers,
             totalBillers: billers,
+            totalEmployees: employees,
             totalStores: stores.length,
             totalProducts: products.length,
             totalTransactions: transactions.length,
             lowStockAlerts: lowStockProducts,
             outOfStockAlerts: outOfStockProducts,
             totalRevenue,
+            platformCommission,
+            platformRevenue: platformCommission,
+            netRetailerPayout,
             roleDistribution,
         };
     }
@@ -263,6 +271,7 @@ let AdminService = class AdminService {
         const transactions = this.db.getCollection('transactions');
         const stores = this.getAllStores();
         const totalRevenue = transactions.reduce((sum, t) => sum + Number(t.finalTotal || 0), 0);
+        const platformCommission = Number((totalRevenue * 0.02).toFixed(2));
         const totalOrders = transactions.length;
         const productsSold = products.reduce((sum, p) => sum + Number(p.soldThisMonth || 0), 0);
         const lowStockItems = products.filter((p) => Number(p.qty || 0) > 0 && Number(p.qty || 0) <= Number(p.min || 10)).length;
@@ -288,6 +297,8 @@ let AdminService = class AdminService {
         }));
         return {
             totalRevenue,
+            platformCommission,
+            platformRevenue: platformCommission,
             totalOrders,
             productsSold,
             lowStockItems,
@@ -386,8 +397,8 @@ let AdminService = class AdminService {
             lowStockAlertEnabled: true,
             autoReorderEnabled: false,
             maxOrderQuantity: 100,
-            currency: 'USD',
-            timezone: 'UTC',
+            currency: 'INR',
+            timezone: 'Asia/Kolkata',
             updatedAt: new Date().toISOString(),
         };
     }

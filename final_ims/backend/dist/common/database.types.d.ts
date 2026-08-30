@@ -289,6 +289,8 @@ export interface TransactionRecord {
     discount: number;
     roundoff: number;
     finalTotal: number;
+    platformFee?: number;
+    netRetailerAmount?: number;
     status: string;
     receiptUrl?: string;
 }
@@ -351,7 +353,39 @@ export interface BillerRequest {
     approvedAt?: string;
     rejectedAt?: string;
 }
-export type UserRole = 'admin' | 'retailer' | 'supplier' | 'consumer' | 'biller';
+export type EmployeeAssignmentType = 'retailer' | 'supplier' | 'store' | 'query';
+export type EmployeeAssignmentStatus = 'pending' | 'approved' | 'rejected' | 'resolved';
+export interface EmployeeAssignment {
+    id: string;
+    employeeId: string;
+    employeeName: string;
+    employeeEmail: string;
+    targetId: string;
+    targetType: EmployeeAssignmentType;
+    title: string;
+    details: Record<string, unknown>;
+    status: EmployeeAssignmentStatus;
+    notes?: string;
+    createdAt: string;
+    resolvedAt?: string;
+}
+export interface UserQuery {
+    id: string;
+    userId?: string;
+    userName: string;
+    userEmail: string;
+    userRole?: string;
+    subject: string;
+    message: string;
+    status: 'pending' | 'in_progress' | 'resolved';
+    priority: 'low' | 'medium' | 'high';
+    assignedEmployeeId?: string;
+    assignedEmployeeName?: string;
+    response?: string;
+    createdAt: string;
+    resolvedAt?: string;
+}
+export type UserRole = 'admin' | 'employee' | 'retailer' | 'supplier' | 'consumer' | 'biller';
 export type UserStatus = 'Active' | 'Inactive' | 'Pending' | 'active' | 'inactive' | 'suspended';
 export interface UserRecord {
     id: string;
@@ -383,6 +417,40 @@ export interface SystemSettingsRecord {
     timezone: string;
     updatedAt: string;
 }
+export type SubscriptionTier = 'free' | 'pro' | 'enterprise';
+export interface PlatformCommissionRecord {
+    id: string;
+    transactionId?: string;
+    orderId: string;
+    retailerId: string;
+    retailerName?: string;
+    storeId: string;
+    storeName: string;
+    customerName: string;
+    orderTotal: number;
+    commissionRate: number;
+    commissionAmount: number;
+    netRetailerAmount: number;
+    currency: string;
+    timestamp: string;
+    status: 'settled' | 'pending' | 'refunded';
+}
+export interface SubscriptionRecord {
+    id: string;
+    userId: string;
+    userName: string;
+    userEmail: string;
+    userRole: 'retailer' | 'supplier';
+    tier: SubscriptionTier;
+    pricePerMonth: number;
+    billingCycle: 'monthly' | 'yearly';
+    startDate: string;
+    renewalDate: string;
+    status: 'active' | 'cancelled' | 'trial';
+    features: string[];
+    maxStores?: number;
+    maxProducts?: number;
+}
 export interface DatabaseSchema {
     products: ProductRecord[];
     stores: StoreRecord[];
@@ -400,5 +468,9 @@ export interface DatabaseSchema {
     users: UserRecord[];
     roles: RoleRecord[];
     systemSettings: SystemSettingsRecord[];
+    employeeAssignments: EmployeeAssignment[];
+    userQueries: UserQuery[];
+    platformCommissions: PlatformCommissionRecord[];
+    subscriptions: SubscriptionRecord[];
 }
 export type DatabaseCollectionKey = keyof DatabaseSchema;

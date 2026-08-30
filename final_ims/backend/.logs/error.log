@@ -45,3 +45,13 @@
 [2026-08-30T15:49:14.293Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
 [2026-08-30T15:49:14.434Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
 [2026-08-30T15:49:33.759Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T17:03:16.443Z] [ERROR] GET /api/admin/dashboard 404 - Cannot GET /api/admin/dashboard
+[2026-08-30T17:03:16.460Z] [ERROR] GET /api/admin/system-settings 404 - Cannot GET /api/admin/system-settings
+[2026-08-30T17:03:16.483Z] [ERROR] GET /api/admin/reports 404 - Cannot GET /api/admin/reports
+[2026-08-30T17:03:16.503Z] [ERROR] GET /api/admin/stores-summary 404 - Cannot GET /api/admin/stores-summary
+[2026-08-30T17:03:16.506Z] [ERROR] GET /api/platform-revenue/dashboard 404 - Cannot GET /api/platform-revenue/dashboard
+[2026-08-30T17:03:16.608Z] [ERROR] GET /api/employees/dashboard 404 - Cannot GET /api/employees/dashboard
+[2026-08-30T17:03:16.741Z] [ERROR] GET /api/admin/dashboard 404 - Cannot GET /api/admin/dashboard
+[2026-08-30T17:03:54.026Z] [ERROR] POST /api/transactions 400 - property orderId should not exist, property total should not exist, property finalTotal should not exist, items.0.property id should not exist, items.0.property qty should not exist, items.0.sku must be a string, items.0.quantity must not be less than 1, items.0.quantity must be a number conforming to the specified constraints
+[2026-08-30T17:04:08.526Z] [ERROR] POST /api/transactions 400 - property total should not exist, property finalTotal should not exist
+[2026-08-30T17:04:15.044Z] [ERROR] POST /api/transactions 400 - property total should not exist, property finalTotal should not exist, store must be a string

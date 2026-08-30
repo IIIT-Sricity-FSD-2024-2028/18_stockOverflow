@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Verification Pending - StockOverflow</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f6fa;
+      --primary: #5b67ca;
+      --text: #1a1d2e;
+      --card: #ffffff;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .card {
+      background: var(--card);
+      padding: 44px 36px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      border: 1px solid #e5e7eb;
+    }
+    .icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--warning-light);
+      color: var(--warning);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 20px;
+    }
+    .icon.rejected {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+    h1 {
+      font-size: 23px;
+      font-weight: 700;
+      margin: 0 0 12px;
+    }
+    p {
+      color: #6b7280;
+      line-height: 1.6;
+      font-size: 14px;
+      margin: 0 0 24px;
+    }
+    .info-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
+    .info-label {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .info-value {
+      color: #1e293b;
+      font-weight: 700;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: var(--warning-light);
+      color: #b45309;
+    }
+    .status-badge.rejected {
+      background: var(--danger-light);
+      color: #b91c1c;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      padding: 11px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .btn.secondary {
+      background: #ffffff;
+      color: var(--primary);
+      border: 1px solid #d8dcff;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon" id="statusIcon">⏳</div>
+    <h1 id="statusHeading">Verification in Progress</h1>
+    <p id="statusMsg">Your account and business details have been submitted and assigned to an employee for validation. Access to your dashboard will be unlocked once approved.</p>
+    
+    <div class="info-box">
+      <div class="info-row">
+        <span class="info-label">Account Name</span>
+        <span class="info-value" id="accountName">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Registered Email</span>
+        <span class="info-value" id="accountEmail">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Account Role</span>
+        <span class="info-value" id="accountRole" style="text-transform:capitalize">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Current Status</span>
+        <span class="status-badge" id="statusBadge">Pending Review</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="checkStatus()">Check Status Again</button>
+      <button class="btn secondary" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <script src="../js/api-config.js"></script>
+  <script>
+    let session = null;
+    try {
+      session = JSON.parse(localStorage.getItem('so_session') || 'null');
+    } catch {
+      session = null;
+    }
+
+    if (!session) {
+      window.location.href = 'login.html';
+    }
+
+    document.getElementById('accountName').textContent = session.name || 'User';
+    document.getElementById('accountEmail').textContent = session.email || '-';
+    document.getElementById('accountRole').textContent = session.role || 'Business';
+
+    async function checkStatus() {
+      if (!session) return;
+      try {
+        const user = await window.IMS_HTTP.request('/users/' + encodeURIComponent(session.id));
+        const role = String(user.role || '').toLowerCase();
+        let isApproved = false;
+        let isRejected = false;
+        let rejectReason = '';
+
+        const profileId = user.profileId || user.retailerId || user.supplierId || session.profileId || session.retailerId;
+        if (role === 'retailer') {
+          let st = String(user.profileStatus || '').toLowerCase();
+          if (profileId) {
+            const profile = await window.IMS_HTTP.request('/retailers/' + encodeURIComponent(profileId)).catch(() => null);
+            if (profile && profile.profileStatus) st = String(profile.profileStatus).toLowerCase();
+          }
+          if (st === 'active' || st === 'approved') isApproved = true;
+          if (st === 'rejected') isRejected = true;
+        } else if (role === 'supplier') {
+          let st = String(user.profileStatus || '').toLowerCase();
+          if (profileId) {
+            const profile = await window.IMS_HTTP.request('/suppliers/' + encodeURIComponent(profileId)).catch(() => null);
+            if (profile && profile.profileStatus) st = String(profile.profileStatus).toLowerCase();
+          }
+          if (st === 'active' || st === 'approved') isApproved = true;
+          if (st === 'rejected') isRejected = true;
+        }
+
+        if (isApproved) {
+          // Update session and redirect to respective dashboard
+          session.profileStatus = 'active';
+          localStorage.setItem('so_session', JSON.stringify({ ...session, ...user }));
+          if (role === 'retailer') window.location.href = '../Retailer module/Retialer_Dashboard.html';
+          else if (role === 'supplier') window.location.href = '../supplier module/supplier-dashboard.html';
+          return;
+        }
+
+        if (isRejected) {
+          document.getElementById('statusIcon').textContent = '✕';
+          document.getElementById('statusIcon').className = 'icon rejected';
+          document.getElementById('statusHeading').textContent = 'Registration Rejected';
+          document.getElementById('statusMsg').textContent = 'Your business registration could not be verified. Please contact staff support or register with corrected business details.';
+          document.getElementById('statusBadge').textContent = 'Rejected';
+          document.getElementById('statusBadge').className = 'status-badge rejected';
+        } else {
+          alert('Your account is still being reviewed by our verification staff. Please check back shortly!');
+        }
+      } catch (err) {
+        console.warn('Status check error:', err);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('so_session');
+      window.location.href = 'login.html';
+    }
+
+    // Auto-check on page load
+    checkStatus();
+  </script>
+</body>
+</html>

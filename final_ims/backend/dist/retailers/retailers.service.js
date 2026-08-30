@@ -30,7 +30,7 @@ let RetailersService = class RetailersService {
             products: createRetailerSetupDto.products ?? [],
             id: (0, crypto_1.randomUUID)(),
             status: 'completed',
-            profileStatus: createRetailerSetupDto.profileStatus ?? 'active',
+            profileStatus: createRetailerSetupDto.profileStatus ?? 'pending',
             createdAt: now,
             updatedAt: now,
         };
@@ -38,8 +38,16 @@ let RetailersService = class RetailersService {
         this.persistToDisk();
         return retailer;
     }
+    updateProfileStatus(id, status) {
+        const retailer = this.findOne(id);
+        retailer.profileStatus = status;
+        retailer.updatedAt = new Date().toISOString();
+        this.retailers.set(id, retailer);
+        this.persistToDisk();
+        return retailer;
+    }
     findAll() {
-        return Array.from(this.retailers.values()).sort((a, b) => String(b?.updatedAt || '').localeCompare(String(a?.updatedAt || '')));
+        return Array.from(this.retailers.values()).sort((a, b) => String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || '')));
     }
     findOne(id) {
         const retailer = this.retailers.get(id);
@@ -124,12 +132,15 @@ let RetailersService = class RetailersService {
         try {
             const retailers = JSON.parse(raw);
             retailers.forEach((retailer) => {
+                const now = new Date().toISOString();
                 this.retailers.set(retailer.id, {
                     ...retailer,
                     stores: retailer.stores ?? [],
                     suppliers: retailer.suppliers ?? [],
                     products: retailer.products ?? [],
                     profileStatus: retailer.profileStatus ?? 'active',
+                    createdAt: retailer.createdAt || now,
+                    updatedAt: retailer.updatedAt || now,
                 });
             });
         }

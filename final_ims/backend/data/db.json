@@ -18,7 +18,7 @@
       "taxRate": 0,
       "taxType": "Inclusive",
       "unit": "Pc",
-      "qty": 30,
+      "qty": 28,
       "initialQty": 30,
       "min": 10,
       "max": 100,
@@ -36,7 +36,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Enike%20shoes%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "📦",
-      "soldThisMonth": 0,
+      "soldThisMonth": 2,
       "trend": "up",
       "description": "",
       "descriptionHtml": "",
@@ -65,7 +65,7 @@
       "storeInventory": [
         {
           "storeId": "JOHN-S-STORE",
-          "qty": 30
+          "qty": 28
         }
       ],
       "initialStoreInventory": [
@@ -84,11 +84,11 @@
       },
       "ratingCount": 0,
       "ratingAvg": 0,
-      "revenue": 0,
+      "revenue": 10000,
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T06:56:40.524Z",
-      "updatedAt": "2026-08-28T06:56:40.524Z",
+      "updatedAt": "2026-08-30T17:04:25.857Z",
       "restockedAt": "2026-08-28T06:56:40.517Z",
       "lastStockChangeAt": "2026-08-28T06:56:40.524Z"
     },
@@ -180,7 +180,7 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T05:05:37.997Z",
-      "updatedAt": "2026-08-30T15:38:39.074Z",
+      "updatedAt": "2026-08-30T17:04:25.857Z",
       "restockedAt": "2026-08-30T15:38:39.074Z",
       "lastStockChangeAt": "2026-08-30T15:38:39.074Z"
     }
@@ -200,10 +200,10 @@
       "country": "India",
       "store": "Downtown Store",
       "status": "Active",
-      "totalOrders": 3,
-      "totalSpent": 2047.5,
-      "orders": 3,
-      "spent": 2047.5,
+      "totalOrders": 4,
+      "totalSpent": 12047.5,
+      "orders": 4,
+      "spent": 12047.5,
       "created": "Aug 28, 2026",
       "rating": 3,
       "notes": ""
@@ -392,6 +392,39 @@
   ],
   "transactions": [
     {
+      "orderId": "ORD154403",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "timestamp": "2026-08-30T17:04:25.850Z",
+      "customer": "James",
+      "customerEmail": "james@gmail.com",
+      "customerId": "",
+      "store": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "paymentMethod": "UPI",
+      "items": [
+        {
+          "sku": "PT001",
+          "name": "nike shoes",
+          "quantity": 2,
+          "price": 5000,
+          "total": 10000,
+          "isReserved": false,
+          "requestIds": []
+        }
+      ],
+      "subtotal": 10000,
+      "shipping": 0,
+      "tax": 0,
+      "coupon": 0,
+      "discount": 0,
+      "roundoff": 0,
+      "finalTotal": 10000,
+      "platformFee": 200,
+      "netRetailerAmount": 9800,
+      "status": "Completed",
+      "receiptUrl": ""
+    },
+    {
       "orderId": "ORD546371",
       "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
       "timestamp": "2026-08-28T08:07:35.012Z",
@@ -573,5 +606,78 @@
       "timezone": "UTC",
       "updatedAt": "2026-08-28T04:35:06.471Z"
     }
-  ]
+  ],
+  "employeeAssignments": [],
+  "userQueries": [],
+  "platformCommissions": [
+    {
+      "id": "comm-7632564c-b3c3-4193-a3e7-7435a8036175",
+      "transactionId": "ORD154403",
+      "orderId": "ORD154403",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "storeName": "John's Retail Store",
+      "customerName": "James",
+      "orderTotal": 10000,
+      "commissionRate": 0.02,
+      "commissionAmount": 200,
+      "netRetailerAmount": 9800,
+      "currency": "INR",
+      "timestamp": "2026-08-30T17:04:25.850Z",
+      "status": "settled"
+    },
+    {
+      "id": "comm-ORD546371",
+      "transactionId": "ORD546371",
+      "orderId": "ORD546371",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "storeName": "John's Retail Store",
+      "customerName": "James",
+      "orderTotal": 682.5,
+      "commissionRate": 0.02,
+      "commissionAmount": 13.65,
+      "netRetailerAmount": 668.85,
+      "currency": "INR",
+      "timestamp": "2026-08-28T08:07:35.012Z",
+      "status": "settled"
+    },
+    {
+      "id": "comm-ORD820239",
+      "transactionId": "ORD820239",
+      "orderId": "ORD820239",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "storeName": "John's Retail Store",
+      "customerName": "James",
+      "orderTotal": 682.5,
+      "commissionRate": 0.02,
+      "commissionAmount": 13.65,
+      "netRetailerAmount": 668.85,
+      "currency": "INR",
+      "timestamp": "2026-08-28T07:17:38.624Z",
+      "status": "settled"
+    },
+    {
+      "id": "comm-ORD632591",
+      "transactionId": "ORD632591",
+      "orderId": "ORD632591",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "storeName": "John's Retail Store",
+      "customerName": "James",
+      "orderTotal": 682.5,
+      "commissionRate": 0.02,
+      "commissionAmount": 13.65,
+      "netRetailerAmount": 668.85,
+      "currency": "INR",
+      "timestamp": "2026-08-28T05:09:52.793Z",
+      "status": "settled"
+    }
+  ],
+  "subscriptions": []
 }
