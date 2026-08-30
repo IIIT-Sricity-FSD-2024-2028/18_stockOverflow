@@ -12,3 +12,7 @@
 [2026-08-28T05:07:11.775Z] [ERROR] POST /api/users/login 401 - Invalid email or password
 [2026-08-28T05:28:51.303Z] [ERROR] POST /api/users/login 401 - Invalid email or password
 [2026-08-28T08:37:26.471Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this item.
+[2026-08-28T15:15:07.860Z] [ERROR] GET /api 404 - Cannot GET /api
+[2026-08-28T15:15:08.017Z] [ERROR] GET /favicon.ico 404 - Cannot GET /favicon.ico
+[2026-08-29T10:32:44.001Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-29T10:32:56.698Z] [ERROR] POST /api/users/login 401 - Invalid email or password
