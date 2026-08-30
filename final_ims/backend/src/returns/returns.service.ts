@@ -42,17 +42,18 @@ export class ReturnsService {
     const items = this.db.getCollection('returns') as ReturnRecord[];
 
     const existingReturn = items.find((r) => {
-      const sameSku =
-        Boolean(createReturnDto.sku) &&
-        String(r.sku || '').trim().toLowerCase() === String(createReturnDto.sku || '').trim().toLowerCase();
       const sameOrder =
         Boolean(createReturnDto.orderId) &&
-        String(r.orderId || '').trim().toLowerCase() === String(createReturnDto.orderId || '').trim().toLowerCase();
-      return sameSku || sameOrder;
+        Boolean(r.orderId) &&
+        String(r.orderId || '').trim().toLowerCase() ===
+          String(createReturnDto.orderId || '').trim().toLowerCase();
+      return sameOrder;
     });
 
     if (existingReturn) {
-      throw new BadRequestException('A return request has already been submitted for this item.');
+      throw new BadRequestException(
+        'A return request has already been submitted for this order.',
+      );
     }
 
     const nextNumber =
@@ -359,8 +360,9 @@ export class ReturnsService {
       | undefined;
 
     if (normalizedOrderId) {
+      const cleanOrderId = normalizedOrderId.replace(/^#/, '').toLowerCase();
       transaction = transactions.find(
-        (entry) => entry.orderId === normalizedOrderId,
+        (entry) => String(entry.orderId || '').replace(/^#/, '').toLowerCase() === cleanOrderId,
       );
       item = transaction
         ? this.findTransactionItem(

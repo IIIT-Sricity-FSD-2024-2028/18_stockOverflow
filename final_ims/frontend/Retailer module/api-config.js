@@ -441,7 +441,7 @@
     if (!session) return;
 
     var initials = buildInitials(session.name);
-    ['avatar', 'topbarAvatar', 'sidebarAvatar'].forEach(function (id) {
+    ['avatar', 'topbarAvatar', 'userAvatar', 'sidebarAvatar'].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) el.textContent = initials;
     });
@@ -575,6 +575,44 @@
   }
 
   function setupGlobalProfilePopover() {
+    var topbarRight = document.querySelector('.topbar-right');
+    if (topbarRight && !document.getElementById('profilePopover')) {
+      var pop = document.createElement('div');
+      pop.id = 'profilePopover';
+      pop.className = 'profile-popover';
+      pop.innerHTML = (
+        '<div class="profile-popover-head">' +
+          '<div class="profile-popover-avatar" id="profilePopoverAvatar">JO</div>' +
+          '<div>' +
+            '<div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>' +
+            '<div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="profile-popover-grid">' +
+          '<div class="profile-popover-item">' +
+            '<div class="profile-popover-label">Email</div>' +
+            '<div class="profile-popover-value" id="profilePopoverEmail">-</div>' +
+          '</div>' +
+          '<div class="profile-popover-item">' +
+            '<div class="profile-popover-label">Phone</div>' +
+            '<div class="profile-popover-value" id="profilePopoverPhone">-</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="profile-popover-actions">' +
+          '<button onclick="window.location.href=\'Retailer_Profile.html\'" type="button">Edit Profile</button>' +
+          '<button class="btn-primary" onclick="if(window.DB){DB.logout();}localStorage.removeItem(\'so_session\');window.location.href=\'../index.html\'" type="button">Logout</button>' +
+        '</div>'
+      );
+      topbarRight.appendChild(pop);
+    }
+
+    document.querySelectorAll('.topbar-avatar, .tb-avatar, #topbarAvatar, #userAvatar, #avatar').forEach(function(el) {
+      el.style.cursor = 'pointer';
+      el.onclick = function(e) {
+        window.toggleProfilePopover(e);
+      };
+    });
+
     window.toggleProfilePopover = function(e) {
       if (e) e.stopPropagation();
       var popover = document.getElementById('profilePopover');
@@ -759,8 +797,11 @@
         notifPop.classList.remove('open');
       }
       if (profPop && profPop.classList.contains('open') && !profPop.contains(e.target)) {
-        var topAv = document.getElementById('topbarAvatar');
-        if (!topAv || !topAv.contains(e.target)) {
+        var isAvatar = false;
+        document.querySelectorAll('.topbar-avatar, .tb-avatar, #topbarAvatar, #userAvatar, #avatar').forEach(function(av) {
+          if (av && av.contains(e.target)) isAvatar = true;
+        });
+        if (!isAvatar) {
           profPop.classList.remove('open');
         }
       }

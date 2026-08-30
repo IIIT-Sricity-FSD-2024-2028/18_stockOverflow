@@ -1,35 +1,6 @@
 [
   {
     "business": {
-      "businessName": "John",
-      "businessType": "Sole Proprietorship",
-      "businessEmail": "john@gmail.com",
-      "retailerCode": "RET-537",
-      "currency": "USD",
-      "fiscalYear": "January"
-    },
-    "primaryContact": {
-      "fullName": "John"
-    },
-    "profileStatus": "active",
-    "stores": [
-      {
-        "name": "John's store",
-        "code": "JOHN-S-STORE",
-        "contactPerson": "John",
-        "type": "Retail Store",
-        "status": "active"
-      }
-    ],
-    "suppliers": [],
-    "products": [],
-    "id": "bc67a598-c2fd-4702-b686-4e70cf5ba882",
-    "status": "completed",
-    "createdAt": "2026-08-29T10:43:36.546Z",
-    "updatedAt": "2026-08-29T10:43:36.546Z"
-  },
-  {
-    "business": {
       "businessName": "Retailer",
       "businessType": "Partnership",
       "businessEmail": "abhirajaaayush@gmail.com",

@@ -1,5 +1,29 @@
 [
   {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "John",
+      "businessType": "Distributor",
+      "businessEmail": "john@gmail.com",
+      "state": "Gujarat",
+      "primaryCategory": "Electronics & Technology"
+    },
+    "primaryContact": {
+      "fullName": "John",
+      "directEmail": "john@gmail.com"
+    },
+    "retailers": [],
+    "products": [],
+    "documents": [],
+    "id": "fcda8cfb-cb35-41fc-86ac-59a4387708bc",
+    "status": "completed",
+    "profileStatus": "active",
+    "createdAt": "2026-08-30T15:48:50.561Z",
+    "updatedAt": "2026-08-30T15:48:50.561Z"
+  },
+  {
     "id": "0ccceb67-958d-4957-9728-e023994a8e8d",
     "status": "completed",
     "profileStatus": "active",

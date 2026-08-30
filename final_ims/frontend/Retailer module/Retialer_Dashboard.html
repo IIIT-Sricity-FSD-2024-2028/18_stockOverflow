@@ -140,10 +140,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .panel-title{font-size:14px;font-weight:700;flex:1;letter-spacing:-.2px}
 .panel-link{font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;white-space:nowrap}
 .panel-link:hover{text-decoration:underline}
-.filter-tabs{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
-.filter-tab{padding:4px 9px;font-size:11.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-right:1px solid var(--border)}
+.filter-tabs,.panel-tabs{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--card)}
+.filter-tab{padding:5px 11px;font-size:11.5px;font-weight:600;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-right:1px solid var(--border);user-select:none;white-space:nowrap;display:inline-block}
 .filter-tab:last-child{border-right:none}
-.filter-tab:hover{background:var(--bg)}
+.filter-tab:hover{background:var(--bg);color:var(--text-primary)}
 .filter-tab.active{background:var(--primary);color:#fff}
 .panel-select{display:flex;align-items:center;gap:5px;padding:5px 9px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11.5px;color:var(--text-secondary);cursor:pointer;background:var(--card);transition:background .15s;white-space:nowrap}
 .panel-select:hover{background:var(--bg)}
@@ -413,10 +413,10 @@ tr:hover td{background:rgba(91,103,202,.03)}
         <span class="notif-dot"></span>
       </div>
       
-      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">RS</button>
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">JO</button>
       <div class="profile-popover" id="profilePopover">
         <div class="profile-popover-head">
-          <div class="profile-popover-avatar" id="profilePopoverAvatar">RS</div>
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">JO</div>
           <div>
             <div class="profile-popover-name" id="profilePopoverName">Retailer Profile</div>
             <div class="profile-popover-sub" id="profilePopoverCode">Retailer</div>
@@ -445,13 +445,13 @@ tr:hover td{background:rgba(91,103,202,.03)}
     <div class="page-header">
       <div>
         <div class="page-title">Retailer Dashboard</div>
-        <div class="page-subtitle">Welcome back, Rahul! You have 24 pending orders today.</div>
+        <div class="page-subtitle" id="dashboardSubtitle">Welcome back, John! You have 0 pending orders today.</div>
       </div>
     </div>
 
     <div class="notification-bar" id="notifBar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>⚠️ 5 products are running low on stock. <strong>Reorder now</strong> to avoid stockouts.</span>
+      <span>⚠️ <span id="notifText">1 product is running low on stock.</span> <a href="Reorder_Recommendations.html" style="color:#92400e;font-weight:700;text-decoration:underline;">Reorder now</a> to avoid stockouts.</span>
       <div class="close-btn" onclick="document.getElementById('notifBar').style.display='none'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </div>
@@ -508,10 +508,10 @@ tr:hover td{background:rgba(91,103,202,.03)}
       <div class="fin-card">
         <div class="fin-card-top">
           <div><div class="fin-card-val">$0</div><div class="fin-card-label">Net Profit</div></div>
-          <div class="fin-card-icon" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg></div>
+          <div class="fin-card-icon" id="netProfitIcon" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>0.0% vs last month</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>0.0% vs last month</span><a href="Inventory_Overview.html">View All</a></div>
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
@@ -519,7 +519,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
           <div class="fin-card-icon" style="background:#fee2e2"><svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>Due within 7 days</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>Due within 7 days</span><a href="Create_Purchase_Order.html">View All</a></div>
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
@@ -527,7 +527,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
           <div class="fin-card-icon" style="background:#fef3c7"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>0.0% vs last month</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>0.0% vs last month</span><a href="Product_List.html">View All</a></div>
       </div>
       <div class="fin-card">
         <div class="fin-card-top">
@@ -535,7 +535,7 @@ tr:hover td{background:rgba(91,103,202,.03)}
           <div class="fin-card-icon" style="background:#dbeafe"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
         </div>
         <hr class="fin-card-divider"/>
-        <div class="fin-card-footer"><span>0.0% vs last month</span><a>View All</a></div>
+        <div class="fin-card-footer"><span>0.0% vs last month</span><a href="Returns_Management.html">View All</a></div>
       </div>
     </div>
 
@@ -545,13 +545,13 @@ tr:hover td{background:rgba(91,103,202,.03)}
         <div class="panel-header">
           <div class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg></div>
           <div class="panel-title">Sales & Purchase</div>
-          <div class="panel-tabs">
-            <div class="filter-tab active" onclick="setFilter(this,'salesFilter')">1D</div>
-            <div class="filter-tab" onclick="setFilter(this,'salesFilter')">1W</div>
-            <div class="filter-tab" onclick="setFilter(this,'salesFilter')">1M</div>
-            <div class="filter-tab" onclick="setFilter(this,'salesFilter')">3M</div>
-            <div class="filter-tab" onclick="setFilter(this,'salesFilter')">6M</div>
-            <div class="filter-tab" onclick="setFilter(this,'salesFilter')">1Y</div>
+          <div class="filter-tabs" id="salesFilterTabs">
+            <div class="filter-tab active" onclick="setFilter(this,'1D')">1D</div>
+            <div class="filter-tab" onclick="setFilter(this,'1W')">1W</div>
+            <div class="filter-tab" onclick="setFilter(this,'1M')">1M</div>
+            <div class="filter-tab" onclick="setFilter(this,'3M')">3M</div>
+            <div class="filter-tab" onclick="setFilter(this,'6M')">6M</div>
+            <div class="filter-tab" onclick="setFilter(this,'1Y')">1Y</div>
           </div>
         </div>
         <div class="chart-area">
@@ -1151,6 +1151,25 @@ function logout() {
       window.renderTransactions(el.textContent.trim());
     };
 
+    const pendingOrdersCount = purchaseOrders.filter((po) => String(po.status || '').toLowerCase().includes('pending')).length;
+    const retailerName = session.name || (session.profile && session.profile.name) || 'John';
+
+    const greetingEl = document.getElementById('dashboardSubtitle');
+    if (greetingEl) {
+      greetingEl.textContent = `Welcome back, ${retailerName}! You have ${pendingOrdersCount} pending order${pendingOrdersCount === 1 ? '' : 's'} today.`;
+    }
+
+    const storeNameEl = document.getElementById('topbarStoreName');
+    if (storeNameEl) {
+      storeNameEl.textContent = session.store || (session.profile && session.profile.stores && session.profile.stores[0] && session.profile.stores[0].name) || "John's Retail Store";
+    }
+
+    const initials = retailerName.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase() || 'JO';
+    const topAvatar = document.getElementById('topbarAvatar');
+    if (topAvatar) topAvatar.textContent = initials;
+    const popAvatar = document.getElementById('profilePopoverAvatar');
+    if (popAvatar) popAvatar.textContent = initials;
+
     const metricCards = document.querySelectorAll('.metric-card');
     if(metricCards[0]){
       metricCards[0].querySelector('.metric-value').textContent = formatCurrency(totalSales);
@@ -1170,7 +1189,17 @@ function logout() {
     }
 
     const finCards = document.querySelectorAll('.fin-card');
-    if(finCards[0]) finCards[0].querySelector('.fin-card-val').textContent = formatCurrency(netProfit);
+    if(finCards[0]) {
+      finCards[0].querySelector('.fin-card-val').textContent = formatCurrency(netProfit);
+      const icon = document.getElementById('netProfitIcon');
+      if (netProfit < 0 && icon) {
+        icon.style.background = '#fee2e2';
+        icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="22,17 13.5,8.5 8.5,13.5 2,7"/><polyline points="16,17 22,17 22,11"/></svg>`;
+      } else if (icon) {
+        icon.style.background = '#dcfce7';
+        icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg>`;
+      }
+    }
     if(finCards[1]) finCards[1].querySelector('.fin-card-val').textContent = formatCurrency(invoiceDue);
     if(finCards[2]) finCards[2].querySelector('.fin-card-val').textContent = formatCurrency(totalExpenses);
     if(finCards[3]) finCards[3].querySelector('.fin-card-val').textContent = formatCurrency(paymentReturns);
@@ -1203,13 +1232,12 @@ function logout() {
     if(overallStats[1]) overallStats[1].textContent = formatCompact(customers.length);
     if(overallStats[2]) overallStats[2].textContent = formatCompact(transactions.length);
 
-    const notifBar = document.getElementById('notifBar');
-    if(notifBar){
-      const label = notifBar.querySelector('span');
+    const notifText = document.getElementById('notifText');
+    if(notifText){
       if(lowStockProducts.length){
-        label.textContent = `${lowStockProducts.length} products are running low on stock.`;
+        notifText.textContent = `${lowStockProducts.length} product${lowStockProducts.length === 1 ? ' is' : 's are'} running low on stock.`;
       }else{
-        label.textContent = 'No low stock alerts for the selected store.';
+        notifText.textContent = 'No products are running low on stock.';
       }
     }
 
@@ -1265,11 +1293,26 @@ function logout() {
       renderEmptyState(topCustomersHost, 'No customers yet.');
     }
 
+    const totalCustCount = customers.length;
+    const firstTimePct = totalCustCount ? Math.round((firstTimeCustomers / totalCustCount) * 100) : 0;
+    const returnPct = totalCustCount ? Math.round((returnCustomers / totalCustCount) * 100) : 0;
+
     const donutCenter = document.querySelector('.donut-center-val');
-    if(donutCenter) donutCenter.textContent = formatCompact(customers.length);
-    const donutLegendValues = document.querySelectorAll('.donut-legend-val');
-    if(donutLegendValues[0]) donutLegendValues[0].textContent = formatCompact(firstTimeCustomers);
-    if(donutLegendValues[1]) donutLegendValues[1].textContent = formatCompact(returnCustomers);
+    if(donutCenter) donutCenter.textContent = formatCompact(totalCustCount);
+    
+    const donutLegendItems = document.querySelectorAll('.donut-legend-item');
+    if(donutLegendItems[0]){
+      const val = donutLegendItems[0].querySelector('.donut-legend-val');
+      const badge = donutLegendItems[0].querySelector('.badge');
+      if(val) val.textContent = formatCompact(firstTimeCustomers);
+      if(badge) badge.textContent = `${firstTimePct}%`;
+    }
+    if(donutLegendItems[1]){
+      const val = donutLegendItems[1].querySelector('.donut-legend-val');
+      const badge = donutLegendItems[1].querySelector('.badge');
+      if(val) val.textContent = formatCompact(returnCustomers);
+      if(badge) badge.textContent = `${returnPct}%`;
+    }
 
     const categorySales = {};
     products.forEach((product) => {
@@ -1304,18 +1347,69 @@ function logout() {
         : '<div style="padding:12px;color:#9ca3af;font-size:12px">No category statistics yet.</div>';
     }
 
-    destroyChart('salesChart');
-    new Chart(document.getElementById('salesChart').getContext('2d'),{
-      type:'bar',
-      data:{
-        labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-        datasets:[
-          {label:'Purchase',data:purchaseByMonth,backgroundColor:'#5b67ca',borderRadius:4,borderSkipped:false,barPercentage:0.5,categoryPercentage:0.7},
-          {label:'Sales',data:salesByMonth,backgroundColor:'#22c55e',borderRadius:4,borderSkipped:false,barPercentage:0.5,categoryPercentage:0.7}
-        ]
-      },
-      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9ca3af'}},y:{grid:{color:'#f3f4f6'},border:{display:false},ticks:{callback:(v)=>`$${v}K`,font:{size:10},color:'#9ca3af'}}}}
-    });
+    function renderSalesChartByRange(range) {
+      destroyChart('salesChart');
+      let labels = [];
+      let purchaseData = [];
+      let salesData = [];
+
+      if (range === '1D') {
+        labels = ['12 AM', '4 AM', '8 AM', '12 PM', '4 PM', '8 PM'];
+        purchaseData = [0, 0, Number((totalPurchase * 0.3 / 1000).toFixed(1)), Number((totalPurchase * 0.4 / 1000).toFixed(1)), Number((totalPurchase * 0.2 / 1000).toFixed(1)), Number((totalPurchase * 0.1 / 1000).toFixed(1))];
+        salesData = [0, 0, Number((totalSales * 0.2 / 1000).toFixed(1)), Number((totalSales * 0.4 / 1000).toFixed(1)), Number((totalSales * 0.3 / 1000).toFixed(1)), Number((totalSales * 0.1 / 1000).toFixed(1))];
+      } else if (range === '1W') {
+        labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        purchaseData = [0, 0, 0, 0, Number((totalPurchase * 0.5 / 1000).toFixed(1)), Number((totalPurchase * 0.5 / 1000).toFixed(1)), 0];
+        salesData = [0, 0, 0, 0, Number((totalSales * 0.4 / 1000).toFixed(1)), Number((totalSales * 0.6 / 1000).toFixed(1)), 0];
+      } else if (range === '1M') {
+        labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+        purchaseData = [0, 0, 0, Number((totalPurchase / 1000).toFixed(1))];
+        salesData = [0, 0, 0, Number((totalSales / 1000).toFixed(1))];
+      } else if (range === '3M') {
+        labels = ['Jun', 'Jul', 'Aug'];
+        purchaseData = [0, 0, purchaseByMonth[7]];
+        salesData = [0, 0, salesByMonth[7]];
+      } else if (range === '6M') {
+        labels = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+        purchaseData = purchaseByMonth.slice(2, 8);
+        salesData = salesByMonth.slice(2, 8);
+      } else {
+        labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        purchaseData = purchaseByMonth;
+        salesData = salesByMonth;
+      }
+
+      new Chart(document.getElementById('salesChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Purchase', data: purchaseData, backgroundColor: '#5b67ca', borderRadius: 4, borderSkipped: false, barPercentage: 0.5, categoryPercentage: 0.7 },
+            { label: 'Sales', data: salesData, backgroundColor: '#22c55e', borderRadius: 4, borderSkipped: false, barPercentage: 0.5, categoryPercentage: 0.7 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 }, color: '#9ca3af' } },
+            y: { grid: { color: '#f3f4f6' }, border: { display: false }, ticks: { callback: (v) => `$${v}K`, font: { size: 10 }, color: '#9ca3af' } }
+          }
+        }
+      });
+    }
+
+    window.setFilter = function(el, range) {
+      if (!el) return;
+      const parent = el.parentElement;
+      if (parent) {
+        parent.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      }
+      el.classList.add('active');
+      renderSalesChartByRange(range || el.textContent.trim());
+    };
+
+    renderSalesChartByRange('1D');
 
     destroyChart('revExpChart');
     new Chart(document.getElementById('revExpChart').getContext('2d'),{

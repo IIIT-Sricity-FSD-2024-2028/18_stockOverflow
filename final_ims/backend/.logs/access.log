@@ -6433,3 +6433,870 @@
 [2026-08-30T10:42:22.824Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
 [2026-08-30T10:42:22.823Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
 [2026-08-30T10:42:22.827Z] [GET] /api/suppliers 304 - 3ms - IP: ::1
+[2026-08-30T10:43:17.252Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-08-30T10:43:17.264Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::1
+[2026-08-30T10:43:17.269Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::1
+[2026-08-30T10:43:17.278Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:17.280Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:18.069Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-08-30T10:43:18.093Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::1
+[2026-08-30T10:43:18.105Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-08-30T10:43:18.106Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::1
+[2026-08-30T10:43:19.342Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::1
+[2026-08-30T10:43:19.358Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:19.363Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-08-30T10:43:19.878Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::1
+[2026-08-30T10:43:19.880Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:19.902Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:19.903Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::1
+[2026-08-30T10:43:20.583Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::1
+[2026-08-30T10:43:20.585Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:20.595Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::1
+[2026-08-30T10:43:20.597Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:20.599Z] [GET] /api/stores?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:21.745Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::1
+[2026-08-30T10:43:21.748Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:21.776Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-08-30T10:43:21.779Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-08-30T10:43:22.291Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::1
+[2026-08-30T10:43:22.293Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:22.296Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:22.307Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:22.309Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:23.897Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::1
+[2026-08-30T10:43:23.897Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T10:43:23.899Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-08-30T10:43:23.913Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:23.915Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:23.915Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::1
+[2026-08-30T10:43:24.610Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::1
+[2026-08-30T10:43:24.614Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-08-30T10:43:24.621Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T10:43:24.623Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-08-30T10:43:24.616Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T10:43:24.618Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-08-30T10:43:24.627Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:24.631Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-08-30T10:43:25.837Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::1
+[2026-08-30T10:43:25.839Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:25.855Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-08-30T10:43:25.860Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-08-30T10:44:51.556Z] [POST] /api/users/login 201 - 3ms - IP: ::1
+[2026-08-30T10:44:51.730Z] [GET] /api/products 200 - 2ms - IP: ::1
+[2026-08-30T10:44:54.899Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T10:44:54.903Z] [GET] /api/transactions/purchased-products?customer=James 200 - 4ms - IP: ::1
+[2026-08-30T10:44:54.916Z] [GET] /api/reservations/requests?status=pending&customer=James 200 - 4ms - IP: ::1
+[2026-08-30T10:44:54.924Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-08-30T10:44:56.933Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T10:44:56.934Z] [GET] /api/transactions/purchased-products?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:44:56.941Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:44:58.194Z] [GET] /api/returns?customer=James 200 - 1ms - IP: ::1
+[2026-08-30T10:45:12.360Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:45:20.109Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:45:21.231Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:45:30.640Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:45:34.791Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:46:08.205Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:46:10.102Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T10:46:10.104Z] [GET] /api/transactions/purchased-products?customer=James 304 - 2ms - IP: ::1
+[2026-08-30T10:46:10.117Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:46:10.124Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-08-30T10:46:10.755Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:46:11.144Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:46:14.350Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:46:15.562Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:46:18.097Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T10:46:18.098Z] [GET] /api/transactions/purchased-products?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:46:18.103Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:46:18.107Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:46:19.141Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:47:07.436Z] [POST] /api/users/login 201 - 4ms - IP: ::1
+[2026-08-30T10:47:07.919Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T10:47:07.920Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d 200 - 1ms - IP: ::1
+[2026-08-30T10:47:07.942Z] [GET] /api/retailers 304 - 0ms - IP: ::1
+[2026-08-30T10:47:07.950Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-08-30T10:47:07.962Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T10:47:07.964Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 200 - 2ms - IP: ::1
+[2026-08-30T10:47:26.289Z] [POST] /api/users/login 201 - 1ms - IP: ::1
+[2026-08-30T10:47:26.323Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:47:28.792Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:47:39.259Z] [POST] /api/users/login 201 - 2ms - IP: ::1
+[2026-08-30T10:47:39.294Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:47:41.881Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:47:42.965Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:47:50.093Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T10:47:50.094Z] [GET] /api/transactions/purchased-products?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:47:50.098Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:47:50.102Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:47:59.304Z] [POST] /api/users/login 201 - 2ms - IP: ::1
+[2026-08-30T10:47:59.335Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:48:01.247Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:48:02.146Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:48:06.664Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:48:07.201Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:48:08.093Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:48:08.638Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:48:09.232Z] [GET] /api/returns?customer=James 304 - 0ms - IP: ::1
+[2026-08-30T10:48:10.444Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-08-30T10:48:12.200Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::1
+[2026-08-30T10:48:12.775Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-08-30T10:48:15.476Z] [GET] /api/returns?customer=James 304 - 0ms - IP: ::1
+[2026-08-30T15:26:28.666Z] [POST] /api/users/login 201 - 9ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:28.809Z] [GET] /api/products 200 - 8ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:31.475Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-30T15:26:31.479Z] [GET] /api/transactions/purchased-products?customer=consumer 200 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:31.502Z] [GET] /api/reservations/requests?status=pending&customer=consumer 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:31.511Z] [GET] /api/products 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:33.025Z] [GET] /api/returns?customer=consumer 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:33.909Z] [GET] /api/returns?customer=consumer 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:34.180Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-30T15:26:34.183Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:34.207Z] [GET] /api/reservations/requests?status=pending&customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:34.213Z] [GET] /api/products 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:35.355Z] [GET] /api/products 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:36.849Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=consumer
+[2026-08-30T15:26:36.852Z] [GET] /api/transactions/purchased-products?customer=consumer 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:36.880Z] [GET] /api/reservations/requests?status=pending&customer=consumer 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:36.888Z] [GET] /api/products 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:26:37.808Z] [GET] /api/returns?customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:44.564Z] [POST] /api/users/login 201 - 23ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:44.837Z] [GET] /api/products 200 - 18ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:52.370Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:36:52.379Z] [GET] /api/transactions/purchased-products?customer=James 200 - 9ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:52.383Z] [GET] /api/reservations/requests?status=pending&customer=James 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:52.388Z] [GET] /api/products 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:54.398Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:36:54.400Z] [GET] /api/transactions/purchased-products?customer=James 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:54.407Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:56.403Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:36:56.406Z] [GET] /api/transactions/purchased-products?customer=James 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:56.414Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:58.396Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:36:58.400Z] [GET] /api/transactions/purchased-products?customer=James 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:58.405Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:59.235Z] [GET] /api/returns?customer=James 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:36:59.266Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=James
+[2026-08-30T15:36:59.269Z] [GET] /api/transactions?customer=James 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:37:13.143Z] [GET] /api/returns?customer=James 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:37:20.326Z] [POST] /api/returns 201 - 25ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:37:20.336Z] [GET] /api/returns?customer=James 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:37:20.344Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:37:38.759Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:14.689Z] [POST] /api/users/login 201 - 26ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.231Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.237Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.242Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.246Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.252Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.262Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.263Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:38:15.266Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.271Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.274Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.275Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:38:15.277Z] [GET] /api/suppliers 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:15.279Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:22.317Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:22.322Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:22.328Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:22.331Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:38:39.081Z] [PUT] /api/returns/RET-019 200 - 15ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:12.980Z] [POST] /api/users/login 201 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:13.026Z] [GET] /api/products 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:22.486Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:39:22.487Z] [GET] /api/transactions/purchased-products?customer=James 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:22.499Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:22.506Z] [GET] /api/products 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:24.519Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:39:24.520Z] [GET] /api/transactions/purchased-products?customer=James 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:24.525Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:26.527Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:39:26.528Z] [GET] /api/transactions/purchased-products?customer=James 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:26.531Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:28.515Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:39:28.517Z] [GET] /api/transactions/purchased-products?customer=James 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:28.521Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:30.526Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-08-30T15:39:30.528Z] [GET] /api/transactions/purchased-products?customer=James 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:30.532Z] [GET] /api/reservations/requests?status=pending&customer=James 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:31.137Z] [GET] /api/returns?customer=James 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:39:31.152Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=James
+[2026-08-30T15:39:31.155Z] [GET] /api/transactions?customer=James 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:02.848Z] [GET] /api/products 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:03.456Z] [GET] /api/products 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:03.845Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:03.853Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=James
+[2026-08-30T15:40:03.854Z] [GET] /api/transactions?customer=James 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:21.904Z] [GET] /api/returns?customer=consumer 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:21.961Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=consumer
+[2026-08-30T15:40:21.963Z] [GET] /api/transactions?customer=consumer 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.330Z] [POST] /api/users/login 201 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.493Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.495Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.498Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.554Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.557Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.564Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.561Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.566Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.566Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:40:31.567Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.568Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:40:31.570Z] [GET] /api/suppliers 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:40:31.573Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.473Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.481Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.494Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.628Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.631Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.634Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.637Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.636Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:42:12.638Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.640Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.643Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:12.644Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:42:12.645Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.321Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.337Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.341Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.342Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.344Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.350Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.351Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.352Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:42:44.353Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.354Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.362Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:42:44.370Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:42:44.371Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.165Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.172Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.175Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.263Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.265Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.267Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.271Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.272Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:43:02.274Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.275Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.277Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:02.278Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:43:02.279Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.167Z] [POST] /api/users/login 201 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.320Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.327Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.332Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.404Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.411Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.421Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.425Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.428Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:43:43.430Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.432Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.437Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:43:43.439Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:43:43.440Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:25.429Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:25.432Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:25.435Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:45:25.436Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:25.437Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:45:25.438Z] [GET] /api/suppliers 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:25.440Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:25.443Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:27.171Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:27.182Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:27.186Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:27.195Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:27.197Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:28.489Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:28.491Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:28.518Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:28.519Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.225Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.241Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.243Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.893Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.895Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.897Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.898Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:45:29.899Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.901Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.929Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:29.931Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:31.071Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:31.078Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:31.079Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:32.294Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:32.297Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:32.304Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:32.310Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:32.313Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.027Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.029Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.030Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.031Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:45:36.032Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.034Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.043Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.044Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.654Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.655Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.679Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:36.680Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:37.598Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:37.601Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:37.604Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:37.608Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:37.605Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:45:37.610Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:37.647Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:37.648Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:38.154Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:38.155Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:38.168Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:38.170Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:38.172Z] [GET] /api/stores?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:39.862Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:45:39.863Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:39.864Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:39.865Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:42.402Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:45:42.404Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:42.405Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:42.406Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:49.956Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:45:49.957Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:49.958Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:49.960Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:55.007Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:55.009Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:55.010Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:55.026Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:55.028Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:56.638Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:56.639Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:56.658Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:56.659Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:57.594Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:57.595Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:45:57.596Z] [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:57.598Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-30T15:45:57.599Z] [GET] /api/billers/requests 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:57.606Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:57.607Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:58.624Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:58.624Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:45:58.625Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:58.637Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:45:58.639Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:00.205Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:00.207Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:00.208Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:00.209Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:46:00.207Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:46:00.210Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:00.221Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:00.223Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:01.289Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:01.289Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:46:01.290Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:01.299Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:01.300Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:03.690Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:03.692Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:03.693Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:46:03.694Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:03.694Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:46:03.695Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:03.698Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:03.700Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:04.621Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:04.621Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:46:04.622Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:04.654Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:04.656Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:04.657Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:05.956Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:05.957Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:05.974Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:05.976Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:22.018Z] [POST] /api/users/login 201 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:22.198Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:46:22.199Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:22.205Z] [GET] /api/retailers 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:22.209Z] [GET] /api/purchase-orders 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:22.217Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:46:22.218Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:46:27.194Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:46:27.194Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:49.309Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:49.312Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:49.377Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/by-email/hans%40gmail.com | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:49.379Z] [GET] /api/suppliers/by-email/hans%40gmail.com 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:49.386Z] [GET] /api/retailers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:49.393Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:49.413Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:49.414Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:50.513Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:50.515Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:50.550Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/by-email/john%40gmail.com | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:50.551Z] [GET] /api/suppliers/by-email/john%40gmail.com 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:50.557Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:50.564Z] [POST] /api/suppliers/setup 201 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:50.642Z] [GET] /api/retailers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:50.652Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:50.661Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/fcda8cfb-cb35-41fc-86ac-59a4387708bc/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:50.662Z] [GET] /api/suppliers/fcda8cfb-cb35-41fc-86ac-59a4387708bc/documents 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:53.986Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:53.988Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:53.997Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/by-email/hans%40gmail.com | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:53.998Z] [GET] /api/suppliers/by-email/hans%40gmail.com 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:54.003Z] [GET] /api/retailers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:54.007Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:48:54.016Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:48:54.028Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 12ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:04.802Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:04.804Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:04.812Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/by-email/hans%40gmail.com | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:04.813Z] [GET] /api/suppliers/by-email/hans%40gmail.com 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:04.817Z] [GET] /api/retailers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:04.821Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:04.827Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:04.828Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:05.758Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:05.760Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:05.768Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/by-email/hans%40gmail.com | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:05.770Z] [GET] /api/suppliers/by-email/hans%40gmail.com 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:05.773Z] [GET] /api/retailers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:05.776Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:05.782Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:05.784Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:06.808Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:06.810Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:06.820Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/by-email/hans%40gmail.com | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:06.821Z] [GET] /api/suppliers/by-email/hans%40gmail.com 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:06.824Z] [GET] /api/retailers 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:06.827Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:06.835Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:06.836Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:14.292Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:14.294Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 2ms - IP: ::1
+[2026-08-30T15:49:14.433Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:14.435Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:14.445Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/by-email/john%40gmail.com | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:14.447Z] [GET] /api/suppliers/by-email/john%40gmail.com 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:14.491Z] [GET] /api/retailers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:14.500Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:14.507Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/fcda8cfb-cb35-41fc-86ac-59a4387708bc/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:14.508Z] [GET] /api/suppliers/fcda8cfb-cb35-41fc-86ac-59a4387708bc/documents 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:19.137Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/fcda8cfb-cb35-41fc-86ac-59a4387708bc/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:19.138Z] [GET] /api/suppliers/fcda8cfb-cb35-41fc-86ac-59a4387708bc/documents 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:21.195Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:21.196Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d 200 - 1ms - IP: ::1
+[2026-08-30T15:49:27.633Z] [GET] /api/retailers 200 - 1ms - IP: ::1
+[2026-08-30T15:49:30.370Z] [DELETE] /api/retailers/bc67a598-c2fd-4702-b686-4e70cf5ba882 204 - 3ms - IP: ::1
+[2026-08-30T15:49:31.899Z] [GET] /api/retailers 200 - 1ms - IP: ::1
+[2026-08-30T15:49:33.758Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:33.761Z] [GET] /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:33.769Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/by-email/hans%40gmail.com | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:33.770Z] [GET] /api/suppliers/by-email/hans%40gmail.com 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:33.778Z] [GET] /api/retailers 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:33.781Z] [GET] /api/purchase-orders 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:33.790Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:33.792Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.451Z] [POST] /api/users/login 201 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.517Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.522Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.527Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.532Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.542Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.544Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.546Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.555Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.560Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.560Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:54.550Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:54.554Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:49:54.562Z] [GET] /api/suppliers 200 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.021Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.023Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:49:56.030Z] [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.032Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-30T15:49:56.033Z] [GET] /api/billers/requests 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.044Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.052Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.653Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.654Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:56.655Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.665Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:56.667Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:57.418Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:57.418Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:57.419Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:57.440Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:57.442Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:57.443Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.172Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.174Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.175Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:49:58.178Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:49:58.177Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.179Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.181Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.185Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.891Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.892Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.906Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:49:58.907Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:06.259Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:06.260Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:50:06.261Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:06.282Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:06.286Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:06.288Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:10.354Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:10.358Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:10.360Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:50:10.362Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:10.363Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:50:10.365Z] [GET] /api/suppliers 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:10.368Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:10.373Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:13.862Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:13.863Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:50:13.864Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:13.880Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:13.882Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:13.883Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:14.498Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:14.501Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:14.519Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:14.520Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:16.065Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:16.066Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:50:16.067Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:16.077Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:16.078Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.093Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.095Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.098Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.100Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:50:19.101Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.099Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.113Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.115Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.675Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.676Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.694Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:19.695Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:22.952Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 8ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:22.972Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 10ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:22.995Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 15ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:23.016Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:23.023Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:23.028Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:23.031Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:50:23.033Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:23.038Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:23.041Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:23.042Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:50:23.043Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:50:23.049Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.359Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.371Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.389Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.497Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.500Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.519Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.604Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.614Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:52:38.615Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.617Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.622Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:38.625Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:52:38.626Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.233Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.236Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.239Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.259Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.261Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.279Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.281Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:52:57.281Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.282Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.283Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.284Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:52:57.285Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:52:57.285Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.797Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.801Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.803Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.818Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.821Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.842Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.845Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.846Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:53:04.847Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.847Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.848Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:04.849Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:53:04.850Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:14.972Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:14.975Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:14.980Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:15.024Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:15.027Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:15.067Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:15.077Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:15.078Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:53:15.079Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:15.088Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:15.095Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:53:15.096Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:53:15.097Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:02.615Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:02.623Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:02.625Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:02.631Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:02.635Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:27.204Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:27.209Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:27.237Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:27.238Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:51.046Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:51.060Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:51.063Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:52.282Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:52.285Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:52.288Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:52.300Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:52.302Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:58.481Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:58.551Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:58.560Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:59.790Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:59.793Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:59.806Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:59.856Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:54:59.859Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:11.292Z] [GET] /api/products/13658856-119e-4599-8733-d73d00c19713?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:11.305Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:11.404Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:11.407Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:37.580Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:37.589Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:55:37.583Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:37.588Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:37.592Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:37.594Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:37.598Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:55:37.600Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:08.780Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:08.783Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:08.800Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:08.802Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:32.791Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:32.794Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:32.803Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:32.807Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:56:32.823Z] [GET] /api/stores?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:01.189Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:01.192Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:01.193Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:01.210Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:01.212Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:24.358Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:24.359Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:24.381Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:24.384Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:25.782Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:25.783Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:25.793Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:25.795Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:51.270Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:51.271Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:57:51.272Z] [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:51.272Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-30T15:57:51.273Z] [GET] /api/billers/requests 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:51.287Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:57:51.293Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.037Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.040Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:17.042Z] [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.051Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-30T15:58:17.062Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.057Z] [GET] /api/billers/requests 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.068Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.211Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.213Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:17.214Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.241Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.244Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:17.247Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:20.508Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:20.512Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:20.547Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:20.552Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:26.975Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:26.981Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:26.986Z] [GET] /api/suppliers 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.020Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.025Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.029Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.524Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.533Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:27.537Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.531Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.539Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:27.541Z] [GET] /api/suppliers 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.562Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:27.567Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.092Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.094Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.117Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.121Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.733Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.734Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:31.735Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.763Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.772Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:31.776Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:32.642Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:32.651Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 7ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:32.657Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:32.661Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:32.665Z] [GET] /api/stores?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.138Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.140Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.170Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.173Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.592Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.595Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.600Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.596Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.599Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:33.603Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.613Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:33.619Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:34.289Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:34.303Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:34.308Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:34.723Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:34.754Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:34.766Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:34.771Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:35.151Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:35.154Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:35.157Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:35.179Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:35.186Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.866Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.869Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.879Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 4ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.888Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 6ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.881Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.897Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.899Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.906Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:36.915Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 9ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.920Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.926Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:36.928Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:36.930Z] [GET] /api/suppliers 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:39.355Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:39.357Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:39.398Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:39.403Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.084Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.088Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.090Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.107Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.111Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.115Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.117Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:44.120Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.122Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:44.123Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.125Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.129Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:44.131Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:45.816Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:45.818Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:45.820Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:45.830Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:45.833Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:46.319Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:46.323Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:46.325Z] [GET] /api/stock-adjustments?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:46.326Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:46.329Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:46.332Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:46.345Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:46.346Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:47.145Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:47.147Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:47.148Z] [GET] /api/billers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:47.150Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests
+[2026-08-30T15:58:47.152Z] [GET] /api/billers/requests 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:47.159Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:47.166Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 5ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:48.142Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:48.143Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:48.143Z] [GET] /api/suppliers 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:48.160Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:48.163Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:48.166Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.111Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.114Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.143Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.146Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.848Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.851Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.852Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:50.855Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.857Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:50.860Z] [GET] /api/suppliers 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.872Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:50.876Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.269Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.275Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.279Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.297Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.302Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.307Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.310Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.311Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:58:52.312Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.314Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.315Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:58:52.316Z] [GET] /api/suppliers 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:58:52.319Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:15.130Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:15.132Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:15.156Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:15.162Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:18.883Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:18.886Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:18.920Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:18.926Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:19.656Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:19.657Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:59:19.659Z] [GET] /api/suppliers 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:19.679Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:19.681Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:19.685Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:20.915Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:20.918Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:20.920Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-08-30T15:59:20.921Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:20.922Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+[2026-08-30T15:59:20.924Z] [GET] /api/suppliers 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:20.931Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:20.936Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:22.742Z] [GET] /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:22.745Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:22.756Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:22.760Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::ffff:127.0.0.1
+[2026-08-30T15:59:22.763Z] [GET] /api/stores?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::ffff:127.0.0.1

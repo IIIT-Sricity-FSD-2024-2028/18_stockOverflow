@@ -110,8 +110,8 @@
       "taxRate": 0,
       "taxType": "Inclusive",
       "unit": "Pc",
-      "qty": 2,
-      "initialQty": 5,
+      "qty": 3,
+      "initialQty": 6,
       "min": 5,
       "max": 5,
       "creator": "Retail Manager",
@@ -157,13 +157,13 @@
       "storeInventory": [
         {
           "storeId": "JOHN-S-STORE",
-          "qty": 2
+          "qty": 3
         }
       ],
       "initialStoreInventory": [
         {
           "storeId": "JOHN-S-STORE",
-          "qty": 5
+          "qty": 6
         }
       ],
       "feedback": [],
@@ -180,9 +180,9 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T05:05:37.997Z",
-      "updatedAt": "2026-08-30T10:40:25.018Z",
-      "restockedAt": "2026-08-28T00:00:00.000Z",
-      "lastStockChangeAt": "2026-08-28T08:37:42.389Z"
+      "updatedAt": "2026-08-30T15:38:39.074Z",
+      "restockedAt": "2026-08-30T15:38:39.074Z",
+      "lastStockChangeAt": "2026-08-30T15:38:39.074Z"
     }
   ],
   "stores": [],
@@ -492,6 +492,34 @@
     }
   ],
   "returns": [
+    {
+      "id": "RET-019",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "orderId": "ORD820239",
+      "customer": "James",
+      "customerId": "d240c107-b88c-4d79-af91-64e7bb505a4d",
+      "email": "james@gmail.com",
+      "sku": "OP3-BLK-2026",
+      "productName": "op3",
+      "product": "op3",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20OP3-BLK-2026%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "emoji": "📦",
+      "reason": "Defective / Not Working",
+      "condition": "Sealed / Unopened",
+      "refundMethod": "Original Payment Method",
+      "method": "Original Payment Method",
+      "notes": "",
+      "status": "Approved",
+      "date": "2026-08-30T15:37:20.312Z",
+      "dateN": 1788104240312,
+      "amount": 682.5,
+      "priority": "High",
+      "storeId": "JOHN-S-STORE",
+      "store": "John's Retail Store",
+      "source": "customer",
+      "retailerActionAt": "2026-08-30T15:38:39.073Z",
+      "inventoryProcessedAt": "2026-08-30T15:38:39.073Z"
+    },
     {
       "id": "RET-018",
       "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",

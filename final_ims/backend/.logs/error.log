@@ -36,3 +36,12 @@
 [2026-08-30T09:49:44.509Z] [ERROR] GET /api/purchase-returns 404 - Cannot GET /api/purchase-returns
 [2026-08-30T09:49:44.514Z] [ERROR] GET /api/purchase-orders/returns 404 - Purchase order not found
 [2026-08-30T09:49:44.530Z] [ERROR] GET /api/returns/purchase 404 - Return request not found
+[2026-08-30T15:48:49.310Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T15:48:50.514Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T15:48:53.987Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T15:49:04.803Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T15:49:05.759Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T15:49:06.809Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T15:49:14.293Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T15:49:14.434Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found
+[2026-08-30T15:49:33.759Z] [ERROR] GET /api/suppliers/0eceb657-958d-4957-9728-e023994a8e8d 404 - Supplier setup "0eceb657-958d-4957-9728-e023994a8e8d" was not found

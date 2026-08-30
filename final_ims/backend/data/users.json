@@ -14,52 +14,7 @@
     "createdAt": "2026-08-30T09:47:29.757Z",
     "updatedAt": "2026-08-30T09:47:29.757Z"
   },
-  {
-    "id": "cc5be9a4-8874-47cf-b890-8634f291133a",
-    "name": "John",
-    "email": "john@gamil.com",
-    "password": "pass1234",
-    "role": "retailer",
-    "status": "Active",
-    "store": "John's store",
-    "storeId": "JOHN-S-STORE",
-    "currentStoreId": "JOHN-S-STORE",
-    "accessibleStoreIds": [
-      "JOHN-S-STORE"
-    ],
-    "profileId": "bc67a598-c2fd-4702-b686-4e70cf5ba882",
-    "profile": {
-      "businessName": "John",
-      "businessEmail": "john@gmail.com",
-      "businessPhone": "",
-      "taxId": "",
-      "retailerCode": "RET-537",
-      "address": "",
-      "website": "",
-      "businessType": "Sole Proprietorship",
-      "currency": "USD",
-      "fiscalYear": "January",
-      "primaryIndustry": "",
-      "ownerName": "John",
-      "ownerTitle": "",
-      "ownerEmail": "john@gmail.com",
-      "profileStatus": "active",
-      "stores": [
-        {
-          "name": "John's store",
-          "code": "JOHN-S-STORE",
-          "contactPerson": "John",
-          "phone": "",
-          "address": "",
-          "type": "Retail Store",
-          "status": "active"
-        }
-      ],
-      "suppliers": []
-    },
-    "createdAt": "2026-08-29T10:42:59.891Z",
-    "updatedAt": "2026-08-29T10:43:36.557Z"
-  },
+
   {
     "id": "eaae8f04-d217-481c-9420-ddf87843169a",
     "name": "jones",
