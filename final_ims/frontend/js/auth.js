@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
       profileId: user.profileId || '',
       profile: user.profile || null,
       retailerId: user.retailerId || (user.profile && user.profile.retailerId) || (role === 'retailer' ? user.profileId : ''),
+      plan: (user && user.plan) || (role === 'retailer' || role === 'supplier' ? 'free' : undefined),
       initials: getInitials(user.name),
     };
   }

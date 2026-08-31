@@ -11,6 +11,7 @@ export declare class User {
     accessibleStoreIds?: string[];
     profileId?: string;
     profile?: Record<string, unknown>;
+    plan?: string;
     createdAt?: string;
     updatedAt?: string;
 }

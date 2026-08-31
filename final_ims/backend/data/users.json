@@ -1,95 +1,5 @@
 [
   {
-    "id": "7a5f677f-0b8f-4a39-849b-3e546226fbaa",
-    "name": "Retailer Test",
-    "email": "retailer@test.com",
-    "password": "Password123",
-    "role": "retailer",
-    "status": "Active",
-    "store": "",
-    "storeId": "",
-    "currentStoreId": "",
-    "accessibleStoreIds": [],
-    "profileId": "",
-    "createdAt": "2026-08-30T09:47:29.757Z",
-    "updatedAt": "2026-08-30T09:47:29.757Z"
-  },
-  {
-    "id": "eaae8f04-d217-481c-9420-ddf87843169a",
-    "name": "jones",
-    "email": "jones@gmail.com",
-    "password": "pass1234",
-    "role": "biller",
-    "status": "Active",
-    "store": "",
-    "storeId": "JOHN-S-STORE",
-    "currentStoreId": "JOHN-S-STORE",
-    "accessibleStoreIds": [
-      "JOHN-S-STORE"
-    ],
-    "profileId": "1",
-    "profile": {
-      "name": "jones",
-      "email": "jones@gmail.com",
-      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d"
-    },
-    "createdAt": "2026-08-28T05:09:19.586Z",
-    "updatedAt": "2026-08-28T05:09:47.236Z"
-  },
-  {
-    "id": "d240c107-b88c-4d79-af91-64e7bb505a4d",
-    "name": "James",
-    "email": "james@gmail.com",
-    "password": "pass1234",
-    "role": "consumer",
-    "status": "Active",
-    "store": "",
-    "storeId": "",
-    "currentStoreId": "",
-    "accessibleStoreIds": [],
-    "profileId": "",
-    "createdAt": "2026-08-28T05:07:32.825Z",
-    "updatedAt": "2026-08-28T05:07:32.825Z"
-  },
-  {
-    "id": "0ccceb67-958d-4957-9728-e023994a8e8d",
-    "name": "Hans",
-    "email": "hans@gmail.com",
-    "password": "pass1234",
-    "role": "supplier",
-    "status": "Active",
-    "store": "Hans",
-    "storeId": "0ccceb67-958d-4957-9728-e023994a8e8d",
-    "currentStoreId": "0ccceb67-958d-4957-9728-e023994a8e8d",
-    "accessibleStoreIds": [
-      "0ccceb67-958d-4957-9728-e023994a8e8d"
-    ],
-    "profileId": "0ccceb67-958d-4957-9728-e023994a8e8d",
-    "profile": {
-      "businessName": "Hans",
-      "businessEmail": "hans@gmail.com",
-      "businessPhone": "+91 98765 43210",
-      "supplierCode": "SUP-HANS-001",
-      "address": "123 Tech Park, Ahmedabad",
-      "website": "https://hans.supplier.local",
-      "businessType": "Distributor",
-      "currency": "INR",
-      "primaryCategory": "Electronics & Technology",
-      "paymentTerms": "Net 30",
-      "sellingType": "Wholesale",
-      "description": "Primary Electronics Supplier Hans",
-      "state": "Gujarat",
-      "ownerName": "Hans",
-      "ownerTitle": "Managing Director",
-      "ownerEmail": "hans@gmail.com",
-      "profileStatus": "active",
-      "retailers": [],
-      "productCount": 1
-    },
-    "createdAt": "2026-08-28T05:05:15.935Z",
-    "updatedAt": "2026-08-28T05:05:15.937Z"
-  },
-  {
     "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
     "name": "John",
     "email": "john@gmail.com",
@@ -132,8 +42,185 @@
       ],
       "suppliers": []
     },
+    "plan": "pro",
     "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-28T04:31:20.182Z"
+    "updatedAt": "2026-08-31T15:17:21.822Z"
+  },
+  {
+    "id": "0ccceb67-958d-4957-9728-e023994a8e8d",
+    "name": "Hans",
+    "email": "hans@gmail.com",
+    "password": "pass1234",
+    "role": "supplier",
+    "status": "Active",
+    "store": "Hans",
+    "storeId": "0ccceb67-958d-4957-9728-e023994a8e8d",
+    "currentStoreId": "0ccceb67-958d-4957-9728-e023994a8e8d",
+    "accessibleStoreIds": [
+      "0ccceb67-958d-4957-9728-e023994a8e8d"
+    ],
+    "profileId": "0ccceb67-958d-4957-9728-e023994a8e8d",
+    "profile": {
+      "businessName": "Hans",
+      "businessEmail": "hans@gmail.com",
+      "businessPhone": "+91 98765 43210",
+      "supplierCode": "SUP-HANS-001",
+      "address": "123 Tech Park, Ahmedabad",
+      "website": "https://hans.supplier.local",
+      "businessType": "Distributor",
+      "currency": "INR",
+      "primaryCategory": "Electronics & Technology",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "description": "Primary Electronics Supplier Hans",
+      "state": "Gujarat",
+      "ownerName": "Hans",
+      "ownerTitle": "Managing Director",
+      "ownerEmail": "hans@gmail.com",
+      "profileStatus": "active",
+      "retailers": [],
+      "productCount": 1
+    },
+    "plan": "enterprise",
+    "createdAt": "2026-08-28T05:05:15.935Z",
+    "updatedAt": "2026-08-31T13:58:16.566Z"
+  },
+  {
+    "id": "5cd275c8-b769-4eef-9bc7-03e08c1b0b97",
+    "name": "Yung",
+    "email": "yung@gmail.com",
+    "password": "pass1234",
+    "role": "supplier",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "34b1454b-e9ab-4520-9ba9-6e51630eafdf",
+    "profile": {
+      "businessName": "Yung",
+      "businessEmail": "yung@gmail.com",
+      "businessPhone": "",
+      "supplierCode": "",
+      "address": "",
+      "website": "",
+      "businessType": "Manufacturer",
+      "currency": "INR",
+      "primaryCategory": "",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "description": "",
+      "state": "",
+      "ownerName": "Yung",
+      "ownerTitle": "",
+      "ownerEmail": "yung@gmail.com",
+      "profileStatus": "pending",
+      "retailers": [],
+      "productCount": 1
+    },
+    "plan": "free",
+    "createdAt": "2026-08-31T12:33:56.969Z",
+    "updatedAt": "2026-08-31T12:37:05.916Z"
+  },
+  {
+    "id": "5bb28be8-ec2c-436c-89f6-04bfb2055ce1",
+    "name": "Taylor",
+    "email": "taylor@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "Taylor's Store",
+    "storeId": "TAYLOR-S-STO",
+    "currentStoreId": "TAYLOR-S-STO",
+    "accessibleStoreIds": [
+      "TAYLOR-S-STO"
+    ],
+    "profileId": "d21cd2e3-f211-48f2-9ba1-ab033d0d8340",
+    "profile": {
+      "businessName": "Taylor",
+      "businessEmail": "taylor@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-950",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "INR",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "Taylor",
+      "ownerTitle": "",
+      "ownerEmail": "taylor@gmail.com",
+      "profileStatus": "active",
+      "stores": [
+        {
+          "name": "Taylor's Store",
+          "code": "TAYLOR-S-STO",
+          "contactPerson": "Taylor",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "plan": "free",
+    "createdAt": "2026-08-31T12:29:38.440Z",
+    "updatedAt": "2026-08-31T12:31:38.973Z"
+  },
+  {
+    "id": "7a5f677f-0b8f-4a39-849b-3e546226fbaa",
+    "name": "Retailer Test",
+    "email": "retailer@test.com",
+    "password": "Password123",
+    "role": "retailer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "plan": "free",
+    "createdAt": "2026-08-30T09:47:29.757Z",
+    "updatedAt": "2026-08-30T09:47:29.757Z"
+  },
+  {
+    "id": "eaae8f04-d217-481c-9420-ddf87843169a",
+    "name": "jones",
+    "email": "jones@gmail.com",
+    "password": "pass1234",
+    "role": "biller",
+    "status": "Active",
+    "store": "",
+    "storeId": "JOHN-S-STORE",
+    "currentStoreId": "JOHN-S-STORE",
+    "accessibleStoreIds": [
+      "JOHN-S-STORE"
+    ],
+    "profileId": "1",
+    "profile": {
+      "name": "jones",
+      "email": "jones@gmail.com",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d"
+    },
+    "createdAt": "2026-08-28T05:09:19.586Z",
+    "updatedAt": "2026-08-28T05:09:47.236Z"
+  },
+  {
+    "id": "d240c107-b88c-4d79-af91-64e7bb505a4d",
+    "name": "James",
+    "email": "james@gmail.com",
+    "password": "pass1234",
+    "role": "consumer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-08-28T05:07:32.825Z",
+    "updatedAt": "2026-08-28T05:07:32.825Z"
   },
   {
     "id": "a1315d24-89d4-4b5a-aeef-d89924b2df9a",
@@ -215,6 +302,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-25T16:19:13.113Z",
     "updatedAt": "2026-08-25T16:19:29.996Z"
   },
@@ -301,6 +389,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-04T03:35:10.457Z",
     "updatedAt": "2026-05-04T03:36:36.791Z"
   },
@@ -359,6 +448,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-05-04T00:48:49.423Z",
     "updatedAt": "2026-05-04T00:49:59.366Z"
   },
@@ -415,6 +505,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-04T00:45:50.169Z",
     "updatedAt": "2026-05-04T00:47:03.029Z"
   },
@@ -473,6 +564,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-05-04T00:11:50.835Z",
     "updatedAt": "2026-05-04T00:13:09.788Z"
   },
@@ -529,6 +621,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-04T00:08:05.816Z",
     "updatedAt": "2026-05-04T00:09:32.701Z"
   },
@@ -602,6 +695,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-05-03T23:06:32.604Z",
     "updatedAt": "2026-05-03T23:07:35.531Z"
   },
@@ -658,6 +752,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-03T23:03:05.736Z",
     "updatedAt": "2026-05-03T23:04:33.594Z"
   },
@@ -673,6 +768,7 @@
     "currentStoreId": "",
     "accessibleStoreIds": [],
     "profileId": "",
+    "plan": "free",
     "createdAt": "2026-05-03T23:02:24.300Z",
     "updatedAt": "2026-05-03T23:02:24.300Z"
   },
@@ -744,6 +840,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-03T22:13:26.608Z",
     "updatedAt": "2026-05-03T22:15:17.949Z"
   },
@@ -780,6 +877,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-05-03T21:42:49.398Z",
     "updatedAt": "2026-05-03T21:43:46.073Z"
   },
@@ -871,6 +969,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-03T21:22:20.215Z",
     "updatedAt": "2026-05-03T21:23:56.152Z"
   },
@@ -927,6 +1026,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-03T14:52:56.699Z",
     "updatedAt": "2026-05-03T14:53:30.486Z"
   },
@@ -1018,6 +1118,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-05-03T14:24:53.052Z"
   },
@@ -1048,6 +1149,7 @@
     "currentStoreId": "",
     "accessibleStoreIds": [],
     "profileId": "",
+    "plan": "free",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-01-01T00:00:00.000Z"
   },

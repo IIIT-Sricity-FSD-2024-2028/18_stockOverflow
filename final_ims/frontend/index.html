@@ -995,13 +995,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (session) {
     const user = JSON.parse(session);
     if (user.role === 'biller') {
-      document.getElementById('billerAccessModal').classList.add('active');
+      const modal = document.getElementById('billerAccessModal');
+      if (modal) {
+        modal.classList.add('active');
+      }
     }
   }
 });
 
 function closeBillerAccessModal() {
-  document.getElementById('billerAccessModal').classList.remove('active');
+  const modal = document.getElementById('billerAccessModal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
 }
 
 function goToPOS() {

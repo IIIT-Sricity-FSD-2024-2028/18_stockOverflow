@@ -106,6 +106,38 @@ const DEFAULT_USERS: User[] = [
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
   {
+    id: 'u-retailer-john',
+    name: 'John',
+    email: 'john@gmail.com',
+    password: 'pass1234',
+    role: 'retailer',
+    status: 'Active',
+    store: "John's Retail Store",
+    storeId: 'JOHN-S-STORE',
+    currentStoreId: 'JOHN-S-STORE',
+    accessibleStoreIds: ['JOHN-S-STORE'],
+    profileId: 'cedc0064-0c9e-445e-9649-d344d6fe094d',
+    plan: 'free',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 'u-supplier-hans',
+    name: 'Hans',
+    email: 'hans@gmail.com',
+    password: 'pass1234',
+    role: 'supplier',
+    status: 'Active',
+    store: '',
+    storeId: '',
+    currentStoreId: '',
+    accessibleStoreIds: [],
+    profileId: '0ccceb67-958d-4957-9728-e023994a8e8d',
+    plan: 'free',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
     id: 'u-retailer-1',
     name: 'Primary Retailer',
     email: 'retailer@stockoverflow.com',
@@ -114,6 +146,7 @@ const DEFAULT_USERS: User[] = [
     status: 'Active',
     store: '',
     accessibleStoreIds: [],
+    plan: 'free',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -125,6 +158,7 @@ const DEFAULT_USERS: User[] = [
     role: 'supplier',
     status: 'Active',
     store: '',
+    plan: 'free',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -238,6 +272,7 @@ export class UsersService {
       ),
       profileId: this.normalizeText(createUserDto.profileId),
       profile: this.normalizeProfile(createUserDto.profile),
+      plan: (role === 'retailer' || role === 'supplier') ? this.normalizeText(createUserDto.plan, 'free') : undefined,
       createdAt: now,
       updatedAt: now,
     };
@@ -260,6 +295,8 @@ export class UsersService {
     const nextEmail = this.normalizeEmail(updateUserDto.email || existing.email);
 
     if (
+      updateUserDto.email &&
+      this.normalizeEmail(updateUserDto.email) !== this.normalizeEmail(existing.email) &&
       users.some(
         (entry) =>
           entry.id !== id && this.normalizeEmail(entry.email) === nextEmail,
@@ -305,6 +342,10 @@ export class UsersService {
         updateUserDto.profile !== undefined
           ? this.normalizeProfile(updateUserDto.profile)
           : this.normalizeProfile(existing.profile),
+      plan:
+        (targetRole === 'retailer' || targetRole === 'supplier')
+          ? (updateUserDto.plan !== undefined ? this.normalizeText(updateUserDto.plan, 'free') : (existing.plan || 'free'))
+          : undefined,
       updatedAt: new Date().toISOString(),
     };
 
@@ -697,6 +738,12 @@ export class UsersService {
       const source = Array.isArray(parsed) && parsed.length ? parsed : DEFAULT_USERS;
       source.forEach((user) => {
         const normalized = this.normalizeStoredUser(user);
+        const existingKey = Array.from(this.users.entries()).find(
+          ([_, u]) => this.normalizeEmail(u.email) === this.normalizeEmail(normalized.email)
+        );
+        if (existingKey) {
+          this.users.delete(existingKey[0]);
+        }
         this.users.set(normalized.id, normalized);
       });
 
@@ -745,6 +792,10 @@ export class UsersService {
       accessibleStoreIds: this.normalizeStringList(user.accessibleStoreIds),
       profileId: this.normalizeText(user.profileId),
       profile: this.normalizeProfile(user.profile),
+      plan:
+        (this.normalizeRole(user.role || 'consumer') === 'retailer' || this.normalizeRole(user.role || 'consumer') === 'supplier')
+          ? this.normalizeText(user.plan, 'free')
+          : undefined,
       createdAt: this.normalizeText(user.createdAt, now),
       updatedAt: this.normalizeText(user.updatedAt, user.createdAt, now),
     };

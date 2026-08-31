@@ -47,4 +47,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsObject()
   profile?: Record<string, unknown>;
+
+  @IsOptional()
+  @IsString()
+  plan?: string;
 }

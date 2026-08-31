@@ -7,7 +7,7 @@
     "assignedEmployeeId": "EMP-1001",
     "assignedAt": "2026-08-27T19:26:09.950Z",
     "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-30T18:08:36.004Z",
+    "updatedAt": "2026-08-31T13:30:50.088Z",
     "business": {
       "companyName": "Hans",
       "businessType": "Distributor",
@@ -40,7 +40,7 @@
         "category": "Electronics",
         "unitPrice": 525,
         "minOrderQty": 1,
-        "stockAvailable": 148,
+        "stockAvailable": 147,
         "unit": "Piece",
         "description": "Product op3 supplied by Hans"
       }
@@ -48,8 +48,80 @@
     "pricingPolicies": [],
     "bankDetails": [],
     "documents": [],
-    "rating": 4,
-    "avgRating": 4
+    "rating": 3,
+    "avgRating": 3,
+    "feedback": {
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "rating": 3,
+      "comment": "Rated 3 stars by John's Retail Store",
+      "createdAt": "2026-08-31T12:28:43.667Z"
+    }
+  },
+  {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "Apex Distributors",
+      "businessType": "Distributor",
+      "businessEmail": "rahul@apex.com"
+    },
+    "primaryContact": {
+      "fullName": "Rahul Sharma",
+      "directEmail": "rahul@apex.com"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP001",
+        "name": "Premium Basmati Rice",
+        "brand": "India Gate",
+        "variant": "5kg Bag",
+        "category": "Food & Beverage",
+        "stockAvailable": 100,
+        "unitPrice": 450,
+        "minOrderQty": 10
+      }
+    ],
+    "documents": [],
+    "id": "9683178c-d709-4439-bb8c-7a139af28158",
+    "status": "completed",
+    "profileStatus": "pending",
+    "createdAt": "2026-08-31T13:17:47.437Z",
+    "updatedAt": "2026-08-31T13:17:47.437Z"
+  },
+  {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "Yung",
+      "businessType": "Manufacturer",
+      "businessEmail": "yung@gmail.com"
+    },
+    "primaryContact": {
+      "fullName": "Yung"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP002",
+        "name": "dr",
+        "brand": "fff",
+        "category": "Electronics",
+        "stockAvailable": 20,
+        "unitPrice": 0
+      }
+    ],
+    "documents": [],
+    "id": "34b1454b-e9ab-4520-9ba9-6e51630eafdf",
+    "status": "completed",
+    "profileStatus": "pending",
+    "createdAt": "2026-08-31T12:37:05.905Z",
+    "updatedAt": "2026-08-31T12:37:05.905Z"
   },
   {
     "business": {

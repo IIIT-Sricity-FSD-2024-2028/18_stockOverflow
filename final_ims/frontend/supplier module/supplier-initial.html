@@ -570,9 +570,9 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-muted)" id="prodCount">0 products</span>
-          <button class="btn btn-outline btn-sm" onclick="addProductRow()">
+          <button class="btn btn-primary btn-sm" onclick="openProductModal()">
             <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
-            Add Row
+            Add Product
           </button>
         </div>
       </div>
@@ -580,31 +580,33 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
         <table class="prod-table">
           <thead>
             <tr>
-              <th style="width:40px"></th>
-              <th style="width:80px">SKU</th>
+              <th style="width:38px"></th>
+              <th style="width:90px">SKU</th>
               <th>Product Name</th>
-              <th>Brand</th>
+              <th>Brand / Variant</th>
               <th>Category</th>
-              <th style="width:100px">Stock Avail.</th>
-              <th style="width:90px">Unit</th>
-              <th style="width:50px"></th>
+              <th style="width:105px">Unit Price (₹)</th>
+              <th style="width:75px">MOQ</th>
+              <th style="width:75px">Stock</th>
+              <th style="width:75px">Unit</th>
+              <th style="width:80px;text-align:center">Actions</th>
             </tr>
           </thead>
           <tbody id="prodBody"></tbody>
         </table>
-        <div class="empty-state" id="prodEmpty" style="padding:32px 20px">
+        <div class="empty-state" id="prodEmpty" style="padding:36px 20px">
           <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M22 4L40 13.5v17L22 40 4 30.5v-17L22 4z"/><path d="M4 13.5L22 23l18-9.5M22 23V40"/></svg>
-          <p>No products yet</p>
-          <span>Click "Add Row" to begin adding your product catalog</span>
+          <p>No products in catalog yet</p>
+          <span>Click "Add Product" to configure detailed product specifications</span>
         </div>
       </div>
       <div style="padding:12px 16px;border-top:1px solid #f0f2f4;display:flex;align-items:center;justify-content:space-between">
         <div style="font-family:'Nunito Sans',sans-serif;font-size:12px;color:var(--text-muted)">
-          Tip: Press Tab to move between fields quickly. You can add more products after setup is complete.
+          Starter Kirana plan includes up to 50 products catalog. Upgrade to Vyapar Pro for unlimited products.
         </div>
-        <button class="btn btn-outline btn-sm" onclick="addProductRow()">
+        <button class="btn btn-primary btn-sm" onclick="openProductModal()">
           <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
-          Add Row
+          Add Product
         </button>
       </div>
     </div>
@@ -756,6 +758,110 @@ input.err,select.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1
   </div>
 </div>
 
+<!-- ══ MODAL: ADD / EDIT PRODUCT ══ -->
+<div class="modal-bg" id="productModal">
+  <div class="modal" style="width:min(600px,94vw);max-height:90vh;overflow-y:auto">
+    <div class="modal-title">
+      <div class="card-icon" style="background:var(--primary-light)"><svg viewBox="0 0 13 13" fill="none" stroke="#2e6bc5" stroke-width="1.4"><path d="M6.5 1L12 4.5v4L6.5 12 1 8.5v-4L6.5 1z"/></svg></div>
+      <span id="prodModalTitle">Add Product to Catalog</span>
+    </div>
+    <div class="fg fg-2" style="margin-bottom:14px">
+      <div class="field">
+        <label class="field-label">Product Name <span class="req">*</span></label>
+        <input type="text" id="pm-name" placeholder="e.g. Basmati Rice 5kg / Laptop 15-inch"/>
+        <div class="field-error" id="pm-name-err">Product name is required</div>
+      </div>
+      <div class="field">
+        <label class="field-label">SKU</label>
+        <input type="text" id="pm-sku" placeholder="Auto-generated" style="background:#f9fafb" readonly/>
+      </div>
+    </div>
+    <div class="fg fg-2" style="margin-bottom:14px">
+      <div class="field">
+        <label class="field-label">Brand</label>
+        <input type="text" id="pm-brand" placeholder="e.g. India Gate / Lenovo"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Product Variant</label>
+        <input type="text" id="pm-variant" placeholder="e.g. 5kg Bag / 16GB RAM"/>
+      </div>
+    </div>
+    <div class="fg fg-2" style="margin-bottom:14px">
+      <div class="field">
+        <label class="field-label">Category <span class="req">*</span></label>
+        <div class="sel-wrap">
+          <select id="pm-cat">
+            <option value="">Select Category</option>
+            <option>Electronics</option>
+            <option>Computers</option>
+            <option>Fashion</option>
+            <option>Furniture</option>
+            <option>Food &amp; Beverage</option>
+            <option>Appliances</option>
+            <option>Mobile</option>
+            <option>Sports</option>
+            <option>Beauty</option>
+            <option>Mixed</option>
+          </select>
+        </div>
+        <div class="field-error" id="pm-cat-err">Category is required</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Unit of Measure</label>
+        <div class="sel-wrap">
+          <select id="pm-unit">
+            <option>Piece</option>
+            <option>Box</option>
+            <option>Kg</option>
+            <option>Ltr</option>
+            <option>Set</option>
+            <option>Pair</option>
+            <option>Meter</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="fg fg-3" style="margin-bottom:14px">
+      <div class="field">
+        <label class="field-label">Unit Price (₹) <span class="req">*</span></label>
+        <input type="number" id="pm-price" placeholder="0.00" min="0" step="0.01"/>
+        <div class="field-error" id="pm-price-err">Valid price is required</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Min Order Qty</label>
+        <input type="number" id="pm-moq" placeholder="10" min="1" value="10"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Available Stock</label>
+        <input type="number" id="pm-stock" placeholder="0" min="0" value="0"/>
+      </div>
+    </div>
+    <div class="fg fg-2" style="margin-bottom:14px">
+      <div class="field">
+        <label class="field-label">Expiry Date</label>
+        <input type="date" id="pm-expiry"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Review Summary</label>
+        <input type="text" id="pm-review" placeholder="e.g. 4.8/5 Rating"/>
+      </div>
+    </div>
+    <div class="fg fg-1" style="margin-bottom:14px">
+      <div class="field">
+        <label class="field-label">Description</label>
+        <textarea id="pm-desc" placeholder="Brief product description…" style="min-height:60px"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('productModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProductModal()">
+        <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="2,7 5.5,10.5 11,3.5"/></svg>
+        Save Product
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOAST ── -->
 <div class="toast" id="toast">
   <svg viewBox="0 0 20 20" fill="none" stroke="#22c55e" stroke-width="2" id="toastIcon"><circle cx="10" cy="10" r="8.5"/><polyline points="6.5,10 9,12.5 13.5,7"/></svg>
@@ -872,36 +978,11 @@ function validateStep(){
     return ok;
   }
   if(currentStep===2){
-    const rows = Array.from(document.getElementById('prodBody').querySelectorAll('tr'));
-    if(!rows.length){
+    if(!products.length){
       showToast('Add at least one product to your catalog.','err');
       return false;
     }
-
-    let ok = true;
-    rows.forEach((row) => {
-      const fields = row.querySelectorAll('input,select');
-      const name = fields[0];
-      const category = fields[2];
-      const stock = fields[3];
-      [name, category, stock].forEach((field) => field && field.classList.remove('err'));
-
-      if(!name.value.trim()){
-        name.classList.add('err');
-        ok = false;
-      }
-      if(!category.value){
-        category.classList.add('err');
-        ok = false;
-      }
-      if(Number(stock.value) < 0 || stock.value === ''){
-        stock.classList.add('err');
-        ok = false;
-      }
-    });
-
-    if(!ok) showToast('Product name, category, and stock are required.','err');
-    return ok;
+    return true;
   }
   return true;
 }
@@ -969,10 +1050,11 @@ function saveRetailer(){
 
 function renderRetailers(){
   const rows=document.getElementById('retRows');
+  if(!rows) return;
   const empty=document.getElementById('retEmpty');
   rows.innerHTML='';
-  if(retailers.length===0){empty.style.display='block';return;}
-  empty.style.display='none';
+  if(retailers.length===0){if(empty) empty.style.display='block';return;}
+  if(empty) empty.style.display='none';
   retailers.forEach((r,i)=>{
     const initials=r.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
     const row=document.createElement('div');
@@ -992,7 +1074,8 @@ function renderRetailers(){
     row.ondblclick=()=>openRetModal(i);
     rows.appendChild(row);
   });
-  document.getElementById('retCount').textContent=retailers.length+' retailer'+(retailers.length!==1?'s':'')+' added';
+  const cntEl = document.getElementById('retCount');
+  if(cntEl) cntEl.textContent=retailers.length+' retailer'+(retailers.length!==1?'s':'')+' added';
 }
 
 function deleteRetailer(i){
@@ -1002,67 +1085,193 @@ function deleteRetailer(i){
   showToast('Retailer removed.');
 }
 
-/* ── PRODUCT TABLE ── */
-function addProductRow(prefill){
-  const sku='SP'+String(prodSkuCounter).padStart(3,'0');
-  prodSkuCounter++;
-  const r=prefill||{sku,name:'',brand:'',cat:'',stock:0,unitPrice:0,unit:'Piece'};
-  const tbody=document.getElementById('prodBody');
-  const tr=document.createElement('tr');
-  tr.innerHTML=`
-    <td class="emoji-cell" id="em-${sku}">${EMOJIS['']}</td>
-    <td class="sku-cell">${r.sku||sku}</td>
-    <td><input type="text" value="${r.name||''}" placeholder="Product name…"/></td>
-    <td><input type="text" value="${r.brand||''}" placeholder="Brand…"/></td>
-    <td>
-      <div class="sel-wrap" style="position:relative">
-        <select onchange="catChanged(this,'em-${sku}')">
-          <option value="">Category</option>
-          ${CATEGORIES.map(c=>`<option ${r.cat===c?'selected':''}>${c}</option>`).join('')}
-        </select>
-      </div>
-    </td>
-    <td><input type="number" min="0" value="${r.stock||0}"/></td>
-    <td>
-      <div class="sel-wrap">
-        <select>
-          ${['Piece','Box','Kg','Set','Pair','Meter','Ltr'].map(u=>`<option ${r.unit===u?'selected':''}>${u}</option>`).join('')}
-        </select>
-      </div>
-    </td>
-    <td class="del-td">
-      <button onclick="this.closest('tr').remove();updateProdCount()">
-        <svg viewBox="0 0 12 12" fill="none" stroke-width="1.6"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
-      </button>
-    </td>`;
-  tbody.appendChild(tr);
-  updateProdCount();
+/* ── PRODUCT MANAGEMENT (SYNCHRONIZED WITH INTERNAL FORM) ── */
+let editingProdIdx = null;
+
+function openProductModal(idx){
+  if(idx === undefined && products.length >= 50){
+    showToast('Starter Kirana plan is limited to 50 products. You can upgrade to Vyapar Pro or Bharat Enterprise from the Plan section to add unlimited products.', 'err');
+    return;
+  }
+  editingProdIdx = idx !== undefined ? idx : null;
+  document.getElementById('prodModalTitle').textContent = editingProdIdx !== null ? 'Edit Product' : 'Add Product to Catalog';
+
+  // reset errors
+  ['pm-name-err', 'pm-cat-err', 'pm-price-err'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('show');
+  });
+  ['pm-name', 'pm-cat', 'pm-price'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('err');
+  });
+
+  if(editingProdIdx !== null){
+    const p = products[editingProdIdx];
+    document.getElementById('pm-name').value = p.name || '';
+    document.getElementById('pm-sku').value = p.sku || '';
+    document.getElementById('pm-brand').value = p.brand || '';
+    document.getElementById('pm-variant').value = p.variant || '';
+    document.getElementById('pm-cat').value = p.cat || p.category || '';
+    document.getElementById('pm-unit').value = p.unit || 'Piece';
+    document.getElementById('pm-price').value = p.unitPrice !== undefined ? p.unitPrice : (p.price || 0);
+    document.getElementById('pm-moq').value = p.moq !== undefined ? p.moq : 10;
+    document.getElementById('pm-stock').value = p.stock !== undefined ? p.stock : 0;
+    document.getElementById('pm-expiry').value = p.expiryDate || '';
+    document.getElementById('pm-review').value = p.reviewSummary || '';
+    document.getElementById('pm-desc').value = p.description || '';
+  } else {
+    const nextSku = 'SP' + String(prodSkuCounter).padStart(3, '0');
+    document.getElementById('pm-name').value = '';
+    document.getElementById('pm-sku').value = nextSku;
+    document.getElementById('pm-brand').value = '';
+    document.getElementById('pm-variant').value = '';
+    document.getElementById('pm-cat').value = '';
+    document.getElementById('pm-unit').value = 'Piece';
+    document.getElementById('pm-price').value = '';
+    document.getElementById('pm-moq').value = 10;
+    document.getElementById('pm-stock').value = 0;
+    document.getElementById('pm-expiry').value = '';
+    document.getElementById('pm-review').value = '';
+    document.getElementById('pm-desc').value = '';
+  }
+  openModal('productModal');
 }
-function catChanged(sel,emId){
-  const el=document.getElementById(emId);
-  if(el) el.textContent=EMOJIS[sel.value]||'📦';
+
+function saveProductModal(){
+  const name = document.getElementById('pm-name').value.trim();
+  const cat = document.getElementById('pm-cat').value;
+  const priceVal = document.getElementById('pm-price').value;
+  const price = parseFloat(priceVal);
+
+  let ok = true;
+  if(!name){
+    document.getElementById('pm-name').classList.add('err');
+    document.getElementById('pm-name-err').classList.add('show');
+    ok = false;
+  } else {
+    document.getElementById('pm-name').classList.remove('err');
+    document.getElementById('pm-name-err').classList.remove('show');
+  }
+
+  if(!cat){
+    document.getElementById('pm-cat').classList.add('err');
+    document.getElementById('pm-cat-err').classList.add('show');
+    ok = false;
+  } else {
+    document.getElementById('pm-cat').classList.remove('err');
+    document.getElementById('pm-cat-err').classList.remove('show');
+  }
+
+  if(isNaN(price) || price < 0 || priceVal === ''){
+    document.getElementById('pm-price').classList.add('err');
+    document.getElementById('pm-price-err').classList.add('show');
+    ok = false;
+  } else {
+    document.getElementById('pm-price').classList.remove('err');
+    document.getElementById('pm-price-err').classList.remove('show');
+  }
+
+  if(!ok) return;
+
+  const sku = document.getElementById('pm-sku').value.trim() || ('SP' + String(prodSkuCounter).padStart(3, '0'));
+  const brand = document.getElementById('pm-brand').value.trim();
+  const variant = document.getElementById('pm-variant').value.trim();
+  const unit = document.getElementById('pm-unit').value || 'Piece';
+  const moq = parseInt(document.getElementById('pm-moq').value, 10) || 1;
+  const stock = parseInt(document.getElementById('pm-stock').value, 10) || 0;
+  const expiryDate = document.getElementById('pm-expiry').value;
+  const reviewSummary = document.getElementById('pm-review').value.trim();
+  const description = document.getElementById('pm-desc').value.trim();
+  const emoji = EMOJIS[cat] || '📦';
+
+  const productObj = {
+    sku,
+    name,
+    brand,
+    variant,
+    cat,
+    category: cat,
+    unitPrice: price,
+    price: price,
+    moq,
+    stock,
+    qty: stock,
+    unit,
+    expiryDate,
+    reviewSummary,
+    description,
+    emoji,
+  };
+
+  if(editingProdIdx !== null){
+    products[editingProdIdx] = productObj;
+    showToast('Product updated!');
+  } else {
+    products.push(productObj);
+    prodSkuCounter++;
+    showToast('Product added to catalog!');
+  }
+
+  closeModal('productModal');
+  renderProducts();
 }
-function updateProdCount(){
-  const cnt=document.getElementById('prodBody').querySelectorAll('tr').length;
-  document.getElementById('prodCount').textContent=cnt+' product'+(cnt!==1?'s':'');
-  document.getElementById('prodEmpty').style.display=cnt>0?'none':'block';
+
+function renderProducts(){
+  const tbody = document.getElementById('prodBody');
+  const empty = document.getElementById('prodEmpty');
+  tbody.innerHTML = '';
+
+  if(products.length === 0){
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    products.forEach((p, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="emoji-cell">${p.emoji || '📦'}</td>
+        <td class="sku-cell">${p.sku}</td>
+        <td>
+          <div style="font-weight:700;color:var(--text-primary)">${p.name}</div>
+          ${p.description ? `<div style="font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">${p.description}</div>` : ''}
+        </td>
+        <td>
+          <div style="font-weight:600">${p.brand || '—'}</div>
+          ${p.variant ? `<div style="font-size:11px;color:var(--text-muted)">${p.variant}</div>` : ''}
+        </td>
+        <td><span style="display:inline-block;padding:2px 8px;border-radius:12px;background:#eef3fc;color:#2e6bc5;font-size:11.5px;font-weight:700">${p.cat || p.category}</span></td>
+        <td style="font-weight:700;color:#15803d">₹${Number(p.unitPrice || 0).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+        <td style="color:var(--text-secondary)">${p.moq || 1}</td>
+        <td style="font-weight:700">${p.stock || 0}</td>
+        <td style="color:var(--text-secondary)">${p.unit || 'Piece'}</td>
+        <td>
+          <div style="display:flex;gap:4px;justify-content:center">
+            <button class="btn btn-outline btn-sm" style="padding:3px 7px" onclick="openProductModal(${idx})" title="Edit">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" style="width:11px;height:11px"><path d="M10 1.5l1.5 1.5L4 10.5H2.5V9L10 1.5z"/></svg>
+            </button>
+            <button class="btn btn-outline btn-sm" style="padding:3px 7px;border-color:#fca5a5" onclick="deleteProduct(${idx})" title="Delete">
+              <svg viewBox="0 0 12 12" fill="none" stroke="#ef4444" stroke-width="1.6" style="width:11px;height:11px"><polyline points="1,3 11,3"/><path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3"/></svg>
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  const cntEl = document.getElementById('prodCount');
+  if(cntEl) cntEl.textContent = products.length + ' product' + (products.length !== 1 ? 's' : '');
 }
+
+function deleteProduct(idx){
+  if(!confirm('Remove this product from catalog?')) return;
+  products.splice(idx, 1);
+  renderProducts();
+  showToast('Product removed.');
+}
+
 function getProducts(){
-  const rows=document.getElementById('prodBody').querySelectorAll('tr');
-  return Array.from(rows).map(tr=>{
-    const cells=tr.querySelectorAll('td');
-    const inputs=tr.querySelectorAll('input,select');
-    return {
-      emoji:cells[0].textContent.trim(),
-      sku:cells[1].textContent.trim(),
-      name:inputs[0].value.trim(),
-      brand:inputs[1].value.trim(),
-      cat:inputs[2].value,
-      stock:inputs[3].value,
-      unit:inputs[4].value,
-      unitPrice:0,
-    };
-  }).filter(p=>p.name);
+  return products;
 }
 
 /* ── REVIEW ── */
@@ -1155,7 +1364,7 @@ function showToast(msg,type){
 renderStepper();
 updateHero();
 updateBottomBar();
-updateProdCount();
+renderProducts();
 renderRetailers();
 </script>
 <script>
@@ -1254,10 +1463,15 @@ function buildLandingPayload() {
       sku: product.sku,
       name: product.name,
       brand: product.brand || undefined,
-      category: product.cat || undefined,
+      variant: product.variant || undefined,
+      category: product.cat || product.category || undefined,
       stockAvailable: Number(product.stock || 0),
       unitPrice: Number(product.unitPrice || 0),
+      minOrderQty: Number(product.moq || 1),
       unit: product.unit || 'Piece',
+      expiryDate: product.expiryDate || undefined,
+      reviewSummary: product.reviewSummary || undefined,
+      description: product.description || undefined,
     })),
   };
 }

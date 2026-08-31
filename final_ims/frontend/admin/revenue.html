@@ -471,7 +471,7 @@
     }
 
     function filterByTier(tier) {
-      alert(`Filtering subscribers on the ${tier.toUpperCase()} tier.`);
+      window.location.href = `users.html?plan=${encodeURIComponent(tier)}`;
     }
 
     function exportRevenueLedger() {
@@ -502,6 +502,13 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('so_session');
+          window.location.href = '../index.html';
+        });
+      }
       loadRevenueData();
     });
   </script>

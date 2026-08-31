@@ -1576,6 +1576,110 @@
         }
       }
     },
+    "/retailers/{id}/stores": {
+      "post": {
+        "tags": [
+          "Retailers"
+        ],
+        "operationId": "Retailers_addStore",
+        "summary": "Add Store",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userPlan",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: userPlan",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/retailers_retailer_record_interface_RetailerRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": {},
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/retailers/{id}/stores/{storeCode}": {
+      "delete": {
+        "tags": [
+          "Retailers"
+        ],
+        "operationId": "Retailers_removeStore",
+        "summary": "Remove Store",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storeCode",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: storeCode",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/stores": {
       "get": {
         "tags": [
@@ -7660,6 +7764,9 @@
           "password": {
             "type": "string"
           },
+          "plan": {
+            "type": "string"
+          },
           "retailerId": {
             "type": "string"
           },
@@ -11247,6 +11354,9 @@
           "password": {
             "type": "string"
           },
+          "plan": {
+            "type": "string"
+          },
           "profile": {
             "additionalProperties": {},
             "type": "object"
@@ -11312,6 +11422,9 @@
           "password": {
             "type": "string"
           },
+          "plan": {
+            "type": "string"
+          },
           "profile": {
             "additionalProperties": {},
             "type": "object"
@@ -11355,6 +11468,9 @@
             "type": "string"
           },
           "name": {
+            "type": "string"
+          },
+          "plan": {
             "type": "string"
           },
           "profile": {

@@ -52,3 +52,23 @@
 [2026-08-30T19:02:22.471Z] [ERROR] POST /api/users/login 401 - Invalid email or password
 [2026-08-30T19:02:40.578Z] [ERROR] POST /api/users/login 401 - Invalid email or password
 [2026-08-30T19:24:02.096Z] [ERROR] POST /api/users/login 400 - email must be an email
+[2026-08-31T13:14:18.628Z] [ERROR] POST /api/suppliers/setup 400 - products.0.property stock should not exist, products.0.property price should not exist, products.0.property moq should not exist
+[2026-08-31T13:15:52.912Z] [ERROR] POST /api/suppliers/setup 400 - products.0.property stock should not exist, products.0.property price should not exist, products.0.property moq should not exist
+[2026-08-31T13:16:11.478Z] [ERROR] POST /api/suppliers/setup 400 - products.0.property stock should not exist, products.0.property price should not exist, products.0.property moq should not exist
+[2026-08-31T13:16:38.831Z] [ERROR] POST /api/suppliers/setup 400 - products.0.property stock should not exist, products.0.property price should not exist, products.0.property moq should not exist
+[2026-08-31T13:16:48.818Z] [ERROR] POST /api/suppliers/setup 400 - products.0.property stock should not exist, products.0.property price should not exist, products.0.property moq should not exist
+[2026-08-31T13:16:53.404Z] [ERROR] POST /api/suppliers/setup 400 - products.0.property stock should not exist, products.0.property price should not exist, products.0.property moq should not exist
+[2026-08-31T13:16:59.590Z] [ERROR] GET /api-docs 404 - Cannot GET /api-docs
+[2026-08-31T13:16:59.600Z] [ERROR] GET /swagger 404 - Cannot GET /swagger
+[2026-08-31T13:19:39.493Z] [ERROR] PATCH /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 400 - property plan should not exist
+[2026-08-31T13:47:41.471Z] [ERROR] PATCH /api/users/cedc0064-0c9e-445e-9649-d344d6fe094d 400 - property plan should not exist
+[2026-08-31T13:56:26.517Z] [ERROR] PATCH /api/users/u-retailer-john 409 - Email already exists
+[2026-08-31T13:57:54.293Z] [ERROR] PATCH /api/users/u-retailer-john 404 - User not found
+[2026-08-31T14:08:26.417Z] [ERROR] GET /js/admin.js 404 - Cannot GET /js/admin.js
+[2026-08-31T15:00:41.665Z] [ERROR] GET /api 404 - Cannot GET /api
+[2026-08-31T15:00:41.957Z] [ERROR] GET /favicon.ico 404 - Cannot GET /favicon.ico
+[2026-08-31T15:15:46.937Z] [ERROR] POST /api/retailers/cedc0064-0c9e-445e-9649-d344d6fe094d/stores?userPlan=pro 400 - Expected property name or '}' in JSON at position 1 (line 1 column 2)
+[2026-08-31T15:15:54.183Z] [ERROR] POST /api/retailers/cedc0064-0c9e-445e-9649-d344d6fe094d/stores?userPlan=pro 400 - Expected property name or '}' in JSON at position 1 (line 1 column 2)
+[2026-08-31T15:16:01.074Z] [ERROR] POST /api/retailers/cedc0064-0c9e-445e-9649-d344d6fe094d/stores?userPlan=pro 400 - Expected property name or '}' in JSON at position 1 (line 1 column 2)
+[2026-08-31T15:16:19.561Z] [ERROR] POST /api/retailers/cedc0064-0c9e-445e-9649-d344d6fe094d/stores?userPlan=free 400 - PLAN_LIMIT_REACHED:free:1:Starter Kirana (Free)
+[2026-08-31T15:38:33.440Z] [ERROR] POST /api/users/login 401 - Invalid email or password

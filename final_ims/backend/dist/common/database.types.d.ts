@@ -398,6 +398,7 @@ export interface UserRecord {
     store?: string;
     retailerId?: string;
     storeId?: string;
+    plan?: string;
     createdAt: string;
     updatedAt: string;
 }

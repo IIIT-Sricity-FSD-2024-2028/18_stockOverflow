@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateRetailerSetupDto } from './dto/create-retailer-setup.dto';
 import { RetailerDirectoryEntry } from './retailer-directory-entry.interface';
@@ -55,6 +57,71 @@ export class RetailersController {
     @Body() updateRetailerSetupDto: UpdateRetailerSetupDto,
   ): RetailerRecord {
     return this.retailersService.update(id, updateRetailerSetupDto);
+  }
+
+  @Post(':id/stores')
+  addStore(
+    @Param('id') id: string,
+    @Body() storeDto: Record<string, unknown>,
+    @Query('userPlan') userPlan?: string,
+  ): RetailerRecord {
+    const plan = (userPlan || 'free').toLowerCase();
+    const retailer = this.retailersService.findOne(id);
+    const currentStores = retailer.stores || [];
+
+    // SaaS plan enforcement
+    const planLimits: Record<string, number> = {
+      free: 1,
+      pro: 5,
+      enterprise: Infinity,
+    };
+    const limit = planLimits[plan] ?? 1;
+    if (currentStores.length >= limit) {
+      const planNames: Record<string, string> = {
+        free: 'Starter Kirana (Free)',
+        pro: 'Vyapar Pro',
+        enterprise: 'Bharat Enterprise',
+      };
+      throw new BadRequestException(
+        `PLAN_LIMIT_REACHED:${plan}:${limit}:${planNames[plan] || 'your current plan'}`,
+      );
+    }
+
+    // Generate store code from name if not provided
+    const name = String(storeDto['name'] || '').trim();
+    if (!name) throw new BadRequestException('Store name is required');
+    const code = String(storeDto['code'] || '')
+      .trim()
+      .toUpperCase()
+      || name.toUpperCase().replace(/[^A-Z0-9]/g, '-').replace(/-+/g, '-').substring(0, 16);
+
+    const newStore = {
+      name,
+      code,
+      contactPerson: String(storeDto['contactPerson'] || '').trim(),
+      phone: String(storeDto['phone'] || '').trim(),
+      address: String(storeDto['address'] || '').trim(),
+      type: String(storeDto['type'] || 'Retail Store').trim(),
+      status: String(storeDto['status'] || 'active').trim(),
+      notes: String(storeDto['notes'] || '').trim(),
+    };
+
+    return this.retailersService.update(id, {
+      stores: [...currentStores, newStore],
+    } as UpdateRetailerSetupDto);
+  }
+
+  @Delete(':id/stores/:storeCode')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeStore(
+    @Param('id') id: string,
+    @Param('storeCode') storeCode: string,
+  ): void {
+    const retailer = this.retailersService.findOne(id);
+    const stores = (retailer.stores || []).filter(
+      (s) => s.code !== storeCode,
+    );
+    this.retailersService.update(id, { stores } as UpdateRetailerSetupDto);
   }
 
   @Delete(':id')

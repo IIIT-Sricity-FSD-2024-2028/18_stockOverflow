@@ -490,6 +490,19 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
     <div class="sb-divider"></div>
 
     <div class="sb-group">
+      <div class="sb-group-label">Plans &amp; Billing</div>
+      <div class="sb-menus">
+        <div class="sb-item" onclick="showSection('plan',this)">
+          <span class="sb-item-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="8 1 10.3 5.7 15.5 6.5 11.8 10.1 12.6 15.3 8 12.8 3.4 15.3 4.2 10.1 0.5 6.5 5.7 5.7 8 1"/></svg></span>
+          <span class="sb-item-label">Subscription Plan</span>
+          <span class="sb-item-arr"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-group">
       <div class="sb-group-label">Settings</div>
       <div class="sb-menus">
         <div class="sb-item" onclick="logoutSupplierModule()">
@@ -575,38 +588,71 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
           </button>
         </div>
       </div>
-      <div class="stat-grid">
+      <div class="stat-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px">
         <div class="stat-card">
-          <div class="stat-icon" style="background:#eef3fc">
-            <svg viewBox="0 0 16 16" fill="none" stroke="#2e6bc5" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="4" y1="1" x2="4" y2="15"/><line x1="1" y1="8" x2="15" y2="8"/></svg>
+          <div class="stat-icon" style="background:#ecfdf5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           </div>
-          <div class="stat-value" style="color:#2e6bc5">12</div>
-          <div class="stat-label">Active Retailers</div>
-          <div class="stat-trend trend-up">↑ 2 this month</div>
+          <div class="stat-value" id="statTotalSalesVal" style="color:#059669">₹0.00</div>
+          <div class="stat-label">Total Completed Sales</div>
+          <div class="stat-trend trend-up" id="statTotalSalesTrend">↑ 0 POs Fulfilled</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:#dcfce7">
-            <svg viewBox="0 0 16 16" fill="none" stroke="#22c55e" stroke-width="1.5"><path d="M8 1L15 4.5v7L8 15 1 11.5v-7L8 1z"/></svg>
+          <div class="stat-icon" style="background:#eff6ff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
           </div>
-          <div class="stat-value" style="color:#22c55e">48</div>
-          <div class="stat-label">Products Listed</div>
-          <div class="stat-trend trend-up">↑ 5 new items</div>
+          <div class="stat-value" id="statNetPayoutVal" style="color:#2563eb">₹0.00</div>
+          <div class="stat-label">Net Supplier Payout</div>
+          <div class="stat-trend trend-up" style="color:#2563eb;font-weight:700">98% Payout Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#faf5ff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#7e22ce" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5a2.5 2.5 0 0 0-5 0v5a2.5 2.5 0 0 0 5 0"/><path d="M9 12h6"/></svg>
+          </div>
+          <div class="stat-value" id="statPlatformFeeVal" style="color:#7e22ce">₹0.00</div>
+          <div class="stat-label">2% Platform Fee</div>
+          <div class="stat-trend trend-up" style="color:#7e22ce;font-weight:700">2.0% Commission</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:#fef3c7">
             <svg viewBox="0 0 16 16" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/></svg>
           </div>
-          <div class="stat-value" style="color:#f59e0b">7</div>
+          <div class="stat-value" id="statPendingOrdersVal" style="color:#f59e0b">0</div>
           <div class="stat-label">Pending Orders</div>
-          <div class="stat-trend trend-down">↓ action needed</div>
+          <div class="stat-trend" id="statPendingOrdersTrend" style="color:#d97706">0 total orders</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:#ede9fe">
             <svg viewBox="0 0 16 16" fill="none" stroke="#8b5cf6" stroke-width="1.5"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/></svg>
           </div>
-          <div class="stat-value" style="color:#8b5cf6">94%</div>
+          <div class="stat-value" id="statFulfilmentVal" style="color:#8b5cf6">100%</div>
           <div class="stat-label">Fulfilment Rate</div>
-          <div class="stat-trend trend-up">↑ above target</div>
+          <div class="stat-trend trend-up" id="statFulfilmentTrend">↑ 0 delivered orders</div>
+        </div>
+      </div>
+
+      <!-- Sales & PO Fulfilment Performance Banner -->
+      <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg, #092c4c 0%, #1e429f 100%);color:#fff;border:none;padding:20px 24px;border-radius:12px;position:relative;overflow:hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+          <div>
+            <div style="font-size:11.5px;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">Sales &amp; Fulfilment Intelligence</div>
+            <div style="font-size:22px;font-weight:800;font-family:'Space Grotesk',sans-serif;margin-bottom:4px" id="dashTotalSalesHeadline">₹0.00 Gross Fulfilled Sales</div>
+            <div style="font-size:13px;color:#cbd5e1" id="dashSalesSubheadline">Completing purchase orders automatically records gross revenue, calculates the 2% platform fee, and updates your network performance.</div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="background:rgba(255,255,255,0.12);padding:10px 16px;border-radius:8px;text-align:center;backdrop-filter:blur(4px);min-width:110px">
+              <div style="font-size:11px;color:#93c5fd;font-weight:600">Fulfilled POs</div>
+              <div style="font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif" id="dashDeliveredCount">0</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.12);padding:10px 16px;border-radius:8px;text-align:center;backdrop-filter:blur(4px);min-width:130px">
+              <div style="font-size:11px;color:#93c5fd;font-weight:600">Pending Value</div>
+              <div style="font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif" id="dashPendingValue">₹0.00</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.12);padding:10px 16px;border-radius:8px;text-align:center;backdrop-filter:blur(4px);min-width:130px">
+              <div style="font-size:11px;color:#93c5fd;font-weight:600">Avg PO Value</div>
+              <div style="font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif" id="dashAvgOrderValue">₹0.00</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -962,6 +1008,139 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
       </div>
     </div>
 
+    <!-- ══ SUBSCRIPTION PLANS & BILLING ══ -->
+    <div class="section" id="sec-plan">
+      <div class="page-header">
+        <div>
+          <div class="page-title">SaaS Growth &amp; Subscription Plans</div>
+          <div class="page-sub">Tiered membership plans designed for MSME suppliers, distributors, and manufacturers across India</div>
+        </div>
+      </div>
+
+      <!-- Current Active Plan Banner -->
+      <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);color:#fff;border:none;padding:24px;border-radius:12px;position:relative;overflow:hidden">
+        <div style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:12px;text-transform:uppercase;letter-spacing:1px;background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:20px;font-weight:700">Current Active Membership</span>
+              <span id="supplierPlanStatusBadge" style="background:#22c55e;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">Active</span>
+            </div>
+            <h2 id="supplierCurrentPlanName" style="font-size:24px;font-weight:800;margin:0 0 6px">Starter Kirana (Free Tier)</h2>
+            <p id="supplierPlanDesc" style="color:rgba(255,255,255,0.75);font-size:13px;margin:0">Basic catalog access. Allows up to 50 product items in your supplier catalog.</p>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11.5px;color:rgba(255,255,255,0.65);margin-bottom:4px">CATALOG UTILIZATION</div>
+            <div id="supplierPlanUsageText" style="font-size:18px;font-weight:800;color:#fff">0 / 50 Products</div>
+            <div style="width:160px;height:6px;background:rgba(255,255,255,0.2);border-radius:4px;overflow:hidden;margin-top:6px">
+              <div id="supplierPlanUsageBar" style="width:10%;height:100%;background:#38bdf8;border-radius:4px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Tier Pricing Cards Grid -->
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:18px;margin-bottom:24px">
+        <!-- Tier 1: Free -->
+        <div class="card" id="cardTierFree" style="padding:24px;display:flex;flex-direction:column;border-radius:12px;border:1px solid var(--border)">
+          <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px">Starter Kirana</div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">Free forever for MSME onboarding</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:16px">₹0 <span style="font-size:13px;font-weight:500;color:var(--text-3)">/ month</span></div>
+          <ul style="list-style:none;padding:0;margin:0 0 20px;flex:1;display:flex;flex-direction:column;gap:10px;font-size:13px">
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 1 Store Location</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Up to 50 Products Catalog</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> UPI QR &amp; POS Billing Terminal</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Daily WhatsApp Sales Summary</li>
+          </ul>
+          <button class="btn btn-outline" id="btnTierFree" onclick="setSupplierPlan('free')" style="width:100%;justify-content:center;font-weight:700" disabled>Current Active Plan</button>
+        </div>
+
+        <!-- Tier 2: Pro -->
+        <div class="card" id="cardTierPro" style="padding:24px;display:flex;flex-direction:column;border-radius:12px;border:2px solid #3b82f6;position:relative;box-shadow:0 8px 24px rgba(59,130,246,0.12)">
+          <div style="position:absolute;top:-12px;right:20px;background:#3b82f6;color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;letter-spacing:0.5px">MOST POPULAR (BHARAT)</div>
+          <div style="font-size:16px;font-weight:800;color:#2563eb;margin-bottom:4px">Vyapar Pro</div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">For growing distributors &amp; suppliers</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:16px">₹799 <span style="font-size:13px;font-weight:500;color:var(--text-3)">/ month</span></div>
+          <ul style="list-style:none;padding:0;margin:0 0 20px;flex:1;display:flex;flex-direction:column;gap:10px;font-size:13px">
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <strong>Up to 5 Retail Outlets</strong></li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <strong>Unlimited Products &amp; SKUs</strong></li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> GST E-Invoice &amp; e-Way Bill Generator</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> WhatsApp &amp; SMS Low Stock Alerts</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Automated Reorder Suggestions</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Priority Verification Staff Support</li>
+          </ul>
+          <button class="btn btn-primary" id="btnTierPro" onclick="openMockPaymentModal('pro')" style="width:100%;justify-content:center;font-weight:700">Upgrade to Vyapar Pro</button>
+        </div>
+
+        <!-- Tier 3: Enterprise -->
+        <div class="card" id="cardTierEnterprise" style="padding:24px;display:flex;flex-direction:column;border-radius:12px;border:1px solid #7e22ce">
+          <div style="font-size:16px;font-weight:800;color:#7e22ce;margin-bottom:4px">Bharat Enterprise</div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">Multi-depot suppliers &amp; large FMCG</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:16px">₹3,499 <span style="font-size:13px;font-weight:500;color:var(--text-3)">/ month</span></div>
+          <ul style="list-style:none;padding:0;margin:0 0 20px;flex:1;display:flex;flex-direction:column;gap:10px;font-size:13px">
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <strong>Unlimited Stores &amp; Outlets</strong></li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Multi-Warehouse Stock Transfer &amp; Depots</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Bulk Supplier POs &amp; Credit Terms</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Dedicated 24/7 Account Manager</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Custom ERP &amp; Tally Prime Sync API</li>
+          </ul>
+          <button class="btn btn-dark" id="btnTierEnterprise" onclick="openMockPaymentModal('enterprise')" style="width:100%;justify-content:center;font-weight:700">Upgrade to Enterprise</button>
+        </div>
+      </div>
+
+      <!-- Billing & Tax Invoices History -->
+      <div class="card" style="padding:24px;border-radius:12px;border:1px solid var(--border);margin-top:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div>
+            <h3 style="font-size:16px;font-weight:800;color:var(--text);margin:0 0 4px">Billing &amp; Tax Invoices</h3>
+            <p style="font-size:12.5px;color:var(--text-3);margin:0">Download official GST-compliant tax invoices and manage automated SaaS renewals</p>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-outline btn-sm" onclick="toast('Next billing cycle: 1st of next month')">Next Renewal: 1st Next Month</button>
+            <button class="btn btn-outline btn-sm" onclick="toast('Invoices synchronized with banking switch.')">Sync Invoices</button>
+          </div>
+        </div>
+
+        <div class="tbl-wrap" style="border-radius:8px;border:1px solid var(--border)">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Billing Date</th>
+                <th>Plan Description</th>
+                <th>Amount (INR)</th>
+                <th>GST (18%)</th>
+                <th>Payment Mode</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="supplierInvoicesTbody">
+              <tr>
+                <td style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--primary)">SO-INV-2026-081</td>
+                <td>31 Aug 2026</td>
+                <td><strong>Vyapar Pro SaaS (Monthly)</strong></td>
+                <td>₹799.00</td>
+                <td>₹143.82</td>
+                <td><span style="font-weight:600">UPI Instant</span></td>
+                <td><span class="badge badge-delivered"><span class="badge-dot" style="background:#22c55e"></span>Paid</span></td>
+                <td><button class="btn btn-outline btn-sm" onclick="toast('Downloading GST Tax Invoice PDF for SO-INV-2026-081...')">Receipt</button></td>
+              </tr>
+              <tr>
+                <td style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--primary)">SO-INV-2026-071</td>
+                <td>01 Aug 2026</td>
+                <td>Starter Kirana Onboarding</td>
+                <td>₹0.00</td>
+                <td>₹0.00</td>
+                <td>Free Tier</td>
+                <td><span class="badge badge-delivered"><span class="badge-dot" style="background:#22c55e"></span>Active</span></td>
+                <td><button class="btn btn-outline btn-sm" onclick="toast('Starter tier has zero charge.')">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1066,6 +1245,122 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
     <div id="retailerViewBody" style="display:flex;flex-direction:column;gap:12px;font-size:13px;padding:6px 0"></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('retailerViewModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: MOCK PAYMENT GATEWAY ══ -->
+<div class="modal-bg" id="paymentGatewayModal">
+  <div class="modal" style="width:min(520px,94vw);border-radius:14px;padding:0;overflow:hidden">
+    <div style="background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);color:#fff;padding:20px 24px;display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.7);font-weight:700">StockOverflow Bharat Gateway</div>
+        <div id="payModalPlanTitle" style="font-size:18px;font-weight:800;margin-top:2px">Upgrade to Vyapar Pro</div>
+      </div>
+      <button onclick="closeModal('paymentGatewayModal')" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+
+    <div style="padding:20px 24px">
+      <!-- Amount Summary -->
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:6px">
+          <span>Plan Base Amount</span>
+          <span id="payModalBaseAmount">₹799.00</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:8px">
+          <span>GST (18% Goods &amp; Services Tax)</span>
+          <span id="payModalGst">₹143.82</span>
+        </div>
+        <div style="border-top:1px dashed #cbd5e1;padding-top:8px;display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--text)">
+          <span>Total Payable</span>
+          <span id="payModalTotalAmount" style="color:#2563eb">₹942.82</span>
+        </div>
+      </div>
+
+      <!-- Payment Method Tabs -->
+      <div style="display:flex;gap:6px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:16px">
+        <button class="btn btn-primary btn-sm" id="payTabUpi" onclick="selectPayMethod('upi')">UPI / QR</button>
+        <button class="btn btn-outline btn-sm" id="payTabCard" onclick="selectPayMethod('card')">Card (RuPay/Visa)</button>
+        <button class="btn btn-outline btn-sm" id="payTabNet" onclick="selectPayMethod('net')">NetBanking</button>
+      </div>
+
+      <!-- UPI Form -->
+      <div id="payFormUpi">
+        <div style="text-align:center;padding:12px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:14px">
+          <div style="display:inline-block;padding:8px;background:#fff;border-radius:8px;border:1px solid #cbd5e1;box-shadow:0 2px 8px rgba(0,0,0,0.05)">
+            <svg width="130" height="130" viewBox="0 0 100 100">
+              <rect width="100" height="100" fill="#ffffff"/>
+              <rect x="10" y="10" width="26" height="26" fill="#0f172a"/>
+              <rect x="14" y="14" width="18" height="18" fill="#ffffff"/>
+              <rect x="18" y="18" width="10" height="10" fill="#0f172a"/>
+              <rect x="64" y="10" width="26" height="26" fill="#0f172a"/>
+              <rect x="68" y="14" width="18" height="18" fill="#ffffff"/>
+              <rect x="72" y="18" width="10" height="10" fill="#0f172a"/>
+              <rect x="10" y="64" width="26" height="26" fill="#0f172a"/>
+              <rect x="14" y="68" width="18" height="18" fill="#ffffff"/>
+              <rect x="18" y="72" width="10" height="10" fill="#0f172a"/>
+              <rect x="42" y="14" width="8" height="8" fill="#0f172a"/>
+              <rect x="52" y="24" width="6" height="6" fill="#0f172a"/>
+              <rect x="42" y="34" width="16" height="16" fill="#0f172a"/>
+              <rect x="14" y="44" width="8" height="12" fill="#0f172a"/>
+              <rect x="64" y="44" width="12" height="8" fill="#0f172a"/>
+              <rect x="80" y="52" width="10" height="10" fill="#0f172a"/>
+              <rect x="44" y="64" width="12" height="12" fill="#0f172a"/>
+              <rect x="64" y="68" width="16" height="8" fill="#0f172a"/>
+              <rect x="70" y="80" width="14" height="10" fill="#0f172a"/>
+            </svg>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-top:6px">Scan with GPay, PhonePe, Paytm or BHIM</div>
+        </div>
+        <div class="field" style="margin-bottom:12px">
+          <label class="field-label">Or Enter UPI ID</label>
+          <input type="text" id="upiIdInput" placeholder="mobile@upi" value="supplier@upi"/>
+        </div>
+      </div>
+
+      <!-- Card Form -->
+      <div id="payFormCard" style="display:none">
+        <div class="field" style="margin-bottom:12px">
+          <label class="field-label">Card Number</label>
+          <input type="text" placeholder="4532 •••• •••• 8892" value="4532 9812 3456 8892"/>
+        </div>
+        <div class="fg fg-2" style="margin-bottom:12px">
+          <div class="field"><label class="field-label">Valid Thru</label><input type="text" placeholder="MM/YY" value="08/29"/></div>
+          <div class="field"><label class="field-label">CVV</label><input type="password" placeholder="•••" value="882"/></div>
+        </div>
+        <div class="field" style="margin-bottom:12px">
+          <label class="field-label">Cardholder Name</label>
+          <input type="text" id="cardHolderName" placeholder="Name on card" value="Authorized Signatory"/>
+        </div>
+      </div>
+
+      <!-- Net Banking Form -->
+      <div id="payFormNet" style="display:none">
+        <div class="field" style="margin-bottom:12px">
+          <label class="field-label">Select Popular Indian Bank</label>
+          <select style="width:100%">
+            <option>HDFC Bank</option>
+            <option>State Bank of India (SBI)</option>
+            <option>ICICI Bank</option>
+            <option>Axis Bank</option>
+            <option>Kotak Mahindra Bank</option>
+            <option>Punjab National Bank (PNB)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Processing State -->
+      <div id="payProcessingState" style="display:none;text-align:center;padding:24px 10px">
+        <div style="width:44px;height:44px;border:3px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px"></div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">Authorizing with Banking Switch...</div>
+        <div style="font-size:12px;color:var(--text-3)">Please do not refresh or close this window</div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div id="payModalActions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-outline" onclick="closeModal('paymentGatewayModal')">Cancel</button>
+        <button class="btn btn-primary" id="btnPayConfirm" onclick="processMockPayment()" style="background:#2563eb">Pay Securely</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1915,6 +2210,7 @@ showSection = function(id, el) {
     orders: 'Purchase Orders',
     retailers: 'Retailer List',
     performance: 'My Performance',
+    plan: 'Subscription Plan',
   };
   document.querySelectorAll('.section').forEach((section) => section.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach((item) => item.classList.remove('active'));
@@ -1928,45 +2224,96 @@ showSection = function(id, el) {
   if (sidebarItem) {
     sidebarItem.classList.add('active');
   }
-  document.getElementById('bc').innerHTML = `<a href="javascript:void(0)" onclick="showSection('dashboard')">Home</a><span class="bc-sep">/</span><span class="current">${escapeHtml(labelMap[id])}</span>`;
+  document.getElementById('bc').innerHTML = `<a href="javascript:void(0)" onclick="showSection('dashboard')">Home</a><span class="bc-sep">/</span><span class="current">${escapeHtml(labelMap[id] || id)}</span>`;
   if (id === 'dashboard') renderDashboard();
   if (id === 'profile') { fillDashboardProfileForm(); loadSupplierDocuments(); }
   if (id === 'products') renderProducts();
   if (id === 'orders') renderOrders();
   if (id === 'retailers') renderRetailers();
   if (id === 'performance') renderPerformance();
+  if (id === 'plan') { renderPlanSection(); syncSupplierPlanFromBackend(); }
 };
 
 renderDashboard = function() {
-  const statCards = document.querySelectorAll('#sec-dashboard .stat-card');
   const activeRetailers = retailers.filter((retailer) => retailer.status === 'active').length;
   const listedProducts = suppliers_products.length;
-  const pendingOrders = orders.filter((order) => order.status === 'pending').length;
-  const deliveredOrders = orders.filter((order) => order.status === 'delivered').length;
+  const pendingOrders = orders.filter((order) => order.status === 'pending');
+  const deliveredOrders = orders.filter((order) => order.status === 'delivered');
   const lowStockProducts = suppliers_products.filter((product) => product.status === 'inactive').length;
-  const fulfilmentAverage = retailers.length
-    ? Math.round(retailers.reduce((sum, retailer) => sum + retailer.fulfilment, 0) / retailers.length)
-    : 0;
-  if (statCards[0]) {
-    statCards[0].querySelector('.stat-value').textContent = String(activeRetailers);
-    statCards[0].querySelector('.stat-trend').textContent = `${Math.max(retailers.length - activeRetailers, 0)} inactive retailers`;
-  }
-  if (statCards[1]) {
-    statCards[1].querySelector('.stat-value').textContent = String(listedProducts);
-    statCards[1].querySelector('.stat-trend').textContent = `${lowStockProducts} below MOQ`;
-  }
-  if (statCards[2]) {
-    statCards[2].querySelector('.stat-value').textContent = String(pendingOrders);
-    statCards[2].querySelector('.stat-trend').textContent = `${orders.length} total orders`;
-  }
-  if (statCards[3]) {
-    statCards[3].querySelector('.stat-value').textContent = `${fulfilmentAverage}%`;
-    statCards[3].querySelector('.stat-trend').textContent = `${deliveredOrders} delivered orders`;
-  }
+  const fulfilmentAverage = orders.length
+    ? Math.round((deliveredOrders.length / orders.length) * 100)
+    : 100;
+
+  // Calculate gross sales for completed/delivered orders
+  const completedSalesRevenue = deliveredOrders.reduce((sum, order) => {
+    const p = suppliers_products.find(prod => prod.name === order.product || prod.id === order.product || prod.sku === order.product);
+    const unitPrice = p ? (Number(p.price || p.unitPrice) || 450) : 450;
+    const qty = parseInt(order.qty, 10) || 1;
+    return sum + (unitPrice * qty);
+  }, 0);
+
+  // Total volume across all orders (for pending estimates)
+  const totalVolume = orders.reduce((sum, order) => {
+    const p = suppliers_products.find(prod => prod.name === order.product || prod.id === order.product || prod.sku === order.product);
+    const unitPrice = p ? (Number(p.price || p.unitPrice) || 450) : 450;
+    const qty = parseInt(order.qty, 10) || 1;
+    return sum + (unitPrice * qty);
+  }, 0);
+
+  const pendingVolume = pendingOrders.reduce((sum, order) => {
+    const p = suppliers_products.find(prod => prod.name === order.product || prod.id === order.product || prod.sku === order.product);
+    const unitPrice = p ? (Number(p.price || p.unitPrice) || 450) : 450;
+    const qty = parseInt(order.qty, 10) || 1;
+    return sum + (unitPrice * qty);
+  }, 0);
+
+  // 2% Platform Commission calculation on completed sales (or total volume if no delivered yet)
+  const activeVolume = completedSalesRevenue > 0 ? completedSalesRevenue : totalVolume;
+  const platformFee = activeVolume * 0.02;
+  const netPayout = activeVolume - platformFee;
+  const avgOrderVal = deliveredOrders.length > 0 ? (completedSalesRevenue / deliveredOrders.length) : (orders.length ? totalVolume / orders.length : 0);
+
+  // Stat Card 1: Total Completed Sales
+  const elTotalSales = document.getElementById('statTotalSalesVal');
+  if (elTotalSales) elTotalSales.textContent = '₹' + Number(completedSalesRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const elTotalSalesTrend = document.getElementById('statTotalSalesTrend');
+  if (elTotalSalesTrend) elTotalSalesTrend.textContent = `↑ ${deliveredOrders.length} POs Fulfilled`;
+
+  // Stat Card 2: Net Supplier Payout
+  const elNetPayout = document.getElementById('statNetPayoutVal');
+  if (elNetPayout) elNetPayout.textContent = '₹' + Number(netPayout).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // Stat Card 3: 2% Platform Fee
+  const elPlatformFee = document.getElementById('statPlatformFeeVal');
+  if (elPlatformFee) elPlatformFee.textContent = '₹' + Number(platformFee).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // Stat Card 4: Pending Orders
+  const elPendingOrders = document.getElementById('statPendingOrdersVal');
+  if (elPendingOrders) elPendingOrders.textContent = String(pendingOrders.length);
+  const elPendingOrdersTrend = document.getElementById('statPendingOrdersTrend');
+  if (elPendingOrdersTrend) elPendingOrdersTrend.textContent = `${orders.length} total orders (₹${Math.round(pendingVolume).toLocaleString('en-IN')} pending)`;
+
+  // Stat Card 5: Fulfilment Rate
+  const elFulfilment = document.getElementById('statFulfilmentVal');
+  if (elFulfilment) elFulfilment.textContent = `${fulfilmentAverage}%`;
+  const elFulfilmentTrend = document.getElementById('statFulfilmentTrend');
+  if (elFulfilmentTrend) elFulfilmentTrend.textContent = `↑ ${deliveredOrders.length} delivered orders`;
+
+  // Sales Banner Headline & KPIs
+  const elSalesHead = document.getElementById('dashTotalSalesHeadline');
+  if (elSalesHead) elSalesHead.textContent = '₹' + Number(completedSalesRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Gross Completed Sales';
+  const elSalesSub = document.getElementById('dashSalesSubheadline');
+  if (elSalesSub) elSalesSub.textContent = `Net supplier payout: ₹${Number(netPayout).toLocaleString('en-IN', { minimumFractionDigits: 2 })} (after 2.0% platform fee of ₹${Number(platformFee).toLocaleString('en-IN', { minimumFractionDigits: 2 })})`;
+  const elDeliveredCount = document.getElementById('dashDeliveredCount');
+  if (elDeliveredCount) elDeliveredCount.textContent = String(deliveredOrders.length);
+  const elPendingVal = document.getElementById('dashPendingValue');
+  if (elPendingVal) elPendingVal.textContent = '₹' + Number(pendingVolume).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const elAvgVal = document.getElementById('dashAvgOrderValue');
+  if (elAvgVal) elAvgVal.textContent = '₹' + Number(avgOrderVal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const recentOrdersBody = document.getElementById('dashboardRecentOrdersBody');
   if (recentOrdersBody) {
-    const recentOrders = orders.slice(0, 3);
+    const recentOrders = orders.slice(0, 5);
     recentOrdersBody.innerHTML = recentOrders.length
       ? recentOrders.map((order) => `
         <tr>
@@ -1999,6 +2346,237 @@ renderDashboard = function() {
       </div>
     </div>
   `).join('');
+};
+
+/* ── SAAS PLAN & MOCK PAYMENT SYSTEM ── */
+let currentSelectedPlan = 'pro';
+
+renderPlanSection = function() {
+  const session = (() => { try { return JSON.parse(localStorage.getItem('so_session') || 'null'); } catch { return null; } })();
+  const plan = (session && session.plan) || 'free';
+  
+  const planNames = { free: 'Starter Kirana (Free Tier)', pro: 'Vyapar Pro (₹799/mo)', enterprise: 'Bharat Enterprise (₹3,499/mo)' };
+  const planDescs = {
+    free: 'Basic catalog access. Allows up to 50 product items in your supplier catalog.',
+    pro: 'Unlimited product catalog, up to 5 outlets, automated reorder suggestions, WhatsApp alerts.',
+    enterprise: 'Enterprise multi-depot sync, custom ERP integration, unlimited stores & products, 24/7 account manager.'
+  };
+
+  const nameEl = document.getElementById('supplierCurrentPlanName');
+  const descEl = document.getElementById('supplierPlanDesc');
+  const badgeEl = document.getElementById('supplierPlanStatusBadge');
+  const usageTextEl = document.getElementById('supplierPlanUsageText');
+  const usageBarEl = document.getElementById('supplierPlanUsageBar');
+
+  if (nameEl) nameEl.textContent = planNames[plan] || 'Starter Kirana (Free Tier)';
+  if (descEl) descEl.textContent = planDescs[plan] || '';
+  if (badgeEl) {
+    badgeEl.textContent = plan === 'free' ? 'Free Forever' : 'Active Subscription';
+    badgeEl.style.background = plan === 'enterprise' ? '#7e22ce' : (plan === 'pro' ? '#2563eb' : '#22c55e');
+  }
+
+  const prodCount = suppliers_products.length;
+  if (usageTextEl) {
+    usageTextEl.textContent = plan === 'free' ? `${prodCount} / 50 Products` : `${prodCount} Products (Unlimited)`;
+  }
+  if (usageBarEl) {
+    const pct = plan === 'free' ? Math.min(100, Math.round((prodCount / 50) * 100)) : 100;
+    usageBarEl.style.width = `${pct}%`;
+    usageBarEl.style.background = pct > 90 ? '#ef4444' : '#38bdf8';
+  }
+
+  const btnFree = document.getElementById('btnTierFree');
+  const btnPro = document.getElementById('btnTierPro');
+  const btnEnt = document.getElementById('btnTierEnterprise');
+
+  if (btnFree) {
+    btnFree.disabled = plan === 'free';
+    btnFree.textContent = plan === 'free' ? 'Current Active Plan' : 'Downgrade to Free';
+  }
+  if (btnPro) {
+    btnPro.disabled = plan === 'pro';
+    btnPro.textContent = plan === 'pro' ? 'Current Active Plan' : (plan === 'enterprise' ? 'Downgrade to Pro' : 'Upgrade to Vyapar Pro');
+  }
+  if (btnEnt) {
+    btnEnt.disabled = plan === 'enterprise';
+    btnEnt.textContent = plan === 'enterprise' ? 'Current Active Plan' : 'Upgrade to Enterprise';
+  }
+};
+
+syncSupplierPlanFromBackend = async function() {
+  const session = (() => { try { return JSON.parse(localStorage.getItem('so_session') || 'null'); } catch { return null; } })();
+  if (!session) return;
+
+  try {
+    let user = null;
+    if (session.id) {
+      const res = await fetch(`${API_BASE}/users/${encodeURIComponent(session.id)}`);
+      if (res.ok) user = await res.json();
+    }
+    if (!user && session.email) {
+      const listRes = await fetch(`${API_BASE}/users?email=${encodeURIComponent(session.email)}`);
+      if (listRes.ok) {
+        const list = await listRes.json();
+        if (list && list.length) user = list[0];
+      }
+    }
+    if (user) {
+      if (user.id) session.id = user.id;
+      if (user.plan) session.plan = user.plan;
+      localStorage.setItem('so_session', JSON.stringify(session));
+      renderPlanSection();
+    }
+  } catch (err) {
+    console.error('Could not sync supplier plan from backend:', err);
+  }
+};
+
+setSupplierPlan = async function(planKey) {
+  const session = (() => { try { return JSON.parse(localStorage.getItem('so_session') || 'null'); } catch { return null; } })();
+  if (!session) return;
+
+  try {
+    let updated = false;
+    if (session.id) {
+      const res = await fetch(`${API_BASE}/users/${encodeURIComponent(session.id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planKey }),
+      });
+      if (res.ok) updated = true;
+    }
+    if (!updated && session.email) {
+      const listRes = await fetch(`${API_BASE}/users?email=${encodeURIComponent(session.email)}`);
+      if (listRes.ok) {
+        const list = await listRes.json();
+        if (list && list.length && list[0].id) {
+          const res = await fetch(`${API_BASE}/users/${encodeURIComponent(list[0].id)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan: planKey }),
+          });
+          if (res.ok) {
+            session.id = list[0].id;
+            updated = true;
+          }
+        }
+      }
+    }
+
+    session.plan = planKey;
+    localStorage.setItem('so_session', JSON.stringify(session));
+    renderPlanSection();
+    toast(`Plan updated to ${planKey === 'free' ? 'Starter Kirana (Free)' : (planKey === 'pro' ? 'Vyapar Pro' : 'Bharat Enterprise')}.`);
+  } catch (e) {
+    session.plan = planKey;
+    localStorage.setItem('so_session', JSON.stringify(session));
+    renderPlanSection();
+    toast('Plan updated.');
+  }
+};
+
+openMockPaymentModal = function(planKey) {
+  currentSelectedPlan = planKey;
+  const isPro = planKey === 'pro';
+  const base = isPro ? 799 : 3499;
+  const gst = Number((base * 0.18).toFixed(2));
+  const total = Number((base + gst).toFixed(2));
+
+  document.getElementById('payModalPlanTitle').textContent = isPro ? 'Upgrade to Vyapar Pro' : 'Upgrade to Bharat Enterprise';
+  document.getElementById('payModalBaseAmount').textContent = '₹' + base.toLocaleString('en-IN', {minimumFractionDigits:2});
+  document.getElementById('payModalGst').textContent = '₹' + gst.toLocaleString('en-IN', {minimumFractionDigits:2});
+  document.getElementById('payModalTotalAmount').textContent = '₹' + total.toLocaleString('en-IN', {minimumFractionDigits:2});
+
+  selectPayMethod('upi');
+  document.getElementById('payProcessingState').style.display = 'none';
+  document.getElementById('payModalActions').style.display = 'flex';
+  openModal('paymentGatewayModal');
+};
+
+selectPayMethod = function(method) {
+  ['payTabUpi', 'payTabCard', 'payTabNet'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('btn-primary'); el.classList.add('btn-outline'); }
+  });
+  ['payFormUpi', 'payFormCard', 'payFormNet'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  if (method === 'upi') {
+    document.getElementById('payTabUpi').classList.add('btn-primary');
+    document.getElementById('payTabUpi').classList.remove('btn-outline');
+    document.getElementById('payFormUpi').style.display = 'block';
+  } else if (method === 'card') {
+    document.getElementById('payTabCard').classList.add('btn-primary');
+    document.getElementById('payTabCard').classList.remove('btn-outline');
+    document.getElementById('payFormCard').style.display = 'block';
+  } else {
+    document.getElementById('payTabNet').classList.add('btn-primary');
+    document.getElementById('payTabNet').classList.remove('btn-outline');
+    document.getElementById('payFormNet').style.display = 'block';
+  }
+};
+
+processMockPayment = async function() {
+  document.getElementById('payFormUpi').style.display = 'none';
+  document.getElementById('payFormCard').style.display = 'none';
+  document.getElementById('payFormNet').style.display = 'none';
+  document.getElementById('payModalActions').style.display = 'none';
+  document.getElementById('payProcessingState').style.display = 'block';
+
+  setTimeout(async () => {
+    try {
+      const session = (() => { try { return JSON.parse(localStorage.getItem('so_session') || 'null'); } catch { return null; } })();
+      if (session) {
+        let updated = false;
+        if (session.id) {
+          try {
+            const res = await fetch(`${API_BASE}/users/${encodeURIComponent(session.id)}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ plan: currentSelectedPlan }),
+            });
+            if (res.ok) updated = true;
+          } catch (e) {
+            console.error('Supplier PATCH by id failed:', e);
+          }
+        }
+        if (!updated && session.email) {
+          try {
+            const listRes = await fetch(`${API_BASE}/users?email=${encodeURIComponent(session.email)}`);
+            if (listRes.ok) {
+              const list = await listRes.json();
+              if (list && list.length && list[0].id) {
+                const res = await fetch(`${API_BASE}/users/${encodeURIComponent(list[0].id)}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ plan: currentSelectedPlan }),
+                });
+                if (res.ok) {
+                  session.id = list[0].id;
+                  updated = true;
+                }
+              }
+            }
+          } catch (e) {
+            console.error('Supplier PATCH by email failed:', e);
+          }
+        }
+
+        session.plan = currentSelectedPlan;
+        localStorage.setItem('so_session', JSON.stringify(session));
+      }
+
+      closeModal('paymentGatewayModal');
+      toast(`Payment successful! Reference #SO-PAY-${Math.floor(100000+Math.random()*900000)}. Your plan is now upgraded to ${currentSelectedPlan === 'enterprise' ? 'Bharat Enterprise' : 'Vyapar Pro'}!`);
+      renderPlanSection();
+    } catch (e) {
+      closeModal('paymentGatewayModal');
+      toast('Payment processed locally.');
+      renderPlanSection();
+    }
+  }, 1200);
 };
 
 renderProducts = function(filter = '') {
@@ -2054,6 +2632,13 @@ filterProducts = function(value) {
 };
 
 openProductModal = function(index) {
+  const session = (() => { try { return JSON.parse(localStorage.getItem('so_session') || 'null'); } catch { return null; } })();
+  const currentPlan = (session && session.plan) || 'free';
+  if (index === undefined && currentPlan === 'free' && suppliers_products.length >= 50) {
+    toast('Starter Kirana plan is limited to 50 products. Upgrade to Vyapar Pro or Bharat Enterprise to list unlimited products.');
+    showSection('plan');
+    return;
+  }
   document.getElementById('prodModalTitle').textContent = index !== undefined ? 'Edit Product' : 'Add New Product';
   const modal = document.getElementById('productModal');
   const ids = ['pm-name', 'pm-sku', 'pm-brand', 'pm-variant', 'pm-cat', 'pm-unit', 'pm-price', 'pm-moq', 'pm-stock', 'pm-expiry', 'pm-review', 'pm-desc'];
