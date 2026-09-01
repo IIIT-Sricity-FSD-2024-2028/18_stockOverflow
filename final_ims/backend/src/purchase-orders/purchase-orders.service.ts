@@ -7,6 +7,7 @@ import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
 import { RetailersService } from '../retailers/retailers.service';
 import { SuppliersService } from '../suppliers/suppliers.service';
 import { ProductsService } from '../products/products.service';
+import { PlatformRevenueService } from '../platform-revenue/platform-revenue.service';
 
 @Injectable()
 export class PurchaseOrdersService extends JsonCollectionService<
@@ -21,6 +22,7 @@ export class PurchaseOrdersService extends JsonCollectionService<
     private readonly suppliersService: SuppliersService,
     private readonly retailersService: RetailersService,
     private readonly productsService: ProductsService,
+    private readonly platformRevenueService: PlatformRevenueService,
   ) {
     super(db);
   }
@@ -37,6 +39,11 @@ export class PurchaseOrdersService extends JsonCollectionService<
       createPurchaseOrderDto.retailerId
         ? this.retailersService.findOne(createPurchaseOrderDto.retailerId)
         : null;
+
+    // Validate weekly purchase order quotas for both retailer and supplier
+    const targetRetailerId = retailer?.id || createPurchaseOrderDto.retailerId;
+    const targetSupplierId = supplier?.id || createPurchaseOrderDto.supplierId;
+    this.platformRevenueService.validateOrderQuota(targetRetailerId, targetSupplierId);
 
     const purchaseOrders = this.findAllTyped();
     const subtotal = createPurchaseOrderDto.items.reduce(

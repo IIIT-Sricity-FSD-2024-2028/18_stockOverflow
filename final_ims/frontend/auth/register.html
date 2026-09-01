@@ -11,16 +11,22 @@
 <body>
   <div class="auth-container">
     <div class="auth-form-side">
-      <a href="../index.html" class="brand">
-        <div class="brand-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-          </svg>
-        </div>
-        Stock Overflow
-      </a>
+      <div style="width: 100%; max-width: 500px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <a href="../index.html" class="brand" style="margin-bottom: 0;">
+          <div class="brand-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+            </svg>
+          </div>
+          Stock Overflow
+        </a>
+        <a href="../index.html" style="display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: #475569; text-decoration: none; padding: 6px 12px; border-radius: 8px; background: #f1f5f9; border: 1px solid #e2e8f0; transition: all 0.2s;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back to Home
+        </a>
+      </div>
 
-      <div class="auth-header">
+      <div class="auth-header" style="width: 100%; max-width: 500px;">
         <h1>Create an Account</h1>
         <p>Join Stock Overflow and start managing your inventory efficiently.</p>
       </div>
@@ -68,24 +74,82 @@
           <div class="invalid-feedback">Passwords must match.</div>
         </div>
         
+        <!-- Role Selection -->
         <div class="form-group" style="padding: 0; width: 100%;">
-          <label class="form-label" for="role">Role</label>
+          <label class="form-label" for="role">Select Your Role</label>
+          
+          <!-- Visual Role Toggle Buttons -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+            <button type="button" id="roleBtn-retailer" onclick="setRoleDirectly('retailer')" style="padding: 10px; border-radius: 10px; border: 2px solid #3b82f6; background: #eff6ff; color: #1d4ed8; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              🏪 Retailer / Store
+            </button>
+            <button type="button" id="roleBtn-supplier" onclick="setRoleDirectly('supplier')" style="padding: 10px; border-radius: 10px; border: 2px solid #e2e8f0; background: #ffffff; color: #475569; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              🏭 Supplier / Distributor
+            </button>
+          </div>
+
           <div class="input-icon-group">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9m3 4H5m4 4h10M5 7h2m0 4h2m-2 4h2"></path></svg>
-            <select class="form-control" id="role" required>
-              <option value="" disabled selected>Select your role</option>
-              <option value="retailer">Retailer</option>
-              <option value="supplier">Supplier</option>
-              <option value="biller">Biller</option>
-              <option value="consumer">Customer</option>
+            <select class="form-control" id="role" required onchange="handleRoleChange(this.value)">
+              <option value="retailer" selected>Retailer (Store / Supermarket)</option>
+              <option value="supplier">Supplier (Distributor / Wholesaler)</option>
+              <option value="biller">Biller (POS Staff)</option>
+              <option value="consumer">Customer (End Buyer)</option>
               <option value="admin">Admin (Testing)</option>
             </select>
           </div>
           <div class="invalid-feedback">Please select a role.</div>
         </div>
 
+        <!-- Dynamic Plan Selection for Retailers & Suppliers -->
+        <div id="planSelectionContainer" style="display: block; width: 100%; margin: 1.25rem 0; animation: fadeIn 0.3s ease-in-out;">
+          <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 700; font-size: 13.5px; color: #0f172a;">Choose Subscription Plan</span>
+            <span style="font-size: 11px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px;">30-Day Billing Cycle</span>
+          </label>
+          <input type="hidden" id="selectedPlan" value="free">
+
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+            <!-- Plan 1: Starter (Free) -->
+            <div class="plan-card active-plan" id="planCard-free" onclick="selectPlan('free')" style="border: 2px solid #10b981; border-radius: 12px; padding: 14px; background: #f0fdf4; cursor: pointer; transition: all 0.2s; position: relative;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-weight: 800; font-size: 15px; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                    Starter <span style="font-size: 11px; background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 10px; font-weight: 700;">FREE FOREVER</span>
+                  </div>
+                  <div style="font-size: 12px; color: #64748b; margin-top: 2px;" id="planDesc-free">3 Orders / week • 1 Store • 50 SKUs • POS Billing</div>
+                </div>
+                <div style="font-size: 18px; font-weight: 800; color: #0f172a;">₹0<span style="font-size: 11px; font-weight: 500; color: #64748b;">/mo</span></div>
+              </div>
+            </div>
+
+            <!-- Plan 2: Growth (Pro) -->
+            <div class="plan-card" id="planCard-pro" onclick="selectPlan('pro')" style="border: 2px solid #e2e8f0; border-radius: 12px; padding: 14px; background: #ffffff; cursor: pointer; transition: all 0.2s; position: relative;">
+              <div style="position: absolute; top: -9px; right: 14px; background: #3b82f6; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; letter-spacing: 0.5px;">MOST POPULAR</div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-weight: 800; font-size: 15px; color: #1d4ed8;">Growth</div>
+                  <div style="font-size: 12px; color: #64748b; margin-top: 2px;" id="planDesc-pro">15 Orders / week • Up to 5 Stores • Unlimited SKUs • AI Reorders</div>
+                </div>
+                <div style="font-size: 18px; font-weight: 800; color: #1d4ed8;">₹799<span style="font-size: 11px; font-weight: 500; color: #64748b;">/mo</span></div>
+              </div>
+            </div>
+
+            <!-- Plan 3: Enterprise -->
+            <div class="plan-card" id="planCard-enterprise" onclick="selectPlan('enterprise')" style="border: 2px solid #e2e8f0; border-radius: 12px; padding: 14px; background: #ffffff; cursor: pointer; transition: all 0.2s; position: relative;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-weight: 800; font-size: 15px; color: #7e22ce;">Enterprise</div>
+                  <div style="font-size: 12px; color: #64748b; margin-top: 2px;" id="planDesc-enterprise">UNLIMITED Orders • Unlimited Stores • ERP Sync • 24/7 Support</div>
+                </div>
+                <div style="font-size: 18px; font-weight: 800; color: #7e22ce;">₹3,499<span style="font-size: 11px; font-weight: 500; color: #64748b;">/mo</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div style="padding: 0; width: 100%;">
-          <button type="submit" class="btn btn-primary btn-block" style="background-color: var(--success-color); margin-top: 1rem;">Create Account</button>
+          <button type="submit" id="btnSubmitRegister" class="btn btn-primary btn-block" style="background-color: var(--success-color); margin-top: 1rem;">Create Account</button>
         </div>
 
         <div class="auth-footer" style="margin-top: 2rem;">
@@ -102,6 +166,217 @@
       <img src="../assets/warehouse-empl.jpeg" alt="Stock Overflow Warehouse" class="hero-dashboard-img">
     </div>
   </div>
+
+  <!-- Dummy Payment & Activation Modal -->
+  <div id="paymentModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; width: 100%; max-width: 480px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #e2e8f0; overflow: hidden; animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+      
+      <!-- Modal Header -->
+      <div style="padding: 20px 24px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px;">Secure Checkout Simulator</div>
+          <div style="font-size: 18px; font-weight: 800; margin-top: 2px;" id="modalPlanTitle">Growth Plan Activation</div>
+        </div>
+        <button type="button" onclick="closePaymentModal()" style="background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;">✕</button>
+      </div>
+
+      <div style="padding: 24px;">
+        <!-- Order Summary Box -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 13px; font-weight: 700; color: #1e293b;" id="modalSummaryPlan">Growth Plan (1 Month)</div>
+            <div style="font-size: 11.5px; color: #64748b;">30 days validity • Auto-renews monthly • Cancel anytime</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 20px; font-weight: 800; color: #1e293b;" id="modalSummaryPrice">₹799</div>
+            <div style="font-size: 10px; font-weight: 700; color: #10b981;">+ 2% Commission</div>
+          </div>
+        </div>
+
+        <!-- Payment Method Tabs -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px;">Select Dummy Payment Method:</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <button type="button" class="pay-tab active-pay-tab" id="tab-upi" onclick="switchPayTab('upi')" style="padding: 10px 6px; border-radius: 8px; border: 1.5px solid #3b82f6; background: #eff6ff; font-size: 12px; font-weight: 700; color: #1d4ed8; cursor: pointer; text-align: center;">📱 UPI AutoPay</button>
+            <button type="button" class="pay-tab" id="tab-card" onclick="switchPayTab('card')" style="padding: 10px 6px; border-radius: 8px; border: 1.5px solid #e2e8f0; background: #ffffff; font-size: 12px; font-weight: 700; color: #64748b; cursor: pointer; text-align: center;">💳 Card</button>
+            <button type="button" class="pay-tab" id="tab-netbanking" onclick="switchPayTab('netbanking')" style="padding: 10px 6px; border-radius: 8px; border: 1.5px solid #e2e8f0; background: #ffffff; font-size: 12px; font-weight: 700; color: #64748b; cursor: pointer; text-align: center;">🏦 NetBanking</button>
+          </div>
+        </div>
+
+        <!-- Payment Form Body -->
+        <div id="payForm-upi" style="background: #fafafa; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px; margin-bottom: 20px;">
+          <label style="font-size: 12px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">UPI ID / VPA</label>
+          <input type="text" id="upiInput" value="business@okhdfcbank" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+          <div style="font-size: 11px; color: #6b7280; margin-top: 6px;">⚡ Simulated: Mandate of ₹799/mo pre-approved for sandbox testing.</div>
+        </div>
+
+        <div id="payForm-card" style="display: none; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px; margin-bottom: 20px;">
+          <label style="font-size: 12px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Card Number</label>
+          <input type="text" value="4242 •••• •••• 4242" readonly style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; box-sizing: border-box; background: #fff;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+            <div>
+              <label style="font-size: 11px; color: #6b7280;">Valid Thru</label>
+              <input type="text" value="12/29" readonly style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; box-sizing: border-box; background: #fff;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: #6b7280;">CVV</label>
+              <input type="text" value="888" readonly style="width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; box-sizing: border-box; background: #fff;">
+            </div>
+          </div>
+        </div>
+
+        <div id="payForm-netbanking" style="display: none; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px; margin-bottom: 20px;">
+          <label style="font-size: 12px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px;">Select Bank</label>
+          <select style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; box-sizing: border-box; background: #fff;">
+            <option>HDFC Bank Corporate</option>
+            <option>ICICI Bank Current Account</option>
+            <option>State Bank of India (SBI)</option>
+            <option>Axis Bank Business</option>
+          </select>
+        </div>
+
+        <!-- Simulated Action Button -->
+        <button type="button" id="btnConfirmDummyPayment" onclick="executePaymentAndRegister()" style="width: 100%; background: #10b981; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;">
+          <span>✓ Confirm &amp; Activate Subscription</span>
+        </button>
+
+        <div style="text-align: center; margin-top: 12px; font-size: 11.5px; color: #94a3b8;">
+          🔒 Sandbox Test Mode: No real money is charged.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+
+  <script>
+    function setRoleDirectly(role) {
+      const select = document.getElementById('role');
+      if (select) {
+        select.value = role;
+        handleRoleChange(role);
+      }
+    }
+
+    function handleRoleChange(role) {
+      const container = document.getElementById('planSelectionContainer');
+      const retBtn = document.getElementById('roleBtn-retailer');
+      const supBtn = document.getElementById('roleBtn-supplier');
+
+      if (retBtn && supBtn) {
+        if (role === 'retailer') {
+          retBtn.style.borderColor = '#3b82f6';
+          retBtn.style.background = '#eff6ff';
+          retBtn.style.color = '#1d4ed8';
+          supBtn.style.borderColor = '#e2e8f0';
+          supBtn.style.background = '#ffffff';
+          supBtn.style.color = '#475569';
+        } else if (role === 'supplier') {
+          supBtn.style.borderColor = '#7c5def';
+          supBtn.style.background = '#f5f3ff';
+          supBtn.style.color = '#6d28d9';
+          retBtn.style.borderColor = '#e2e8f0';
+          retBtn.style.background = '#ffffff';
+          retBtn.style.color = '#475569';
+        } else {
+          retBtn.style.borderColor = '#e2e8f0';
+          retBtn.style.background = '#ffffff';
+          retBtn.style.color = '#475569';
+          supBtn.style.borderColor = '#e2e8f0';
+          supBtn.style.background = '#ffffff';
+          supBtn.style.color = '#475569';
+        }
+      }
+
+      if (role === 'retailer' || role === 'supplier') {
+        container.style.display = 'block';
+        if (role === 'supplier') {
+          document.getElementById('planDesc-free').textContent = '5 Incoming POs / week • Up to 25 Products • 1 Depot • Order Tracking';
+          document.getElementById('planDesc-pro').textContent = '30 Incoming POs / week • Unlimited Products • Bulk CSV Import • Auto-Dispatch';
+          document.getElementById('planDesc-enterprise').textContent = 'UNLIMITED Incoming POs • Multi-Depots • Net 30/60 Credit • ERP Sync';
+        } else {
+          document.getElementById('planDesc-free').textContent = '3 Orders / week • 1 Store • 50 SKUs • POS Billing';
+          document.getElementById('planDesc-pro').textContent = '15 Orders / week • Up to 5 Stores • Unlimited SKUs • AI Reorders';
+          document.getElementById('planDesc-enterprise').textContent = 'UNLIMITED Orders • Unlimited Stores • ERP Sync • 24/7 Support';
+        }
+      } else {
+        container.style.display = 'none';
+        selectPlan('free');
+      }
+    }
+
+    function selectPlan(tier) {
+      document.getElementById('selectedPlan').value = tier;
+      ['free', 'pro', 'enterprise'].forEach(t => {
+        const card = document.getElementById('planCard-' + t);
+        if (!card) return;
+        if (t === tier) {
+          card.style.borderColor = t === 'free' ? '#10b981' : (t === 'pro' ? '#3b82f6' : '#7e22ce');
+          card.style.backgroundColor = t === 'free' ? '#f0fdf4' : (t === 'pro' ? '#eff6ff' : '#faf5ff');
+        } else {
+          card.style.borderColor = '#e2e8f0';
+          card.style.backgroundColor = '#ffffff';
+        }
+      });
+    }
+
+    let activePaymentMethod = 'UPI AutoPay';
+
+    function switchPayTab(type) {
+      ['upi', 'card', 'netbanking'].forEach(t => {
+        const tab = document.getElementById('tab-' + t);
+        const form = document.getElementById('payForm-' + t);
+        if (t === type) {
+          tab.style.borderColor = '#3b82f6';
+          tab.style.backgroundColor = '#eff6ff';
+          tab.style.color = '#1d4ed8';
+          form.style.display = 'block';
+        } else {
+          tab.style.borderColor = '#e2e8f0';
+          tab.style.backgroundColor = '#ffffff';
+          tab.style.color = '#64748b';
+          form.style.display = 'none';
+        }
+      });
+      activePaymentMethod = type === 'upi' ? 'UPI AutoPay' : (type === 'card' ? 'Credit/Debit Card' : 'NetBanking');
+    }
+
+    function openPaymentModal(tier) {
+      const modal = document.getElementById('paymentModal');
+      const title = tier === 'enterprise' ? 'Enterprise Plan Activation' : 'Growth Plan Activation';
+      const price = tier === 'enterprise' ? '₹3,499' : '₹799';
+      const planName = tier === 'enterprise' ? 'Enterprise Plan' : 'Growth Plan';
+
+      document.getElementById('modalPlanTitle').textContent = title;
+      document.getElementById('modalSummaryPlan').textContent = planName + ' (1 Month)';
+      document.getElementById('modalSummaryPrice').textContent = price;
+
+      modal.style.display = 'flex';
+    }
+
+    function closePaymentModal() {
+      document.getElementById('paymentModal').style.display = 'none';
+    }
+
+    // Auto-initialize on load based on URL query params
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get('role') || 'retailer';
+      const planParam = params.get('plan') || 'free';
+
+      setRoleDirectly(roleParam);
+      selectPlan(planParam);
+    });
+  </script>
 
   <script src="../js/auth.js"></script>
 </body>

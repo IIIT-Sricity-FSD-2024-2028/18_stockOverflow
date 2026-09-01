@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QueryPlatformRevenueDto = exports.UpdateSubscriptionDto = void 0;
+exports.QueryPlatformRevenueDto = exports.CancelSubscriptionDto = exports.UpdateSubscriptionDto = void 0;
 const class_validator_1 = require("class-validator");
 class UpdateSubscriptionDto {
 }
@@ -42,6 +42,28 @@ __decorate([
     (0, class_validator_1.IsEnum)(['monthly', 'yearly']),
     __metadata("design:type", String)
 ], UpdateSubscriptionDto.prototype, "billingCycle", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateSubscriptionDto.prototype, "paymentMethod", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateSubscriptionDto.prototype, "paymentId", void 0);
+class CancelSubscriptionDto {
+}
+exports.CancelSubscriptionDto = CancelSubscriptionDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CancelSubscriptionDto.prototype, "userId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CancelSubscriptionDto.prototype, "reason", void 0);
 class QueryPlatformRevenueDto {
 }
 exports.QueryPlatformRevenueDto = QueryPlatformRevenueDto;

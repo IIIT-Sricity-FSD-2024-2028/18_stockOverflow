@@ -6,13 +6,15 @@ import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
 import { RetailersService } from '../retailers/retailers.service';
 import { SuppliersService } from '../suppliers/suppliers.service';
 import { ProductsService } from '../products/products.service';
+import { PlatformRevenueService } from '../platform-revenue/platform-revenue.service';
 export declare class PurchaseOrdersService extends JsonCollectionService<PurchaseOrder, 'purchaseOrders'> {
     private readonly suppliersService;
     private readonly retailersService;
     private readonly productsService;
+    private readonly platformRevenueService;
     protected readonly collectionKey: "purchaseOrders";
     protected readonly entityName = "Purchase order";
-    constructor(db: JsonDbService, suppliersService: SuppliersService, retailersService: RetailersService, productsService: ProductsService);
+    constructor(db: JsonDbService, suppliersService: SuppliersService, retailersService: RetailersService, productsService: ProductsService, platformRevenueService: PlatformRevenueService);
     findAll(retailerId?: string, storeId?: string, supplierId?: string): PurchaseOrder[];
     create(createPurchaseOrderDto: CreatePurchaseOrderDto): PurchaseOrder;
     update(id: string, updatePurchaseOrderDto: UpdatePurchaseOrderDto): PurchaseOrder;

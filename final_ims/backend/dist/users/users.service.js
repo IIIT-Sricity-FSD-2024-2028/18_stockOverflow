@@ -8,12 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const node_crypto_1 = require("node:crypto");
 const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
+const employees_service_1 = require("../employees/employees.service");
 const DEFAULT_USERS = [
     {
         id: 'u-admin-1',
@@ -84,7 +88,8 @@ const DEFAULT_USERS = [
     },
 ];
 let UsersService = class UsersService {
-    constructor() {
+    constructor(employeesService) {
+        this.employeesService = employeesService;
         this.users = new Map();
         this.dataDirectory = (0, node_path_1.join)(__dirname, '..', '..', 'data');
         this.dataFile = (0, node_path_1.join)(this.dataDirectory, 'users.json');
@@ -143,9 +148,79 @@ let UsersService = class UsersService {
             createdAt: now,
             updatedAt: now,
         };
+        if (role === 'retailer') {
+            const existingRetailers = this.readRecordsFromFile(this.retailersFile);
+            const existingRetailer = existingRetailers.find((r) => this.normalizeEmail(r.business?.businessEmail) === email ||
+                this.normalizeEmail(r.primaryContact?.directEmail) === email);
+            if (existingRetailer) {
+                created.profileId = existingRetailer.id;
+            }
+            else {
+                const newRetailerId = (0, node_crypto_1.randomUUID)();
+                const code = `RET-${Math.floor(1000 + Math.random() * 9000)}`;
+                const retailerRecord = {
+                    id: newRetailerId,
+                    profileStatus: 'pending',
+                    business: {
+                        businessName: created.name + ' Retail',
+                        businessType: 'Retailer',
+                        businessEmail: email,
+                        retailerCode: code,
+                        currency: 'INR',
+                    },
+                    primaryContact: {
+                        fullName: created.name,
+                        directEmail: email,
+                    },
+                    stores: [],
+                    suppliers: [],
+                    createdAt: now,
+                    updatedAt: now,
+                };
+                existingRetailers.unshift(retailerRecord);
+                this.writeRecordsToFile(this.retailersFile, existingRetailers);
+                created.profileId = newRetailerId;
+            }
+        }
+        else if (role === 'supplier') {
+            const existingSuppliers = this.readRecordsFromFile(this.suppliersFile);
+            const existingSupplier = existingSuppliers.find((s) => this.normalizeEmail(s.business?.businessEmail) === email ||
+                this.normalizeEmail(s.primaryContact?.directEmail) === email);
+            if (existingSupplier) {
+                created.profileId = existingSupplier.id;
+            }
+            else {
+                const newSupplierId = (0, node_crypto_1.randomUUID)();
+                const code = `SUP-${Math.floor(1000 + Math.random() * 9000)}`;
+                const supplierRecord = {
+                    id: newSupplierId,
+                    profileStatus: 'pending',
+                    business: {
+                        companyName: created.name + ' Supplies',
+                        businessType: 'Wholesaler',
+                        businessEmail: email,
+                        supplierCode: code,
+                        currency: 'INR',
+                        primaryCategory: 'General',
+                    },
+                    primaryContact: {
+                        fullName: created.name,
+                        directEmail: email,
+                    },
+                    retailers: [],
+                    products: [],
+                    createdAt: now,
+                    updatedAt: now,
+                };
+                existingSuppliers.unshift(supplierRecord);
+                this.writeRecordsToFile(this.suppliersFile, existingSuppliers);
+                created.profileId = newSupplierId;
+            }
+        }
         const hydrated = this.hydrateLinkedProfile(created);
         users.unshift(hydrated);
         this.writeAll(users);
+        this.employeesService.distributePendingWork();
         return this.toPublicUser(hydrated);
     }
     update(id, updateUserDto) {
@@ -219,7 +294,10 @@ let UsersService = class UsersService {
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid email or password');
         }
-        if (this.normalizeText(user.status, 'Active') !== 'Active') {
+        const role = this.normalizeRole(user.role);
+        const status = this.normalizeText(user.status, 'Active');
+        const isRejectedBusinessUser = (role === 'retailer' || role === 'supplier') && status !== 'Active';
+        if (status !== 'Active' && !isRejectedBusinessUser) {
             throw new common_1.UnauthorizedException('Account is inactive');
         }
         return this.toPublicUser(this.syncLinkedProfileForUserId(user.id));
@@ -392,6 +470,7 @@ let UsersService = class UsersService {
             ownerTitle: this.normalizeText(primaryContact.designation),
             ownerEmail: this.normalizeText(primaryContact.directEmail, business.businessEmail),
             profileStatus: this.normalizeText(retailer.profileStatus, 'active'),
+            rejectionReason: retailer.rejectionReason || '',
             stores,
             suppliers: Array.isArray(retailer.suppliers)
                 ? JSON.parse(JSON.stringify(retailer.suppliers))
@@ -419,6 +498,7 @@ let UsersService = class UsersService {
             ownerTitle: this.normalizeText(primaryContact.designation),
             ownerEmail: this.normalizeText(primaryContact.directEmail, business.businessEmail),
             profileStatus: this.normalizeText(supplier.profileStatus, 'active'),
+            rejectionReason: supplier.rejectionReason || '',
             retailers: Array.isArray(supplier.retailers)
                 ? JSON.parse(JSON.stringify(supplier.retailers))
                 : [],
@@ -522,6 +602,15 @@ let UsersService = class UsersService {
         });
         (0, node_fs_1.writeFileSync)(this.dataFile, JSON.stringify(users, null, 2), 'utf-8');
     }
+    writeRecordsToFile(filePath, records) {
+        try {
+            (0, node_fs_1.mkdirSync)(this.dataDirectory, { recursive: true });
+            (0, node_fs_1.writeFileSync)(filePath, JSON.stringify(records, null, 2), 'utf-8');
+        }
+        catch (err) {
+            console.error('Failed to write records to file:', filePath, err);
+        }
+    }
     normalizeStoredUser(user) {
         const now = new Date().toISOString();
         return {
@@ -581,6 +670,7 @@ let UsersService = class UsersService {
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [])
+    __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => employees_service_1.EmployeesService))),
+    __metadata("design:paramtypes", [employees_service_1.EmployeesService])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

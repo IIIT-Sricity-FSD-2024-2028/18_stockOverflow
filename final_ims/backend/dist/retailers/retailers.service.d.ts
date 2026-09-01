@@ -8,7 +8,7 @@ export declare class RetailersService {
     private readonly dataFile;
     constructor();
     create(createRetailerSetupDto: CreateRetailerSetupDto): RetailerRecord;
-    updateProfileStatus(id: string, status: 'active' | 'inactive' | 'pending' | 'rejected'): RetailerRecord;
+    updateProfileStatus(id: string, status: 'active' | 'inactive' | 'pending' | 'rejected', rejectionReason?: string): RetailerRecord;
     findAll(): RetailerRecord[];
     findOne(id: string): RetailerRecord;
     findLatest(): RetailerRecord | null;

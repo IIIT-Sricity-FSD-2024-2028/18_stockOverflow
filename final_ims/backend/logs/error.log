@@ -52,3 +52,40 @@
 [2026-08-30T19:02:22.471Z] [ERROR] POST /api/users/login 401 - Invalid email or password
 [2026-08-30T19:02:40.578Z] [ERROR] POST /api/users/login 401 - Invalid email or password
 [2026-08-30T19:24:02.096Z] [ERROR] POST /api/users/login 400 - email must be an email
+[2026-08-31T10:14:04.539Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T10:14:08.419Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T10:14:09.023Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T10:14:09.203Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T10:14:15.211Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T18:31:15.244Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T19:07:40.402Z] [ERROR] PATCH /api/retailers/5d3e7c0d-ef12-4d16-80fe-d3c701227818 404 - Retailer setup "5d3e7c0d-ef12-4d16-80fe-d3c701227818" was not found
+[2026-08-31T19:08:57.190Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T19:09:40.220Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T19:12:53.440Z] [ERROR] GET /api/employees 404 - Cannot GET /api/employees
+[2026-08-31T19:17:06.788Z] [ERROR] PATCH /api/retailers/609ecdc1-618b-4eae-b8a0-7764566ca351 404 - Retailer setup "609ecdc1-618b-4eae-b8a0-7764566ca351" was not found
+[2026-08-31T19:19:38.940Z] [ERROR] GET /db 404 - Cannot GET /db
+[2026-08-31T19:19:42.680Z] [ERROR] GET /db 404 - Cannot GET /db
+[2026-08-31T19:24:01.707Z] [ERROR] GET /api/orders 404 - Cannot GET /api/orders
+[2026-08-31T19:24:05.343Z] [ERROR] GET /api/bills 404 - Cannot GET /api/bills
+[2026-08-31T19:24:27.441Z] [ERROR] GET / 404 - Cannot GET /
+[2026-08-31T19:25:06.226Z] [ERROR] GET /db 404 - Cannot GET /db
+[2026-08-31T19:54:02.882Z] [ERROR] PATCH /api/retailers/a5486d99-4412-43a7-bed2-7405767871ae 404 - Retailer setup "a5486d99-4412-43a7-bed2-7405767871ae" was not found
+[2026-08-31T19:54:42.465Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-08-31T20:02:34.822Z] [ERROR] PATCH /api/retailers/d0551379-89e9-40fe-94ee-7675d7c5f6cd 404 - Retailer setup "d0551379-89e9-40fe-94ee-7675d7c5f6cd" was not found
+[2026-08-31T20:03:39.502Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:46.675Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:47.058Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:47.228Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:47.409Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:47.567Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:47.723Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:47.901Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:48.075Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:48.260Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:48.449Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:03:48.628Z] [ERROR] POST /api/users/login 401 - Account is inactive
+[2026-08-31T20:09:38.105Z] [ERROR] PATCH /api/retailers/4c483210-780f-41e8-a1b1-5b8165eb47d6 404 - Retailer setup "4c483210-780f-41e8-a1b1-5b8165eb47d6" was not found
+[2026-09-01T08:09:10.789Z] [ERROR] POST /api/users 409 - Email already exists
+[2026-09-01T08:09:47.597Z] [ERROR] PATCH /api/retailers/49b0082f-1388-4330-8ee6-d884c812f96d 404 - Retailer setup "49b0082f-1388-4330-8ee6-d884c812f96d" was not found
+[2026-09-01T08:44:13.797Z] [ERROR] PATCH /api/retailers/6cc1fd29-9678-4726-a595-de757a2f6816 404 - Retailer setup "6cc1fd29-9678-4726-a595-de757a2f6816" was not found
+[2026-09-01T08:57:21.400Z] [ERROR] PATCH /api/retailers/73e6b19f-e6f1-421a-bd56-214623a82376 404 - Retailer setup "73e6b19f-e6f1-421a-bd56-214623a82376" was not found

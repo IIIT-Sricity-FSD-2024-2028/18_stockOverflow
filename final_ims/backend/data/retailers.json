@@ -1,6 +1,333 @@
 [
   {
     "business": {
+      "businessName": "retaile2",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "retaile2@gmail.com",
+      "retailerCode": "RET-388",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "retaile2"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "retaile2",
+        "code": "RETAILE2",
+        "contactPerson": "retaile2",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "a81acfc2-f8e5-4d80-8071-e4055d110b00",
+    "status": "completed",
+    "createdAt": "2026-09-01T08:57:21.410Z",
+    "updatedAt": "2026-09-01T08:57:28.529Z"
+  },
+  {
+    "business": {
+      "businessName": "retaile1",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "retaile1@gmail.com",
+      "retailerCode": "RET-782",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "retaile1"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "retaile1",
+        "code": "RETAILE1",
+        "contactPerson": "retaile1",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "36af4d63-43d4-40ee-9cf0-d617522504a1",
+    "status": "completed",
+    "createdAt": "2026-09-01T08:44:13.807Z",
+    "updatedAt": "2026-09-01T08:44:23.232Z"
+  },
+  {
+    "business": {
+      "businessName": "retail4",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "retail4@gmail.com",
+      "retailerCode": "RET-584",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "retail4"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "retail4",
+        "code": "RETAIL4",
+        "contactPerson": "retail4",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "b57b7d51-a638-4e99-910f-f02aecb2db51",
+    "status": "completed",
+    "createdAt": "2026-09-01T08:09:47.611Z",
+    "updatedAt": "2026-09-01T08:10:31.779Z"
+  },
+  {
+    "business": {
+      "businessName": "retail2",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "retail2@gmail.com",
+      "retailerCode": "RET-089",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "retail2"
+    },
+    "profileStatus": "rejected",
+    "stores": [
+      {
+        "name": "retail2",
+        "code": "RETAIL2",
+        "contactPerson": "retail2",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "3a55cddd-69ad-43da-848d-69a4141fec81",
+    "status": "completed",
+    "createdAt": "2026-08-31T20:09:38.115Z",
+    "updatedAt": "2026-08-31T20:10:35.931Z",
+    "rejectionReason": "not enough information"
+  },
+  {
+    "business": {
+      "businessName": "retail1",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "retail1@gmail.com",
+      "retailerCode": "RET-806",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "retail1"
+    },
+    "profileStatus": "rejected",
+    "stores": [
+      {
+        "name": "retail1",
+        "code": "RETAIL1",
+        "contactPerson": "retail1",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "38887f39-99c2-47f1-8b40-e52fca1f7442",
+    "status": "completed",
+    "createdAt": "2026-08-31T20:02:34.831Z",
+    "updatedAt": "2026-08-31T20:03:19.097Z",
+    "rejectionReason": "not enough details"
+  },
+  {
+    "id": "f0f5dba4-7f85-48fb-8b23-19d32ad58f10",
+    "profileStatus": "rejected",
+    "business": {
+      "businessName": "New Retailer Retail",
+      "businessType": "Retailer",
+      "businessEmail": "newretailer@stockoverflow.com",
+      "retailerCode": "RET-5608",
+      "currency": "INR"
+    },
+    "primaryContact": {
+      "fullName": "New Retailer",
+      "directEmail": "newretailer@stockoverflow.com"
+    },
+    "stores": [],
+    "suppliers": [],
+    "createdAt": "2026-08-31T19:43:56.146Z",
+    "updatedAt": "2026-08-31T19:55:55.157Z",
+    "products": []
+  },
+  {
+    "business": {
+      "businessName": "retail2",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "retailer2@gmail.com",
+      "retailerCode": "RET-865",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "retail2"
+    },
+    "profileStatus": "pending",
+    "stores": [
+      {
+        "name": "retail2",
+        "code": "RETAIL2",
+        "contactPerson": "retail2",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "95cb70c8-2412-4de1-bf97-b59fad391f32",
+    "status": "completed",
+    "createdAt": "2026-08-31T19:54:02.890Z",
+    "updatedAt": "2026-08-31T19:54:02.890Z"
+  },
+  {
+    "business": {
+      "businessName": "Test Retailer Business",
+      "businessType": "LLC",
+      "businessEmail": "business@testretailer.com",
+      "phoneNumber": "1234567890",
+      "taxId": "TAX123456",
+      "retailerCode": "RET-697",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "businessAddress": "123 Main St, New York, NY",
+      "website": "http://testretailer.com",
+      "primaryIndustry": "Electronics & Technology"
+    },
+    "primaryContact": {
+      "fullName": "John Doe Manager",
+      "designation": "Store Manager",
+      "directEmail": "manager@testretailer.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "NYC Flagship Store",
+        "code": "NYC-01",
+        "contactPerson": "John Doe Manager",
+        "phone": "1234567890",
+        "address": "123 Main St, New York, NY",
+        "type": "Retail Store",
+        "notes": "Primary store location.",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "40d12845-0f3f-45b6-9d9d-1771dc3861c7",
+    "status": "completed",
+    "createdAt": "2026-08-31T19:19:00.701Z",
+    "updatedAt": "2026-08-31T19:21:00.687Z"
+  },
+  {
+    "business": {
+      "businessName": "Apex Retailers Ltd",
+      "businessType": "LLC",
+      "businessEmail": "apex.retail@test.com",
+      "retailerCode": "RET-537",
+      "currency": "INR",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "Apex Owner"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "Apex Main Store",
+        "code": "APEX-MAIN-ST",
+        "contactPerson": "Apex Manager",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "ee83f903-29cf-460f-816f-6115a81ba191",
+    "status": "completed",
+    "createdAt": "2026-08-31T19:08:25.542Z",
+    "updatedAt": "2026-08-31T19:10:19.944Z"
+  },
+  {
+    "business": {
+      "businessName": "r17",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "r17@gmail.com",
+      "retailerCode": "RET-104",
+      "currency": "USD",
+      "fiscalYear": "January"
+    },
+    "primaryContact": {
+      "fullName": "r17"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "r17",
+        "code": "R17",
+        "contactPerson": "r17",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "d95e9b78-ba61-4719-be72-1835013b93bf",
+    "status": "completed",
+    "createdAt": "2026-08-31T18:28:04.121Z",
+    "updatedAt": "2026-08-31T18:28:04.121Z"
+  },
+  {
+    "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+    "profileStatus": "active",
+    "business": {
+      "businessName": "John's Retail Store",
+      "businessType": "Retailer",
+      "businessEmail": "john@gmail.com",
+      "phoneNumber": "+91 98765 11111",
+      "retailerCode": "RET-101",
+      "currency": "INR",
+      "businessAddress": "Gujarat, India",
+      "primaryIndustry": "Retail"
+    },
+    "primaryContact": {
+      "fullName": "John",
+      "designation": "Owner",
+      "directEmail": "john@gmail.com"
+    },
+    "stores": [
+      {
+        "name": "John's Retail Store",
+        "code": "JOHN-S-STORE",
+        "contactPerson": "John",
+        "phone": "+91 98765 11111",
+        "address": "Gujarat, India",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "createdAt": "2026-08-31T16:55:47.281Z",
+    "updatedAt": "2026-08-31T16:55:47.281Z"
+  },
+  {
+    "business": {
       "businessName": "Retailer",
       "businessType": "Partnership",
       "businessEmail": "abhirajaaayush@gmail.com",
@@ -302,37 +629,5 @@
     "status": "completed",
     "createdAt": "2026-05-03T14:24:53.044Z",
     "updatedAt": "2026-05-03T14:24:53.044Z"
-  },
-  {
-    "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
-    "profileStatus": "active",
-    "business": {
-      "businessName": "John's Retail Store",
-      "businessType": "Retailer",
-      "businessEmail": "john@gmail.com",
-      "phoneNumber": "+91 98765 11111",
-      "retailerCode": "RET-101",
-      "currency": "INR",
-      "businessAddress": "Gujarat, India",
-      "primaryIndustry": "Retail"
-    },
-    "primaryContact": {
-      "fullName": "John",
-      "designation": "Owner",
-      "directEmail": "john@gmail.com"
-    },
-    "stores": [
-      {
-        "name": "John's Retail Store",
-        "code": "JOHN-S-STORE",
-        "contactPerson": "John",
-        "phone": "+91 98765 11111",
-        "address": "Gujarat, India",
-        "type": "Retail Store",
-        "status": "active"
-      }
-    ],
-    "suppliers": [],
-    "products": []
   }
 ]

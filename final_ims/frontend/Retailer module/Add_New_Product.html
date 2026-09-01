@@ -2823,6 +2823,21 @@ async function publishProduct() {
     return;
   }
 
+  if (!isEditMode()) {
+    try {
+      const sub = window.RetailerApi ? await window.RetailerApi.getActiveSubscription() : null;
+      const tier = (sub && sub.tier) ? sub.tier : 'free';
+      if (tier === 'free') {
+        const existingProducts = window.RetailerApi ? await window.RetailerApi.getProducts() : [];
+        if (existingProducts.length >= 50) {
+          alert(`⚠️ SKU Catalog Limit Reached (Starter Plan)\n\nYou have reached the limit of 50 SKUs on your Starter plan.\n\nPlease upgrade to the Growth plan (₹799/mo) or Enterprise plan to add unlimited products and multi-store sync.`);
+          showToastMsg('Starter limit (50 SKUs) reached. Upgrade to Growth.', true);
+          return;
+        }
+      }
+    } catch (_e) {}
+  }
+
   try {
     var persistedProduct = isEditMode()
       ? await window.RetailerApi.updateProduct(editingProductId, payload)

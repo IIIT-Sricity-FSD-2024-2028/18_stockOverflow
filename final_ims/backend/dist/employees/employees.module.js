@@ -22,7 +22,7 @@ exports.EmployeesModule = EmployeesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             common_module_1.CommonModule,
-            users_module_1.UsersModule,
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
             retailers_module_1.RetailersModule,
             suppliers_module_1.SuppliersModule,
             stores_module_1.StoresModule,

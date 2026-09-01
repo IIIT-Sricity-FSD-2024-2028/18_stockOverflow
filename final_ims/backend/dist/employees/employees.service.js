@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmployeesService = void 0;
 const common_1 = require("@nestjs/common");
@@ -58,67 +61,108 @@ let EmployeesService = class EmployeesService {
         let newAssignmentsCount = 0;
         const retailers = this.retailersService.findAll();
         retailers.forEach((retailer) => {
-            if ((retailer.profileStatus === 'pending' || !retailer.profileStatus) &&
-                !assignedTargetIds.has(retailer.id)) {
-                const emp = getNextEmployee();
-                const assignment = {
-                    id: `asgn-${(0, node_crypto_1.randomUUID)()}`,
-                    employeeId: emp.id,
-                    employeeName: emp.name,
-                    employeeEmail: emp.email,
-                    targetId: retailer.id,
-                    targetType: 'retailer',
-                    title: `Retailer Verification: ${retailer.business?.businessName || 'New Retailer'}`,
-                    details: {
-                        businessName: retailer.business?.businessName || 'Unnamed Business',
-                        ownerName: retailer.primaryContact?.fullName || 'Unknown',
-                        email: retailer.business?.businessEmail || retailer.primaryContact?.directEmail || '',
-                        phone: retailer.business?.phoneNumber || '',
-                        address: retailer.business?.businessAddress || '',
-                        businessType: retailer.business?.businessType || 'Retailer',
-                        retailerCode: retailer.business?.retailerCode || '',
-                        storeCount: (retailer.stores || []).length,
-                        stores: retailer.stores || [],
-                        submittedAt: retailer.createdAt || new Date().toISOString(),
-                    },
-                    status: 'pending',
-                    createdAt: new Date().toISOString(),
-                };
-                assignments.unshift(assignment);
-                assignedTargetIds.add(retailer.id);
-                newAssignmentsCount++;
+            const isPending = retailer.profileStatus === 'pending' || !retailer.profileStatus;
+            if (isPending) {
+                if (!assignedTargetIds.has(retailer.id)) {
+                    const emp = getNextEmployee();
+                    const assignment = {
+                        id: `asgn-${(0, node_crypto_1.randomUUID)()}`,
+                        employeeId: emp.id,
+                        employeeName: emp.name,
+                        employeeEmail: emp.email,
+                        targetId: retailer.id,
+                        targetType: 'retailer',
+                        title: `Retailer Verification: ${retailer.business?.businessName || 'New Retailer'}`,
+                        details: {
+                            businessName: retailer.business?.businessName || 'Unnamed Business',
+                            ownerName: retailer.primaryContact?.fullName || 'Unknown',
+                            email: retailer.business?.businessEmail || retailer.primaryContact?.directEmail || '',
+                            phone: retailer.business?.phoneNumber || '',
+                            address: retailer.business?.businessAddress || '',
+                            businessType: retailer.business?.businessType || 'Retailer',
+                            retailerCode: retailer.business?.retailerCode || '',
+                            storeCount: (retailer.stores || []).length,
+                            stores: retailer.stores || [],
+                            submittedAt: retailer.updatedAt || retailer.createdAt || new Date().toISOString(),
+                        },
+                        status: 'pending',
+                        createdAt: new Date().toISOString(),
+                    };
+                    assignments.unshift(assignment);
+                    assignedTargetIds.add(retailer.id);
+                    newAssignmentsCount++;
+                }
+                else {
+                    const existingAsgn = assignments.find((a) => a.targetId === retailer.id && a.status === 'pending');
+                    if (existingAsgn) {
+                        existingAsgn.title = `Retailer Verification: ${retailer.business?.businessName || 'New Retailer'}`;
+                        existingAsgn.details = {
+                            ...existingAsgn.details,
+                            businessName: retailer.business?.businessName || existingAsgn.details.businessName,
+                            ownerName: retailer.primaryContact?.fullName || existingAsgn.details.ownerName,
+                            email: retailer.business?.businessEmail || retailer.primaryContact?.directEmail || existingAsgn.details.email,
+                            phone: retailer.business?.phoneNumber || existingAsgn.details.phone,
+                            address: retailer.business?.businessAddress || existingAsgn.details.address,
+                            businessType: retailer.business?.businessType || existingAsgn.details.businessType,
+                            retailerCode: retailer.business?.retailerCode || existingAsgn.details.retailerCode,
+                            storeCount: (retailer.stores || []).length,
+                            stores: retailer.stores || [],
+                            submittedAt: retailer.updatedAt || retailer.createdAt || existingAsgn.details.submittedAt,
+                        };
+                    }
+                }
             }
         });
         const suppliers = this.suppliersService.findAll();
         suppliers.forEach((supplier) => {
-            if ((supplier.profileStatus === 'pending' || !supplier.profileStatus) &&
-                !assignedTargetIds.has(supplier.id)) {
-                const emp = getNextEmployee();
-                const assignment = {
-                    id: `asgn-${(0, node_crypto_1.randomUUID)()}`,
-                    employeeId: emp.id,
-                    employeeName: emp.name,
-                    employeeEmail: emp.email,
-                    targetId: supplier.id,
-                    targetType: 'supplier',
-                    title: `Supplier Verification: ${supplier.business?.companyName || supplier.business?.businessEmail || 'New Supplier'}`,
-                    details: {
-                        companyName: supplier.business?.companyName || 'Unnamed Supplier',
-                        ownerName: supplier.primaryContact?.fullName || 'Unknown',
-                        email: supplier.business?.businessEmail || supplier.primaryContact?.directEmail || '',
-                        phone: supplier.business?.phoneNumber || '',
-                        address: supplier.business?.businessAddress || supplier.business?.state || '',
-                        category: supplier.business?.primaryCategory || 'General',
-                        supplierCode: supplier.business?.supplierCode || '',
-                        paymentTerms: supplier.business?.paymentTerms || 'Net 30',
-                        submittedAt: supplier.createdAt || new Date().toISOString(),
-                    },
-                    status: 'pending',
-                    createdAt: new Date().toISOString(),
-                };
-                assignments.unshift(assignment);
-                assignedTargetIds.add(supplier.id);
-                newAssignmentsCount++;
+            const isPending = supplier.profileStatus === 'pending' || !supplier.profileStatus;
+            if (isPending) {
+                if (!assignedTargetIds.has(supplier.id)) {
+                    const emp = getNextEmployee();
+                    const assignment = {
+                        id: `asgn-${(0, node_crypto_1.randomUUID)()}`,
+                        employeeId: emp.id,
+                        employeeName: emp.name,
+                        employeeEmail: emp.email,
+                        targetId: supplier.id,
+                        targetType: 'supplier',
+                        title: `Supplier Verification: ${supplier.business?.companyName || supplier.business?.businessEmail || 'New Supplier'}`,
+                        details: {
+                            companyName: supplier.business?.companyName || 'Unnamed Supplier',
+                            ownerName: supplier.primaryContact?.fullName || 'Unknown',
+                            email: supplier.business?.businessEmail || supplier.primaryContact?.directEmail || '',
+                            phone: supplier.business?.phoneNumber || '',
+                            address: supplier.business?.businessAddress || supplier.business?.state || '',
+                            category: supplier.business?.primaryCategory || 'General',
+                            supplierCode: supplier.business?.supplierCode || '',
+                            paymentTerms: supplier.business?.paymentTerms || 'Net 30',
+                            submittedAt: supplier.updatedAt || supplier.createdAt || new Date().toISOString(),
+                        },
+                        status: 'pending',
+                        createdAt: new Date().toISOString(),
+                    };
+                    assignments.unshift(assignment);
+                    assignedTargetIds.add(supplier.id);
+                    newAssignmentsCount++;
+                }
+                else {
+                    const existingAsgn = assignments.find((a) => a.targetId === supplier.id && a.status === 'pending');
+                    if (existingAsgn) {
+                        existingAsgn.title = `Supplier Verification: ${supplier.business?.companyName || supplier.business?.businessEmail || 'New Supplier'}`;
+                        existingAsgn.details = {
+                            ...existingAsgn.details,
+                            companyName: supplier.business?.companyName || existingAsgn.details.companyName,
+                            ownerName: supplier.primaryContact?.fullName || existingAsgn.details.ownerName,
+                            email: supplier.business?.businessEmail || supplier.primaryContact?.directEmail || existingAsgn.details.email,
+                            phone: supplier.business?.phoneNumber || existingAsgn.details.phone,
+                            address: supplier.business?.businessAddress || supplier.business?.state || existingAsgn.details.address,
+                            category: supplier.business?.primaryCategory || existingAsgn.details.category,
+                            supplierCode: supplier.business?.supplierCode || existingAsgn.details.supplierCode,
+                            paymentTerms: supplier.business?.paymentTerms || existingAsgn.details.paymentTerms,
+                            submittedAt: supplier.updatedAt || supplier.createdAt || existingAsgn.details.submittedAt,
+                        };
+                    }
+                }
             }
         });
         retailers.forEach((retailer) => {
@@ -215,14 +259,32 @@ let EmployeesService = class EmployeesService {
         assignment.resolvedAt = new Date().toISOString();
         if (assignment.targetType === 'retailer') {
             try {
-                this.retailersService.updateProfileStatus(assignment.targetId, dto.action === 'approve' ? 'active' : 'rejected');
+                const nextStatus = dto.action === 'approve' ? 'active' : 'rejected';
+                const reason = dto.action === 'reject' ? (dto.notes || 'Your application did not meet our verification requirements.') : undefined;
+                this.retailersService.updateProfileStatus(assignment.targetId, nextStatus, reason);
+                const users = this.usersService.findAll('retailer');
+                const user = users.find((u) => u.profileId === assignment.targetId || (assignment.details?.email && u.email === assignment.details.email));
+                if (user) {
+                    this.usersService.update(user.id, {
+                        status: dto.action === 'approve' ? 'Active' : 'Inactive',
+                    });
+                }
             }
             catch (err) {
             }
         }
         else if (assignment.targetType === 'supplier') {
             try {
-                this.suppliersService.updateProfileStatus(assignment.targetId, dto.action === 'approve' ? 'active' : 'rejected');
+                const nextStatus = dto.action === 'approve' ? 'active' : 'rejected';
+                const supReason = dto.action === 'reject' ? (dto.notes || 'Your application did not meet our verification requirements.') : undefined;
+                this.suppliersService.updateProfileStatus(assignment.targetId, nextStatus, supReason);
+                const users = this.usersService.findAll('supplier');
+                const user = users.find((u) => u.profileId === assignment.targetId || (assignment.details?.email && u.email === assignment.details.email));
+                if (user) {
+                    this.usersService.update(user.id, {
+                        status: dto.action === 'approve' ? 'Active' : 'Inactive',
+                    });
+                }
             }
             catch (err) {
             }
@@ -333,6 +395,7 @@ let EmployeesService = class EmployeesService {
 exports.EmployeesService = EmployeesService;
 exports.EmployeesService = EmployeesService = __decorate([
     (0, common_1.Injectable)(),
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
     __metadata("design:paramtypes", [json_db_service_1.JsonDbService,
         users_service_1.UsersService,
         retailers_service_1.RetailersService,

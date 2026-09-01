@@ -1,6 +1,177 @@
 {
   "products": [
     {
+      "id": "2cf8577b-bb6e-4944-8c40-ed99b8ded743",
+      "retailerId": "",
+      "sku": "PT003",
+      "name": "brand",
+      "category": "Electronics",
+      "subcategory": "General",
+      "subCategory": "General",
+      "brand": "brand",
+      "priceUSD": 0,
+      "price": 0,
+      "discountType": "none",
+      "finalPrice": 0,
+      "taxType": "Inclusive",
+      "unit": "Pc",
+      "qty": 11,
+      "initialQty": 11,
+      "min": 0,
+      "max": 11,
+      "creator": "Retail Manager",
+      "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebrand%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT003%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebrand%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT003%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebrand%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebrand%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebrand%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT003%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebrand%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebrand%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 0,
+      "trend": "up",
+      "description": "Supplied by supply1",
+      "descriptionHtml": "",
+      "supplier": "supply1",
+      "supplierSku": "SP001",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 1,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 11
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 11
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 0,
+      "status": "active",
+      "visibility": "published",
+      "createdAt": "2026-09-01T07:33:07.819Z",
+      "updatedAt": "2026-09-01T07:33:07.819Z",
+      "restockedAt": "2026-09-01T07:33:07.819Z",
+      "lastStockChangeAt": "2026-09-01T07:33:07.819Z"
+    },
+    {
+      "id": "e2957a9f-0be6-4d5a-92e7-48a80362baf4",
+      "retailerId": "40d12845-0f3f-45b6-9d9d-1771dc3861c7",
+      "sku": "PT001",
+      "name": "op3",
+      "category": "Electronics",
+      "subcategory": "General",
+      "subCategory": "General",
+      "brand": "Electronics",
+      "priceUSD": 577.5,
+      "price": 577.5,
+      "cost": 525,
+      "discountType": "none",
+      "finalPrice": 577.5,
+      "taxType": "Inclusive",
+      "unit": "Pc",
+      "qty": 1,
+      "initialQty": 1,
+      "min": 0,
+      "max": 1,
+      "creator": "Retail Manager",
+      "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 0,
+      "trend": "up",
+      "description": "",
+      "descriptionHtml": "",
+      "supplier": "Hans",
+      "supplierSku": "OP3-BLK-2026",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 1,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "NYC-01",
+          "qty": 1
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "NYC-01",
+          "qty": 1
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 0,
+      "status": "active",
+      "visibility": "published",
+      "createdAt": "2026-08-31T19:38:17.557Z",
+      "updatedAt": "2026-08-31T19:38:17.557Z",
+      "restockedAt": "2026-08-31T19:38:17.557Z",
+      "lastStockChangeAt": "2026-08-31T19:38:17.557Z"
+    },
+    {
       "id": "13658856-119e-4599-8733-d73d00c19713",
       "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
       "sku": "PT001",
@@ -263,6 +434,38 @@
   "suppliers": [],
   "warehouses": [],
   "purchaseOrders": [
+    {
+      "id": "PO-2026-0005",
+      "supplierId": "0ccceb67-958d-4957-9728-e023994a8e8d",
+      "supplierName": "Hans",
+      "retailerId": "40d12845-0f3f-45b6-9d9d-1771dc3861c7",
+      "retailerName": "John's Retail Store",
+      "storeId": "NYC-01",
+      "items": [
+        {
+          "id": "OP3-BLK-2026",
+          "name": "op3",
+          "emoji": "📦",
+          "sku": "OP3-BLK-2026",
+          "cat": "Electronics",
+          "price": 525,
+          "profitMargin": 10,
+          "qty": 1,
+          "stock": 148,
+          "stockStatus": "ok"
+        }
+      ],
+      "deliveryDate": "2026-09-03",
+      "paymentTerms": "Net 30",
+      "notes": "",
+      "shippingAddress": "",
+      "subtotal": 525,
+      "tax": 26,
+      "total": 551,
+      "units": 1,
+      "status": "Delivered",
+      "createdAt": "2026-08-31T19:29:27.861Z"
+    },
     {
       "id": "PO-2026-0004",
       "supplierId": "0ccceb67-958d-4957-9728-e023994a8e8d",
@@ -764,7 +967,253 @@
       "updatedAt": "2026-08-28T04:35:06.471Z"
     }
   ],
-  "employeeAssignments": [],
+  "employeeAssignments": [
+    {
+      "id": "asgn-7d3d5ef7-12e0-4f69-8cce-1867fc68b6ba",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "a81acfc2-f8e5-4d80-8071-e4055d110b00",
+      "targetType": "retailer",
+      "title": "Retailer Verification: retaile2",
+      "details": {
+        "businessName": "retaile2",
+        "ownerName": "retaile2",
+        "email": "retaile2@gmail.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Sole Proprietorship",
+        "retailerCode": "RET-388",
+        "storeCount": 1,
+        "stores": [
+          {
+            "name": "retaile2",
+            "code": "RETAILE2",
+            "contactPerson": "retaile2",
+            "type": "Retail Store",
+            "status": "active"
+          }
+        ],
+        "submittedAt": "2026-09-01T08:57:21.410Z"
+      },
+      "status": "approved",
+      "createdAt": "2026-09-01T08:57:26.475Z",
+      "notes": "",
+      "resolvedAt": "2026-09-01T08:57:28.528Z"
+    },
+    {
+      "id": "asgn-ced2b610-0db9-41cd-88c0-55419c0227f7",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "36af4d63-43d4-40ee-9cf0-d617522504a1",
+      "targetType": "retailer",
+      "title": "Retailer Verification: retaile1",
+      "details": {
+        "businessName": "retaile1",
+        "ownerName": "retaile1",
+        "email": "retaile1@gmail.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Sole Proprietorship",
+        "retailerCode": "RET-782",
+        "storeCount": 1,
+        "stores": [
+          {
+            "name": "retaile1",
+            "code": "RETAILE1",
+            "contactPerson": "retaile1",
+            "type": "Retail Store",
+            "status": "active"
+          }
+        ],
+        "submittedAt": "2026-09-01T08:44:13.807Z"
+      },
+      "status": "approved",
+      "createdAt": "2026-09-01T08:44:21.257Z",
+      "notes": "",
+      "resolvedAt": "2026-09-01T08:44:23.232Z"
+    },
+    {
+      "id": "asgn-f13256c9-9123-465d-bb76-3c501fa875f0",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "b57b7d51-a638-4e99-910f-f02aecb2db51",
+      "targetType": "retailer",
+      "title": "Retailer Verification: retail4",
+      "details": {
+        "businessName": "retail4",
+        "ownerName": "retail4",
+        "email": "retail4@gmail.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Sole Proprietorship",
+        "retailerCode": "RET-584",
+        "storeCount": 1,
+        "stores": [
+          {
+            "name": "retail4",
+            "code": "RETAIL4",
+            "contactPerson": "retail4",
+            "type": "Retail Store",
+            "status": "active"
+          }
+        ],
+        "submittedAt": "2026-09-01T08:09:47.611Z"
+      },
+      "status": "approved",
+      "createdAt": "2026-09-01T08:10:26.645Z",
+      "notes": "",
+      "resolvedAt": "2026-09-01T08:10:31.779Z"
+    },
+    {
+      "id": "asgn-c1f1ee4a-14fa-4d58-9bd0-7c8195068f55",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "4fc69375-5dcf-4ff1-939f-65a3c87a0390",
+      "targetType": "supplier",
+      "title": "Supplier Verification: supply1",
+      "details": {
+        "companyName": "supply1",
+        "ownerName": "supply1",
+        "email": "supply1@gmail.com",
+        "phone": "",
+        "address": "",
+        "category": "General",
+        "supplierCode": "",
+        "paymentTerms": "Net 30",
+        "submittedAt": "2026-09-01T07:33:07.814Z"
+      },
+      "status": "approved",
+      "createdAt": "2026-09-01T07:33:26.833Z",
+      "notes": "",
+      "resolvedAt": "2026-09-01T07:33:39.494Z"
+    },
+    {
+      "id": "asgn-c3b086fe-3475-42e4-a95f-593d4de64525",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "3a55cddd-69ad-43da-848d-69a4141fec81",
+      "targetType": "retailer",
+      "title": "Retailer Verification: retail2",
+      "details": {
+        "businessName": "retail2",
+        "ownerName": "retail2",
+        "email": "retail2@gmail.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Sole Proprietorship",
+        "retailerCode": "RET-089",
+        "storeCount": 1,
+        "stores": [
+          {
+            "name": "retail2",
+            "code": "RETAIL2",
+            "contactPerson": "retail2",
+            "type": "Retail Store",
+            "status": "active"
+          }
+        ],
+        "submittedAt": "2026-08-31T20:09:38.115Z"
+      },
+      "status": "rejected",
+      "createdAt": "2026-08-31T20:10:04.783Z",
+      "notes": "not enough information",
+      "resolvedAt": "2026-08-31T20:10:35.931Z"
+    },
+    {
+      "id": "asgn-c749e637-bed4-4146-b402-5597488a10e1",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "38887f39-99c2-47f1-8b40-e52fca1f7442",
+      "targetType": "retailer",
+      "title": "Retailer Verification: retail1",
+      "details": {
+        "businessName": "retail1",
+        "ownerName": "retail1",
+        "email": "retail1@gmail.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Sole Proprietorship",
+        "retailerCode": "RET-806",
+        "storeCount": 1,
+        "stores": [
+          {
+            "name": "retail1",
+            "code": "RETAIL1",
+            "contactPerson": "retail1",
+            "type": "Retail Store",
+            "status": "active"
+          }
+        ],
+        "submittedAt": "2026-08-31T20:02:34.831Z"
+      },
+      "status": "rejected",
+      "createdAt": "2026-08-31T20:03:04.230Z",
+      "notes": "not enough details",
+      "resolvedAt": "2026-08-31T20:03:19.097Z"
+    },
+    {
+      "id": "asgn-3987a840-7ae7-479c-a5c0-1a8a9c3038ac",
+      "employeeId": "u-employee-2",
+      "employeeName": "Sarah Chen",
+      "employeeEmail": "sarah.employee@stockoverflow.com",
+      "targetId": "95cb70c8-2412-4de1-bf97-b59fad391f32",
+      "targetType": "retailer",
+      "title": "Retailer Verification: retail2",
+      "details": {
+        "businessName": "retail2",
+        "ownerName": "retail2",
+        "email": "retailer2@gmail.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Sole Proprietorship",
+        "retailerCode": "RET-865",
+        "storeCount": 1,
+        "stores": [
+          {
+            "name": "retail2",
+            "code": "RETAIL2",
+            "contactPerson": "retail2",
+            "type": "Retail Store",
+            "status": "active"
+          }
+        ],
+        "submittedAt": "2026-08-31T19:54:02.890Z"
+      },
+      "status": "pending",
+      "createdAt": "2026-08-31T19:54:51.645Z"
+    },
+    {
+      "id": "asgn-934b9bbc-ab8d-4d12-8323-e733ebfbb739",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "f0f5dba4-7f85-48fb-8b23-19d32ad58f10",
+      "targetType": "retailer",
+      "title": "Retailer Verification: New Retailer Retail",
+      "details": {
+        "businessName": "New Retailer Retail",
+        "ownerName": "New Retailer",
+        "email": "newretailer@stockoverflow.com",
+        "phone": "",
+        "address": "",
+        "businessType": "Retailer",
+        "retailerCode": "RET-5608",
+        "storeCount": 0,
+        "stores": [],
+        "submittedAt": "2026-08-31T19:43:56.146Z"
+      },
+      "status": "rejected",
+      "createdAt": "2026-08-31T19:52:46.277Z",
+      "notes": "not provided enough document",
+      "resolvedAt": "2026-08-31T19:55:55.157Z"
+    }
+  ],
   "userQueries": [],
   "platformCommissions": [
     {
@@ -870,5 +1319,140 @@
       "status": "settled"
     }
   ],
-  "subscriptions": []
+  "subscriptions": [
+    {
+      "id": "sub-89f44739-1ffd-49ff-8184-fd9e0112a8aa",
+      "userId": "9ecb0b45-8643-444a-9382-954ad69922b8",
+      "userName": "r17",
+      "userEmail": "r17@gmail.com",
+      "userRole": "retailer",
+      "tier": "pro",
+      "pricePerMonth": 799,
+      "billingCycle": "monthly",
+      "startDate": "2026-08-31T18:28:28.175Z",
+      "renewalDate": "2026-09-30T20:11:31.488Z",
+      "status": "active",
+      "features": [
+        "Up to 5 Retail Outlets",
+        "Unlimited Products & SKUs",
+        "GST E-Invoice & e-Way Bill",
+        "WhatsApp & SMS Stock Alerts",
+        "Automated Reorder Suggestions",
+        "Priority Verification Queue"
+      ],
+      "maxStores": 5,
+      "maxProducts": 10000
+    },
+    {
+      "id": "sub-09110a78-e764-42f9-9bd4-ce4a308fbe3f",
+      "userId": "e391bc53-27b8-4321-bd80-aa222f46d90b",
+      "userName": "supply1",
+      "userEmail": "supply1@gmail.com",
+      "userRole": "supplier",
+      "tier": "pro",
+      "tierName": "Growth",
+      "pricePerMonth": 799,
+      "billingCycle": "monthly",
+      "startDate": "2026-09-01T07:32:22.984Z",
+      "endDate": "2026-10-01T07:32:22.984Z",
+      "renewalDate": "2026-10-01T07:32:22.984Z",
+      "status": "active",
+      "autoRenew": true,
+      "paymentId": "PAY-SO-624806",
+      "paymentMethod": "UPI AutoPay",
+      "features": [
+        "Unlimited Product Listings",
+        "Multi-Retailer Connection & POs",
+        "Bulk Catalog Import/Export",
+        "Automated Dispatch Notifications",
+        "Priority Buyer Discovery"
+      ],
+      "maxStores": 5,
+      "maxProducts": 10000
+    },
+    {
+      "id": "sub-e94ce6d9-4268-463c-8496-8425446d6bbd",
+      "userId": "5fbf7777-03dc-42d5-b460-81e25b940b1c",
+      "userName": "retail4",
+      "userEmail": "retail4@gmail.com",
+      "userRole": "retailer",
+      "tier": "pro",
+      "tierName": "Growth",
+      "pricePerMonth": 799,
+      "billingCycle": "monthly",
+      "startDate": "2026-09-01T08:29:11.037Z",
+      "endDate": "2026-10-01T08:29:11.037Z",
+      "renewalDate": "2026-10-01T08:29:11.037Z",
+      "status": "active",
+      "autoRenew": true,
+      "paymentId": "PAY-SO-453850",
+      "paymentMethod": "UPI AutoPay",
+      "features": [
+        "15 Purchase Orders / week (Auto-resets weekly)",
+        "Up to 5 Retail Outlets",
+        "Unlimited Products & SKUs",
+        "AI Automated Reorder Suggestions",
+        "Multi-Store Inventory Sync",
+        "Priority Staff Verification Queue"
+      ],
+      "maxStores": 5,
+      "maxProducts": 10000
+    },
+    {
+      "id": "sub-07344d30-5f9e-4987-a347-b2de2a53f070",
+      "userId": "048e6cb4-aa1e-496b-a7d6-efdf0eda0ae9",
+      "userName": "retaile1",
+      "userEmail": "retaile1@gmail.com",
+      "userRole": "retailer",
+      "tier": "pro",
+      "tierName": "Growth",
+      "pricePerMonth": 799,
+      "billingCycle": "monthly",
+      "startDate": "2026-09-01T08:43:42.853Z",
+      "endDate": "2026-10-01T08:43:42.853Z",
+      "renewalDate": "2026-10-01T08:43:42.853Z",
+      "status": "active",
+      "autoRenew": true,
+      "paymentId": "PAY-SO-139422",
+      "paymentMethod": "UPI AutoPay",
+      "features": [
+        "15 Purchase Orders / week (Auto-resets weekly)",
+        "Up to 5 Retail Outlets",
+        "Unlimited Products & SKUs",
+        "AI Automated Reorder Suggestions",
+        "Multi-Store Inventory Sync",
+        "Priority Staff Verification Queue"
+      ],
+      "maxStores": 5,
+      "maxProducts": 10000
+    },
+    {
+      "id": "sub-ff12e8fe-1cbd-4ef5-8e3b-1c1517bbcc53",
+      "userId": "8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7",
+      "userName": "retaile2",
+      "userEmail": "retaile2@gmail.com",
+      "userRole": "retailer",
+      "tier": "pro",
+      "tierName": "Growth",
+      "pricePerMonth": 799,
+      "billingCycle": "monthly",
+      "startDate": "2026-09-01T09:05:10.897Z",
+      "endDate": "2026-10-01T09:05:10.897Z",
+      "renewalDate": "2026-10-01T09:05:10.897Z",
+      "status": "active",
+      "autoRenew": true,
+      "paymentId": "PAY-SO-230890",
+      "paymentMethod": "UPI AutoPay",
+      "features": [
+        "15 Purchase Orders / week (Auto-resets weekly)",
+        "Up to 5 Retail Outlets",
+        "Unlimited Products & SKUs",
+        "AI Automated Reorder Suggestions",
+        "Multi-Store Inventory Sync",
+        "Priority Staff Verification Queue"
+      ],
+      "maxStores": 5,
+      "maxProducts": 10000
+    }
+  ]
 }

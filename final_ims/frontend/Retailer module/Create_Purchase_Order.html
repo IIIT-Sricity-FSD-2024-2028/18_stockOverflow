@@ -577,10 +577,20 @@ table.po-table tbody tr:hover td{background:#fafbfc}
     <!-- PAGE HEADER -->
     <div class="po-page-header">
       <div>
-        <h1 class="po-page-title">Purchase Orders & Procurement</h1>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <h1 class="po-page-title" style="margin:0;">Purchase Orders &amp; Procurement</h1>
+          <span class="badge" id="poRetailerTierBadge" style="background:#eff6ff;color:#1d4ed8;font-size:11.5px;padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;font-weight:700;border:1px solid #bfdbfe;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span id="retailerTierName">Growth (₹799/mo)</span>
+          </span>
+        </div>
         <div class="po-breadcrumb">Create new purchase orders and track fulfillment history</div>
       </div>
-      <div style="display:flex;gap:10px">
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn btn-outline" onclick="openTierModal()" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#1e293b;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          Manage Plan
+        </button>
         <button class="btn btn-outline" onclick="scrollToSection('historySection')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           View PO History
@@ -637,6 +647,204 @@ table.po-table tbody tr:hover td{background:#fafbfc}
       <div class="added-banner-icon">✅</div>
       <div class="added-banner-text" id="addedBannerText">Products added successfully to this PO!</div>
       <button class="added-banner-close" onclick="closeBanner()">✕</button>
+    </div>
+
+    <!-- SUBSCRIPTION & TIER MANAGEMENT MODAL -->
+    <div class="modal-overlay" id="tierModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+      <div style="background:#fff;border-radius:16px;max-width:780px;width:92%;padding:24px;box-shadow:0 20px 40px rgba(0,0,0,0.2);position:relative;max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
+          <div>
+            <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0;">Subscription &amp; Plans</h3>
+            <p style="font-size:12px;color:#64748b;margin-top:2px;">Manage your 30-day membership cycle or upgrade to unlock higher weekly PO quotas</p>
+          </div>
+          <button onclick="closeTierModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;">&times;</button>
+        </div>
+
+        <!-- Active Subscription Status Banner -->
+        <div id="activeSubBanner" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-weight:700;font-size:13.5px;color:#15803d;display:flex;align-items:center;gap:6px;">
+              <span>Current Plan: <strong id="modalActivePlanName">Starter Plan</strong></span>
+              <span id="modalActiveStatusBadge" style="background:#bbf7d0;color:#166534;font-size:10.5px;padding:2px 7px;border-radius:10px;font-weight:800;text-transform:uppercase;">ACTIVE</span>
+            </div>
+            <div style="font-size:12px;color:#334155;margin-top:2px;" id="modalBillingInfo">30-day billing cycle • Valid until <span id="modalExpiryDate">-</span> (<strong id="modalDaysLeft">-</strong> days left)</div>
+          </div>
+          <button type="button" id="btnCancelSub" onclick="openCancelPlanModal()" style="display:none;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Cancel Plan</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:20px;" id="tierCardsModal">
+          <!-- Starter -->
+          <div style="border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;display:flex;flex-direction:column;position:relative;">
+            <div style="font-weight:800;font-size:15px;color:#0f172a;">Starter</div>
+            <div style="font-size:22px;font-weight:800;color:#0f172a;margin:6px 0;">₹0 <span style="font-size:12px;font-weight:500;color:#64748b;">/ mo</span></div>
+            <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:#334155;flex:1;display:flex;flex-direction:column;gap:6px;">
+              <li>✓ <strong>3 POs / week</strong> (Auto-resets)</li>
+              <li>✓ 1 Store Location</li>
+              <li>✓ Up to 50 SKUs</li>
+              <li>✓ POS Billing Terminal</li>
+              <li>✓ Daily Sales Reports</li>
+            </ul>
+            <button onclick="handlePlanSelectionClick('free')" class="tier-select-btn" id="btnTier-free" style="width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-weight:700;cursor:pointer;font-size:12px;">Active Plan</button>
+          </div>
+
+          <!-- Growth -->
+          <div style="border:2px solid #3b82f6;border-radius:12px;padding:16px;display:flex;flex-direction:column;position:relative;background:#f8faff;">
+            <span style="position:absolute;top:-10px;right:12px;background:#3b82f6;color:#fff;font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:10px;">POPULAR</span>
+            <div style="font-weight:800;font-size:15px;color:#1d4ed8;">Growth</div>
+            <div style="font-size:22px;font-weight:800;color:#1d4ed8;margin:6px 0;">₹799 <span style="font-size:12px;font-weight:500;color:#64748b;">/ mo</span></div>
+            <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:#334155;flex:1;display:flex;flex-direction:column;gap:6px;">
+              <li>✓ <strong>15 POs / week</strong> (Auto-resets)</li>
+              <li>✓ Up to 5 Retail Outlets</li>
+              <li>✓ Unlimited SKUs</li>
+              <li>✓ AI Automated Reorders</li>
+              <li>✓ Multi-Store Sync</li>
+              <li>✓ Priority Staff Verification</li>
+            </ul>
+            <button onclick="handlePlanSelectionClick('pro')" class="tier-select-btn" id="btnTier-pro" style="width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;color:#1e293b;font-weight:700;cursor:pointer;font-size:12px;">Upgrade (₹799/mo)</button>
+          </div>
+
+          <!-- Enterprise -->
+          <div style="border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;display:flex;flex-direction:column;position:relative;">
+            <div style="font-weight:800;font-size:15px;color:#7e22ce;">Enterprise</div>
+            <div style="font-size:22px;font-weight:800;color:#7e22ce;margin:6px 0;">₹3,499 <span style="font-size:12px;font-weight:500;color:#64748b;">/ mo</span></div>
+            <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:#334155;flex:1;display:flex;flex-direction:column;gap:6px;">
+              <li>✓ <strong>UNLIMITED POs</strong> (No Weekly Cap)</li>
+              <li>✓ Unlimited Stores &amp; Depots</li>
+              <li>✓ Multi-Warehouse Routing</li>
+              <li>✓ Extended B2B Credit Terms</li>
+              <li>✓ Dedicated Account Manager</li>
+              <li>✓ Custom ERP &amp; API Sync</li>
+            </ul>
+            <button onclick="handlePlanSelectionClick('enterprise')" class="tier-select-btn" id="btnTier-enterprise" style="width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-weight:700;cursor:pointer;font-size:12px;">Upgrade (₹3,499/mo)</button>
+          </div>
+        </div>
+
+        <div style="font-size:11.5px;color:#64748b;text-align:center;">
+          Note: StockOverflow applies a transparent flat 2.0% platform commission on completed POS/checkout orders.
+        </div>
+      </div>
+    </div>
+
+    <!-- SECURE CHECKOUT & PAYMENT SIMULATOR MODAL -->
+    <div class="modal-overlay" id="paymentSimModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+      <div style="background:#fff;border-radius:16px;max-width:480px;width:92%;padding:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="background:#dcfce7;color:#15803d;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700;">🔒 256-Bit SSL</span>
+            <h3 style="font-size:17px;font-weight:800;color:#0f172a;margin:0;">Simulated Secure Checkout</h3>
+          </div>
+          <button onclick="closePaymentModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;">&times;</button>
+        </div>
+
+        <!-- Order Summary Card -->
+        <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:14px;font-weight:800;color:#0f172a;" id="simPlanName">Growth Plan</span>
+            <span style="font-size:16px;font-weight:800;color:#1d4ed8;" id="simPlanPrice">₹799 / mo</span>
+          </div>
+          <div style="font-size:12px;color:#64748b;" id="simPlanFeatures">15 POs/wk • 5 Outlets • Unlimited SKUs</div>
+          <div style="border-top:1px dashed #cbd5e1;margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;font-size:12.5px;color:#334155;">
+            <span>30-Day Billing Cycle (Billed Monthly)</span>
+            <strong style="color:#0f172a;" id="simTotalAmount">Total: ₹799</strong>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div style="margin-bottom:16px;">
+          <label style="font-size:12px;font-weight:700;color:#334155;display:block;margin-bottom:8px;">Select Payment Method</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <button type="button" class="pay-tab active-pay-tab" id="simTab-upi" onclick="switchSimPayTab('upi')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #3b82f6;background:#eff6ff;font-size:12px;font-weight:700;color:#1d4ed8;cursor:pointer;text-align:center;">📱 UPI AutoPay</button>
+            <button type="button" class="pay-tab" id="simTab-card" onclick="switchSimPayTab('card')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #e2e8f0;background:#ffffff;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;text-align:center;">💳 Card</button>
+            <button type="button" class="pay-tab" id="simTab-netbanking" onclick="switchSimPayTab('netbanking')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #e2e8f0;background:#ffffff;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;text-align:center;">🏦 NetBanking</button>
+          </div>
+        </div>
+
+        <!-- Payment Method Forms -->
+        <div id="simPayForm-upi" style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+          <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">UPI ID / VPA</label>
+          <input type="text" id="simUpiInput" value="retailer@okhdfcbank" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;">
+          <div style="font-size:11px;color:#6b7280;margin-top:5px;">⚡ AutoPay mandate pre-approved for sandbox testing.</div>
+        </div>
+
+        <div id="simPayForm-card" style="display:none;background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+          <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Card Number</label>
+          <input type="text" value="4242 •••• •••• 4242" readonly style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;background:#fff;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+            <input type="text" value="12/29" readonly style="width:100%;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <input type="text" value="888" readonly style="width:100%;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+          </div>
+        </div>
+
+        <div id="simPayForm-netbanking" style="display:none;background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+          <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Select Bank</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;background:#fff;">
+            <option>HDFC Bank Corporate</option>
+            <option>ICICI Bank Current Account</option>
+            <option>State Bank of India (SBI)</option>
+            <option>Axis Bank Business</option>
+          </select>
+        </div>
+
+        <!-- Confirm Payment Button -->
+        <button type="button" id="btnConfirmSimPayment" onclick="executeSimulatedPayment()" style="width:100%;background:#10b981;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;">
+          <span id="btnConfirmSimPaymentText">✓ Pay ₹799 &amp; Activate Plan</span>
+        </button>
+        <div style="text-align:center;margin-top:10px;font-size:11.5px;color:#94a3b8;">
+          🔒 Sandbox Mode: Instant dummy payment simulation.
+        </div>
+      </div>
+    </div>
+
+    <!-- CANCEL PLAN CONFIRMATION UI MODAL -->
+    <div class="modal-overlay" id="cancelPlanConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.65);z-index:10001;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+      <div style="background:#fff;border-radius:16px;max-width:440px;width:90%;padding:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;text-align:center;">
+        <div style="width:52px;height:52px;background:#fee2e2;color:#dc2626;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 8px 0;">Cancel Subscription Plan?</h3>
+        <p style="font-size:13.5px;color:#475569;margin:0 0 16px 0;line-height:1.5;">
+          You are currently subscribed to <strong id="cancelModalPlanName" style="color:#0f172a;">Growth Plan</strong>.
+        </p>
+        
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;text-align:left;font-size:12.5px;color:#334155;margin-bottom:20px;line-height:1.5;">
+          <div style="font-weight:700;color:#0f172a;margin-bottom:4px;">What happens next:</div>
+          <div style="display:flex;gap:6px;margin-bottom:4px;">
+            <span style="color:#10b981;font-weight:800;">✓</span> <span>Plan access stays active until the end of your 30-day billing cycle.</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:4px;">
+            <span style="color:#10b981;font-weight:800;">✓</span> <span>Auto-renewal will be stopped immediately.</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <span style="color:#10b981;font-weight:800;">✓</span> <span>You can freely switch to Starter (₹0) or upgrade to another tier.</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button type="button" onclick="closeCancelPlanModal()" style="padding:11px 16px;border-radius:8px;border:1.5px solid #cbd5e1;background:#fff;font-weight:700;font-size:13.5px;color:#475569;cursor:pointer;">Keep My Plan</button>
+          <button type="button" id="btnConfirmCancelPlanExecution" onclick="executePlanCancellation()" style="padding:11px 16px;border-radius:8px;border:none;background:#dc2626;font-weight:700;font-size:13.5px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <span id="btnConfirmCancelText">Confirm &amp; Cancel</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEKLY PO QUOTA BANNER -->
+    <div id="poQuotaBanner" style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:12px;padding:12px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="background:#3b82f6;color:#fff;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">📦</div>
+        <div>
+          <div style="font-size:13.5px;font-weight:700;color:#1e3a8a;display:flex;align-items:center;gap:8px;">
+            <span>Weekly Purchase Order Quota: <strong id="quotaUsedBadge">0 / 3 Used</strong></span>
+            <span id="quotaPlanBadge" style="background:#dbeafe;color:#1e40af;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:800;text-transform:uppercase;">STARTER PLAN</span>
+          </div>
+          <div style="font-size:12px;color:#475569;margin-top:2px;" id="quotaSubText">
+            <span id="quotaRemainingText">3 orders remaining this week.</span> Auto-resets in 7 days.
+          </div>
+        </div>
+      </div>
+      <button type="button" onclick="openTierModal()" class="btn btn-outline btn-sm" style="border-color:#3b82f6;color:#1d4ed8;background:#fff;font-weight:700;padding:6px 14px;cursor:pointer;">
+        Manage Plan / Upgrade
+      </button>
     </div>
 
     <!-- MAIN CREATION GRID -->
@@ -1028,6 +1236,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadFromStorage();
   updateDisplay();
 
+  // 1. Sync Active Subscription Plan & Limits First
+  await loadActiveSubscription();
+
   // Set min date for delivery to today
   const today = new Date().toISOString().split('T')[0];
   const deliveryInput = document.getElementById('deliveryDate');
@@ -1041,6 +1252,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await loadSuppliers();
   await loadPurchaseOrdersHistory();
+  await loadWeeklyQuotaUsage();
   onDeliveryChange();
 
   // Listen for tab focus (in case user navigates back from product page)
@@ -1846,17 +2058,492 @@ async function confirmCreate() {
     document.getElementById('poNotes').value = '';
     document.getElementById('shippingAddr').value = '';
 
-    // Reload PO history
+    // Reload PO history and quota
+    await loadWeeklyQuotaUsage();
     await loadPurchaseOrdersHistory();
     scrollToSection('historySection');
   } catch(err) {
     console.error('Error creating purchase order:', err);
-    showToast('Created PO (stored in local database): ' + (err.message || 'Offline mode'), 'ok');
     closeCreateModal(null);
-    await loadPurchaseOrdersHistory();
+    const msg = err.message || 'Error creating purchase order';
+    if (msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('limit') || msg.toLowerCase().includes('starter')) {
+      alert(`⚠️ Subscription Quota Notice:\n\n${msg}`);
+      showToast(msg, 'error');
+    } else {
+      showToast(msg, 'error');
+    }
+    await loadWeeklyQuotaUsage();
   } finally {
     btn.disabled = false;
     btn.textContent = 'Confirm & Create';
+  }
+}
+
+let activeSubscriptionRecord = null;
+let pendingPlanTier = null;
+let activeSimPayMethod = 'UPI AutoPay';
+
+function openTierModal() {
+  loadActiveSubscription();
+  const modal = document.getElementById('tierModal');
+  if (modal) modal.style.display = 'flex';
+}
+function closeTierModal() {
+  const modal = document.getElementById('tierModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function loadActiveSubscription() {
+  try {
+    let data = null;
+    if (window.RetailerApi && typeof window.RetailerApi.getActiveSubscription === 'function') {
+      data = await window.RetailerApi.getActiveSubscription();
+    } else {
+      const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const userId = curSession.id || curSession.profileId || curSession.userId || 'u-retailer-1';
+      const apiBase = (window.location && window.location.hostname ? window.location.protocol + '//' + window.location.hostname + ':3001' : 'http://localhost:3001');
+      const res = await fetch(`${apiBase}/api/platform-revenue/subscriptions/active?userId=${encodeURIComponent(userId)}`);
+      if (res.ok) data = await res.json();
+    }
+
+    if (data) {
+      activeSubscriptionRecord = data;
+      updateTierUi(data);
+      await loadWeeklyQuotaUsage();
+      return data;
+    }
+    const sessionTier = (JSON.parse(localStorage.getItem('so_session') || '{}').tier || 'free');
+    updateTierUi({ tier: sessionTier, status: 'active', daysRemaining: 30 });
+    await loadWeeklyQuotaUsage();
+  } catch (err) {
+    console.warn('Subscription fetch note:', err);
+    updateTierUi({ tier: 'free', status: 'active', daysRemaining: 30 });
+    await loadWeeklyQuotaUsage();
+  }
+}
+
+let pendingSwitchTargetTier = null;
+
+function showInPageToast(message, type = 'success') {
+  let toastEl = document.getElementById('soInPageToast');
+  if (!toastEl) {
+    toastEl = document.createElement('div');
+    toastEl.id = 'soInPageToast';
+    toastEl.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;padding:14px 20px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 25px -5px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);transform:translateY(100px);opacity:0;';
+    document.body.appendChild(toastEl);
+  }
+  toastEl.style.background = type === 'danger' ? '#fee2e2' : (type === 'info' ? '#eff6ff' : '#dcfce7');
+  toastEl.style.color = type === 'danger' ? '#991b1b' : (type === 'info' ? '#1e40af' : '#166534');
+  toastEl.style.border = `1.5px solid ${type === 'danger' ? '#fca5a5' : (type === 'info' ? '#93c5fd' : '#86efac')}`;
+  toastEl.innerHTML = `<span>${type === 'danger' ? '⚠️' : (type === 'info' ? 'ℹ️' : '✓')}</span> <span>${message}</span>`;
+  
+  toastEl.style.transform = 'translateY(0)';
+  toastEl.style.opacity = '1';
+  setTimeout(() => {
+    toastEl.style.transform = 'translateY(100px)';
+    toastEl.style.opacity = '0';
+  }, 4000);
+}
+
+function openCancelPlanModal(targetTier = null) {
+  pendingSwitchTargetTier = targetTier;
+  const currentTier = (activeSubscriptionRecord && activeSubscriptionRecord.tier) || 'pro';
+  const tierDisplay = currentTier === 'enterprise' ? 'Enterprise Plan (₹3,499/mo)' : 'Growth Plan (₹799/mo)';
+  
+  const nameEl = document.getElementById('cancelModalPlanName');
+  if (nameEl) nameEl.textContent = tierDisplay;
+
+  const modal = document.getElementById('cancelPlanConfirmModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeCancelPlanModal() {
+  const modal = document.getElementById('cancelPlanConfirmModal');
+  if (modal) modal.style.display = 'none';
+  pendingSwitchTargetTier = null;
+}
+
+async function executePlanCancellation() {
+  const btn = document.getElementById('btnConfirmCancelPlanExecution');
+  const btnText = document.getElementById('btnConfirmCancelText');
+  const originalText = btnText ? btnText.textContent : 'Confirm & Cancel';
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = '⏳ Cancelling Plan...';
+
+  try {
+    let cancelled = null;
+    if (window.RetailerApi && typeof window.RetailerApi.cancelSubscription === 'function') {
+      cancelled = await window.RetailerApi.cancelSubscription();
+    } else {
+      const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const userId = curSession.id || curSession.userId || curSession.profileId || 'u-retailer-1';
+      const apiBase = (window.location && window.location.hostname ? window.location.protocol + '//' + window.location.hostname + ':3001' : 'http://localhost:3001');
+      const res = await fetch(`${apiBase}/api/platform-revenue/subscriptions/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      if (!res.ok) throw new Error('Failed to cancel subscription');
+      cancelled = await res.json();
+    }
+
+    activeSubscriptionRecord = cancelled;
+    const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+    curSession.activeSubscription = cancelled;
+    curSession.subscriptionStatus = 'cancelled';
+    localStorage.setItem('so_session', JSON.stringify(curSession));
+
+    updateTierUi(cancelled);
+    await loadWeeklyQuotaUsage();
+    
+    closeCancelPlanModal();
+    showInPageToast('Subscription auto-renewal has been cancelled. You can now switch or upgrade.', 'info');
+
+    const nextTier = pendingSwitchTargetTier;
+    pendingSwitchTargetTier = null;
+    if (nextTier === 'free') {
+      await activateSubscriptionDirectly('free');
+    } else if (nextTier) {
+      openPaymentSimulatorModal(nextTier);
+    }
+  } catch (err) {
+    showInPageToast('Error cancelling subscription: ' + (err.message || err), 'danger');
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.textContent = originalText;
+  }
+}
+
+function handlePlanSelectionClick(targetTier) {
+  const currentTier = (activeSubscriptionRecord && activeSubscriptionRecord.tier) || 'free';
+  const currentStatus = (activeSubscriptionRecord && activeSubscriptionRecord.status) || 'active';
+
+  if (targetTier === currentTier && currentStatus === 'active') {
+    return;
+  }
+
+  if (currentTier !== 'free' && currentStatus === 'active') {
+    openCancelPlanModal(targetTier);
+    return;
+  }
+
+  if (targetTier === 'free') {
+    activateSubscriptionDirectly('free');
+    return;
+  }
+
+  openPaymentSimulatorModal(targetTier);
+}
+
+function openPaymentSimulatorModal(tier) {
+  pendingPlanTier = tier;
+  const isEnterprise = tier === 'enterprise';
+  const planName = isEnterprise ? 'Enterprise Membership Plan' : 'Growth Membership Plan';
+  const planPrice = isEnterprise ? '₹3,499 / mo' : '₹799 / mo';
+  const planFeatures = isEnterprise
+    ? 'UNLIMITED Purchase Orders • Unlimited Stores & Depots • Custom ERP Sync'
+    : '15 POs / week • Up to 5 Retail Outlets • Unlimited SKUs • AI Reorders';
+  const totalText = isEnterprise ? 'Total: ₹3,499' : 'Total: ₹799';
+  const payBtnText = isEnterprise ? '✓ Pay ₹3,499 & Activate Plan' : '✓ Pay ₹799 & Activate Plan';
+
+  const pName = document.getElementById('simPlanName');
+  const pPrice = document.getElementById('simPlanPrice');
+  const pFeat = document.getElementById('simPlanFeatures');
+  const pTot = document.getElementById('simTotalAmount');
+  const pBtn = document.getElementById('btnConfirmSimPaymentText');
+
+  if (pName) pName.textContent = planName;
+  if (pPrice) pPrice.textContent = planPrice;
+  if (pFeat) pFeat.textContent = planFeatures;
+  if (pTot) pTot.textContent = totalText;
+  if (pBtn) pBtn.textContent = payBtnText;
+
+  switchSimPayTab('upi');
+  const modal = document.getElementById('paymentSimModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closePaymentModal() {
+  const modal = document.getElementById('paymentSimModal');
+  if (modal) modal.style.display = 'none';
+  pendingPlanTier = null;
+}
+
+function switchSimPayTab(tab) {
+  activeSimPayMethod = tab === 'upi' ? 'UPI AutoPay' : (tab === 'card' ? 'Credit / Debit Card' : 'Net Banking');
+  ['upi', 'card', 'netbanking'].forEach(t => {
+    const tabEl = document.getElementById('simTab-' + t);
+    const formEl = document.getElementById('simPayForm-' + t);
+    if (tabEl) {
+      tabEl.style.border = (t === tab) ? '1.5px solid #3b82f6' : '1.5px solid #e2e8f0';
+      tabEl.style.background = (t === tab) ? '#eff6ff' : '#ffffff';
+      tabEl.style.color = (t === tab) ? '#1d4ed8' : '#64748b';
+    }
+    if (formEl) formEl.style.display = (t === tab) ? 'block' : 'none';
+  });
+}
+
+async function executeSimulatedPayment() {
+  if (!pendingPlanTier) return;
+  const btn = document.getElementById('btnConfirmSimPayment');
+  const btnText = document.getElementById('btnConfirmSimPaymentText');
+  const originalText = btnText ? btnText.textContent : '';
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = '⏳ Processing simulated payment...';
+
+  try {
+    await new Promise(r => setTimeout(r, 600));
+    const dummyPaymentId = 'PAY-SO-' + Math.floor(100000 + Math.random() * 900000);
+    
+    let updated = null;
+    if (window.RetailerApi && typeof window.RetailerApi.updateSubscription === 'function') {
+      updated = await window.RetailerApi.updateSubscription({
+        tier: pendingPlanTier,
+        paymentId: dummyPaymentId,
+        paymentMethod: activeSimPayMethod
+      });
+    } else {
+      const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const userId = curSession.id || curSession.userId || curSession.profileId || 'u-retailer-1';
+      const apiBase = (window.location && window.location.hostname ? window.location.protocol + '//' + window.location.hostname + ':3001' : 'http://localhost:3001');
+      const res = await fetch(`${apiBase}/api/platform-revenue/subscriptions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          userName: curSession.name || 'Retailer User',
+          userEmail: curSession.email || 'retailer@stockoverflow.com',
+          userRole: 'retailer',
+          tier: pendingPlanTier,
+          billingCycle: 'monthly',
+          paymentId: dummyPaymentId,
+          paymentMethod: activeSimPayMethod
+        })
+      });
+      if (!res.ok) throw new Error('Failed to update subscription');
+      updated = await res.json();
+    }
+
+    activeSubscriptionRecord = updated;
+    const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+    curSession.tier = pendingPlanTier;
+    curSession.currentTier = pendingPlanTier;
+    curSession.activeSubscription = updated;
+    curSession.subscriptionStatus = 'active';
+    localStorage.setItem('so_session', JSON.stringify(curSession));
+
+    updateTierUi(updated);
+    await loadWeeklyQuotaUsage();
+    closePaymentModal();
+    closeTierModal();
+
+    const tierNames = { free: 'Starter (₹0/mo)', pro: 'Growth (₹799/mo)', enterprise: 'Enterprise (₹3,499/mo)' };
+    showInPageToast(`🎉 ${tierNames[pendingPlanTier] || pendingPlanTier} is now active for 30 days! (Ref: ${dummyPaymentId})`, 'success');
+  } catch (err) {
+    showInPageToast('Payment error: ' + (err.message || err), 'danger');
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.textContent = originalText;
+  }
+}
+
+async function activateSubscriptionDirectly(tier) {
+  try {
+    let updated = null;
+    if (window.RetailerApi && typeof window.RetailerApi.updateSubscription === 'function') {
+      updated = await window.RetailerApi.updateSubscription({ tier });
+    } else {
+      const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const userId = curSession.id || curSession.userId || curSession.profileId || 'u-retailer-1';
+      const apiBase = (window.location && window.location.hostname ? window.location.protocol + '//' + window.location.hostname + ':3001' : 'http://localhost:3001');
+      const res = await fetch(`${apiBase}/api/platform-revenue/subscriptions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          userName: curSession.name || 'Retailer User',
+          userEmail: curSession.email || 'retailer@stockoverflow.com',
+          userRole: 'retailer',
+          tier,
+          billingCycle: 'monthly'
+        })
+      });
+      if (!res.ok) throw new Error('Failed to update subscription');
+      updated = await res.json();
+    }
+
+    activeSubscriptionRecord = updated;
+    const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+    curSession.tier = tier;
+    curSession.currentTier = tier;
+    curSession.activeSubscription = updated;
+    curSession.subscriptionStatus = 'active';
+    localStorage.setItem('so_session', JSON.stringify(curSession));
+
+    updateTierUi(updated);
+    await loadWeeklyQuotaUsage();
+    closeTierModal();
+    showInPageToast(`Plan updated: Starter (₹0/mo) is now active.`, 'success');
+  } catch (err) {
+    showInPageToast('Error updating plan: ' + (err.message || err), 'danger');
+  }
+}
+
+window.selectSubscriptionTier = function(tier) {
+  return handlePlanSelectionClick(tier);
+};
+
+function cancelCurrentSubscription() {
+  openCancelPlanModal();
+}
+
+function updateTierUi(sub) {
+  const tier = (sub && sub.tier) ? sub.tier : 'free';
+  const status = (sub && sub.status) ? sub.status : 'active';
+  const daysRemaining = (sub && sub.daysRemaining !== undefined) ? sub.daysRemaining : 30;
+  const endDate = sub && (sub.endDate || sub.renewalDate) ? new Date(sub.endDate || sub.renewalDate).toLocaleDateString() : 'Next Cycle';
+  const isPaidActive = tier !== 'free' && status === 'active';
+
+  const tierNameMap = {
+    free: 'Starter (₹0/mo)',
+    pro: 'Growth (₹799/mo)',
+    enterprise: 'Enterprise (₹3,499/mo)'
+  };
+  const planDisplay = tierNameMap[tier] || 'Starter (₹0/mo)';
+
+  // Update Page Header Badge
+  const badgeEl = document.getElementById('retailerTierName');
+  if (badgeEl) {
+    badgeEl.textContent = `${planDisplay}${status === 'cancelled' ? ' [Cancelled]' : ''}`;
+  }
+  const tierBadgeContainer = document.getElementById('poRetailerTierBadge');
+  if (tierBadgeContainer) {
+    if (status === 'cancelled') {
+      tierBadgeContainer.style.background = '#fee2e2';
+      tierBadgeContainer.style.color = '#b91c1c';
+      tierBadgeContainer.style.borderColor = '#fca5a5';
+    } else if (tier === 'enterprise') {
+      tierBadgeContainer.style.background = '#f3e8ff';
+      tierBadgeContainer.style.color = '#6b21a8';
+      tierBadgeContainer.style.borderColor = '#d8b4fe';
+    } else if (tier === 'pro') {
+      tierBadgeContainer.style.background = '#eff6ff';
+      tierBadgeContainer.style.color = '#1d4ed8';
+      tierBadgeContainer.style.borderColor = '#bfdbfe';
+    } else {
+      tierBadgeContainer.style.background = '#f0fdf4';
+      tierBadgeContainer.style.color = '#15803d';
+      tierBadgeContainer.style.borderColor = '#86efac';
+    }
+  }
+
+  // Update Modal Status Banner
+  const modalPlanName = document.getElementById('modalActivePlanName');
+  const modalStatusBadge = document.getElementById('modalActiveStatusBadge');
+  const modalExpiryDate = document.getElementById('modalExpiryDate');
+  const modalDaysLeft = document.getElementById('modalDaysLeft');
+  const btnCancel = document.getElementById('btnCancelSub');
+
+  if (modalPlanName) modalPlanName.textContent = planDisplay;
+  if (modalExpiryDate) modalExpiryDate.textContent = endDate;
+  if (modalDaysLeft) modalDaysLeft.textContent = daysRemaining;
+
+  if (modalStatusBadge) {
+    if (status === 'cancelled') {
+      modalStatusBadge.textContent = 'CANCELLED';
+      modalStatusBadge.style.background = '#fee2e2';
+      modalStatusBadge.style.color = '#b91c1c';
+    } else {
+      modalStatusBadge.textContent = 'ACTIVE';
+      modalStatusBadge.style.background = '#bbf7d0';
+      modalStatusBadge.style.color = '#166534';
+    }
+  }
+
+  if (btnCancel) {
+    btnCancel.style.display = (tier !== 'free' && status === 'active') ? 'inline-block' : 'none';
+  }
+
+  ['free', 'pro', 'enterprise'].forEach(t => {
+    const btn = document.getElementById(`btnTier-${t}`);
+    if (btn) {
+      if (t === tier) {
+        btn.textContent = status === 'cancelled' ? 'Active (Cancelled)' : 'Active Plan';
+        btn.style.background = '#3b82f6';
+        btn.style.color = '#fff';
+        btn.style.border = 'none';
+        btn.onclick = () => handlePlanSelectionClick(t);
+      } else if (isPaidActive) {
+        btn.textContent = 'Cancel current plan first';
+        btn.style.background = '#fef2f2';
+        btn.style.color = '#991b1b';
+        btn.style.border = '1px solid #fecaca';
+        btn.onclick = () => handlePlanSelectionClick(t);
+      } else {
+        btn.textContent = (t === 'free') ? 'Select Starter (₹0)' : (t === 'pro' ? 'Upgrade (₹799/mo)' : 'Upgrade (₹3,499/mo)');
+        btn.style.background = '#f8fafc';
+        btn.style.color = '#1e293b';
+        btn.style.border = '1px solid #cbd5e1';
+        btn.onclick = () => handlePlanSelectionClick(t);
+      }
+    }
+  });
+}
+
+async function loadWeeklyQuotaUsage() {
+  try {
+    let session = null;
+    try { session = JSON.parse(localStorage.getItem('so_session') || 'null'); } catch(e){}
+    const userId = (session && (session.id || session.profileId || session.userId)) || 'u-retailer-1';
+    
+    let data = null;
+    if (window.RetailerApi && typeof window.RetailerApi.getSubscriptionUsage === 'function') {
+      data = await window.RetailerApi.getSubscriptionUsage(userId, 'retailer');
+    } else {
+      const apiBase = (window.location && window.location.hostname ? window.location.protocol + '//' + window.location.hostname + ':3001' : 'http://localhost:3001');
+      const res = await fetch(`${apiBase}/api/platform-revenue/usage?userId=${encodeURIComponent(userId)}&role=retailer`);
+      if (res.ok) data = await res.json();
+    }
+
+    if (data) {
+      const usedEl = document.getElementById('quotaUsedBadge');
+      const planEl = document.getElementById('quotaPlanBadge');
+      const remEl = document.getElementById('quotaRemainingText');
+      if (usedEl) {
+        usedEl.textContent = data.isUnlimited ? `${data.usedThisWeek} Used (Unlimited)` : `${data.usedThisWeek} / ${data.weeklyLimit} Used`;
+        usedEl.style.color = data.isQuotaReached ? '#dc2626' : '#1e3a8a';
+      }
+      if (planEl) {
+        const isCancelled = (activeSubscriptionRecord && activeSubscriptionRecord.status === 'cancelled') || (data.status === 'cancelled');
+        const effectiveTier = (activeSubscriptionRecord && activeSubscriptionRecord.tier) || data.tier || 'free';
+        const planName = (data.tierName || (effectiveTier === 'enterprise' ? 'Enterprise' : (effectiveTier === 'pro' ? 'Growth' : 'Starter'))).toUpperCase();
+        planEl.textContent = `${planName} PLAN${isCancelled ? ' [CANCELLED]' : ''}`;
+        if (isCancelled) {
+          planEl.style.background = '#fee2e2';
+          planEl.style.color = '#b91c1c';
+        } else if (effectiveTier === 'enterprise') {
+          planEl.style.background = '#f3e8ff';
+          planEl.style.color = '#6b21a8';
+        } else if (effectiveTier === 'pro') {
+          planEl.style.background = '#dbeafe';
+          planEl.style.color = '#1e40af';
+        } else {
+          planEl.style.background = '#dcfce7';
+          planEl.style.color = '#15803d';
+        }
+      }
+      if (remEl) {
+        if (data.isUnlimited) {
+          remEl.textContent = 'Unlimited purchase orders allowed.';
+        } else {
+          remEl.textContent = `${data.remainingThisWeek} order${data.remainingThisWeek === 1 ? '' : 's'} remaining this week.`;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Could not load weekly quota:', err);
   }
 }
 

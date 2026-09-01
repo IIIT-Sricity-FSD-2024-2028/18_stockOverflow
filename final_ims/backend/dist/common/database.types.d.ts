@@ -398,6 +398,7 @@ export interface UserRecord {
     store?: string;
     retailerId?: string;
     storeId?: string;
+    profileId?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -443,14 +444,22 @@ export interface SubscriptionRecord {
     userEmail: string;
     userRole: 'retailer' | 'supplier';
     tier: SubscriptionTier;
+    tierName?: string;
     pricePerMonth: number;
     billingCycle: 'monthly' | 'yearly';
     startDate: string;
+    endDate: string;
     renewalDate: string;
     status: 'active' | 'cancelled' | 'trial';
+    autoRenew: boolean;
+    cancelledAt?: string;
+    paymentId?: string;
+    paymentMethod?: string;
     features: string[];
     maxStores?: number;
     maxProducts?: number;
+    daysRemaining?: number;
+    isExpired?: boolean;
 }
 export interface DatabaseSchema {
     products: ProductRecord[];

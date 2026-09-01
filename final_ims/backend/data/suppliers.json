@@ -1,5 +1,36 @@
 [
   {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "supply1",
+      "businessType": "Manufacturer",
+      "businessEmail": "supply1@gmail.com"
+    },
+    "primaryContact": {
+      "fullName": "supply1"
+    },
+    "profileStatus": "active",
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP001",
+        "name": "brand",
+        "brand": "brand",
+        "category": "Electronics",
+        "stockAvailable": 11,
+        "unitPrice": 0
+      }
+    ],
+    "documents": [],
+    "id": "4fc69375-5dcf-4ff1-939f-65a3c87a0390",
+    "status": "completed",
+    "createdAt": "2026-09-01T07:33:07.814Z",
+    "updatedAt": "2026-09-01T07:33:39.494Z"
+  },
+  {
     "id": "0ccceb67-958d-4957-9728-e023994a8e8d",
     "status": "completed",
     "profileStatus": "active",
@@ -7,7 +38,7 @@
     "assignedEmployeeId": "EMP-1001",
     "assignedAt": "2026-08-27T19:26:09.950Z",
     "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-30T18:08:36.004Z",
+    "updatedAt": "2026-08-31T19:38:17.560Z",
     "business": {
       "companyName": "Hans",
       "businessType": "Distributor",
@@ -40,7 +71,7 @@
         "category": "Electronics",
         "unitPrice": 525,
         "minOrderQty": 1,
-        "stockAvailable": 148,
+        "stockAvailable": 147,
         "unit": "Piece",
         "description": "Product op3 supplied by Hans"
       }

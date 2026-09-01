@@ -74,6 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
       profile: user.profile || null,
       retailerId: user.retailerId || (user.profile && user.profile.retailerId) || (role === 'retailer' ? user.profileId : ''),
       initials: getInitials(user.name),
+      profileStatus: (user.profile && user.profile.profileStatus) || user.profileStatus || '',
+      rejectionReason: (user.profile && user.profile.rejectionReason) || user.rejectionReason || '',
     };
   }
 
@@ -242,11 +244,11 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
-  async function handleRegisterSubmit(event) {
-    event.preventDefault();
-    var submitButton = event.target.querySelector('button[type="submit"]');
-    var footer = document.querySelector('.auth-footer');
+  window.executePaymentAndRegister = async function () {
+    var submitButton = document.getElementById('btnSubmitRegister');
+    var modalButton = document.getElementById('btnConfirmDummyPayment');
     var errorId = 'registerError';
+    var footer = document.querySelector('.auth-footer');
     var existingError = document.getElementById(errorId);
 
     if (!existingError && footer) {
@@ -260,15 +262,47 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     setError(errorId, '');
+    if (modalButton) {
+      modalButton.disabled = true;
+      modalButton.innerHTML = '<span>⏳ Processing Payment &amp; Activating Plan...</span>';
+    }
     toggleLoading(submitButton, true, 'Creating...');
 
     try {
       var payload = validateRegisterForm();
+      var planInput = document.getElementById('selectedPlan');
+      var selectedTier = planInput ? planInput.value || 'free' : 'free';
+      var payMethod = window.activePaymentMethod || 'UPI AutoPay';
+      var dummyPaymentId = selectedTier !== 'free' ? 'PAY-SO-' + Math.floor(100000 + Math.random() * 900000) : undefined;
+
+      // 1. Create User
       var created = await request('/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
+      // 2. Activate Subscription for Retailers / Suppliers
+      if (payload.role === 'retailer' || payload.role === 'supplier') {
+        try {
+          await request('/platform-revenue/subscriptions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: created.id,
+              userName: created.name,
+              userEmail: created.email,
+              userRole: payload.role,
+              tier: selectedTier,
+              billingCycle: 'monthly',
+              paymentMethod: payMethod,
+              paymentId: dummyPaymentId,
+            }),
+          });
+        } catch (subErr) {
+          console.warn('Subscription activation note:', subErr);
+        }
+      }
 
       if (payload.role === 'biller') {
         await request('/billers/requests', {
@@ -282,6 +316,10 @@ document.addEventListener('DOMContentLoaded', function () {
             country: 'India',
           }),
         });
+      }
+
+      if (window.closePaymentModal) {
+        window.closePaymentModal();
       }
 
       if (payload.role === 'retailer') {
@@ -302,9 +340,40 @@ document.addEventListener('DOMContentLoaded', function () {
       saveSession(created);
       window.location.href = getRedirectForRole(created);
     } catch (error) {
+      if (modalButton) {
+        modalButton.disabled = false;
+        modalButton.innerHTML = '<span>✓ Confirm &amp; Activate Subscription</span>';
+      }
+      if (window.closePaymentModal) {
+        window.closePaymentModal();
+      }
       setError(errorId, error.message || 'Unable to create account');
     } finally {
       toggleLoading(submitButton, false);
+    }
+  };
+
+  async function handleRegisterSubmit(event) {
+    event.preventDefault();
+    setError('registerError', '');
+
+    try {
+      var payload = validateRegisterForm();
+      var planInput = document.getElementById('selectedPlan');
+      var selectedTier = planInput ? planInput.value || 'free' : 'free';
+
+      // For paid tiers on retailer/supplier, trigger the simulated payment modal first
+      if ((payload.role === 'retailer' || payload.role === 'supplier') && selectedTier !== 'free') {
+        if (window.openPaymentModal) {
+          window.openPaymentModal(selectedTier);
+          return;
+        }
+      }
+
+      // Free tier or other roles proceed directly
+      await window.executePaymentAndRegister();
+    } catch (error) {
+      setError('registerError', error.message || 'Validation error');
     }
   }
 

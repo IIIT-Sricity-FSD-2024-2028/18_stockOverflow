@@ -5,7 +5,10 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { UpdateSubscriptionDto } from './dto/platform-revenue.dto';
+import {
+  CancelSubscriptionDto,
+  UpdateSubscriptionDto,
+} from './dto/platform-revenue.dto';
 import { PlatformRevenueService } from './platform-revenue.service';
 
 @Controller('platform-revenue')
@@ -28,6 +31,11 @@ export class PlatformRevenueController {
     );
   }
 
+  @Get('subscriptions/active')
+  getActiveSubscription(@Query('userId') userId: string) {
+    return this.platformRevenueService.getActiveSubscription(userId);
+  }
+
   @Get('subscriptions')
   getSubscriptions(@Query('userId') userId?: string) {
     return this.platformRevenueService.getSubscriptions(userId);
@@ -38,8 +46,21 @@ export class PlatformRevenueController {
     return this.platformRevenueService.updateSubscription(dto);
   }
 
+  @Post('subscriptions/cancel')
+  cancelSubscription(@Body() dto: CancelSubscriptionDto) {
+    return this.platformRevenueService.cancelSubscription(dto);
+  }
+
   @Get('tiers')
-  getPricingTiers() {
-    return this.platformRevenueService.getPricingTiers();
+  getPricingTiers(@Query('role') role?: 'retailer' | 'supplier') {
+    return this.platformRevenueService.getPricingTiers(role);
+  }
+
+  @Get('usage')
+  getWeeklyOrderUsage(
+    @Query('userId') userId: string,
+    @Query('role') role?: 'retailer' | 'supplier',
+  ) {
+    return this.platformRevenueService.getWeeklyOrderUsage(userId, role || 'retailer');
   }
 }

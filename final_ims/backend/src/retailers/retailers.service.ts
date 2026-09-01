@@ -44,9 +44,15 @@ export class RetailersService {
   updateProfileStatus(
     id: string,
     status: 'active' | 'inactive' | 'pending' | 'rejected',
+    rejectionReason?: string,
   ): RetailerRecord {
     const retailer = this.findOne(id);
     retailer.profileStatus = status;
+    if (status === 'rejected' && rejectionReason) {
+      (retailer as any).rejectionReason = rejectionReason;
+    } else if (status !== 'rejected') {
+      delete (retailer as any).rejectionReason;
+    }
     retailer.updatedAt = new Date().toISOString();
     this.retailers.set(id, retailer);
     this.persistToDisk();
@@ -62,13 +68,53 @@ export class RetailersService {
   }
 
   findOne(id: string): RetailerRecord {
-    const retailer = this.retailers.get(id);
-
-    if (!retailer) {
+    if (!id) {
       throw new NotFoundException(`Retailer setup "${id}" was not found`);
     }
+    const target = String(id).trim().toLowerCase();
 
-    return retailer;
+    // 1. Direct Map lookup
+    let retailer = this.retailers.get(id);
+    if (retailer) return retailer;
+
+    // 2. Lookup by case-insensitive ID, email, or retailer code
+    const all = Array.from(this.retailers.values());
+    retailer = all.find((r) => {
+      if (String(r.id || '').trim().toLowerCase() === target) return true;
+      if (r.business?.businessEmail && String(r.business.businessEmail).trim().toLowerCase() === target) return true;
+      if (r.business?.retailerCode && String(r.business.retailerCode).trim().toLowerCase() === target) return true;
+      if (r.primaryContact?.directEmail && String(r.primaryContact.directEmail).trim().toLowerCase() === target) return true;
+      return false;
+    });
+    if (retailer) return retailer;
+
+    // 3. Lookup user from users.json on disk if needed
+    try {
+      const usersFile = join(this.dataDirectory, 'users.json');
+      if (existsSync(usersFile)) {
+        const users = JSON.parse(readFileSync(usersFile, 'utf-8'));
+        if (Array.isArray(users)) {
+          const matchedUser = users.find((u) => {
+            return (
+              String(u.id || '').trim().toLowerCase() === target ||
+              String(u.profileId || '').trim().toLowerCase() === target ||
+              String(u.email || '').trim().toLowerCase() === target
+            );
+          });
+          if (matchedUser) {
+            if (matchedUser.profileId && this.retailers.has(matchedUser.profileId)) {
+              return this.retailers.get(matchedUser.profileId)!;
+            }
+            if (matchedUser.email) {
+              const found = this.findByBusinessEmail(matchedUser.email);
+              if (found) return found;
+            }
+          }
+        }
+      }
+    } catch {}
+
+    throw new NotFoundException(`Retailer setup "${id}" was not found`);
   }
 
   findLatest(): RetailerRecord | null {
@@ -120,7 +166,37 @@ export class RetailersService {
   }
 
   update(id: string, updateRetailerSetupDto: UpdateRetailerSetupDto): RetailerRecord {
-    const retailer = this.findOne(id);
+    let retailer: RetailerRecord;
+    try {
+      retailer = this.findOne(id);
+    } catch {
+      const now = new Date().toISOString();
+      const newRetailer: RetailerRecord = {
+        id: id || randomUUID(),
+        business: updateRetailerSetupDto.business || {
+          businessName: 'Retailer Store',
+          businessType: 'Retail',
+          businessEmail: '',
+          retailerCode: `RET-${Math.floor(100 + Math.random() * 900)}`,
+          currency: 'INR',
+          fiscalYear: 'April',
+        },
+        primaryContact: updateRetailerSetupDto.primaryContact || {
+          fullName: 'Retailer User',
+        },
+        stores: updateRetailerSetupDto.stores ?? [],
+        suppliers: updateRetailerSetupDto.suppliers ?? [],
+        products: updateRetailerSetupDto.products ?? [],
+        status: 'completed',
+        profileStatus: updateRetailerSetupDto.profileStatus ?? 'pending',
+        createdAt: now,
+        updatedAt: now,
+      };
+      this.retailers.set(newRetailer.id, newRetailer);
+      this.persistToDisk();
+      return newRetailer;
+    }
+
     const updatedRetailer: RetailerRecord = {
       ...retailer,
       ...updateRetailerSetupDto,
@@ -135,7 +211,7 @@ export class RetailersService {
       updatedAt: new Date().toISOString(),
     };
 
-    this.retailers.set(id, updatedRetailer);
+    this.retailers.set(retailer.id, updatedRetailer);
     this.persistToDisk();
     return updatedRetailer;
   }

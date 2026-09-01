@@ -34,7 +34,7 @@
       border-radius: 20px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.06);
       text-align: center;
-      max-width: 500px;
+      max-width: 520px;
       width: 100%;
       border: 1px solid #e5e7eb;
     }
@@ -79,17 +79,9 @@
       justify-content: space-between;
       margin-bottom: 6px;
     }
-    .info-row:last-child {
-      margin-bottom: 0;
-    }
-    .info-label {
-      color: #94a3b8;
-      font-weight: 600;
-    }
-    .info-value {
-      color: #1e293b;
-      font-weight: 700;
-    }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-label { color: #94a3b8; font-weight: 600; }
+    .info-value { color: #1e293b; font-weight: 700; }
     .status-badge {
       display: inline-block;
       padding: 3px 10px;
@@ -104,6 +96,54 @@
       background: var(--danger-light);
       color: #b91c1c;
     }
+
+    /* ── Rejection reason card ── */
+    .rejection-box {
+      display: none;
+      background: #fff5f5;
+      border: 1.5px solid #fca5a5;
+      border-radius: 14px;
+      padding: 18px 20px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .rejection-box.visible { display: block; }
+    .rejection-box-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .rejection-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--danger-light);
+      color: var(--danger);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .rejection-title { font-size: 13.5px; font-weight: 700; color: #b91c1c; }
+    .rejection-subtitle { font-size: 11.5px; color: #ef4444; margin-top: 2px; }
+    .rejection-reason-text {
+      font-size: 13.5px;
+      color: #7f1d1d;
+      line-height: 1.65;
+      background: #fee2e2;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-style: italic;
+      border-left: 3px solid #ef4444;
+    }
+    .rejection-help {
+      font-size: 12px;
+      color: #9f1239;
+      margin-top: 10px;
+    }
+
     .actions {
       display: flex;
       justify-content: center;
@@ -125,9 +165,7 @@
       border: none;
       transition: opacity 0.2s;
     }
-    .btn:hover {
-      opacity: 0.9;
-    }
+    .btn:hover { opacity: 0.9; }
     .btn.secondary {
       background: #ffffff;
       color: var(--primary);
@@ -140,7 +178,7 @@
     <div class="icon" id="statusIcon">⏳</div>
     <h1 id="statusHeading">Verification in Progress</h1>
     <p id="statusMsg">Your account and business details have been submitted and assigned to an employee for validation. Access to your dashboard will be unlocked once approved.</p>
-    
+
     <div class="info-box">
       <div class="info-row">
         <span class="info-label">Account Name</span>
@@ -160,8 +198,22 @@
       </div>
     </div>
 
+    <!-- Rejection reason — hidden until status is 'rejected' -->
+    <div class="rejection-box" id="rejectionBox">
+      <div class="rejection-box-header">
+        <div class="rejection-icon">✕</div>
+        <div>
+          <div class="rejection-title">Reason for Rejection</div>
+          <div class="rejection-subtitle">From the StockOverflow Verification Team</div>
+        </div>
+      </div>
+      <div class="rejection-reason-text" id="rejectionReasonText">Your application did not meet our verification requirements.</div>
+      <div class="rejection-help">You may re-register with corrected business details or contact our support team for further assistance.</div>
+    </div>
+
     <div class="actions">
       <button class="btn" onclick="checkStatus()">Check Status Again</button>
+      <a href="../index.html" class="btn secondary" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">Back to Home</a>
       <button class="btn secondary" onclick="logout()">Logout</button>
     </div>
   </div>
@@ -169,50 +221,61 @@
   <script src="../js/api-config.js"></script>
   <script>
     let session = null;
-    try {
-      session = JSON.parse(localStorage.getItem('so_session') || 'null');
-    } catch {
-      session = null;
-    }
+    try { session = JSON.parse(localStorage.getItem('so_session') || 'null'); } catch { session = null; }
 
-    if (!session) {
-      window.location.href = 'login.html';
-    }
+    if (!session) { window.location.href = 'login.html'; }
 
-    document.getElementById('accountName').textContent = session.name || 'User';
+    document.getElementById('accountName').textContent  = session.name  || 'User';
     document.getElementById('accountEmail').textContent = session.email || '-';
-    document.getElementById('accountRole').textContent = session.role || 'Business';
+    document.getElementById('accountRole').textContent  = session.role  || 'Business';
+
+    function showRejected(reason) {
+      document.getElementById('statusIcon').textContent   = '✕';
+      document.getElementById('statusIcon').className    = 'icon rejected';
+      document.getElementById('statusHeading').textContent = 'Registration Rejected';
+      document.getElementById('statusMsg').textContent   = 'Unfortunately, your business registration could not be verified. Please review the reason below and contact support if needed.';
+      document.getElementById('statusBadge').textContent  = 'Rejected';
+      document.getElementById('statusBadge').className   = 'status-badge rejected';
+
+      const box = document.getElementById('rejectionBox');
+      box.classList.add('visible');
+      if (reason && reason.trim()) {
+        document.getElementById('rejectionReasonText').textContent = reason.trim();
+      }
+    }
 
     async function checkStatus() {
       if (!session) return;
       try {
         const user = await window.IMS_HTTP.request('/users/' + encodeURIComponent(session.id));
         const role = String(user.role || '').toLowerCase();
-        let isApproved = false;
-        let isRejected = false;
-        let rejectReason = '';
+        let isApproved = false, isRejected = false, rejectReason = '';
 
-        const profileId = user.profileId || user.retailerId || user.supplierId || session.profileId || session.retailerId;
+        const profileId = user.profileId || user.retailerId || user.supplierId
+                        || session.profileId || session.retailerId;
+
         if (role === 'retailer') {
           let st = String(user.profileStatus || '').toLowerCase();
           if (profileId) {
             const profile = await window.IMS_HTTP.request('/retailers/' + encodeURIComponent(profileId)).catch(() => null);
             if (profile && profile.profileStatus) st = String(profile.profileStatus).toLowerCase();
+            if (profile && profile.rejectionReason)  rejectReason = profile.rejectionReason;
           }
           if (st === 'active' || st === 'approved') isApproved = true;
-          if (st === 'rejected') isRejected = true;
+          if (st === 'rejected')                    isRejected = true;
+
         } else if (role === 'supplier') {
           let st = String(user.profileStatus || '').toLowerCase();
           if (profileId) {
             const profile = await window.IMS_HTTP.request('/suppliers/' + encodeURIComponent(profileId)).catch(() => null);
             if (profile && profile.profileStatus) st = String(profile.profileStatus).toLowerCase();
+            if (profile && profile.rejectionReason)  rejectReason = profile.rejectionReason;
           }
           if (st === 'active' || st === 'approved') isApproved = true;
-          if (st === 'rejected') isRejected = true;
+          if (st === 'rejected')                    isRejected = true;
         }
 
         if (isApproved) {
-          // Update session and redirect to respective dashboard
           session.profileStatus = 'active';
           localStorage.setItem('so_session', JSON.stringify({ ...session, ...user }));
           if (role === 'retailer') window.location.href = '../Retailer module/Retialer_Dashboard.html';
@@ -221,12 +284,10 @@
         }
 
         if (isRejected) {
-          document.getElementById('statusIcon').textContent = '✕';
-          document.getElementById('statusIcon').className = 'icon rejected';
-          document.getElementById('statusHeading').textContent = 'Registration Rejected';
-          document.getElementById('statusMsg').textContent = 'Your business registration could not be verified. Please contact staff support or register with corrected business details.';
-          document.getElementById('statusBadge').textContent = 'Rejected';
-          document.getElementById('statusBadge').className = 'status-badge rejected';
+          const finalReason = rejectReason
+            || session.rejectionReason
+            || 'Your application did not meet our verification requirements.';
+          showRejected(finalReason);
         } else {
           alert('Your account is still being reviewed by our verification staff. Please check back shortly!');
         }
@@ -240,7 +301,12 @@
       window.location.href = 'login.html';
     }
 
-    // Auto-check on page load
+    // Immediately show rejected state if session already knows, without waiting for API
+    const sessionStatus = String(session.profileStatus || '').toLowerCase();
+    if (sessionStatus === 'rejected') {
+      showRejected(session.rejectionReason || '');
+    }
+    // Always do a live API check for the latest state
     checkStatus();
   </script>
 </body>

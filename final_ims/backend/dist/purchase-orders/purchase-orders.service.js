@@ -16,12 +16,14 @@ const json_db_service_1 = require("../common/json-db.service");
 const retailers_service_1 = require("../retailers/retailers.service");
 const suppliers_service_1 = require("../suppliers/suppliers.service");
 const products_service_1 = require("../products/products.service");
+const platform_revenue_service_1 = require("../platform-revenue/platform-revenue.service");
 let PurchaseOrdersService = class PurchaseOrdersService extends collection_service_1.JsonCollectionService {
-    constructor(db, suppliersService, retailersService, productsService) {
+    constructor(db, suppliersService, retailersService, productsService, platformRevenueService) {
         super(db);
         this.suppliersService = suppliersService;
         this.retailersService = retailersService;
         this.productsService = productsService;
+        this.platformRevenueService = platformRevenueService;
         this.collectionKey = 'purchaseOrders';
         this.entityName = 'Purchase order';
     }
@@ -33,6 +35,9 @@ let PurchaseOrdersService = class PurchaseOrdersService extends collection_servi
         const retailer = createPurchaseOrderDto.retailerId
             ? this.retailersService.findOne(createPurchaseOrderDto.retailerId)
             : null;
+        const targetRetailerId = retailer?.id || createPurchaseOrderDto.retailerId;
+        const targetSupplierId = supplier?.id || createPurchaseOrderDto.supplierId;
+        this.platformRevenueService.validateOrderQuota(targetRetailerId, targetSupplierId);
         const purchaseOrders = this.findAllTyped();
         const subtotal = createPurchaseOrderDto.items.reduce((total, item) => total + item.price * item.qty, 0);
         const tax = Math.round(subtotal * 0.05);
@@ -181,6 +186,7 @@ exports.PurchaseOrdersService = PurchaseOrdersService = __decorate([
     __metadata("design:paramtypes", [json_db_service_1.JsonDbService,
         suppliers_service_1.SuppliersService,
         retailers_service_1.RetailersService,
-        products_service_1.ProductsService])
+        products_service_1.ProductsService,
+        platform_revenue_service_1.PlatformRevenueService])
 ], PurchaseOrdersService);
 //# sourceMappingURL=purchase-orders.service.js.map

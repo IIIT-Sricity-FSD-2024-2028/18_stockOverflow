@@ -810,6 +810,52 @@
     fetchAndRenderNotifications();
   }
 
+  async function syncTopbarTierBadge() {
+    try {
+      if (!window.RetailerApi || typeof window.RetailerApi.getActiveSubscription !== 'function') return;
+      var sub = await window.RetailerApi.getActiveSubscription();
+      if (!sub) return;
+      var tier = (sub.tier || 'free').toLowerCase();
+      var status = sub.status || 'active';
+      var tierNames = { free: 'Starter (₹0/mo)', pro: 'Growth (₹799/mo)', enterprise: 'Enterprise (₹3,499/mo)' };
+      var planLabel = tierNames[tier] || 'Starter (₹0/mo)';
+      if (status === 'cancelled') planLabel += ' [Cancelled]';
+
+      var badgeName = document.getElementById('retailerTierName');
+      if (badgeName) badgeName.textContent = planLabel;
+
+      var badgeEl = document.getElementById('retailerTierBadge') || document.getElementById('poRetailerTierBadge');
+      if (badgeEl) {
+        badgeEl.style.display = 'inline-flex';
+        if (status === 'cancelled') {
+          badgeEl.style.background = '#fee2e2';
+          badgeEl.style.color = '#b91c1c';
+          badgeEl.style.borderColor = '#fca5a5';
+        } else if (tier === 'enterprise') {
+          badgeEl.style.background = '#f3e8ff';
+          badgeEl.style.color = '#6b21a8';
+          badgeEl.style.borderColor = '#d8b4fe';
+        } else if (tier === 'pro') {
+          badgeEl.style.background = '#eff6ff';
+          badgeEl.style.color = '#1d4ed8';
+          badgeEl.style.borderColor = '#bfdbfe';
+        } else {
+          badgeEl.style.background = '#f0fdf4';
+          badgeEl.style.color = '#15803d';
+          badgeEl.style.borderColor = '#86efac';
+        }
+      }
+
+      var sess = readSession();
+      if (sess) {
+        sess.tier = tier;
+        sess.currentTier = tier;
+        sess.activeSubscription = sub;
+        localStorage.setItem('so_session', JSON.stringify(sess));
+      }
+    } catch (_e) {}
+  }
+
   async function initializeRetailerUi() {
     var session = guardRetailerSession();
     if (!session) return;
@@ -821,6 +867,7 @@
     applyAvatarAndProfileUi();
     buildStoreSwitcher();
     renderProfileModal();
+    syncTopbarTierBadge();
     revealRetailerPage();
   }
 
@@ -965,6 +1012,41 @@
     getRetailerProfile: async function () {
       var session = await refreshRetailerSession();
       return session ? session.profile || null : null;
+    },
+    getActiveSubscription: function (userId) {
+      var session = readSession();
+      var id = userId || (session && (session.id || session.profileId || session.userId)) || 'u-retailer-1';
+      return request('/api/platform-revenue/subscriptions/active?userId=' + encodeURIComponent(id));
+    },
+    updateSubscription: function (payload) {
+      var session = readSession();
+      var defaultUserId = (session && (session.id || session.profileId || session.userId)) || 'u-retailer-1';
+      var body = Object.assign({
+        userId: defaultUserId,
+        userName: (session && session.name) || 'Retailer User',
+        userEmail: (session && session.email) || 'retailer@stockoverflow.com',
+        userRole: 'retailer',
+        billingCycle: 'monthly',
+      }, payload || {});
+      return request('/api/platform-revenue/subscriptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+    },
+    cancelSubscription: function (userId) {
+      var session = readSession();
+      var id = userId || (session && (session.id || session.profileId || session.userId)) || 'u-retailer-1';
+      return request('/api/platform-revenue/subscriptions/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: id }),
+      });
+    },
+    getSubscriptionUsage: function (userId, role) {
+      var session = readSession();
+      var id = userId || (session && (session.id || session.profileId || session.userId)) || 'u-retailer-1';
+      return request('/api/platform-revenue/usage?userId=' + encodeURIComponent(id) + '&role=' + encodeURIComponent(role || 'retailer'));
     },
   };
 

@@ -1,5 +1,510 @@
 [
   {
+    "id": "a4b835c6-a246-481f-aa0d-e254d8cd2517",
+    "name": "consum1",
+    "email": "consum1@gmail.com",
+    "password": "pass1234",
+    "role": "consumer",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-09-01T09:03:05.801Z",
+    "updatedAt": "2026-09-01T09:03:05.801Z"
+  },
+  {
+    "id": "8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7",
+    "name": "retaile2",
+    "email": "retaile2@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "retaile2",
+    "storeId": "RETAILE2",
+    "currentStoreId": "RETAILE2",
+    "accessibleStoreIds": [
+      "RETAILE2"
+    ],
+    "profileId": "a81acfc2-f8e5-4d80-8071-e4055d110b00",
+    "profile": {
+      "businessName": "retaile2",
+      "businessEmail": "retaile2@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-388",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "retaile2",
+      "ownerTitle": "",
+      "ownerEmail": "retaile2@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "stores": [
+        {
+          "name": "retaile2",
+          "code": "RETAILE2",
+          "contactPerson": "retaile2",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-09-01T08:57:04.651Z",
+    "updatedAt": "2026-09-01T08:57:28.539Z"
+  },
+  {
+    "id": "048e6cb4-aa1e-496b-a7d6-efdf0eda0ae9",
+    "name": "retaile1",
+    "email": "retaile1@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "retaile1",
+    "storeId": "RETAILE1",
+    "currentStoreId": "RETAILE1",
+    "accessibleStoreIds": [
+      "RETAILE1"
+    ],
+    "profileId": "36af4d63-43d4-40ee-9cf0-d617522504a1",
+    "profile": {
+      "businessName": "retaile1",
+      "businessEmail": "retaile1@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-782",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "retaile1",
+      "ownerTitle": "",
+      "ownerEmail": "retaile1@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "stores": [
+        {
+          "name": "retaile1",
+          "code": "RETAILE1",
+          "contactPerson": "retaile1",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-09-01T08:43:42.842Z",
+    "updatedAt": "2026-09-01T08:44:23.240Z"
+  },
+  {
+    "id": "5fbf7777-03dc-42d5-b460-81e25b940b1c",
+    "name": "retail4",
+    "email": "retail4@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "retail4",
+    "storeId": "RETAIL4",
+    "currentStoreId": "RETAIL4",
+    "accessibleStoreIds": [
+      "RETAIL4"
+    ],
+    "profileId": "b57b7d51-a638-4e99-910f-f02aecb2db51",
+    "profile": {
+      "businessName": "retail4",
+      "businessEmail": "retail4@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-584",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "retail4",
+      "ownerTitle": "",
+      "ownerEmail": "retail4@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "stores": [
+        {
+          "name": "retail4",
+          "code": "RETAIL4",
+          "contactPerson": "retail4",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-09-01T08:09:20.135Z",
+    "updatedAt": "2026-09-01T08:10:31.787Z"
+  },
+  {
+    "id": "e391bc53-27b8-4321-bd80-aa222f46d90b",
+    "name": "supply1",
+    "email": "supply1@gmail.com",
+    "password": "pass1234",
+    "role": "supplier",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "4fc69375-5dcf-4ff1-939f-65a3c87a0390",
+    "profile": {
+      "businessName": "supply1",
+      "businessEmail": "supply1@gmail.com",
+      "businessPhone": "",
+      "supplierCode": "",
+      "address": "",
+      "website": "",
+      "businessType": "Manufacturer",
+      "currency": "INR",
+      "primaryCategory": "",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "description": "",
+      "state": "",
+      "ownerName": "supply1",
+      "ownerTitle": "",
+      "ownerEmail": "supply1@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "retailers": [],
+      "productCount": 1
+    },
+    "createdAt": "2026-09-01T07:32:22.973Z",
+    "updatedAt": "2026-09-01T07:33:39.500Z"
+  },
+  {
+    "id": "9ecb0b45-8643-444a-9382-954ad69922b8",
+    "name": "r17",
+    "email": "r17@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "r17",
+    "storeId": "R17",
+    "currentStoreId": "R17",
+    "accessibleStoreIds": [
+      "R17"
+    ],
+    "profileId": "d95e9b78-ba61-4719-be72-1835013b93bf",
+    "profile": {
+      "businessName": "r17",
+      "businessEmail": "r17@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-104",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "r17",
+      "ownerTitle": "",
+      "ownerEmail": "r17@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "stores": [
+        {
+          "name": "r17",
+          "code": "R17",
+          "contactPerson": "r17",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-31T18:27:23.454Z",
+    "updatedAt": "2026-08-31T20:11:14.709Z"
+  },
+  {
+    "id": "17bb84aa-1cc8-480d-af84-98eb25a4c10c",
+    "name": "retail2",
+    "email": "retail2@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Inactive",
+    "store": "retail2",
+    "storeId": "RETAIL2",
+    "currentStoreId": "RETAIL2",
+    "accessibleStoreIds": [
+      "RETAIL2"
+    ],
+    "profileId": "3a55cddd-69ad-43da-848d-69a4141fec81",
+    "profile": {
+      "businessName": "retail2",
+      "businessEmail": "retail2@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-089",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "retail2",
+      "ownerTitle": "",
+      "ownerEmail": "retail2@gmail.com",
+      "profileStatus": "rejected",
+      "rejectionReason": "not enough information",
+      "stores": [
+        {
+          "name": "retail2",
+          "code": "RETAIL2",
+          "contactPerson": "retail2",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-31T20:09:03.192Z",
+    "updatedAt": "2026-08-31T20:10:35.936Z"
+  },
+  {
+    "id": "a3bab8f6-80bd-4330-9620-fb39654dcde8",
+    "name": "retail1",
+    "email": "retail1@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Inactive",
+    "store": "retail1",
+    "storeId": "RETAIL1",
+    "currentStoreId": "RETAIL1",
+    "accessibleStoreIds": [
+      "RETAIL1"
+    ],
+    "profileId": "38887f39-99c2-47f1-8b40-e52fca1f7442",
+    "profile": {
+      "businessName": "retail1",
+      "businessEmail": "retail1@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-806",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "retail1",
+      "ownerTitle": "",
+      "ownerEmail": "retail1@gmail.com",
+      "profileStatus": "rejected",
+      "stores": [
+        {
+          "name": "retail1",
+          "code": "RETAIL1",
+          "contactPerson": "retail1",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-31T20:01:44.990Z",
+    "updatedAt": "2026-08-31T20:03:19.103Z"
+  },
+  {
+    "id": "d42831b3-15a9-49d6-9229-edb4f81ddb1e",
+    "name": "New Retailer",
+    "email": "newretailer@stockoverflow.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Inactive",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "f0f5dba4-7f85-48fb-8b23-19d32ad58f10",
+    "profile": {
+      "businessName": "New Retailer Retail",
+      "businessEmail": "newretailer@stockoverflow.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-5608",
+      "address": "",
+      "website": "",
+      "businessType": "Retailer",
+      "currency": "INR",
+      "fiscalYear": "",
+      "primaryIndustry": "",
+      "ownerName": "New Retailer",
+      "ownerTitle": "",
+      "ownerEmail": "newretailer@stockoverflow.com",
+      "profileStatus": "rejected",
+      "stores": [],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-31T19:43:56.146Z",
+    "updatedAt": "2026-08-31T19:55:55.163Z"
+  },
+  {
+    "id": "5e1781a8-5641-4a1d-bb13-48553f58b8bf",
+    "name": "retailer2",
+    "email": "retailer2@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "retail2",
+    "storeId": "RETAIL2",
+    "currentStoreId": "RETAIL2",
+    "accessibleStoreIds": [
+      "RETAIL2"
+    ],
+    "profileId": "95cb70c8-2412-4de1-bf97-b59fad391f32",
+    "profile": {
+      "businessName": "retail2",
+      "businessEmail": "retailer2@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-865",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "retail2",
+      "ownerTitle": "",
+      "ownerEmail": "retailer2@gmail.com",
+      "profileStatus": "pending",
+      "stores": [
+        {
+          "name": "retail2",
+          "code": "RETAIL2",
+          "contactPerson": "retail2",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-31T19:52:46.275Z",
+    "updatedAt": "2026-08-31T19:54:02.897Z"
+  },
+  {
+    "id": "373e70f0-83c5-4c39-8891-6e17fced4acf",
+    "name": "Test Retailer",
+    "email": "testretailer@test.com",
+    "password": "Password123!",
+    "role": "retailer",
+    "status": "Active",
+    "store": "NYC Flagship Store",
+    "storeId": "NYC-01",
+    "currentStoreId": "NYC-01",
+    "accessibleStoreIds": [
+      "NYC-01"
+    ],
+    "profileId": "40d12845-0f3f-45b6-9d9d-1771dc3861c7",
+    "profile": {
+      "businessName": "Test Retailer Business",
+      "businessEmail": "business@testretailer.com",
+      "businessPhone": "1234567890",
+      "taxId": "TAX123456",
+      "retailerCode": "RET-697",
+      "address": "123 Main St, New York, NY",
+      "website": "http://testretailer.com",
+      "businessType": "LLC",
+      "currency": "USD",
+      "fiscalYear": "January",
+      "primaryIndustry": "Electronics & Technology",
+      "ownerName": "John Doe Manager",
+      "ownerTitle": "Store Manager",
+      "ownerEmail": "manager@testretailer.com",
+      "profileStatus": "active",
+      "stores": [
+        {
+          "name": "NYC Flagship Store",
+          "code": "NYC-01",
+          "contactPerson": "John Doe Manager",
+          "phone": "1234567890",
+          "address": "123 Main St, New York, NY",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-31T19:15:02.779Z",
+    "updatedAt": "2026-08-31T19:21:06.748Z"
+  },
+  {
+    "id": "a3b5cba4-8dd6-4263-8c44-1be43bb16638",
+    "name": "Apex Retailers Ltd",
+    "email": "apex.retail@test.com",
+    "password": "Password123!",
+    "role": "retailer",
+    "status": "Active",
+    "store": "Apex Main Store",
+    "storeId": "APEX-MAIN-ST",
+    "currentStoreId": "APEX-MAIN-ST",
+    "accessibleStoreIds": [
+      "APEX-MAIN-ST"
+    ],
+    "profileId": "ee83f903-29cf-460f-816f-6115a81ba191",
+    "profile": {
+      "businessName": "Apex Retailers Ltd",
+      "businessEmail": "apex.retail@test.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-537",
+      "address": "",
+      "website": "",
+      "businessType": "LLC",
+      "currency": "INR",
+      "fiscalYear": "January",
+      "primaryIndustry": "",
+      "ownerName": "Apex Owner",
+      "ownerTitle": "",
+      "ownerEmail": "apex.retail@test.com",
+      "profileStatus": "active",
+      "stores": [
+        {
+          "name": "Apex Main Store",
+          "code": "APEX-MAIN-ST",
+          "contactPerson": "Apex Manager",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "createdAt": "2026-08-31T19:04:38.434Z",
+    "updatedAt": "2026-08-31T19:10:24.696Z"
+  },
+  {
     "id": "7a5f677f-0b8f-4a39-849b-3e546226fbaa",
     "name": "Retailer Test",
     "email": "retailer@test.com",

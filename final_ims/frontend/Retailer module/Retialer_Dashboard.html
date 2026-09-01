@@ -447,10 +447,199 @@ tr:hover td{background:rgba(91,103,202,.03)}
   </header>
 
   <div class="content">
-    <div class="page-header">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
       <div>
-        <div class="page-title">Retailer Dashboard</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div class="page-title">Retailer Dashboard</div>
+          <span class="sub-tier-badge" id="retailerTierBadge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:linear-gradient(135deg, #eff6ff, #dbeafe);color:#1d4ed8;border:1px solid #bfdbfe;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span id="retailerTierName">Growth (₹799/mo)</span>
+          </span>
+        </div>
         <div class="page-subtitle" id="dashboardSubtitle">Welcome back, John! You have 0 pending orders today.</div>
+      </div>
+      <div>
+        <button class="btn btn-outline" onclick="openTierModal()" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600;color:#1e293b;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          Manage Subscription
+        </button>
+      </div>
+    </div>
+
+    <!-- Subscription Plan Modal -->
+    <div class="modal-overlay" id="tierModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+      <div style="background:#fff;border-radius:16px;max-width:780px;width:92%;padding:24px;box-shadow:0 20px 40px rgba(0,0,0,0.2);position:relative;max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
+          <div>
+            <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0;">Subscription &amp; Plans</h3>
+            <p style="font-size:12px;color:#64748b;margin-top:2px;">Manage your 30-day membership cycle or upgrade to unlock higher store and SKU limits</p>
+          </div>
+          <button onclick="closeTierModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;">&times;</button>
+        </div>
+
+        <!-- Active Subscription Status Banner -->
+        <div id="activeSubBanner" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-weight:700;font-size:13.5px;color:#15803d;display:flex;align-items:center;gap:6px;">
+              <span>Current Plan: <strong id="modalActivePlanName">Growth Plan</strong></span>
+              <span id="modalActiveStatusBadge" style="background:#bbf7d0;color:#166534;font-size:10.5px;padding:2px 7px;border-radius:10px;font-weight:800;text-transform:uppercase;">ACTIVE</span>
+            </div>
+            <div style="font-size:12px;color:#334155;margin-top:2px;" id="modalBillingInfo">30-day billing cycle • Valid until <span id="modalExpiryDate">-</span> (<strong id="modalDaysLeft">-</strong> days left)</div>
+          </div>
+          <button type="button" id="btnCancelSub" onclick="openCancelPlanModal()" style="display:none;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Cancel Plan</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:20px;" id="tierCardsModal">
+          <!-- Starter -->
+          <div style="border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;display:flex;flex-direction:column;position:relative;">
+            <div style="font-weight:800;font-size:15px;color:#0f172a;">Starter</div>
+            <div style="font-size:22px;font-weight:800;color:#0f172a;margin:6px 0;">₹0 <span style="font-size:12px;font-weight:500;color:#64748b;">/ mo</span></div>
+            <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:#334155;flex:1;display:flex;flex-direction:column;gap:6px;">
+              <li>✓ <strong>3 POs / week</strong> (Auto-resets)</li>
+              <li>✓ 1 Store Location</li>
+              <li>✓ Up to 50 SKUs</li>
+              <li>✓ POS Billing Terminal</li>
+              <li>✓ Daily Sales Reports</li>
+            </ul>
+            <button onclick="handlePlanSelectionClick('free')" class="tier-select-btn" id="btnTier-free" style="width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-weight:700;cursor:pointer;font-size:12px;">Select Starter</button>
+          </div>
+
+          <!-- Growth -->
+          <div style="border:2px solid #3b82f6;border-radius:12px;padding:16px;display:flex;flex-direction:column;position:relative;background:#fcfdff;">
+            <span style="position:absolute;top:-10px;right:16px;background:#3b82f6;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase;">POPULAR</span>
+            <div style="font-weight:800;font-size:15px;color:#1e40af;">Growth</div>
+            <div style="font-size:22px;font-weight:800;color:#0f172a;margin:6px 0;">₹799 <span style="font-size:12px;font-weight:500;color:#64748b;">/ mo</span></div>
+            <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:#334155;flex:1;display:flex;flex-direction:column;gap:6px;">
+              <li>✓ <strong>15 POs / week</strong> (Auto-resets)</li>
+              <li>✓ Up to 5 Retail Outlets</li>
+              <li>✓ Unlimited SKUs</li>
+              <li>✓ Automated AI Reorders</li>
+              <li>✓ Priority Staff Verification</li>
+            </ul>
+            <button onclick="handlePlanSelectionClick('pro')" class="tier-select-btn" id="btnTier-pro" style="width:100%;padding:8px;border-radius:6px;border:none;background:#3b82f6;color:#fff;font-weight:700;cursor:pointer;font-size:12px;">Active Plan</button>
+          </div>
+
+          <!-- Enterprise -->
+          <div style="border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;display:flex;flex-direction:column;position:relative;">
+            <div style="font-weight:800;font-size:15px;color:#0f172a;">Enterprise</div>
+            <div style="font-size:22px;font-weight:800;color:#0f172a;margin:6px 0;">₹3,499 <span style="font-size:12px;font-weight:500;color:#64748b;">/ mo</span></div>
+            <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:#334155;flex:1;display:flex;flex-direction:column;gap:6px;">
+              <li>✓ <strong>Unlimited POs</strong></li>
+              <li>✓ Unlimited Stores & Depots</li>
+              <li>✓ Unlimited SKUs & Warehouses</li>
+              <li>✓ Custom ERP & Webhook Sync</li>
+              <li>✓ 24/7 Dedicated Account Rep</li>
+            </ul>
+            <button onclick="handlePlanSelectionClick('enterprise')" class="tier-select-btn" id="btnTier-enterprise" style="width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc;font-weight:700;cursor:pointer;font-size:12px;">Upgrade</button>
+          </div>
+        </div>
+
+        <div style="text-align:center;font-size:11.5px;color:#64748b;">
+          Note: StockOverflow applies a transparent flat 2.0% platform commission on completed POS/checkout orders.
+        </div>
+      </div>
+    </div>
+
+    <!-- SECURE CHECKOUT & PAYMENT SIMULATOR MODAL -->
+    <div class="modal-overlay" id="paymentSimModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+      <div style="background:#fff;border-radius:16px;max-width:480px;width:92%;padding:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="background:#dcfce7;color:#15803d;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700;">🔒 256-Bit SSL</span>
+            <h3 style="font-size:17px;font-weight:800;color:#0f172a;margin:0;">Simulated Secure Checkout</h3>
+          </div>
+          <button onclick="closePaymentModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;">&times;</button>
+        </div>
+
+        <!-- Order Summary Card -->
+        <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:14px;font-weight:800;color:#0f172a;" id="simPlanName">Growth Plan</span>
+            <span style="font-size:16px;font-weight:800;color:#1d4ed8;" id="simPlanPrice">₹799 / mo</span>
+          </div>
+          <div style="font-size:12px;color:#64748b;" id="simPlanFeatures">15 POs/wk • 5 Outlets • Unlimited SKUs</div>
+          <div style="border-top:1px dashed #cbd5e1;margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;font-size:12.5px;color:#334155;">
+            <span>30-Day Billing Cycle (Billed Monthly)</span>
+            <strong style="color:#0f172a;" id="simTotalAmount">Total: ₹799</strong>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div style="margin-bottom:16px;">
+          <label style="font-size:12px;font-weight:700;color:#334155;display:block;margin-bottom:8px;">Select Payment Method</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <button type="button" class="pay-tab active-pay-tab" id="simTab-upi" onclick="switchSimPayTab('upi')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #3b82f6;background:#eff6ff;font-size:12px;font-weight:700;color:#1d4ed8;cursor:pointer;text-align:center;">📱 UPI AutoPay</button>
+            <button type="button" class="pay-tab" id="simTab-card" onclick="switchSimPayTab('card')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #e2e8f0;background:#ffffff;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;text-align:center;">💳 Card</button>
+            <button type="button" class="pay-tab" id="simTab-netbanking" onclick="switchSimPayTab('netbanking')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #e2e8f0;background:#ffffff;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;text-align:center;">🏦 NetBanking</button>
+          </div>
+        </div>
+
+        <!-- Payment Method Forms -->
+        <div id="simPayForm-upi" style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+          <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">UPI ID / VPA</label>
+          <input type="text" id="simUpiInput" value="retailer@okhdfcbank" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;">
+          <div style="font-size:11px;color:#6b7280;margin-top:5px;">⚡ AutoPay mandate pre-approved for sandbox testing.</div>
+        </div>
+
+        <div id="simPayForm-card" style="display:none;background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+          <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Card Number</label>
+          <input type="text" value="4242 •••• •••• 4242" readonly style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;background:#fff;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+            <input type="text" value="12/29" readonly style="width:100%;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <input type="text" value="888" readonly style="width:100%;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+          </div>
+        </div>
+
+        <div id="simPayForm-netbanking" style="display:none;background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+          <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Select Bank</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;background:#fff;">
+            <option>HDFC Bank Corporate</option>
+            <option>ICICI Bank Current Account</option>
+            <option>State Bank of India (SBI)</option>
+            <option>Axis Bank Business</option>
+          </select>
+        </div>
+
+        <!-- Confirm Payment Button -->
+        <button type="button" id="btnConfirmSimPayment" onclick="executeSimulatedPayment()" style="width:100%;background:#10b981;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;">
+          <span id="btnConfirmSimPaymentText">✓ Pay ₹799 &amp; Activate Plan</span>
+        </button>
+        <div style="text-align:center;margin-top:10px;font-size:11.5px;color:#94a3b8;">
+          🔒 Sandbox Mode: Instant dummy payment simulation.
+        </div>
+      </div>
+    </div>
+
+    <!-- CANCEL PLAN CONFIRMATION UI MODAL -->
+    <div class="modal-overlay" id="cancelPlanConfirmModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.65);z-index:10001;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+      <div style="background:#fff;border-radius:16px;max-width:440px;width:90%;padding:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;text-align:center;">
+        <div style="width:52px;height:52px;background:#fee2e2;color:#dc2626;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 8px 0;">Cancel Subscription Plan?</h3>
+        <p style="font-size:13.5px;color:#475569;margin:0 0 16px 0;line-height:1.5;">
+          You are currently subscribed to <strong id="cancelModalPlanName" style="color:#0f172a;">Growth Plan</strong>.
+        </p>
+        
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;text-align:left;font-size:12.5px;color:#334155;margin-bottom:20px;line-height:1.5;">
+          <div style="font-weight:700;color:#0f172a;margin-bottom:4px;">What happens next:</div>
+          <div style="display:flex;gap:6px;margin-bottom:4px;">
+            <span style="color:#10b981;font-weight:800;">✓</span> <span>Plan access stays active until the end of your 30-day billing cycle.</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:4px;">
+            <span style="color:#10b981;font-weight:800;">✓</span> <span>Auto-renewal will be stopped immediately.</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <span style="color:#10b981;font-weight:800;">✓</span> <span>You can freely switch to Starter (₹0) or upgrade to another tier.</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button type="button" onclick="closeCancelPlanModal()" style="padding:11px 16px;border-radius:8px;border:1.5px solid #cbd5e1;background:#fff;font-weight:700;font-size:13.5px;color:#475569;cursor:pointer;">Keep My Plan</button>
+          <button type="button" id="btnConfirmCancelPlanExecution" onclick="executePlanCancellation()" style="padding:11px 16px;border-radius:8px;border:none;background:#dc2626;font-weight:700;font-size:13.5px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <span id="btnConfirmCancelText">Confirm &amp; Cancel</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -460,6 +649,49 @@ tr:hover td{background:rgba(91,103,202,.03)}
       <div class="close-btn" onclick="document.getElementById('notifBar').style.display='none'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </div>
+    </div>
+
+    <!-- SUBSCRIPTION STATUS & PLAN LIMITS BAR -->
+    <div id="planFeaturesWidget" style="background:#ffffff;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg, #3b82f6, #2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">⭐</div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Active Membership</div>
+            <div style="font-size:14px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:6px;" id="widgetPlanName">
+              Starter Plan <span style="font-size:10.5px;background:#dcfce7;color:#15803d;padding:2px 7px;border-radius:10px;font-weight:700;">ACTIVE</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:28px;width:1px;background:#e2e8f0;"></div>
+
+        <!-- Weekly PO Quota Feature -->
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Weekly PO Quota</div>
+          <div style="font-size:13px;font-weight:700;color:#1d4ed8;" id="widgetPoQuota">0 / 3 Orders Used</div>
+        </div>
+
+        <div style="height:28px;width:1px;background:#e2e8f0;"></div>
+
+        <!-- Store Outlets Feature -->
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Store Locations</div>
+          <div style="font-size:13px;font-weight:700;color:#0f172a;" id="widgetStoresLimit">1 / 1 Store Max</div>
+        </div>
+
+        <div style="height:28px;width:1px;background:#e2e8f0;"></div>
+
+        <!-- SKU Limit Feature -->
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">SKU Catalog Limit</div>
+          <div style="font-size:13px;font-weight:700;color:#15803d;" id="widgetSkuLimit">Up to 50 SKUs</div>
+        </div>
+      </div>
+
+      <button onclick="openTierModal()" class="btn btn-outline btn-sm" style="border:1.5px solid #3b82f6;color:#1d4ed8;background:#f8faff;font-weight:700;border-radius:8px;padding:6px 14px;cursor:pointer;">
+        Change / Upgrade Plan
+      </button>
     </div>
 
     <!-- SALES OVERVIEW CARDS -->
@@ -645,8 +877,8 @@ tr:hover td{background:rgba(91,103,202,.03)}
         </div>
         <div class="rev-exp-header">
           <div class="rev-exp-stats">
-            <div><div class="rev-stat-badge"><div class="rev-stat-val">₹56,247</div><span class="badge up">+12.4%</span></div><div class="rev-stat-lbl">Total Revenue</div></div>
-            <div><div class="rev-stat-badge"><div class="rev-stat-val">₹24,630</div><span class="badge down">-3.1%</span></div><div class="rev-stat-lbl">Total Expense</div></div>
+            <div><div class="rev-stat-badge"><div class="rev-stat-val">₹0</div><span class="badge up">+0.0%</span></div><div class="rev-stat-lbl">Total Revenue</div></div>
+            <div><div class="rev-stat-badge"><div class="rev-stat-val">₹0</div><span class="badge down">-0.0%</span></div><div class="rev-stat-lbl">Total Expense</div></div>
           </div>
         </div>
         <div style="padding:0 18px 18px"><canvas id="revExpChart" height="190"></canvas></div>
@@ -925,6 +1157,7 @@ if (!session || session.role !== 'retailer') {
 // INIT
 document.addEventListener('DOMContentLoaded',()=>{
   loadProfile();
+  loadActiveSubscription();
 });
 
 // PROFILE FUNCTIONS
@@ -996,8 +1229,437 @@ function showProfileModal() {
     });
 }
 
-function closeProfileModal() {
-  document.getElementById('profileModal').style.display = 'none';
+function openTierModal() {
+  loadActiveSubscription();
+  const modal = document.getElementById('tierModal');
+  if (modal) modal.style.display = 'flex';
+}
+function closeTierModal() {
+  const modal = document.getElementById('tierModal');
+  if (modal) modal.style.display = 'none';
+}
+
+let activeSubscriptionRecord = null;
+
+async function loadActiveSubscription() {
+  try {
+    let data = null;
+    if (window.RetailerApi && typeof window.RetailerApi.getActiveSubscription === 'function') {
+      data = await window.RetailerApi.getActiveSubscription();
+    } else {
+      const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const userId = curSession.id || curSession.userId || curSession.profileId || 'u-retailer-1';
+      const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+      const res = await fetch(`${apiBase}/api/platform-revenue/subscriptions/active?userId=${encodeURIComponent(userId)}`);
+      if (res.ok) data = await res.json();
+    }
+
+    if (data) {
+      activeSubscriptionRecord = data;
+      updateTierUi(data);
+      loadUsageLimits(data);
+      return data;
+    }
+    updateTierUi({ tier: 'free', status: 'active', daysRemaining: 30 });
+    loadUsageLimits({ tier: 'free' });
+  } catch (err) {
+    console.warn('Subscription fetch note:', err);
+    updateTierUi({ tier: 'free', status: 'active', daysRemaining: 30 });
+    loadUsageLimits({ tier: 'free' });
+  }
+}
+
+async function loadUsageLimits(sub) {
+  try {
+    let usage = null;
+    if (window.RetailerApi && typeof window.RetailerApi.getSubscriptionUsage === 'function') {
+      usage = await window.RetailerApi.getSubscriptionUsage();
+    }
+    if (usage) {
+      const poEl = document.getElementById('widgetPoQuota');
+      if (poEl) {
+        if (usage.isUnlimited) {
+          poEl.textContent = `${usage.usedThisWeek} Placed (Unlimited)`;
+          poEl.style.color = '#15803d';
+        } else {
+          poEl.textContent = `${usage.usedThisWeek} / ${usage.weeklyLimit} Orders Used`;
+          poEl.style.color = usage.isQuotaReached ? '#dc2626' : '#1d4ed8';
+        }
+      }
+    }
+  } catch (_e) {}
+}
+
+let pendingPlanTier = null;
+let pendingSwitchTargetTier = null;
+let activeSimPayMethod = 'UPI AutoPay';
+
+function showInPageToast(message, type = 'success') {
+  let toastEl = document.getElementById('soInPageToast');
+  if (!toastEl) {
+    toastEl = document.createElement('div');
+    toastEl.id = 'soInPageToast';
+    toastEl.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;padding:14px 20px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 25px -5px rgba(0,0,0,0.2);display:flex;align-items:center;gap:10px;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);transform:translateY(100px);opacity:0;';
+    document.body.appendChild(toastEl);
+  }
+  toastEl.style.background = type === 'danger' ? '#fee2e2' : (type === 'info' ? '#eff6ff' : '#dcfce7');
+  toastEl.style.color = type === 'danger' ? '#991b1b' : (type === 'info' ? '#1e40af' : '#166534');
+  toastEl.style.border = `1.5px solid ${type === 'danger' ? '#fca5a5' : (type === 'info' ? '#93c5fd' : '#86efac')}`;
+  toastEl.innerHTML = `<span>${type === 'danger' ? '⚠️' : (type === 'info' ? 'ℹ️' : '✓')}</span> <span>${message}</span>`;
+  
+  toastEl.style.transform = 'translateY(0)';
+  toastEl.style.opacity = '1';
+  setTimeout(() => {
+    toastEl.style.transform = 'translateY(100px)';
+    toastEl.style.opacity = '0';
+  }, 4000);
+}
+
+function openCancelPlanModal(targetTier = null) {
+  pendingSwitchTargetTier = targetTier;
+  const currentTier = (activeSubscriptionRecord && activeSubscriptionRecord.tier) || 'pro';
+  const tierDisplay = currentTier === 'enterprise' ? 'Enterprise Plan (₹3,499/mo)' : 'Growth Plan (₹799/mo)';
+  
+  const nameEl = document.getElementById('cancelModalPlanName');
+  if (nameEl) nameEl.textContent = tierDisplay;
+
+  const modal = document.getElementById('cancelPlanConfirmModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeCancelPlanModal() {
+  const modal = document.getElementById('cancelPlanConfirmModal');
+  if (modal) modal.style.display = 'none';
+  pendingSwitchTargetTier = null;
+}
+
+async function executePlanCancellation() {
+  const btn = document.getElementById('btnConfirmCancelPlanExecution');
+  const btnText = document.getElementById('btnConfirmCancelText');
+  const originalText = btnText ? btnText.textContent : 'Confirm & Cancel';
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = '⏳ Cancelling Plan...';
+
+  try {
+    let cancelled = null;
+    if (window.RetailerApi && typeof window.RetailerApi.cancelSubscription === 'function') {
+      cancelled = await window.RetailerApi.cancelSubscription();
+    } else {
+      const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const userId = curSession.id || curSession.userId || curSession.profileId || 'u-retailer-1';
+      const apiBase = window.API_BASE_URL || 'http://localhost:3001';
+      const res = await fetch(`${apiBase}/api/platform-revenue/subscriptions/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      if (!res.ok) throw new Error('Failed to cancel subscription');
+      cancelled = await res.json();
+    }
+
+    activeSubscriptionRecord = cancelled;
+    const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+    curSession.activeSubscription = cancelled;
+    curSession.subscriptionStatus = 'cancelled';
+    localStorage.setItem('so_session', JSON.stringify(curSession));
+
+    updateTierUi(cancelled);
+    if (typeof loadUsageLimits === 'function') loadUsageLimits(cancelled);
+    
+    closeCancelPlanModal();
+    showInPageToast('Subscription auto-renewal has been cancelled. You can now switch or upgrade.', 'info');
+
+    const nextTier = pendingSwitchTargetTier;
+    pendingSwitchTargetTier = null;
+    if (nextTier === 'free') {
+      await activateSubscriptionDirectly('free');
+    } else if (nextTier) {
+      openPaymentSimulatorModal(nextTier);
+    }
+  } catch (err) {
+    showInPageToast('Error cancelling subscription: ' + (err.message || err), 'danger');
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.textContent = originalText;
+  }
+}
+
+function handlePlanSelectionClick(targetTier) {
+  const currentTier = (activeSubscriptionRecord && activeSubscriptionRecord.tier) || 'free';
+  const currentStatus = (activeSubscriptionRecord && activeSubscriptionRecord.status) || 'active';
+
+  // 1. If user is clicking their current active tier:
+  if (targetTier === currentTier && currentStatus === 'active') {
+    return;
+  }
+
+  // 2. If user currently has an ACTIVE PAID PLAN (pro or enterprise) and wants to switch:
+  if (currentTier !== 'free' && currentStatus === 'active') {
+    openCancelPlanModal(targetTier);
+    return;
+  }
+
+  // 3. If target is 'free' (Starter):
+  if (targetTier === 'free') {
+    activateSubscriptionDirectly('free');
+    return;
+  }
+
+  // 4. If target is a PAID PLAN (pro or enterprise):
+  openPaymentSimulatorModal(targetTier);
+}
+
+function openPaymentSimulatorModal(tier) {
+  pendingPlanTier = tier;
+  const isEnterprise = tier === 'enterprise';
+  const planName = isEnterprise ? 'Enterprise Membership Plan' : 'Growth Membership Plan';
+  const planPrice = isEnterprise ? '₹3,499 / mo' : '₹799 / mo';
+  const planFeatures = isEnterprise
+    ? 'UNLIMITED Purchase Orders • Unlimited Stores & Depots • Custom ERP Sync'
+    : '15 POs / week • Up to 5 Retail Outlets • Unlimited SKUs • AI Reorders';
+  const totalText = isEnterprise ? 'Total: ₹3,499' : 'Total: ₹799';
+  const payBtnText = isEnterprise ? '✓ Pay ₹3,499 & Activate Plan' : '✓ Pay ₹799 & Activate Plan';
+
+  const pName = document.getElementById('simPlanName');
+  const pPrice = document.getElementById('simPlanPrice');
+  const pFeat = document.getElementById('simPlanFeatures');
+  const pTot = document.getElementById('simTotalAmount');
+  const pBtn = document.getElementById('btnConfirmSimPaymentText');
+
+  if (pName) pName.textContent = planName;
+  if (pPrice) pPrice.textContent = planPrice;
+  if (pFeat) pFeat.textContent = planFeatures;
+  if (pTot) pTot.textContent = totalText;
+  if (pBtn) pBtn.textContent = payBtnText;
+
+  switchSimPayTab('upi');
+  const modal = document.getElementById('paymentSimModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closePaymentModal() {
+  const modal = document.getElementById('paymentSimModal');
+  if (modal) modal.style.display = 'none';
+  pendingPlanTier = null;
+}
+
+function switchSimPayTab(tab) {
+  activeSimPayMethod = tab === 'upi' ? 'UPI AutoPay' : (tab === 'card' ? 'Credit / Debit Card' : 'Net Banking');
+  ['upi', 'card', 'netbanking'].forEach(t => {
+    const tabEl = document.getElementById('simTab-' + t);
+    const formEl = document.getElementById('simPayForm-' + t);
+    if (tabEl) {
+      tabEl.style.border = (t === tab) ? '1.5px solid #3b82f6' : '1.5px solid #e2e8f0';
+      tabEl.style.background = (t === tab) ? '#eff6ff' : '#ffffff';
+      tabEl.style.color = (t === tab) ? '#1d4ed8' : '#64748b';
+    }
+    if (formEl) formEl.style.display = (t === tab) ? 'block' : 'none';
+  });
+}
+
+async function executeSimulatedPayment() {
+  if (!pendingPlanTier) return;
+  const btn = document.getElementById('btnConfirmSimPayment');
+  const btnText = document.getElementById('btnConfirmSimPaymentText');
+  const originalText = btnText ? btnText.textContent : '';
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = '⏳ Processing simulated payment...';
+
+  try {
+    await new Promise(r => setTimeout(r, 600));
+    const dummyPaymentId = 'PAY-SO-' + Math.floor(100000 + Math.random() * 900000);
+    
+    let updated = null;
+    if (window.RetailerApi && typeof window.RetailerApi.updateSubscription === 'function') {
+      updated = await window.RetailerApi.updateSubscription({
+        tier: pendingPlanTier,
+        paymentId: dummyPaymentId,
+        paymentMethod: activeSimPayMethod
+      });
+    } else {
+      const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const userId = curSession.id || curSession.userId || curSession.profileId || 'u-retailer-1';
+      const apiBase = (window.location && window.location.hostname ? window.location.protocol + '//' + window.location.hostname + ':3001' : 'http://localhost:3001');
+      const res = await fetch(`${apiBase}/api/platform-revenue/subscriptions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          userName: curSession.name || 'Retailer User',
+          userEmail: curSession.email || 'retailer@stockoverflow.com',
+          userRole: 'retailer',
+          tier: pendingPlanTier,
+          billingCycle: 'monthly',
+          paymentId: dummyPaymentId,
+          paymentMethod: activeSimPayMethod
+        })
+      });
+      if (!res.ok) throw new Error('Failed to update subscription');
+      updated = await res.json();
+    }
+
+    activeSubscriptionRecord = updated;
+    const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+    curSession.tier = pendingPlanTier;
+    curSession.currentTier = pendingPlanTier;
+    curSession.activeSubscription = updated;
+    curSession.subscriptionStatus = 'active';
+    localStorage.setItem('so_session', JSON.stringify(curSession));
+
+    updateTierUi(updated);
+    if (typeof loadUsageLimits === 'function') loadUsageLimits(updated);
+    closePaymentModal();
+    closeTierModal();
+
+    const tierNames = { free: 'Starter (₹0/mo)', pro: 'Growth (₹799/mo)', enterprise: 'Enterprise (₹3,499/mo)' };
+    showInPageToast(`🎉 ${tierNames[pendingPlanTier] || pendingPlanTier} is now active for 30 days! (Ref: ${dummyPaymentId})`, 'success');
+  } catch (err) {
+    showInPageToast('Payment error: ' + (err.message || err), 'danger');
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.textContent = originalText;
+  }
+}
+
+async function activateSubscriptionDirectly(tier) {
+  try {
+    let updated = null;
+    if (window.RetailerApi && typeof window.RetailerApi.updateSubscription === 'function') {
+      updated = await window.RetailerApi.updateSubscription({ tier });
+    } else {
+      const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const userId = curSession.id || curSession.userId || curSession.profileId || 'u-retailer-1';
+      const apiBase = (window.location && window.location.hostname ? window.location.protocol + '//' + window.location.hostname + ':3001' : 'http://localhost:3001');
+      const res = await fetch(`${apiBase}/api/platform-revenue/subscriptions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          userName: curSession.name || 'Retailer User',
+          userEmail: curSession.email || 'retailer@stockoverflow.com',
+          userRole: 'retailer',
+          tier,
+          billingCycle: 'monthly'
+        })
+      });
+      if (!res.ok) throw new Error('Failed to update subscription');
+      updated = await res.json();
+    }
+
+    activeSubscriptionRecord = updated;
+    const curSession = JSON.parse(localStorage.getItem('so_session') || '{}');
+    curSession.tier = tier;
+    curSession.currentTier = tier;
+    curSession.activeSubscription = updated;
+    curSession.subscriptionStatus = 'active';
+    localStorage.setItem('so_session', JSON.stringify(curSession));
+
+    updateTierUi(updated);
+    if (typeof loadUsageLimits === 'function') loadUsageLimits(updated);
+    closeTierModal();
+    showInPageToast(`Plan updated: Starter (₹0/mo) is now active.`, 'success');
+  } catch (err) {
+    showInPageToast('Error updating plan: ' + (err.message || err), 'danger');
+  }
+}
+
+window.selectSubscriptionTier = function(tier) {
+  return handlePlanSelectionClick(tier);
+};
+
+function cancelCurrentSubscription() {
+  openCancelPlanModal();
+}
+
+function updateTierUi(sub) {
+  const tier = (sub && sub.tier) ? sub.tier : 'free';
+  const status = (sub && sub.status) ? sub.status : 'active';
+  const daysRemaining = (sub && sub.daysRemaining !== undefined) ? sub.daysRemaining : 30;
+  const endDate = sub && (sub.endDate || sub.renewalDate) ? new Date(sub.endDate || sub.renewalDate).toLocaleDateString() : 'Next Cycle';
+  const isPaidActive = tier !== 'free' && status === 'active';
+
+  const badgeEl = document.getElementById('retailerTierName');
+  const tierNameMap = {
+    free: 'Starter (₹0/mo)',
+    pro: 'Growth (₹799/mo)',
+    enterprise: 'Enterprise (₹3,499/mo)'
+  };
+  const planDisplay = tierNameMap[tier] || 'Starter (₹0/mo)';
+
+  if (badgeEl) {
+    badgeEl.textContent = `${planDisplay}${status === 'cancelled' ? ' [Cancelled]' : ''}`;
+  }
+
+  // Update Widget
+  const wPlan = document.getElementById('widgetPlanName');
+  const wStores = document.getElementById('widgetStoresLimit');
+  const wSku = document.getElementById('widgetSkuLimit');
+  if (wPlan) {
+    const statusText = status === 'cancelled' ? 'CANCELLED' : 'ACTIVE';
+    const statusBg = status === 'cancelled' ? '#fee2e2' : '#dcfce7';
+    const statusColor = status === 'cancelled' ? '#b91c1c' : '#15803d';
+    wPlan.innerHTML = `${tier === 'enterprise' ? 'Enterprise' : (tier === 'pro' ? 'Growth' : 'Starter')} Plan <span style="font-size:10.5px;background:${statusBg};color:${statusColor};padding:2px 7px;border-radius:10px;font-weight:700;">${statusText}</span>`;
+  }
+  if (wStores) {
+    wStores.textContent = tier === 'enterprise' ? 'Unlimited Stores' : (tier === 'pro' ? 'Up to 5 Outlets' : '1 Store Location');
+  }
+  if (wSku) {
+    wSku.textContent = tier === 'free' ? 'Up to 50 SKUs' : 'Unlimited SKUs';
+  }
+
+  // Update Modal Status Banner
+  const modalPlanName = document.getElementById('modalActivePlanName');
+  const modalStatusBadge = document.getElementById('modalActiveStatusBadge');
+  const modalExpiryDate = document.getElementById('modalExpiryDate');
+  const modalDaysLeft = document.getElementById('modalDaysLeft');
+  const btnCancel = document.getElementById('btnCancelSub');
+
+  if (modalPlanName) modalPlanName.textContent = planDisplay;
+  if (modalExpiryDate) modalExpiryDate.textContent = endDate;
+  if (modalDaysLeft) modalDaysLeft.textContent = daysRemaining;
+
+  if (modalStatusBadge) {
+    if (status === 'cancelled') {
+      modalStatusBadge.textContent = 'CANCELLED';
+      modalStatusBadge.style.background = '#fee2e2';
+      modalStatusBadge.style.color = '#b91c1c';
+    } else {
+      modalStatusBadge.textContent = 'ACTIVE';
+      modalStatusBadge.style.background = '#bbf7d0';
+      modalStatusBadge.style.color = '#166534';
+    }
+  }
+
+  if (btnCancel) {
+    btnCancel.style.display = (tier !== 'free' && status === 'active') ? 'inline-block' : 'none';
+  }
+
+  ['free', 'pro', 'enterprise'].forEach(t => {
+    const btn = document.getElementById(`btnTier-${t}`);
+    if (btn) {
+      if (t === tier) {
+        btn.textContent = status === 'cancelled' ? 'Active (Cancelled)' : 'Active Plan';
+        btn.style.background = '#3b82f6';
+        btn.style.color = '#fff';
+        btn.style.border = 'none';
+        btn.onclick = () => handlePlanSelectionClick(t);
+      } else if (isPaidActive) {
+        btn.textContent = 'Cancel current plan first';
+        btn.style.background = '#fef2f2';
+        btn.style.color = '#991b1b';
+        btn.style.border = '1px solid #fecaca';
+        btn.onclick = () => handlePlanSelectionClick(t);
+      } else {
+        btn.textContent = (t === 'free') ? 'Select Starter (₹0)' : (t === 'pro' ? 'Upgrade (₹799/mo)' : 'Upgrade (₹3,499/mo)');
+        btn.style.background = '#f8fafc';
+        btn.style.color = '#1e293b';
+        btn.style.border = '1px solid #cbd5e1';
+        btn.onclick = () => handlePlanSelectionClick(t);
+      }
+    }
+  });
 }
 
 function logout() {
@@ -1074,15 +1736,22 @@ function logout() {
     const session = await window.RetailerApi.refreshSession();
     if(!session) return;
 
-    const [products, customers, transactions, purchaseOrders, returns, suppliers] =
+    const [products, customers, transactions, purchaseOrders, returns, suppliers, subscriptions] =
       await Promise.all([
         window.RetailerApi.getProducts().catch(()=>[]),
         window.RetailerApi.getCustomers().catch(()=>[]),
         window.RetailerApi.getTransactions().catch(()=>[]),
         window.RetailerApi.getPurchaseOrders ? window.RetailerApi.getPurchaseOrders().catch(()=>[]) : Promise.resolve([]),
         window.RetailerApi.getReturns().catch(()=>[]),
-        window.RetailerApi.getSuppliers().catch(()=>[])
+        window.RetailerApi.getSuppliers().catch(()=>[]),
+        window.IMS_HTTP ? window.IMS_HTTP.request(`/platform-revenue/subscriptions/active?userId=${encodeURIComponent(session.id || session.userId || '')}`).catch(()=>null) : Promise.resolve(null)
       ]);
+
+    if (subscriptions) {
+      updateTierUi(subscriptions);
+    } else {
+      await loadActiveSubscription();
+    }
 
     const deliveredPurchaseOrders = purchaseOrders.filter((order) => {
       const status = String(order.status || '').toLowerCase();
@@ -1263,14 +1932,30 @@ function logout() {
     }
 
     const topSellingHost = document.getElementById('topSellingList');
-    if(topSellingProducts.length){
-      topSellingHost.innerHTML = topSellingProducts.map((product) => `
+    const hasSales = topSellingProducts.some(p => Number(p.soldThisMonth || 0) > 0);
+    if(hasSales){
+      topSellingHost.innerHTML = topSellingProducts.filter(p => Number(p.soldThisMonth || 0) > 0).slice(0, 5).map((product) => `
         <div class="product-item">
-          <div class="product-avatar">${product.emoji || 'PKG'}</div>
+          <div class="product-avatar">${product.emoji || '📦'}</div>
           <div class="product-info"><div class="product-name">${product.name}</div><div class="product-meta">${formatCurrency(product.price)}<span class="meta-dot"></span>${Number(product.soldThisMonth || 0)} sold</div></div>
-          <span class="badge neutral">0.0%</span>
+          <span class="badge up">+${Math.min(25, Number(product.soldThisMonth || 0))}%</span>
         </div>
       `).join('');
+    }else if(topSellingProducts.length){
+      topSellingHost.innerHTML = topSellingProducts.slice(0, 5).map((product) => `
+        <div class="product-item">
+          <div class="product-avatar">${product.emoji || '📦'}</div>
+          <div class="product-info"><div class="product-name">${product.name}</div><div class="product-meta">${formatCurrency(product.price)}<span class="meta-dot"></span>In Catalog</div></div>
+          <span class="badge neutral">Active</span>
+        </div>
+      `).join('');
+    }else if(Array.isArray(topSelling) && topSelling.length){
+      topSellingHost.innerHTML = topSelling.map(p=>`
+        <div class="product-item">
+          <div class="product-avatar">${p.emoji}</div>
+          <div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta">${p.price}<span class="meta-dot"></span>${p.sales}</div></div>
+          <span class="badge ${p.up?'up':'down'}">${p.pct}</span>
+        </div>`).join('');
     }else{
       renderEmptyState(topSellingHost, 'No product sales yet.');
     }
@@ -1279,11 +1964,18 @@ function logout() {
     if(lowStockProducts.length){
       lowStockHost.innerHTML = lowStockProducts.slice(0, 5).map((product) => `
         <div class="product-item">
-          <div class="product-avatar">${product.emoji || 'PKG'}</div>
+          <div class="product-avatar">${product.emoji || '📦'}</div>
           <div class="product-info"><div class="product-name">${product.name}</div><div class="product-meta">${product.sku}</div></div>
           <div class="stock-info"><div class="stock-status ${(Number(product.qty)||0) <= 0 ? 'critical' : 'low'}">${(Number(product.qty)||0) <= 0 ? 'Out' : 'Low Stock'}</div><div class="stock-qty">${Number(product.qty)||0} pcs</div></div>
         </div>
       `).join('');
+    }else if(Array.isArray(lowStock) && lowStock.length){
+      lowStockHost.innerHTML = lowStock.map(p=>`
+        <div class="product-item">
+          <div class="product-avatar">${p.emoji}</div>
+          <div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta">${p.id}</div></div>
+          <div class="stock-info"><div class="stock-status ${p.statusClass}">${p.status}</div><div class="stock-qty">${p.qty}</div></div>
+        </div>`).join('');
     }else{
       renderEmptyState(lowStockHost, 'No low stock products.');
     }
@@ -1292,11 +1984,18 @@ function logout() {
     if(latestSales.length){
       recentSalesHost.innerHTML = latestSales.map((sale) => `
         <div class="sale-item">
-          <div class="product-avatar">SALE</div>
+          <div class="product-avatar">🛍️</div>
           <div class="sale-info"><div class="sale-name">${sale.customer || 'Customer'}</div><div class="sale-sub">${sale.store || 'Store'}<span class="meta-dot"></span>${formatCurrency(sale.finalTotal)}</div></div>
           <div class="sale-right"><div class="sale-date">${formatDate(sale.timestamp)}</div><span class="status-pill ${getStatusClass(sale.status)}">${sale.status || 'Delivered'}</span></div>
         </div>
       `).join('');
+    }else if(Array.isArray(recentSales) && recentSales.length){
+      recentSalesHost.innerHTML = recentSales.map(s=>`
+        <div class="sale-item">
+          <div class="product-avatar">${s.emoji}</div>
+          <div class="sale-info"><div class="sale-name">${s.name}</div><div class="sale-sub">${s.category}<span class="meta-dot"></span>${s.price}</div></div>
+          <div class="sale-right"><div class="sale-date">${s.date}</div><span class="status-pill ${s.status}">${s.status.charAt(0).toUpperCase()+s.status.slice(1)}</span></div>
+        </div>`).join('');
     }else{
       renderEmptyState(recentSalesHost, 'No sales recorded yet.');
     }
@@ -1306,10 +2005,17 @@ function logout() {
       topCustomersHost.innerHTML = topCustomers.map((customer) => `
         <div class="top-cust-item">
           <div class="avatar-sm" style="background:#5b67ca">${(customer.name || 'CU').split(' ').map(x=>x[0]).join('').slice(0,2)}</div>
-          <div class="top-cust-info"><div class="top-cust-name">${customer.name}</div><div class="top-cust-sub">${customer.city || customer.country || 'N/A'}<span class="meta-dot"></span>${Number(customer.totalOrders || 0)} Orders</div></div>
+          <div class="top-cust-info"><div class="top-cust-name">${customer.name}</div><div class="top-cust-sub">${customer.city || customer.country || 'India'}<span class="meta-dot"></span>${Number(customer.totalOrders || 0)} Orders</div></div>
           <div class="top-cust-amount">${formatCurrency(customer.totalSpent)}</div>
         </div>
       `).join('');
+    }else if(Array.isArray(topCustomers) && topCustomers.length){
+      topCustomersHost.innerHTML = topCustomers.map(c=>`
+        <div class="top-cust-item">
+          <div class="avatar-sm" style="background:${c.color}">${c.init}</div>
+          <div class="top-cust-info"><div class="top-cust-name">${c.name}</div><div class="top-cust-sub">${c.location}<span class="meta-dot"></span>${c.orders}</div></div>
+          <div class="top-cust-amount">${c.amount}</div>
+        </div>`).join('');
     }else{
       renderEmptyState(topCustomersHost, 'No customers yet.');
     }

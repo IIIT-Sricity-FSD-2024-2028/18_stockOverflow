@@ -514,7 +514,7 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
   <header class="topbar">
     <div class="topbar-left">
       <div class="breadcrumb" id="bc">
-        <a href="#">Home</a>
+        <a href="javascript:void(0)" onclick="showSection('dashboard')">Home</a>
         <span class="bc-sep">/</span>
         <span class="current">Dashboard</span>
       </div>
@@ -563,50 +563,98 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
 
     <!-- ══ DASHBOARD ══ -->
     <div class="section active" id="sec-dashboard">
-      <div class="page-header">
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <div>
-          <div class="page-title">Welcome back</div>
-          <div class="page-sub">Here's what's happening with your supply chain today.</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div class="page-title">Welcome back</div>
+            <span id="supplierTierBadge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <span id="supplierTierName">Growth (₹799/mo)</span>
+            </span>
+          </div>
+          <div class="page-sub">Here's what's happening with your supply chain and revenue today.</div>
         </div>
         <div class="page-actions">
-          <button class="btn btn-primary" onclick="showSection('products',document.querySelector('.sb-item:nth-child(1)'))">
+          <button class="btn btn-outline btn-sm" onclick="openSupplierTierModal()">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v6M5 8h6"/></svg>
+            Manage Subscription
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="showSection('products',document.querySelector('.sb-item:nth-child(1)'))">
             <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
             Add Product
           </button>
         </div>
       </div>
-      <div class="stat-grid">
+
+      <!-- PLAN & CAPACITY WIDGET -->
+      <div id="supPlanWidget" style="background:#ffffff;border:1.5px solid #e2e8f0;border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg, #2e6bc5, #1d4ed8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;">🏭</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;">Supplier Membership</div>
+              <div style="font-size:13.5px;font-weight:800;color:#092c4c;" id="supWidgetPlanName">Starter Plan</div>
+            </div>
+          </div>
+          <div style="height:26px;width:1px;background:#e2e8f0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;">Weekly PO Capacity</div>
+            <div style="font-size:13px;font-weight:700;color:#2e6bc5;" id="supWidgetPoCapacity">0 / 5 Incoming POs</div>
+          </div>
+          <div style="height:26px;width:1px;background:#e2e8f0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;">Product Listings</div>
+            <div style="font-size:13px;font-weight:700;color:#092c4c;" id="supWidgetProdLimit">0 / 25 Products</div>
+          </div>
+          <div style="height:26px;width:1px;background:#e2e8f0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;">Bulk CSV Import</div>
+            <div style="font-size:13px;font-weight:700;color:#64748b;" id="supWidgetBulkStatus">Growth &amp; Enterprise</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="openSupplierTierModal()" style="font-weight:700;">Manage Plan</button>
+      </div>
+
+      <div class="stat-grid" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="stat-card" style="border-top:3px solid #10b981;">
+          <div class="stat-icon" style="background:#ecfdf5">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#10b981" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 4v8M5 6.5a2.5 2.5 0 0 1 5 0c0 1.8-2.5 2.2-2.5 3.5"/></svg>
+          </div>
+          <div class="stat-value" id="kpiSupplierRevenue" style="color:#10b981">₹0</div>
+          <div class="stat-label">Delivered PO Revenue</div>
+          <div class="stat-trend trend-up" id="kpiSupplierRevenueSub">From 0 delivered orders</div>
+        </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:#eef3fc">
             <svg viewBox="0 0 16 16" fill="none" stroke="#2e6bc5" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="4" y1="1" x2="4" y2="15"/><line x1="1" y1="8" x2="15" y2="8"/></svg>
           </div>
-          <div class="stat-value" style="color:#2e6bc5">12</div>
+          <div class="stat-value" style="color:#2e6bc5">0</div>
           <div class="stat-label">Active Retailers</div>
-          <div class="stat-trend trend-up">↑ 2 this month</div>
+          <div class="stat-trend trend-up">0 connected retailers</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:#dcfce7">
             <svg viewBox="0 0 16 16" fill="none" stroke="#22c55e" stroke-width="1.5"><path d="M8 1L15 4.5v7L8 15 1 11.5v-7L8 1z"/></svg>
           </div>
-          <div class="stat-value" style="color:#22c55e">48</div>
+          <div class="stat-value" style="color:#22c55e">0</div>
           <div class="stat-label">Products Listed</div>
-          <div class="stat-trend trend-up">↑ 5 new items</div>
+          <div class="stat-trend trend-up">0 below MOQ</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:#fef3c7">
             <svg viewBox="0 0 16 16" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/></svg>
           </div>
-          <div class="stat-value" style="color:#f59e0b">7</div>
+          <div class="stat-value" style="color:#f59e0b">0</div>
           <div class="stat-label">Pending Orders</div>
-          <div class="stat-trend trend-down">↓ action needed</div>
+          <div class="stat-trend trend-down">0 total orders</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:#ede9fe">
             <svg viewBox="0 0 16 16" fill="none" stroke="#8b5cf6" stroke-width="1.5"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/></svg>
           </div>
-          <div class="stat-value" style="color:#8b5cf6">94%</div>
+          <div class="stat-value" style="color:#8b5cf6">0%</div>
           <div class="stat-label">Fulfilment Rate</div>
-          <div class="stat-trend trend-up">↑ above target</div>
+          <div class="stat-trend trend-up">0 delivered orders</div>
         </div>
       </div>
 
@@ -784,11 +832,16 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
           <div class="page-title">Product Catalog</div>
           <div class="page-sub">Manage products you supply to retailers</div>
         </div>
-        <div class="page-actions">
+        <div class="page-actions" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <div class="search-wrap">
             <div class="search-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L13 13"/></svg></div>
             <input type="text" placeholder="Search products…" oninput="filterProducts(this.value)" style="padding-left:34px"/>
           </div>
+          <span id="supProdLimitPill" style="font-size:12px;font-weight:700;color:#64748b;background:#f1f5f9;padding:6px 12px;border-radius:20px;border:1px solid #e2e8f0;">0 / 25 Products</span>
+          <button class="btn btn-outline btn-sm" onclick="handleSupplierBulkCsv()">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11v3h12v-3M8 2v9M4 7l4 4 4-4"/></svg>
+            Bulk CSV
+          </button>
           <button class="btn btn-primary" onclick="openProductModal()">
             <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
             Add Product
@@ -1064,8 +1117,180 @@ input.err{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
       <span id="retailerViewTitle">Retailer Details</span>
     </div>
     <div id="retailerViewBody" style="display:flex;flex-direction:column;gap:12px;font-size:13px;padding:6px 0"></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('retailerViewModal')">Close</button>
+<!-- ══ MODAL: SUBSCRIPTION PLAN ══ -->
+<div class="modal-bg" id="supplierTierModal">
+  <div class="modal" style="width:min(780px,94vw);max-height:90vh;overflow-y:auto;border-radius:16px;padding:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
+      <div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin:0;">Supplier Subscription &amp; Plans</h3>
+        <p style="font-size:12px;color:var(--text-3);margin-top:2px;">Manage your 30-day supplier membership cycle or scale your product catalog and distributor network</p>
+      </div>
+      <button onclick="closeModal('supplierTierModal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;">&times;</button>
+    </div>
+
+    <!-- Active Subscription Status Banner -->
+    <div id="activeSupSubBanner" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-weight:700;font-size:13.5px;color:#15803d;display:flex;align-items:center;gap:6px;">
+          <span>Current Plan: <strong id="modalSupActivePlanName">Growth Plan</strong></span>
+          <span id="modalSupActiveStatusBadge" style="background:#bbf7d0;color:#166534;font-size:10.5px;padding:2px 7px;border-radius:10px;font-weight:800;text-transform:uppercase;">ACTIVE</span>
+        </div>
+        <div style="font-size:12px;color:#334155;margin-top:2px;" id="modalSupBillingInfo">30-day billing cycle • Valid until <span id="modalSupExpiryDate">-</span> (<strong id="modalSupDaysLeft">-</strong> days left)</div>
+      </div>
+      <button type="button" id="btnCancelSupSub" onclick="openSupplierCancelPlanModal()" style="display:none;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Cancel Plan</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:18px;">
+      <!-- Starter -->
+      <div style="border:1.5px solid #e2e8f0;border-radius:10px;padding:16px;display:flex;flex-direction:column;">
+        <div style="font-weight:800;font-size:14px;color:#092c4c;">Starter</div>
+        <div style="font-size:20px;font-weight:800;color:#092c4c;margin:6px 0;">₹0 <span style="font-size:11.5px;font-weight:500;color:var(--text-3);">/ mo</span></div>
+        <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:var(--text-2);flex:1;display:flex;flex-direction:column;gap:6px;">
+          <li>✓ <strong>5 Incoming POs / week</strong> (Auto-resets)</li>
+          <li>✓ Up to 25 Product Listings</li>
+          <li>✓ Single Warehouse Dispatch Depot</li>
+          <li>✓ Basic Order Status Tracking</li>
+        </ul>
+        <button onclick="selectSupplierTier('free')" class="btn btn-outline btn-sm" id="btnSupTier-free" style="width:100%;justify-content:center;">Select Starter</button>
+      </div>
+
+      <!-- Growth -->
+      <div style="border:2px solid #3b82f6;border-radius:10px;padding:16px;display:flex;flex-direction:column;background:#f8faff;position:relative;">
+        <span style="position:absolute;top:-10px;right:12px;background:#3b82f6;color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;">POPULAR</span>
+        <div style="font-weight:800;font-size:14px;color:#2e6bc5;">Growth</div>
+        <div style="font-size:20px;font-weight:800;color:#2e6bc5;margin:6px 0;">₹799 <span style="font-size:11.5px;font-weight:500;color:var(--text-3);">/ mo</span></div>
+        <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:var(--text-2);flex:1;display:flex;flex-direction:column;gap:6px;">
+          <li>✓ <strong>30 Incoming POs / week</strong> (Auto-resets)</li>
+          <li>✓ Unlimited Product Listings</li>
+          <li>✓ Up to 3 Regional Depots</li>
+          <li>✓ Bulk CSV/Excel Catalog Import</li>
+          <li>✓ Auto-Dispatch Notifications</li>
+          <li>✓ Priority Buyer Discovery</li>
+        </ul>
+        <button onclick="selectSupplierTier('pro')" class="btn btn-outline btn-sm" id="btnSupTier-pro" style="width:100%;justify-content:center;">Select Growth</button>
+      </div>
+
+      <!-- Enterprise -->
+      <div style="border:1.5px solid #e2e8f0;border-radius:10px;padding:16px;display:flex;flex-direction:column;position:relative;">
+        <div style="font-weight:800;font-size:14px;color:#7c5def;">Enterprise</div>
+        <div style="font-size:20px;font-weight:800;color:#7c5def;margin:6px 0;">₹3,499 <span style="font-size:11.5px;font-weight:500;color:var(--text-3);">/ mo</span></div>
+        <ul style="list-style:none;padding:0;margin:0 0 16px;font-size:12px;color:var(--text-2);flex:1;display:flex;flex-direction:column;gap:6px;">
+          <li>✓ <strong>UNLIMITED Incoming POs</strong> (No Cap)</li>
+          <li>✓ Unlimited Warehouses &amp; Depots</li>
+          <li>✓ Multi-Depot Route Logistics</li>
+          <li>✓ B2B Credit Terms (Net 30/60)</li>
+          <li>✓ Custom ERP &amp; EDI Sync API</li>
+          <li>✓ Dedicated Supply Chain Manager</li>
+          <li>✓ 24/7 Priority Support</li>
+        </ul>
+        <button onclick="selectSupplierTier('enterprise')" class="btn btn-outline btn-sm" id="btnSupTier-enterprise" style="width:100%;justify-content:center;">Upgrade</button>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn btn-outline" onclick="closeModal('supplierTierModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECURE SUPPLIER CHECKOUT & PAYMENT SIMULATOR MODAL -->
+<div class="modal-bg" id="supplierPaymentSimModal">
+  <div class="modal" style="width:min(480px,92vw);border-radius:16px;padding:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="background:#dcfce7;color:#15803d;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700;">🔒 256-Bit SSL</span>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin:0;">Simulated Secure Checkout</h3>
+      </div>
+      <button onclick="closeSupplierPaymentModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;">&times;</button>
+    </div>
+
+    <!-- Order Summary Card -->
+    <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:14px;font-weight:800;color:#092c4c;" id="supSimPlanName">Growth Plan</span>
+        <span style="font-size:16px;font-weight:800;color:#2e6bc5;" id="supSimPlanPrice">₹799 / mo</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-3);" id="supSimPlanFeatures">30 Incoming POs/wk • Unlimited Products • Bulk CSV</div>
+      <div style="border-top:1px dashed #cbd5e1;margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-2);">
+        <span>30-Day Billing Cycle (Billed Monthly)</span>
+        <strong style="color:#092c4c;" id="supSimTotalAmount">Total: ₹799</strong>
+      </div>
+    </div>
+
+    <!-- Payment Methods -->
+    <div style="margin-bottom:16px;">
+      <label style="font-size:12px;font-weight:700;color:var(--text);display:block;margin-bottom:8px;">Select Payment Method</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <button type="button" class="pay-tab active-pay-tab" id="supSimTab-upi" onclick="switchSupplierSimPayTab('upi')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #2e6bc5;background:#eff6ff;font-size:12px;font-weight:700;color:#1d4ed8;cursor:pointer;text-align:center;">📱 UPI AutoPay</button>
+        <button type="button" class="pay-tab" id="supSimTab-card" onclick="switchSupplierSimPayTab('card')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #e2e8f0;background:#ffffff;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;text-align:center;">💳 Card</button>
+        <button type="button" class="pay-tab" id="supSimTab-netbanking" onclick="switchSupplierSimPayTab('netbanking')" style="padding:10px 6px;border-radius:8px;border:1.5px solid #e2e8f0;background:#ffffff;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;text-align:center;">🏦 NetBanking</button>
+      </div>
+    </div>
+
+    <!-- Payment Method Forms -->
+    <div id="supSimPayForm-upi" style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+      <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">UPI ID / VPA</label>
+      <input type="text" id="supSimUpiInput" value="supplier@okaxis" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;">
+      <div style="font-size:11px;color:#6b7280;margin-top:5px;">⚡ AutoPay mandate pre-approved for sandbox test mode.</div>
+    </div>
+
+    <div id="supSimPayForm-card" style="display:none;background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+      <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Card Number</label>
+      <input type="text" value="4242 •••• •••• 4242" readonly style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;background:#fff;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+        <input type="text" value="12/29" readonly style="width:100%;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+        <input type="text" value="888" readonly style="width:100%;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+      </div>
+    </div>
+
+    <div id="supSimPayForm-netbanking" style="display:none;background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:18px;">
+      <label style="font-size:11.5px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Select Bank</label>
+      <select style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;background:#fff;">
+        <option>HDFC Bank Corporate</option>
+        <option>ICICI Bank Current Account</option>
+        <option>State Bank of India (SBI)</option>
+        <option>Axis Bank Business</option>
+      </select>
+    </div>
+
+    <!-- Confirm Payment Button -->
+    <button type="button" id="btnConfirmSupSimPayment" onclick="executeSupplierSimulatedPayment()" style="width:100%;background:#10b981;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;">
+      <span id="btnConfirmSupSimPaymentText">✓ Pay ₹799 &amp; Activate Plan</span>
+    </button>
+    <div style="text-align:center;margin-top:10px;font-size:11.5px;color:#94a3b8;">
+      🔒 Sandbox Mode: Instant dummy payment simulation.
+    </div>
+  </div>
+</div>
+
+<!-- CANCEL SUPPLIER PLAN CONFIRMATION UI MODAL -->
+<div class="modal-bg" id="supplierCancelPlanConfirmModal">
+  <div class="modal" style="width:min(440px,92vw);border-radius:16px;padding:24px;text-align:center;">
+    <div style="width:52px;height:52px;background:#fee2e2;color:#dc2626;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    </div>
+    <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:800;color:var(--text);margin:0 0 8px 0;">Cancel Supplier Subscription?</h3>
+    <p style="font-size:13.5px;color:var(--text-2);margin:0 0 16px 0;line-height:1.5;">
+      You are currently subscribed to <strong id="supCancelModalPlanName" style="color:var(--text);">Growth Plan</strong>.
+    </p>
+    
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;text-align:left;font-size:12.5px;color:var(--text-2);margin-bottom:20px;line-height:1.5;">
+      <div style="font-weight:700;color:var(--text);margin-bottom:4px;">What happens next:</div>
+      <div style="display:flex;gap:6px;margin-bottom:4px;">
+        <span style="color:#10b981;font-weight:800;">✓</span> <span>Supplier access stays active until the end of your 30-day billing cycle.</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:4px;">
+        <span style="color:#10b981;font-weight:800;">✓</span> <span>Auto-renewal will be stopped immediately.</span>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <span style="color:#10b981;font-weight:800;">✓</span> <span>You can freely switch to Starter (₹0) or upgrade to another tier.</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button type="button" class="btn btn-outline" onclick="closeSupplierCancelPlanModal()" style="justify-content:center;font-weight:700;">Keep My Plan</button>
+      <button type="button" id="btnConfirmSupCancelPlanExecution" onclick="executeSupplierPlanCancellation()" class="btn" style="justify-content:center;background:#dc2626;color:#fff;border:none;font-weight:700;">
+        <span id="btnConfirmSupCancelText">Confirm &amp; Cancel</span>
+      </button>
     </div>
   </div>
 </div>
@@ -1937,6 +2162,403 @@ showSection = function(id, el) {
   if (id === 'performance') renderPerformance();
 };
 
+function openSupplierTierModal() {
+  loadSupplierActiveSubscription();
+  openModal('supplierTierModal');
+}
+
+let activeSupplierSubscriptionRecord = null;
+
+async function loadSupplierActiveSubscription() {
+  const session = readSupplierSession() || {};
+  const userId = session.id || session.userId || currentSupplierId || 'u-supplier-1';
+  
+  try {
+    const data = await dashboardApiRequest(`/platform-revenue/subscriptions/active?userId=${encodeURIComponent(userId)}`);
+    if (data) {
+      activeSupplierSubscriptionRecord = data;
+      updateSupplierTierUi(data);
+      loadSupplierUsageLimits(data);
+      return;
+    }
+    updateSupplierTierUi({ tier: 'free', status: 'active', daysRemaining: 30 });
+    loadSupplierUsageLimits({ tier: 'free' });
+  } catch (err) {
+    console.warn('Supplier subscription note:', err);
+    updateSupplierTierUi({ tier: 'free', status: 'active', daysRemaining: 30 });
+    loadSupplierUsageLimits({ tier: 'free' });
+  }
+}
+
+async function loadSupplierUsageLimits(sub) {
+  try {
+    const session = readSupplierSession() || {};
+    const userId = session.id || session.userId || currentSupplierId || 'u-supplier-1';
+    const usage = await dashboardApiRequest(`/platform-revenue/usage?userId=${encodeURIComponent(userId)}&role=supplier`);
+    if (usage) {
+      const capEl = document.getElementById('supWidgetPoCapacity');
+      if (capEl) {
+        if (usage.isUnlimited) {
+          capEl.textContent = `${usage.usedThisWeek} Processed (Unlimited)`;
+          capEl.style.color = '#10b981';
+        } else {
+          capEl.textContent = `${usage.usedThisWeek} / ${usage.weeklyLimit} Incoming POs`;
+          capEl.style.color = usage.isQuotaReached ? '#ef4444' : '#2e6bc5';
+        }
+      }
+    }
+  } catch (_e) {}
+
+  const tier = (sub && sub.tier) ? sub.tier : 'free';
+  const prodCount = suppliers_products.length;
+  const prodPill = document.getElementById('supProdLimitPill');
+  const widgetProd = document.getElementById('supWidgetProdLimit');
+  if (prodPill) {
+    prodPill.textContent = tier === 'free' ? `${prodCount} / 25 Products (Starter)` : `${prodCount} Products (Unlimited)`;
+    prodPill.style.color = (tier === 'free' && prodCount >= 25) ? '#ef4444' : '#64748b';
+  }
+  if (widgetProd) {
+    widgetProd.textContent = tier === 'free' ? `${prodCount} / 25 Products` : `${prodCount} Products (Unlimited)`;
+  }
+  const widgetBulk = document.getElementById('supWidgetBulkStatus');
+  if (widgetBulk) {
+    widgetBulk.textContent = tier === 'free' ? 'Locked (Growth & Ent.)' : 'Unlocked & Enabled';
+    widgetBulk.style.color = tier === 'free' ? '#94a3b8' : '#10b981';
+  }
+}
+
+let pendingSupplierPlanTier = null;
+let pendingSupplierSwitchTargetTier = null;
+let activeSupplierSimPayMethod = 'UPI AutoPay';
+
+function openSupplierCancelPlanModal(targetTier = null) {
+  pendingSupplierSwitchTargetTier = targetTier;
+  const currentTier = (activeSupplierSubscriptionRecord && activeSupplierSubscriptionRecord.tier) || 'pro';
+  const tierDisplay = currentTier === 'enterprise' ? 'Enterprise Supplier Plan (₹3,499/mo)' : 'Growth Supplier Plan (₹799/mo)';
+  
+  const nameEl = document.getElementById('supCancelModalPlanName');
+  if (nameEl) nameEl.textContent = tierDisplay;
+
+  openModal('supplierCancelPlanConfirmModal');
+}
+
+function closeSupplierCancelPlanModal() {
+  closeModal('supplierCancelPlanConfirmModal');
+  pendingSupplierSwitchTargetTier = null;
+}
+
+async function executeSupplierPlanCancellation() {
+  const btn = document.getElementById('btnConfirmSupCancelPlanExecution');
+  const btnText = document.getElementById('btnConfirmSupCancelText');
+  const originalText = btnText ? btnText.textContent : 'Confirm & Cancel';
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = '⏳ Cancelling...';
+
+  try {
+    const session = readSupplierSession() || {};
+    const userId = session.id || session.userId || currentSupplierId || 'u-supplier-1';
+    
+    const cancelled = await dashboardApiRequest('/platform-revenue/subscriptions/cancel', {
+      method: 'POST',
+      body: JSON.stringify({ userId })
+    });
+    activeSupplierSubscriptionRecord = cancelled;
+    session.activeSubscription = cancelled;
+    session.subscriptionStatus = 'cancelled';
+    localStorage.setItem('so_session', JSON.stringify(session));
+
+    updateSupplierTierUi(cancelled);
+    closeSupplierCancelPlanModal();
+    toast('Subscription auto-renewal cancelled. You can now switch or upgrade.', 'info');
+
+    const nextTier = pendingSupplierSwitchTargetTier;
+    pendingSupplierSwitchTargetTier = null;
+    if (nextTier === 'free') {
+      await activateSupplierSubscriptionDirectly('free');
+    } else if (nextTier) {
+      openSupplierPaymentSimulatorModal(nextTier);
+    }
+  } catch (err) {
+    toast('Error cancelling subscription: ' + err.message, 'danger');
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.textContent = originalText;
+  }
+}
+
+function handleSupplierPlanSelectionClick(targetTier) {
+  const currentTier = (activeSupplierSubscriptionRecord && activeSupplierSubscriptionRecord.tier) || 'free';
+  const currentStatus = (activeSupplierSubscriptionRecord && activeSupplierSubscriptionRecord.status) || 'active';
+
+  // 1. If user clicks current active tier:
+  if (targetTier === currentTier && currentStatus === 'active') {
+    return;
+  }
+
+  // 2. If user has an ACTIVE PAID PLAN and wants to switch:
+  if (currentTier !== 'free' && currentStatus === 'active') {
+    openSupplierCancelPlanModal(targetTier);
+    return;
+  }
+
+  // 3. If target is 'free':
+  if (targetTier === 'free') {
+    activateSupplierSubscriptionDirectly('free');
+    return;
+  }
+
+  // 4. If target is a paid plan:
+  openSupplierPaymentSimulatorModal(targetTier);
+}
+
+function openSupplierPaymentSimulatorModal(tier) {
+  pendingSupplierPlanTier = tier;
+  const isEnterprise = tier === 'enterprise';
+  const planName = isEnterprise ? 'Enterprise Supplier Plan' : 'Growth Supplier Plan';
+  const planPrice = isEnterprise ? '₹3,499 / mo' : '₹799 / mo';
+  const planFeatures = isEnterprise
+    ? 'UNLIMITED Incoming POs • Unlimited Depots • Custom ERP Sync • Net 30/60 Terms'
+    : '30 Incoming POs / week • Unlimited Products • Bulk CSV Import • 3 Depots';
+  const totalText = isEnterprise ? 'Total: ₹3,499' : 'Total: ₹799';
+  const payBtnText = isEnterprise ? '✓ Pay ₹3,499 & Activate Plan' : '✓ Pay ₹799 & Activate Plan';
+
+  const pName = document.getElementById('supSimPlanName');
+  const pPrice = document.getElementById('supSimPlanPrice');
+  const pFeat = document.getElementById('supSimPlanFeatures');
+  const pTot = document.getElementById('supSimTotalAmount');
+  const pBtn = document.getElementById('btnConfirmSupSimPaymentText');
+
+  if (pName) pName.textContent = planName;
+  if (pPrice) pPrice.textContent = planPrice;
+  if (pFeat) pFeat.textContent = planFeatures;
+  if (pTot) pTot.textContent = totalText;
+  if (pBtn) pBtn.textContent = payBtnText;
+
+  switchSupplierSimPayTab('upi');
+  openModal('supplierPaymentSimModal');
+}
+
+function closeSupplierPaymentModal() {
+  closeModal('supplierPaymentSimModal');
+  pendingSupplierPlanTier = null;
+}
+
+function switchSupplierSimPayTab(tab) {
+  activeSupplierSimPayMethod = tab === 'upi' ? 'UPI AutoPay' : (tab === 'card' ? 'Credit / Debit Card' : 'Net Banking');
+  ['upi', 'card', 'netbanking'].forEach(t => {
+    const tabEl = document.getElementById('supSimTab-' + t);
+    const formEl = document.getElementById('supSimPayForm-' + t);
+    if (tabEl) {
+      tabEl.style.border = (t === tab) ? '1.5px solid #2e6bc5' : '1.5px solid #e2e8f0';
+      tabEl.style.background = (t === tab) ? '#eff6ff' : '#ffffff';
+      tabEl.style.color = (t === tab) ? '#1d4ed8' : '#64748b';
+    }
+    if (formEl) formEl.style.display = (t === tab) ? 'block' : 'none';
+  });
+}
+
+async function executeSupplierSimulatedPayment() {
+  if (!pendingSupplierPlanTier) return;
+  const btn = document.getElementById('btnConfirmSupSimPayment');
+  const btnText = document.getElementById('btnConfirmSupSimPaymentText');
+  const originalText = btnText ? btnText.textContent : '';
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = '⏳ Processing simulated payment...';
+
+  try {
+    await new Promise(r => setTimeout(r, 600));
+    const dummyPaymentId = 'PAY-SUP-' + Math.floor(100000 + Math.random() * 900000);
+    const session = readSupplierSession() || {};
+    const userId = session.id || session.userId || currentSupplierId || 'u-supplier-1';
+    const userName = supplierProfile.companyName || session.name || 'Supplier User';
+    const userEmail = supplierProfile.businessEmail || session.email || 'supplier@stockoverflow.com';
+
+    const updated = await dashboardApiRequest('/platform-revenue/subscriptions', {
+      method: 'POST',
+      body: JSON.stringify({
+        userId,
+        userName,
+        userEmail,
+        userRole: 'supplier',
+        tier: pendingSupplierPlanTier,
+        billingCycle: 'monthly',
+        paymentId: dummyPaymentId,
+        paymentMethod: activeSupplierSimPayMethod
+      })
+    });
+
+    activeSupplierSubscriptionRecord = updated;
+    session.tier = pendingSupplierPlanTier;
+    session.currentTier = pendingSupplierPlanTier;
+    session.activeSubscription = updated;
+    session.subscriptionStatus = 'active';
+    localStorage.setItem('so_session', JSON.stringify(session));
+
+    updateSupplierTierUi(updated);
+    loadSupplierUsageLimits(updated);
+    closeSupplierPaymentModal();
+    closeModal('supplierTierModal');
+
+    const tierNames = { free: 'Starter (₹0/mo)', pro: 'Growth (₹799/mo)', enterprise: 'Enterprise (₹3,499/mo)' };
+    toast(`🎉 Payment Successful via ${activeSupplierSimPayMethod}! ${tierNames[pendingSupplierPlanTier] || pendingSupplierPlanTier} is now active for 30 days.`, 'success');
+  } catch (err) {
+    toast('Error updating plan: ' + err.message, 'danger');
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.textContent = originalText;
+  }
+}
+
+async function activateSupplierSubscriptionDirectly(tier) {
+  const session = readSupplierSession() || {};
+  const userId = session.id || session.userId || currentSupplierId || 'u-supplier-1';
+  const userName = supplierProfile.companyName || session.name || 'Supplier User';
+  const userEmail = supplierProfile.businessEmail || session.email || 'supplier@stockoverflow.com';
+  
+  try {
+    const updated = await dashboardApiRequest('/platform-revenue/subscriptions', {
+      method: 'POST',
+      body: JSON.stringify({
+        userId,
+        userName,
+        userEmail,
+        userRole: 'supplier',
+        tier,
+        billingCycle: 'monthly'
+      })
+    });
+    activeSupplierSubscriptionRecord = updated;
+    
+    session.tier = tier;
+    session.currentTier = tier;
+    session.activeSubscription = updated;
+    session.subscriptionStatus = 'active';
+    localStorage.setItem('so_session', JSON.stringify(session));
+
+    updateSupplierTierUi(updated);
+    loadSupplierUsageLimits(updated);
+    closeModal('supplierTierModal');
+    toast(`Supplier plan updated to Starter (₹0/mo).`, 'success');
+  } catch (err) {
+    toast('Error updating plan: ' + err.message, 'danger');
+  }
+}
+
+window.selectSupplierTier = function(tier) {
+  return handleSupplierPlanSelectionClick(tier);
+};
+
+function cancelCurrentSupplierSubscription() {
+  openSupplierCancelPlanModal();
+}
+
+function updateSupplierTierUi(sub) {
+  const tier = (sub && sub.tier) ? sub.tier : 'free';
+  const status = (sub && sub.status) ? sub.status : 'active';
+  const daysRemaining = (sub && sub.daysRemaining !== undefined) ? sub.daysRemaining : 30;
+  const endDate = sub && (sub.endDate || sub.renewalDate) ? new Date(sub.endDate || sub.renewalDate).toLocaleDateString() : 'Next Cycle';
+  const isPaidActive = tier !== 'free' && status === 'active';
+
+  const badgeEl = document.getElementById('supplierTierName');
+  const tierNameMap = {
+    free: 'Starter (₹0/mo)',
+    pro: 'Growth (₹799/mo)',
+    enterprise: 'Enterprise (₹3,499/mo)'
+  };
+  const planDisplay = tierNameMap[tier] || 'Starter (₹0/mo)';
+
+  if (badgeEl) {
+    badgeEl.textContent = `${planDisplay}${status === 'cancelled' ? ' [Cancelled]' : ''}`;
+  }
+
+  // Update Widget
+  const wPlan = document.getElementById('supWidgetPlanName');
+  if (wPlan) {
+    const statusText = status === 'cancelled' ? 'CANCELLED' : 'ACTIVE';
+    const statusBg = status === 'cancelled' ? '#fee2e2' : '#dcfce7';
+    const statusColor = status === 'cancelled' ? '#b91c1c' : '#15803d';
+    wPlan.innerHTML = `${tier === 'enterprise' ? 'Enterprise' : (tier === 'pro' ? 'Growth' : 'Starter')} Plan <span style="font-size:10px;background:${statusBg};color:${statusColor};padding:2px 7px;border-radius:10px;font-weight:700;">${statusText}</span>`;
+  }
+
+  // Update Modal Status Banner
+  const modalPlanName = document.getElementById('modalSupActivePlanName');
+  const modalStatusBadge = document.getElementById('modalSupActiveStatusBadge');
+  const modalExpiryDate = document.getElementById('modalSupExpiryDate');
+  const modalDaysLeft = document.getElementById('modalSupDaysLeft');
+  const btnCancel = document.getElementById('btnCancelSupSub');
+
+  if (modalPlanName) modalPlanName.textContent = planDisplay;
+  if (modalExpiryDate) modalExpiryDate.textContent = endDate;
+  if (modalDaysLeft) modalDaysLeft.textContent = daysRemaining;
+
+  if (modalStatusBadge) {
+    if (status === 'cancelled') {
+      modalStatusBadge.textContent = 'CANCELLED';
+      modalStatusBadge.style.background = '#fee2e2';
+      modalStatusBadge.style.color = '#b91c1c';
+    } else {
+      modalStatusBadge.textContent = 'ACTIVE';
+      modalStatusBadge.style.background = '#bbf7d0';
+      modalStatusBadge.style.color = '#166534';
+    }
+  }
+
+  if (btnCancel) {
+    btnCancel.style.display = (tier !== 'free' && status === 'active') ? 'inline-block' : 'none';
+  }
+
+  ['free', 'pro', 'enterprise'].forEach(t => {
+    const btn = document.getElementById(`btnSupTier-${t}`);
+    if (btn) {
+      if (t === tier) {
+        btn.textContent = status === 'cancelled' ? 'Active (Cancelled)' : 'Active Plan';
+        btn.className = 'btn btn-primary btn-sm';
+        btn.style.background = t === 'enterprise' ? '#7c5def' : '#2e6bc5';
+        btn.style.color = '#fff';
+        btn.onclick = () => handleSupplierPlanSelectionClick(t);
+      } else if (isPaidActive) {
+        btn.textContent = 'Cancel current plan first';
+        btn.className = 'btn btn-outline btn-sm';
+        btn.style.background = '#fef2f2';
+        btn.style.color = '#991b1b';
+        btn.style.border = '1px solid #fecaca';
+        btn.onclick = () => handleSupplierPlanSelectionClick(t);
+      } else {
+        btn.textContent = (t === 'free') ? 'Select Starter (₹0)' : (t === 'pro' ? 'Upgrade (₹799/mo)' : 'Upgrade (₹3,499/mo)');
+        btn.className = 'btn btn-outline btn-sm';
+        btn.style.background = '#fff';
+        btn.style.color = 'var(--text-2)';
+        btn.style.border = '1px solid var(--border)';
+        btn.onclick = () => handleSupplierPlanSelectionClick(t);
+      }
+    }
+  });
+}
+
+function handleSupplierBulkCsv() {
+  const tier = (activeSupplierSubscriptionRecord && activeSupplierSubscriptionRecord.tier) || 'free';
+  if (tier === 'free') {
+    if (confirm('🔒 Bulk CSV/Excel Catalog Import is a Growth & Enterprise feature.\n\nUpgrade to Growth (₹799/mo) to unlock one-click bulk catalog updates and priority buyer discovery.\n\nWould you like to view subscription plans?')) {
+      openSupplierTierModal();
+    }
+    return;
+  }
+
+  // Feature is unlocked for Growth and Enterprise
+  const csvContent = 'SKU,Product Name,Brand,Category,Unit Price,Min Order,Stock,Unit\n' +
+    suppliers_products.map(p => `"${p.id}","${p.name}","${p.brand || ''}","${p.cat}","${p.price}","${p.moq}","${p.stock}","${p.unit}"`).join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', `Supplier_Catalog_${supplierProfile.companyName || 'Export'}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  toast('Product catalog exported to CSV successfully!', 'success');
+}
+
 renderDashboard = function() {
   const statCards = document.querySelectorAll('#sec-dashboard .stat-card');
   const activeRetailers = retailers.filter((retailer) => retailer.status === 'active').length;
@@ -1944,29 +2566,38 @@ renderDashboard = function() {
   const pendingOrders = orders.filter((order) => order.status === 'pending').length;
   const deliveredOrders = orders.filter((order) => order.status === 'delivered').length;
   const lowStockProducts = suppliers_products.filter((product) => product.status === 'inactive').length;
-  const fulfilmentAverage = retailers.length
-    ? Math.round(retailers.reduce((sum, retailer) => sum + retailer.fulfilment, 0) / retailers.length)
-    : 0;
+  const fulfilmentAverage = orders.length
+    ? Math.round((deliveredOrders / orders.length) * 100)
+    : (retailers.length ? Math.round(retailers.reduce((sum, retailer) => sum + retailer.fulfilment, 0) / retailers.length) : 0);
+  
+  const deliveredRevenue = orders
+    .filter((order) => order.status === 'delivered')
+    .reduce((sum, order) => sum + (Number(order.rawRecord?.total || order.rawRecord?.finalTotal || 0)), 0);
+
   if (statCards[0]) {
-    statCards[0].querySelector('.stat-value').textContent = String(activeRetailers);
-    statCards[0].querySelector('.stat-trend').textContent = `${Math.max(retailers.length - activeRetailers, 0)} inactive retailers`;
+    statCards[0].querySelector('.stat-value').textContent = '₹' + Number(deliveredRevenue).toLocaleString('en-IN');
+    statCards[0].querySelector('.stat-trend').textContent = `From ${deliveredOrders} delivered POs`;
   }
   if (statCards[1]) {
-    statCards[1].querySelector('.stat-value').textContent = String(listedProducts);
-    statCards[1].querySelector('.stat-trend').textContent = `${lowStockProducts} below MOQ`;
+    statCards[1].querySelector('.stat-value').textContent = String(activeRetailers);
+    statCards[1].querySelector('.stat-trend').textContent = `${retailers.length} connected retailers`;
   }
   if (statCards[2]) {
-    statCards[2].querySelector('.stat-value').textContent = String(pendingOrders);
-    statCards[2].querySelector('.stat-trend').textContent = `${orders.length} total orders`;
+    statCards[2].querySelector('.stat-value').textContent = String(listedProducts);
+    statCards[2].querySelector('.stat-trend').textContent = `${lowStockProducts} below MOQ`;
   }
   if (statCards[3]) {
-    statCards[3].querySelector('.stat-value').textContent = `${fulfilmentAverage}%`;
-    statCards[3].querySelector('.stat-trend').textContent = `${deliveredOrders} delivered orders`;
+    statCards[3].querySelector('.stat-value').textContent = String(pendingOrders);
+    statCards[3].querySelector('.stat-trend').textContent = `${orders.length} total orders`;
+  }
+  if (statCards[4]) {
+    statCards[4].querySelector('.stat-value').textContent = `${fulfilmentAverage}%`;
+    statCards[4].querySelector('.stat-trend').textContent = `${deliveredOrders} delivered orders`;
   }
 
   const recentOrdersBody = document.getElementById('dashboardRecentOrdersBody');
   if (recentOrdersBody) {
-    const recentOrders = orders.slice(0, 3);
+    const recentOrders = orders.slice(0, 5);
     recentOrdersBody.innerHTML = recentOrders.length
       ? recentOrders.map((order) => `
         <tr>
@@ -2054,6 +2685,16 @@ filterProducts = function(value) {
 };
 
 openProductModal = function(index) {
+  if (index === undefined) {
+    const activeTier = (activeSupplierSubscriptionRecord && activeSupplierSubscriptionRecord.tier) || 'free';
+    if (activeTier === 'free' && suppliers_products.length >= 25) {
+      if (confirm(`⚠️ Product Listing Limit Reached (Starter Plan)\n\nYou have listed ${suppliers_products.length} / 25 products allowed on your Starter plan.\n\nUpgrade to Growth (₹799/mo) to list unlimited products and unlock bulk CSV catalog imports. Would you like to view subscription plans?`)) {
+        openSupplierTierModal();
+      }
+      return;
+    }
+  }
+
   document.getElementById('prodModalTitle').textContent = index !== undefined ? 'Edit Product' : 'Add New Product';
   const modal = document.getElementById('productModal');
   const ids = ['pm-name', 'pm-sku', 'pm-brand', 'pm-variant', 'pm-cat', 'pm-unit', 'pm-price', 'pm-moq', 'pm-stock', 'pm-expiry', 'pm-review', 'pm-desc'];
@@ -2837,6 +3478,12 @@ async function initDashboardOverrides() {
     orders = purchaseOrderRecords
       .filter((order) => String(order?.supplierId || '') === String(currentSupplierId || ''))
       .map((order) => mapBackendPurchaseOrderToDashboardOrder(order));
+    
+    try {
+      await loadSupplierActiveSubscription();
+    } catch (_subErr) {
+      updateSupplierTierUi({ tier: 'free', status: 'active', daysRemaining: 30 });
+    }
   } catch (error) {
     toast(error.message || 'Backend not reachable.');
   }

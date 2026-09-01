@@ -96,9 +96,15 @@ export class SuppliersService {
   updateProfileStatus(
     id: string,
     status: 'active' | 'inactive' | 'pending' | 'rejected',
+    rejectionReason?: string,
   ): SupplierRecord {
     const supplier = this.findOne(id);
     supplier.profileStatus = status;
+    if (status === 'rejected' && rejectionReason) {
+      (supplier as any).rejectionReason = rejectionReason;
+    } else if (status !== 'rejected') {
+      delete (supplier as any).rejectionReason;
+    }
     supplier.updatedAt = new Date().toISOString();
     this.suppliers.set(id, supplier);
     this.persistToDisk();

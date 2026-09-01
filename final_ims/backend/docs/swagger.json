@@ -25,19 +25,25 @@
       "name": "Stores"
     },
     {
+      "name": "Suppliers"
+    },
+    {
+      "name": "Products"
+    },
+    {
+      "name": "Employees"
+    },
+    {
       "name": "Billers"
     },
     {
       "name": "Customers"
     },
     {
-      "name": "Products"
-    },
-    {
       "name": "PurchaseOrders"
     },
     {
-      "name": "Suppliers"
+      "name": "PlatformRevenue"
     },
     {
       "name": "Reservations"
@@ -53,12 +59,6 @@
     },
     {
       "name": "Warehouses"
-    },
-    {
-      "name": "Employees"
-    },
-    {
-      "name": "PlatformRevenue"
     }
   ],
   "paths": {
@@ -1617,6 +1617,1499 @@
         }
       }
     },
+    "/suppliers": {
+      "post": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_createSupplier",
+        "summary": "Create Supplier",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_findAll",
+        "summary": "Find All",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/suppliers/setup": {
+      "post": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_create",
+        "summary": "Create",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/suppliers_dto_create_supplier_setup_dto_CreateSupplierSetupDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suppliers/directory": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_getDirectory",
+        "summary": "Get Directory",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/suppliers_supplier_directory_entry_interface_SupplierDirectoryEntry"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/suppliers/latest": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_findLatest",
+        "summary": "Find Latest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/suppliers/by-email/{email}": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_findByBusinessEmail",
+        "summary": "Find By Business Email",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: email",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/suppliers/{id}/upload-document": {
+      "post": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_uploadDocument",
+        "summary": "Upload Document",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierDocument"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suppliers/{id}/documents": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_getDocuments",
+        "summary": "Get Documents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierDocument"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/suppliers/{id}/documents/{docId}": {
+      "delete": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_removeDocument",
+        "summary": "Remove Document",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "docId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: docId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/suppliers/{id}": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_findOne",
+        "summary": "Find One",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_updatePut",
+        "summary": "Update Put",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_update",
+        "summary": "Update",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/suppliers_dto_update_supplier_setup_dto_UpdateSupplierSetupDto"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "Suppliers_remove",
+        "summary": "Remove",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/products": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_create",
+        "summary": "Create",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_ProductRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_dto_create_product_dto_CreateProductDto"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_findAll",
+        "summary": "Find All",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: storeId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/common_database_types_ProductRecord"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/products/sku/{sku}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_findBySku",
+        "summary": "Find By Sku",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: sku",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: storeId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_ProductRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/products/sku/{sku}/feedback": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_getFeedback",
+        "summary": "Get Feedback",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: sku",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/common_database_types_ProductFeedback"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_addFeedback",
+        "summary": "Add Feedback",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: sku",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_ProductFeedback"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_dto_create_product_feedback_dto_CreateProductFeedbackDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/sku/{sku}/rating-summary": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_getRatingSummary",
+        "summary": "Get Rating Summary",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: sku",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "avg": {
+                      "type": "number"
+                    },
+                    "breakdown": {
+                      "$ref": "#/components/schemas/common_database_types_RatingBreakdown"
+                    },
+                    "total": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "avg",
+                    "breakdown",
+                    "total"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_findOne",
+        "summary": "Find One",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: storeId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_ProductRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_update",
+        "summary": "Update",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_ProductRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/products_dto_update_product_dto_UpdateProductDto"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_remove",
+        "summary": "Remove",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "item": {
+                      "$ref": "#/components/schemas/common_database_types_ProductRecord"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "item",
+                    "message"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/products/upload": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "Products_uploadFile",
+        "summary": "Upload File",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "filename": {},
+                    "message": {
+                      "type": "string"
+                    },
+                    "mimetype": {},
+                    "size": {},
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "filename",
+                    "message",
+                    "mimetype",
+                    "size",
+                    "url"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/employees/assignments/distribute": {
+      "post": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_distributeWork",
+        "summary": "Distribute Work",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "assignedCount": {
+                          "type": "number"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "totalAssignments": {}
+                      },
+                      "required": [
+                        "assignedCount",
+                        "message"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "assignedCount": {
+                          "type": "number"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "totalAssignments": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "assignedCount",
+                        "message",
+                        "totalAssignments"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/employees/assignments": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_getAssignments",
+        "summary": "Get Assignments",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: status",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/common_database_types_EmployeeAssignment"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/employees/assignments/{id}": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_getAssignmentById",
+        "summary": "Get Assignment By Id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_EmployeeAssignment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_resolveAssignment",
+        "summary": "Resolve Assignment",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "assignment": {
+                      "$ref": "#/components/schemas/common_database_types_EmployeeAssignment"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "assignment",
+                    "message"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/employees_dto_resolve_assignment_dto_ResolveAssignmentDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/queries": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_getQueries",
+        "summary": "Get Queries",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: status",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/common_database_types_UserQuery"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_createQuery",
+        "summary": "Create Query",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_UserQuery"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/employees_dto_create_query_dto_CreateQueryDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/queries/{id}": {
+      "patch": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_resolveQuery",
+        "summary": "Resolve Query",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "query": {
+                      "$ref": "#/components/schemas/common_database_types_UserQuery"
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/employees_dto_resolve_query_dto_ResolveQueryDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/stats": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "Employees_getStats",
+        "summary": "Get Stats",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "employeeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: employeeId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "approvedCount": {
+                      "type": "number"
+                    },
+                    "pendingQueries": {
+                      "type": "number"
+                    },
+                    "pendingValidations": {
+                      "type": "number"
+                    },
+                    "rejectedCount": {
+                      "type": "number"
+                    },
+                    "resolvedQueries": {
+                      "type": "number"
+                    },
+                    "retailerValidations": {
+                      "type": "number"
+                    },
+                    "storeValidations": {
+                      "type": "number"
+                    },
+                    "supplierValidations": {
+                      "type": "number"
+                    },
+                    "totalAssigned": {
+                      "type": "number"
+                    },
+                    "totalQueries": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "approvedCount",
+                    "pendingQueries",
+                    "pendingValidations",
+                    "rejectedCount",
+                    "resolvedQueries",
+                    "retailerValidations",
+                    "storeValidations",
+                    "supplierValidations",
+                    "totalAssigned",
+                    "totalQueries"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/billers": {
       "post": {
         "tags": [
@@ -2164,535 +3657,6 @@
         }
       }
     },
-    "/products": {
-      "post": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_create",
-        "summary": "Create",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/common_database_types_ProductRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/products_dto_create_product_dto_CreateProductDto"
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_findAll",
-        "summary": "Find All",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "retailerId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: retailerId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "storeId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: storeId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/common_database_types_ProductRecord"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/products/sku/{sku}": {
-      "get": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_findBySku",
-        "summary": "Find By Sku",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "sku",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: sku",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "retailerId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: retailerId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "storeId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: storeId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/common_database_types_ProductRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/products/sku/{sku}/feedback": {
-      "get": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_getFeedback",
-        "summary": "Get Feedback",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "sku",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: sku",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "retailerId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: retailerId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/common_database_types_ProductFeedback"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_addFeedback",
-        "summary": "Add Feedback",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "sku",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: sku",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "retailerId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: retailerId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/common_database_types_ProductFeedback"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/products_dto_create_product_feedback_dto_CreateProductFeedbackDto"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/products/sku/{sku}/rating-summary": {
-      "get": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_getRatingSummary",
-        "summary": "Get Rating Summary",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "sku",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: sku",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "retailerId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: retailerId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "avg": {
-                      "type": "number"
-                    },
-                    "breakdown": {
-                      "$ref": "#/components/schemas/common_database_types_RatingBreakdown"
-                    },
-                    "total": {
-                      "type": "number"
-                    }
-                  },
-                  "required": [
-                    "avg",
-                    "breakdown",
-                    "total"
-                  ],
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/products/{id}": {
-      "get": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_findOne",
-        "summary": "Find One",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "retailerId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: retailerId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "storeId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: storeId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/common_database_types_ProductRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_update",
-        "summary": "Update",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/common_database_types_ProductRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/products_dto_update_product_dto_UpdateProductDto"
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_remove",
-        "summary": "Remove",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "item": {
-                      "$ref": "#/components/schemas/common_database_types_ProductRecord"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "item",
-                    "message"
-                  ],
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/products/upload": {
-      "post": {
-        "tags": [
-          "Products"
-        ],
-        "operationId": "Products_uploadFile",
-        "summary": "Upload File",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "filename": {},
-                    "message": {
-                      "type": "string"
-                    },
-                    "mimetype": {},
-                    "size": {},
-                    "url": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "filename",
-                    "message",
-                    "mimetype",
-                    "size",
-                    "url"
-                  ],
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
     "/purchase-orders": {
       "post": {
         "tags": [
@@ -2930,25 +3894,219 @@
         }
       }
     },
-    "/suppliers": {
-      "post": {
+    "/platform-revenue/summary": {
+      "get": {
         "tags": [
-          "Suppliers"
+          "PlatformRevenue"
         ],
-        "operationId": "Suppliers_createSupplier",
-        "summary": "Create Supplier",
+        "operationId": "PlatformRevenue_getSummary",
+        "summary": "Get Summary",
         "parameters": [
           {
             "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                  "properties": {
+                    "activeSubscriptionsCount": {
+                      "type": "number"
+                    },
+                    "byStore": {
+                      "items": {
+                        "properties": {
+                          "commission": {
+                            "type": "number"
+                          },
+                          "orderCount": {
+                            "type": "number"
+                          },
+                          "storeId": {
+                            "type": "string"
+                          },
+                          "storeName": {
+                            "type": "string"
+                          },
+                          "totalSales": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "commission",
+                          "orderCount",
+                          "storeId",
+                          "storeName",
+                          "totalSales"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "commissionPercentage": {
+                      "type": "string"
+                    },
+                    "commissionRate": {
+                      "type": "number"
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "currencySymbol": {
+                      "type": "string"
+                    },
+                    "monthlyBreakdown": {
+                      "additionalProperties": {
+                        "properties": {
+                          "commission": {
+                            "type": "number"
+                          },
+                          "grossVolume": {
+                            "type": "number"
+                          },
+                          "ordersCount": {
+                            "type": "number"
+                          },
+                          "subscriptions": {
+                            "type": "number"
+                          },
+                          "totalPlatform": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "commission",
+                          "grossVolume",
+                          "ordersCount",
+                          "subscriptions",
+                          "totalPlatform"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "object"
+                    },
+                    "netRetailerPayout": {
+                      "type": "number"
+                    },
+                    "recentCommissions": {
+                      "items": {
+                        "$ref": "#/components/schemas/common_database_types_PlatformCommissionRecord"
+                      },
+                      "type": "array"
+                    },
+                    "subscriptionStats": {
+                      "properties": {
+                        "enterprise": {
+                          "properties": {
+                            "count": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "revenue": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "count",
+                            "name",
+                            "revenue"
+                          ],
+                          "type": "object"
+                        },
+                        "free": {
+                          "properties": {
+                            "count": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "revenue": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "count",
+                            "name",
+                            "revenue"
+                          ],
+                          "type": "object"
+                        },
+                        "pro": {
+                          "properties": {
+                            "count": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "revenue": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "count",
+                            "name",
+                            "revenue"
+                          ],
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "enterprise",
+                        "free",
+                        "pro"
+                      ],
+                      "type": "object"
+                    },
+                    "totalCommissionEarned": {
+                      "type": "number"
+                    },
+                    "totalGrossVolume": {
+                      "type": "number"
+                    },
+                    "totalPlatformRevenue": {
+                      "type": "number"
+                    },
+                    "totalSubscriptionRevenue": {
+                      "type": "number"
+                    },
+                    "totalTransactionsProcessed": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "activeSubscriptionsCount",
+                    "byStore",
+                    "commissionPercentage",
+                    "commissionRate",
+                    "currency",
+                    "currencySymbol",
+                    "monthlyBreakdown",
+                    "netRetailerPayout",
+                    "recentCommissions",
+                    "subscriptionStats",
+                    "totalCommissionEarned",
+                    "totalGrossVolume",
+                    "totalPlatformRevenue",
+                    "totalSubscriptionRevenue",
+                    "totalTransactionsProcessed"
+                  ],
+                  "type": "object"
                 }
               }
             }
@@ -2956,25 +4114,37 @@
           "400": {
             "description": "Bad Request"
           }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
         }
-      },
+      }
+    },
+    "/platform-revenue/commissions": {
       "get": {
         "tags": [
-          "Suppliers"
+          "PlatformRevenue"
         ],
-        "operationId": "Suppliers_findAll",
-        "summary": "Find All",
+        "operationId": "PlatformRevenue_getCommissions",
+        "summary": "Get Commissions",
         "parameters": [
           {
             "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: limit",
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -2984,7 +4154,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                    "$ref": "#/components/schemas/common_database_types_PlatformCommissionRecord"
                   },
                   "type": "array"
                 }
@@ -2997,13 +4167,192 @@
         }
       }
     },
-    "/suppliers/setup": {
+    "/platform-revenue/subscriptions/active": {
+      "get": {
+        "tags": [
+          "PlatformRevenue"
+        ],
+        "operationId": "PlatformRevenue_getActiveSubscription",
+        "summary": "Get Active Subscription",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "description": "Query parameter: userId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "autoRenew": {
+                      "type": "boolean"
+                    },
+                    "billingCycle": {
+                      "enum": [
+                        "monthly",
+                        "yearly"
+                      ],
+                      "type": "string"
+                    },
+                    "cancelledAt": {
+                      "type": "string"
+                    },
+                    "daysRemaining": {
+                      "type": "number"
+                    },
+                    "endDate": {
+                      "type": "string"
+                    },
+                    "features": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "isExpired": {
+                      "type": "boolean"
+                    },
+                    "maxProducts": {
+                      "type": "number"
+                    },
+                    "maxStores": {
+                      "type": "number"
+                    },
+                    "paymentId": {
+                      "type": "string"
+                    },
+                    "paymentMethod": {
+                      "type": "string"
+                    },
+                    "pricePerMonth": {
+                      "type": "number"
+                    },
+                    "renewalDate": {
+                      "type": "string"
+                    },
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "active",
+                        "cancelled",
+                        "trial"
+                      ],
+                      "type": "string"
+                    },
+                    "tier": {
+                      "$ref": "#/components/schemas/common_database_types_SubscriptionTier"
+                    },
+                    "tierName": {
+                      "type": "string"
+                    },
+                    "userEmail": {
+                      "type": "string"
+                    },
+                    "userId": {
+                      "type": "string"
+                    },
+                    "userName": {
+                      "type": "string"
+                    },
+                    "userRole": {
+                      "enum": [
+                        "retailer",
+                        "supplier"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "autoRenew",
+                    "billingCycle",
+                    "daysRemaining",
+                    "endDate",
+                    "features",
+                    "id",
+                    "isExpired",
+                    "pricePerMonth",
+                    "renewalDate",
+                    "startDate",
+                    "status",
+                    "tier",
+                    "userEmail",
+                    "userId",
+                    "userName",
+                    "userRole"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/platform-revenue/subscriptions": {
+      "get": {
+        "tags": [
+          "PlatformRevenue"
+        ],
+        "operationId": "PlatformRevenue_getSubscriptions",
+        "summary": "Get Subscriptions",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: userId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/common_database_types_SubscriptionRecord"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
       "post": {
         "tags": [
-          "Suppliers"
+          "PlatformRevenue"
         ],
-        "operationId": "Suppliers_create",
-        "summary": "Create",
+        "operationId": "PlatformRevenue_updateSubscription",
+        "summary": "Update Subscription",
         "parameters": [
           {
             "$ref": "#/components/parameters/RoleHeader"
@@ -3015,7 +4364,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                  "$ref": "#/components/schemas/common_database_types_SubscriptionRecord"
                 }
               }
             }
@@ -3029,134 +4378,23 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/suppliers_dto_create_supplier_setup_dto_CreateSupplierSetupDto"
+                "$ref": "#/components/schemas/platform_revenue_dto_platform_revenue_dto_UpdateSubscriptionDto"
               }
             }
           }
         }
       }
     },
-    "/suppliers/directory": {
-      "get": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_getDirectory",
-        "summary": "Get Directory",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/suppliers_supplier_directory_entry_interface_SupplierDirectoryEntry"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/suppliers/latest": {
-      "get": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_findLatest",
-        "summary": "Find Latest",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/suppliers/by-email/{email}": {
-      "get": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_findByBusinessEmail",
-        "summary": "Find By Business Email",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: email",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/suppliers/{id}/upload-document": {
+    "/platform-revenue/subscriptions/cancel": {
       "post": {
         "tags": [
-          "Suppliers"
+          "PlatformRevenue"
         ],
-        "operationId": "Suppliers_uploadDocument",
-        "summary": "Upload Document",
+        "operationId": "PlatformRevenue_cancelSubscription",
+        "summary": "Cancel Subscription",
         "parameters": [
           {
             "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3165,47 +4403,48 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierDocument"
+                  "$ref": "#/components/schemas/common_database_types_SubscriptionRecord"
                 }
               }
             }
           },
           "400": {
             "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
           }
         },
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "string"
+                "$ref": "#/components/schemas/platform_revenue_dto_platform_revenue_dto_CancelSubscriptionDto"
               }
             }
           }
         }
       }
     },
-    "/suppliers/{id}/documents": {
+    "/platform-revenue/tiers": {
       "get": {
         "tags": [
-          "Suppliers"
+          "PlatformRevenue"
         ],
-        "operationId": "Suppliers_getDocuments",
-        "summary": "Get Documents",
+        "operationId": "PlatformRevenue_getPricingTiers",
+        "summary": "Get Pricing Tiers",
         "parameters": [
           {
             "$ref": "#/components/parameters/RoleHeader"
           },
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: role",
             "schema": {
+              "enum": [
+                "retailer",
+                "supplier"
+              ],
               "type": "string"
             }
           }
@@ -3217,7 +4456,69 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierDocument"
+                    "properties": {
+                      "billingInterval": {
+                        "type": "string"
+                      },
+                      "currency": {
+                        "type": "string"
+                      },
+                      "currencySymbol": {
+                        "type": "string"
+                      },
+                      "features": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "maxProducts": {
+                        "type": "number"
+                      },
+                      "maxStores": {
+                        "type": "number"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "price": {
+                        "type": "number"
+                      },
+                      "role": {
+                        "enum": [
+                          "retailer",
+                          "supplier"
+                        ],
+                        "type": "string"
+                      },
+                      "tier": {
+                        "$ref": "#/components/schemas/common_database_types_SubscriptionTier"
+                      },
+                      "weeklyOrderLimit": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "billingInterval",
+                      "currency",
+                      "currencySymbol",
+                      "features",
+                      "maxProducts",
+                      "maxStores",
+                      "name",
+                      "price",
+                      "role",
+                      "tier",
+                      "weeklyOrderLimit"
+                    ],
+                    "type": "object"
                   },
                   "type": "array"
                 }
@@ -3226,73 +4527,40 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
           }
         }
       }
     },
-    "/suppliers/{id}/documents/{docId}": {
-      "delete": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_removeDocument",
-        "summary": "Remove Document",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "docId",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: docId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/suppliers/{id}": {
+    "/platform-revenue/usage": {
       "get": {
         "tags": [
-          "Suppliers"
+          "PlatformRevenue"
         ],
-        "operationId": "Suppliers_findOne",
-        "summary": "Find One",
+        "operationId": "PlatformRevenue_getWeeklyOrderUsage",
+        "summary": "Get Weekly Order Usage",
         "parameters": [
           {
             "$ref": "#/components/parameters/RoleHeader"
           },
           {
-            "name": "id",
-            "in": "path",
+            "name": "userId",
+            "in": "query",
             "required": true,
-            "description": "Path parameter: id",
+            "description": "Query parameter: userId",
             "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: role",
+            "schema": {
+              "enum": [
+                "retailer",
+                "supplier"
+              ],
               "type": "string"
             }
           }
@@ -3303,144 +4571,190 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
+                  "properties": {
+                    "isQuotaReached": {
+                      "type": "boolean"
+                    },
+                    "isUnlimited": {
+                      "type": "boolean"
+                    },
+                    "remainingThisWeek": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "resetDate": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "enum": [
+                        "retailer",
+                        "supplier"
+                      ],
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "active",
+                        "cancelled",
+                        "trial"
+                      ],
+                      "type": "string"
+                    },
+                    "subscription": {
+                      "properties": {
+                        "autoRenew": {
+                          "type": "boolean"
+                        },
+                        "billingCycle": {
+                          "enum": [
+                            "monthly",
+                            "yearly"
+                          ],
+                          "type": "string"
+                        },
+                        "cancelledAt": {
+                          "type": "string"
+                        },
+                        "daysRemaining": {
+                          "type": "number"
+                        },
+                        "endDate": {
+                          "type": "string"
+                        },
+                        "features": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "isExpired": {
+                          "type": "boolean"
+                        },
+                        "maxProducts": {
+                          "type": "number"
+                        },
+                        "maxStores": {
+                          "type": "number"
+                        },
+                        "paymentId": {
+                          "type": "string"
+                        },
+                        "paymentMethod": {
+                          "type": "string"
+                        },
+                        "pricePerMonth": {
+                          "type": "number"
+                        },
+                        "renewalDate": {
+                          "type": "string"
+                        },
+                        "startDate": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "enum": [
+                            "active",
+                            "cancelled",
+                            "trial"
+                          ],
+                          "type": "string"
+                        },
+                        "tier": {
+                          "$ref": "#/components/schemas/common_database_types_SubscriptionTier"
+                        },
+                        "tierName": {
+                          "type": "string"
+                        },
+                        "userEmail": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "userName": {
+                          "type": "string"
+                        },
+                        "userRole": {
+                          "enum": [
+                            "retailer",
+                            "supplier"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "autoRenew",
+                        "billingCycle",
+                        "daysRemaining",
+                        "endDate",
+                        "features",
+                        "id",
+                        "isExpired",
+                        "pricePerMonth",
+                        "renewalDate",
+                        "startDate",
+                        "status",
+                        "tier",
+                        "userEmail",
+                        "userId",
+                        "userName",
+                        "userRole"
+                      ],
+                      "type": "object"
+                    },
+                    "tier": {
+                      "$ref": "#/components/schemas/common_database_types_SubscriptionTier"
+                    },
+                    "tierName": {
+                      "type": "string"
+                    },
+                    "usedThisWeek": {
+                      "type": "number"
+                    },
+                    "userId": {
+                      "type": "string"
+                    },
+                    "weeklyLimit": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "isQuotaReached",
+                    "isUnlimited",
+                    "remainingThisWeek",
+                    "resetDate",
+                    "role",
+                    "status",
+                    "subscription",
+                    "tier",
+                    "tierName",
+                    "usedThisWeek",
+                    "userId",
+                    "weeklyLimit"
+                  ],
+                  "type": "object"
                 }
               }
             }
           },
           "400": {
             "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_updatePut",
-        "summary": "Update Put",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_update",
-        "summary": "Update",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/suppliers_supplier_record_interface_SupplierRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/suppliers_dto_update_supplier_setup_dto_UpdateSupplierSetupDto"
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Suppliers"
-        ],
-        "operationId": "Suppliers_remove",
-        "summary": "Remove",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
           }
         }
       }
@@ -4870,869 +6184,6 @@
           },
           "404": {
             "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/employees/assignments/distribute": {
-      "post": {
-        "tags": [
-          "Employees"
-        ],
-        "operationId": "Employees_distributeWork",
-        "summary": "Distribute Work",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "properties": {
-                        "assignedCount": {
-                          "type": "number"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "totalAssignments": {}
-                      },
-                      "required": [
-                        "assignedCount",
-                        "message"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "assignedCount": {
-                          "type": "number"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "totalAssignments": {
-                          "type": "number"
-                        }
-                      },
-                      "required": [
-                        "assignedCount",
-                        "message",
-                        "totalAssignments"
-                      ],
-                      "type": "object"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/employees/assignments": {
-      "get": {
-        "tags": [
-          "Employees"
-        ],
-        "operationId": "Employees_getAssignments",
-        "summary": "Get Assignments",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "employeeId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: employeeId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: status",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/common_database_types_EmployeeAssignment"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/employees/assignments/{id}": {
-      "get": {
-        "tags": [
-          "Employees"
-        ],
-        "operationId": "Employees_getAssignmentById",
-        "summary": "Get Assignment By Id",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/common_database_types_EmployeeAssignment"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Employees"
-        ],
-        "operationId": "Employees_resolveAssignment",
-        "summary": "Resolve Assignment",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "assignment": {
-                      "$ref": "#/components/schemas/common_database_types_EmployeeAssignment"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "assignment",
-                    "message"
-                  ],
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/employees_dto_resolve_assignment_dto_ResolveAssignmentDto"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/employees/queries": {
-      "get": {
-        "tags": [
-          "Employees"
-        ],
-        "operationId": "Employees_getQueries",
-        "summary": "Get Queries",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "employeeId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: employeeId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: status",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/common_database_types_UserQuery"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Employees"
-        ],
-        "operationId": "Employees_createQuery",
-        "summary": "Create Query",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/common_database_types_UserQuery"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/employees_dto_create_query_dto_CreateQueryDto"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/employees/queries/{id}": {
-      "patch": {
-        "tags": [
-          "Employees"
-        ],
-        "operationId": "Employees_resolveQuery",
-        "summary": "Resolve Query",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Path parameter: id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "query": {
-                      "$ref": "#/components/schemas/common_database_types_UserQuery"
-                    }
-                  },
-                  "required": [
-                    "message",
-                    "query"
-                  ],
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/employees_dto_resolve_query_dto_ResolveQueryDto"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/employees/stats": {
-      "get": {
-        "tags": [
-          "Employees"
-        ],
-        "operationId": "Employees_getStats",
-        "summary": "Get Stats",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "employeeId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: employeeId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "approvedCount": {
-                      "type": "number"
-                    },
-                    "pendingQueries": {
-                      "type": "number"
-                    },
-                    "pendingValidations": {
-                      "type": "number"
-                    },
-                    "rejectedCount": {
-                      "type": "number"
-                    },
-                    "resolvedQueries": {
-                      "type": "number"
-                    },
-                    "retailerValidations": {
-                      "type": "number"
-                    },
-                    "storeValidations": {
-                      "type": "number"
-                    },
-                    "supplierValidations": {
-                      "type": "number"
-                    },
-                    "totalAssigned": {
-                      "type": "number"
-                    },
-                    "totalQueries": {
-                      "type": "number"
-                    }
-                  },
-                  "required": [
-                    "approvedCount",
-                    "pendingQueries",
-                    "pendingValidations",
-                    "rejectedCount",
-                    "resolvedQueries",
-                    "retailerValidations",
-                    "storeValidations",
-                    "supplierValidations",
-                    "totalAssigned",
-                    "totalQueries"
-                  ],
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/platform-revenue/summary": {
-      "get": {
-        "tags": [
-          "PlatformRevenue"
-        ],
-        "operationId": "PlatformRevenue_getSummary",
-        "summary": "Get Summary",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "retailerId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: retailerId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "activeSubscriptionsCount": {
-                      "type": "number"
-                    },
-                    "byStore": {
-                      "items": {
-                        "properties": {
-                          "commission": {
-                            "type": "number"
-                          },
-                          "orderCount": {
-                            "type": "number"
-                          },
-                          "storeId": {
-                            "type": "string"
-                          },
-                          "storeName": {
-                            "type": "string"
-                          },
-                          "totalSales": {
-                            "type": "number"
-                          }
-                        },
-                        "required": [
-                          "commission",
-                          "orderCount",
-                          "storeId",
-                          "storeName",
-                          "totalSales"
-                        ],
-                        "type": "object"
-                      },
-                      "type": "array"
-                    },
-                    "commissionPercentage": {
-                      "type": "string"
-                    },
-                    "commissionRate": {
-                      "type": "number"
-                    },
-                    "currency": {
-                      "type": "string"
-                    },
-                    "currencySymbol": {
-                      "type": "string"
-                    },
-                    "monthlyBreakdown": {
-                      "additionalProperties": {
-                        "properties": {
-                          "commission": {
-                            "type": "number"
-                          },
-                          "grossVolume": {
-                            "type": "number"
-                          },
-                          "ordersCount": {
-                            "type": "number"
-                          },
-                          "subscriptions": {
-                            "type": "number"
-                          },
-                          "totalPlatform": {
-                            "type": "number"
-                          }
-                        },
-                        "required": [
-                          "commission",
-                          "grossVolume",
-                          "ordersCount",
-                          "subscriptions",
-                          "totalPlatform"
-                        ],
-                        "type": "object"
-                      },
-                      "type": "object"
-                    },
-                    "netRetailerPayout": {
-                      "type": "number"
-                    },
-                    "recentCommissions": {
-                      "items": {
-                        "$ref": "#/components/schemas/common_database_types_PlatformCommissionRecord"
-                      },
-                      "type": "array"
-                    },
-                    "subscriptionStats": {
-                      "properties": {
-                        "enterprise": {
-                          "properties": {
-                            "count": {
-                              "type": "number"
-                            },
-                            "revenue": {
-                              "type": "number"
-                            }
-                          },
-                          "required": [
-                            "count",
-                            "revenue"
-                          ],
-                          "type": "object"
-                        },
-                        "free": {
-                          "properties": {
-                            "count": {
-                              "type": "number"
-                            },
-                            "revenue": {
-                              "type": "number"
-                            }
-                          },
-                          "required": [
-                            "count",
-                            "revenue"
-                          ],
-                          "type": "object"
-                        },
-                        "pro": {
-                          "properties": {
-                            "count": {
-                              "type": "number"
-                            },
-                            "revenue": {
-                              "type": "number"
-                            }
-                          },
-                          "required": [
-                            "count",
-                            "revenue"
-                          ],
-                          "type": "object"
-                        }
-                      },
-                      "required": [
-                        "enterprise",
-                        "free",
-                        "pro"
-                      ],
-                      "type": "object"
-                    },
-                    "totalCommissionEarned": {
-                      "type": "number"
-                    },
-                    "totalGrossVolume": {
-                      "type": "number"
-                    },
-                    "totalPlatformRevenue": {
-                      "type": "number"
-                    },
-                    "totalSubscriptionRevenue": {
-                      "type": "number"
-                    },
-                    "totalTransactionsProcessed": {
-                      "type": "number"
-                    }
-                  },
-                  "required": [
-                    "activeSubscriptionsCount",
-                    "byStore",
-                    "commissionPercentage",
-                    "commissionRate",
-                    "currency",
-                    "currencySymbol",
-                    "monthlyBreakdown",
-                    "netRetailerPayout",
-                    "recentCommissions",
-                    "subscriptionStats",
-                    "totalCommissionEarned",
-                    "totalGrossVolume",
-                    "totalPlatformRevenue",
-                    "totalSubscriptionRevenue",
-                    "totalTransactionsProcessed"
-                  ],
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/platform-revenue/commissions": {
-      "get": {
-        "tags": [
-          "PlatformRevenue"
-        ],
-        "operationId": "PlatformRevenue_getCommissions",
-        "summary": "Get Commissions",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "retailerId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: retailerId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: limit",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/common_database_types_PlatformCommissionRecord"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/platform-revenue/subscriptions": {
-      "get": {
-        "tags": [
-          "PlatformRevenue"
-        ],
-        "operationId": "PlatformRevenue_getSubscriptions",
-        "summary": "Get Subscriptions",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "required": false,
-            "description": "Query parameter: userId",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/common_database_types_SubscriptionRecord"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "PlatformRevenue"
-        ],
-        "operationId": "PlatformRevenue_updateSubscription",
-        "summary": "Update Subscription",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/common_database_types_SubscriptionRecord"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/platform_revenue_dto_platform_revenue_dto_UpdateSubscriptionDto"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/platform-revenue/tiers": {
-      "get": {
-        "tags": [
-          "PlatformRevenue"
-        ],
-        "operationId": "PlatformRevenue_getPricingTiers",
-        "summary": "Get Pricing Tiers",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RoleHeader"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "properties": {
-                      "billingInterval": {
-                        "type": "string"
-                      },
-                      "currency": {
-                        "type": "string"
-                      },
-                      "currencySymbol": {
-                        "type": "string"
-                      },
-                      "features": {
-                        "items": {
-                          "type": "string"
-                        },
-                        "type": "array"
-                      },
-                      "maxProducts": {
-                        "type": "number"
-                      },
-                      "maxStores": {
-                        "type": "number"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "price": {
-                        "type": "number"
-                      },
-                      "tier": {
-                        "$ref": "#/components/schemas/common_database_types_SubscriptionTier"
-                      }
-                    },
-                    "required": [
-                      "billingInterval",
-                      "currency",
-                      "currencySymbol",
-                      "features",
-                      "maxProducts",
-                      "maxStores",
-                      "name",
-                      "price",
-                      "tier"
-                    ],
-                    "type": "object"
-                  },
-                  "type": "array"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
           }
         }
       }
@@ -7330,11 +7781,23 @@
       },
       "common_database_types_SubscriptionRecord": {
         "properties": {
+          "autoRenew": {
+            "type": "boolean"
+          },
           "billingCycle": {
             "enum": [
               "monthly",
               "yearly"
             ],
+            "type": "string"
+          },
+          "cancelledAt": {
+            "type": "string"
+          },
+          "daysRemaining": {
+            "type": "number"
+          },
+          "endDate": {
             "type": "string"
           },
           "features": {
@@ -7346,11 +7809,20 @@
           "id": {
             "type": "string"
           },
+          "isExpired": {
+            "type": "boolean"
+          },
           "maxProducts": {
             "type": "number"
           },
           "maxStores": {
             "type": "number"
+          },
+          "paymentId": {
+            "type": "string"
+          },
+          "paymentMethod": {
+            "type": "string"
           },
           "pricePerMonth": {
             "type": "number"
@@ -7377,6 +7849,9 @@
             ],
             "type": "string"
           },
+          "tierName": {
+            "type": "string"
+          },
           "userEmail": {
             "type": "string"
           },
@@ -7395,7 +7870,9 @@
           }
         },
         "required": [
+          "autoRenew",
           "billingCycle",
+          "endDate",
           "features",
           "id",
           "pricePerMonth",
@@ -7658,6 +8135,9 @@
             "type": "string"
           },
           "password": {
+            "type": "string"
+          },
+          "profileId": {
             "type": "string"
           },
           "retailerId": {
@@ -8023,6 +8503,20 @@
         ],
         "type": "object"
       },
+      "platform_revenue_dto_platform_revenue_dto_CancelSubscriptionDto": {
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId"
+        ],
+        "type": "object"
+      },
       "platform_revenue_dto_platform_revenue_dto_UpdateSubscriptionDto": {
         "properties": {
           "billingCycle": {
@@ -8030,6 +8524,12 @@
               "monthly",
               "yearly"
             ],
+            "type": "string"
+          },
+          "paymentId": {
+            "type": "string"
+          },
+          "paymentMethod": {
             "type": "string"
           },
           "tier": {

@@ -38,9 +38,15 @@ let RetailersService = class RetailersService {
         this.persistToDisk();
         return retailer;
     }
-    updateProfileStatus(id, status) {
+    updateProfileStatus(id, status, rejectionReason) {
         const retailer = this.findOne(id);
         retailer.profileStatus = status;
+        if (status === 'rejected' && rejectionReason) {
+            retailer.rejectionReason = rejectionReason;
+        }
+        else if (status !== 'rejected') {
+            delete retailer.rejectionReason;
+        }
         retailer.updatedAt = new Date().toISOString();
         this.retailers.set(id, retailer);
         this.persistToDisk();
@@ -50,11 +56,52 @@ let RetailersService = class RetailersService {
         return Array.from(this.retailers.values()).sort((a, b) => String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || '')));
     }
     findOne(id) {
-        const retailer = this.retailers.get(id);
-        if (!retailer) {
+        if (!id) {
             throw new common_1.NotFoundException(`Retailer setup "${id}" was not found`);
         }
-        return retailer;
+        const target = String(id).trim().toLowerCase();
+        let retailer = this.retailers.get(id);
+        if (retailer)
+            return retailer;
+        const all = Array.from(this.retailers.values());
+        retailer = all.find((r) => {
+            if (String(r.id || '').trim().toLowerCase() === target)
+                return true;
+            if (r.business?.businessEmail && String(r.business.businessEmail).trim().toLowerCase() === target)
+                return true;
+            if (r.business?.retailerCode && String(r.business.retailerCode).trim().toLowerCase() === target)
+                return true;
+            if (r.primaryContact?.directEmail && String(r.primaryContact.directEmail).trim().toLowerCase() === target)
+                return true;
+            return false;
+        });
+        if (retailer)
+            return retailer;
+        try {
+            const usersFile = (0, path_1.join)(this.dataDirectory, 'users.json');
+            if ((0, fs_1.existsSync)(usersFile)) {
+                const users = JSON.parse((0, fs_1.readFileSync)(usersFile, 'utf-8'));
+                if (Array.isArray(users)) {
+                    const matchedUser = users.find((u) => {
+                        return (String(u.id || '').trim().toLowerCase() === target ||
+                            String(u.profileId || '').trim().toLowerCase() === target ||
+                            String(u.email || '').trim().toLowerCase() === target);
+                    });
+                    if (matchedUser) {
+                        if (matchedUser.profileId && this.retailers.has(matchedUser.profileId)) {
+                            return this.retailers.get(matchedUser.profileId);
+                        }
+                        if (matchedUser.email) {
+                            const found = this.findByBusinessEmail(matchedUser.email);
+                            if (found)
+                                return found;
+                        }
+                    }
+                }
+            }
+        }
+        catch { }
+        throw new common_1.NotFoundException(`Retailer setup "${id}" was not found`);
     }
     findLatest() {
         return this.findAll()[0] ?? null;
@@ -96,7 +143,37 @@ let RetailersService = class RetailersService {
             retailer.primaryContact.directEmail?.toLowerCase() === lookup) ?? null);
     }
     update(id, updateRetailerSetupDto) {
-        const retailer = this.findOne(id);
+        let retailer;
+        try {
+            retailer = this.findOne(id);
+        }
+        catch {
+            const now = new Date().toISOString();
+            const newRetailer = {
+                id: id || (0, crypto_1.randomUUID)(),
+                business: updateRetailerSetupDto.business || {
+                    businessName: 'Retailer Store',
+                    businessType: 'Retail',
+                    businessEmail: '',
+                    retailerCode: `RET-${Math.floor(100 + Math.random() * 900)}`,
+                    currency: 'INR',
+                    fiscalYear: 'April',
+                },
+                primaryContact: updateRetailerSetupDto.primaryContact || {
+                    fullName: 'Retailer User',
+                },
+                stores: updateRetailerSetupDto.stores ?? [],
+                suppliers: updateRetailerSetupDto.suppliers ?? [],
+                products: updateRetailerSetupDto.products ?? [],
+                status: 'completed',
+                profileStatus: updateRetailerSetupDto.profileStatus ?? 'pending',
+                createdAt: now,
+                updatedAt: now,
+            };
+            this.retailers.set(newRetailer.id, newRetailer);
+            this.persistToDisk();
+            return newRetailer;
+        }
         const updatedRetailer = {
             ...retailer,
             ...updateRetailerSetupDto,
@@ -108,7 +185,7 @@ let RetailersService = class RetailersService {
             profileStatus: updateRetailerSetupDto.profileStatus ?? retailer.profileStatus ?? 'active',
             updatedAt: new Date().toISOString(),
         };
-        this.retailers.set(id, updatedRetailer);
+        this.retailers.set(retailer.id, updatedRetailer);
         this.persistToDisk();
         return updatedRetailer;
     }

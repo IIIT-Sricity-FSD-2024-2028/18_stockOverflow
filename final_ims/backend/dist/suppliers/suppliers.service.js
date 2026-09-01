@@ -84,9 +84,15 @@ let SuppliersService = class SuppliersService {
         this.persistToDisk();
         return supplier;
     }
-    updateProfileStatus(id, status) {
+    updateProfileStatus(id, status, rejectionReason) {
         const supplier = this.findOne(id);
         supplier.profileStatus = status;
+        if (status === 'rejected' && rejectionReason) {
+            supplier.rejectionReason = rejectionReason;
+        }
+        else if (status !== 'rejected') {
+            delete supplier.rejectionReason;
+        }
         supplier.updatedAt = new Date().toISOString();
         this.suppliers.set(id, supplier);
         this.persistToDisk();

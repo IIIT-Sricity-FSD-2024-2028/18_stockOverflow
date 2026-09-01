@@ -62,8 +62,10 @@ describe('PlatformRevenueController', () => {
                     pricePerMonth: 799,
                     billingCycle: 'monthly',
                     startDate: new Date().toISOString(),
+                    endDate: new Date().toISOString(),
                     renewalDate: new Date().toISOString(),
                     status: 'active',
+                    autoRenew: true,
                     features: [],
                   },
                 ];

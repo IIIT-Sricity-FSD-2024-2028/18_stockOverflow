@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { CommonModule } from '../common/common.module';
 import { RetailersModule } from '../retailers/retailers.module';
 import { StoresModule } from '../stores/stores.module';
@@ -10,7 +10,7 @@ import { EmployeesService } from './employees.service';
 @Module({
   imports: [
     CommonModule,
-    UsersModule,
+    forwardRef(() => UsersModule),
     RetailersModule,
     SuppliersModule,
     StoresModule,

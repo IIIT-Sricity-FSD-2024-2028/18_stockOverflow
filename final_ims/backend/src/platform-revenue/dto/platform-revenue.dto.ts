@@ -23,6 +23,23 @@ export class UpdateSubscriptionDto {
   @IsOptional()
   @IsEnum(['monthly', 'yearly'])
   billingCycle?: 'monthly' | 'yearly';
+
+  @IsOptional()
+  @IsString()
+  paymentMethod?: string;
+
+  @IsOptional()
+  @IsString()
+  paymentId?: string;
+}
+
+export class CancelSubscriptionDto {
+  @IsString()
+  userId: string;
+
+  @IsOptional()
+  @IsString()
+  reason?: string;
 }
 
 export class QueryPlatformRevenueDto {

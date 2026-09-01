@@ -1,8 +1,10 @@
 import {
   BadRequestException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import {
@@ -24,6 +26,7 @@ import { ResolveQueryDto } from './dto/resolve-query.dto';
 export class EmployeesService {
   constructor(
     private readonly db: JsonDbService,
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly retailersService: RetailersService,
     private readonly suppliersService: SuppliersService,
@@ -78,75 +81,112 @@ export class EmployeesService {
     // 1. Pending Retailers
     const retailers = this.retailersService.findAll();
     retailers.forEach((retailer) => {
-      if (
-        (retailer.profileStatus === 'pending' || !retailer.profileStatus) &&
-        !assignedTargetIds.has(retailer.id)
-      ) {
-        const emp = getNextEmployee();
-        const assignment: EmployeeAssignment = {
-          id: `asgn-${randomUUID()}`,
-          employeeId: emp.id,
-          employeeName: emp.name,
-          employeeEmail: emp.email,
-          targetId: retailer.id,
-          targetType: 'retailer',
-          title: `Retailer Verification: ${retailer.business?.businessName || 'New Retailer'}`,
-          details: {
-            businessName: retailer.business?.businessName || 'Unnamed Business',
-            ownerName: retailer.primaryContact?.fullName || 'Unknown',
-            email: retailer.business?.businessEmail || retailer.primaryContact?.directEmail || '',
-            phone: retailer.business?.phoneNumber || '',
-            address: retailer.business?.businessAddress || '',
-            businessType: retailer.business?.businessType || 'Retailer',
-            retailerCode: retailer.business?.retailerCode || '',
-            storeCount: (retailer.stores || []).length,
-            stores: retailer.stores || [],
-            submittedAt: retailer.createdAt || new Date().toISOString(),
-          },
-          status: 'pending',
-          createdAt: new Date().toISOString(),
-        };
+      const isPending = retailer.profileStatus === 'pending' || !retailer.profileStatus;
+      if (isPending) {
+        if (!assignedTargetIds.has(retailer.id)) {
+          const emp = getNextEmployee();
+          const assignment: EmployeeAssignment = {
+            id: `asgn-${randomUUID()}`,
+            employeeId: emp.id,
+            employeeName: emp.name,
+            employeeEmail: emp.email,
+            targetId: retailer.id,
+            targetType: 'retailer',
+            title: `Retailer Verification: ${retailer.business?.businessName || 'New Retailer'}`,
+            details: {
+              businessName: retailer.business?.businessName || 'Unnamed Business',
+              ownerName: retailer.primaryContact?.fullName || 'Unknown',
+              email: retailer.business?.businessEmail || retailer.primaryContact?.directEmail || '',
+              phone: retailer.business?.phoneNumber || '',
+              address: retailer.business?.businessAddress || '',
+              businessType: retailer.business?.businessType || 'Retailer',
+              retailerCode: retailer.business?.retailerCode || '',
+              storeCount: (retailer.stores || []).length,
+              stores: retailer.stores || [],
+              submittedAt: retailer.updatedAt || retailer.createdAt || new Date().toISOString(),
+            },
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+          };
 
-        assignments.unshift(assignment);
-        assignedTargetIds.add(retailer.id);
-        newAssignmentsCount++;
+          assignments.unshift(assignment);
+          assignedTargetIds.add(retailer.id);
+          newAssignmentsCount++;
+        } else {
+          // Update details for pending assignment if retailer profile was edited/completed
+          const existingAsgn = assignments.find((a) => a.targetId === retailer.id && a.status === 'pending');
+          if (existingAsgn) {
+            existingAsgn.title = `Retailer Verification: ${retailer.business?.businessName || 'New Retailer'}`;
+            existingAsgn.details = {
+              ...existingAsgn.details,
+              businessName: retailer.business?.businessName || existingAsgn.details.businessName,
+              ownerName: retailer.primaryContact?.fullName || existingAsgn.details.ownerName,
+              email: retailer.business?.businessEmail || retailer.primaryContact?.directEmail || existingAsgn.details.email,
+              phone: retailer.business?.phoneNumber || existingAsgn.details.phone,
+              address: retailer.business?.businessAddress || existingAsgn.details.address,
+              businessType: retailer.business?.businessType || existingAsgn.details.businessType,
+              retailerCode: retailer.business?.retailerCode || existingAsgn.details.retailerCode,
+              storeCount: (retailer.stores || []).length,
+              stores: retailer.stores || [],
+              submittedAt: retailer.updatedAt || retailer.createdAt || existingAsgn.details.submittedAt,
+            };
+          }
+        }
       }
     });
 
     // 2. Pending Suppliers
     const suppliers = this.suppliersService.findAll();
     suppliers.forEach((supplier) => {
-      if (
-        (supplier.profileStatus === 'pending' || !supplier.profileStatus) &&
-        !assignedTargetIds.has(supplier.id)
-      ) {
-        const emp = getNextEmployee();
-        const assignment: EmployeeAssignment = {
-          id: `asgn-${randomUUID()}`,
-          employeeId: emp.id,
-          employeeName: emp.name,
-          employeeEmail: emp.email,
-          targetId: supplier.id,
-          targetType: 'supplier',
-          title: `Supplier Verification: ${supplier.business?.companyName || supplier.business?.businessEmail || 'New Supplier'}`,
-          details: {
-            companyName: supplier.business?.companyName || 'Unnamed Supplier',
-            ownerName: supplier.primaryContact?.fullName || 'Unknown',
-            email: supplier.business?.businessEmail || supplier.primaryContact?.directEmail || '',
-            phone: supplier.business?.phoneNumber || '',
-            address: supplier.business?.businessAddress || supplier.business?.state || '',
-            category: supplier.business?.primaryCategory || 'General',
-            supplierCode: supplier.business?.supplierCode || '',
-            paymentTerms: supplier.business?.paymentTerms || 'Net 30',
-            submittedAt: supplier.createdAt || new Date().toISOString(),
-          },
-          status: 'pending',
-          createdAt: new Date().toISOString(),
-        };
+      const isPending = supplier.profileStatus === 'pending' || !supplier.profileStatus;
+      if (isPending) {
+        if (!assignedTargetIds.has(supplier.id)) {
+          const emp = getNextEmployee();
+          const assignment: EmployeeAssignment = {
+            id: `asgn-${randomUUID()}`,
+            employeeId: emp.id,
+            employeeName: emp.name,
+            employeeEmail: emp.email,
+            targetId: supplier.id,
+            targetType: 'supplier',
+            title: `Supplier Verification: ${supplier.business?.companyName || supplier.business?.businessEmail || 'New Supplier'}`,
+            details: {
+              companyName: supplier.business?.companyName || 'Unnamed Supplier',
+              ownerName: supplier.primaryContact?.fullName || 'Unknown',
+              email: supplier.business?.businessEmail || supplier.primaryContact?.directEmail || '',
+              phone: supplier.business?.phoneNumber || '',
+              address: supplier.business?.businessAddress || supplier.business?.state || '',
+              category: supplier.business?.primaryCategory || 'General',
+              supplierCode: supplier.business?.supplierCode || '',
+              paymentTerms: supplier.business?.paymentTerms || 'Net 30',
+              submittedAt: supplier.updatedAt || supplier.createdAt || new Date().toISOString(),
+            },
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+          };
 
-        assignments.unshift(assignment);
-        assignedTargetIds.add(supplier.id);
-        newAssignmentsCount++;
+          assignments.unshift(assignment);
+          assignedTargetIds.add(supplier.id);
+          newAssignmentsCount++;
+        } else {
+          // Update details for pending assignment if supplier profile was edited/completed
+          const existingAsgn = assignments.find((a) => a.targetId === supplier.id && a.status === 'pending');
+          if (existingAsgn) {
+            existingAsgn.title = `Supplier Verification: ${supplier.business?.companyName || supplier.business?.businessEmail || 'New Supplier'}`;
+            existingAsgn.details = {
+              ...existingAsgn.details,
+              companyName: supplier.business?.companyName || existingAsgn.details.companyName,
+              ownerName: supplier.primaryContact?.fullName || existingAsgn.details.ownerName,
+              email: supplier.business?.businessEmail || supplier.primaryContact?.directEmail || existingAsgn.details.email,
+              phone: supplier.business?.phoneNumber || existingAsgn.details.phone,
+              address: supplier.business?.businessAddress || supplier.business?.state || existingAsgn.details.address,
+              category: supplier.business?.primaryCategory || existingAsgn.details.category,
+              supplierCode: supplier.business?.supplierCode || existingAsgn.details.supplierCode,
+              paymentTerms: supplier.business?.paymentTerms || existingAsgn.details.paymentTerms,
+              submittedAt: supplier.updatedAt || supplier.createdAt || existingAsgn.details.submittedAt,
+            };
+          }
+        }
       }
     });
 
@@ -273,19 +313,39 @@ export class EmployeesService {
     // Propagate status to corresponding entity
     if (assignment.targetType === 'retailer') {
       try {
+        const nextStatus = dto.action === 'approve' ? 'active' : 'rejected';
+        const reason = dto.action === 'reject' ? (dto.notes || 'Your application did not meet our verification requirements.') : undefined;
         this.retailersService.updateProfileStatus(
           assignment.targetId,
-          dto.action === 'approve' ? 'active' : 'rejected',
+          nextStatus,
+          reason,
         );
+        const users = this.usersService.findAll('retailer');
+        const user = users.find((u) => u.profileId === assignment.targetId || (assignment.details?.email && u.email === assignment.details.email));
+        if (user) {
+          this.usersService.update(user.id, {
+            status: dto.action === 'approve' ? 'Active' : 'Inactive',
+          });
+        }
       } catch (err) {
         // Entity might not exist or failed
       }
     } else if (assignment.targetType === 'supplier') {
       try {
+        const nextStatus = dto.action === 'approve' ? 'active' : 'rejected';
+        const supReason = dto.action === 'reject' ? (dto.notes || 'Your application did not meet our verification requirements.') : undefined;
         this.suppliersService.updateProfileStatus(
           assignment.targetId,
-          dto.action === 'approve' ? 'active' : 'rejected',
+          nextStatus,
+          supReason,
         );
+        const users = this.usersService.findAll('supplier');
+        const user = users.find((u) => u.profileId === assignment.targetId || (assignment.details?.email && u.email === assignment.details.email));
+        if (user) {
+          this.usersService.update(user.id, {
+            status: dto.action === 'approve' ? 'Active' : 'Inactive',
+          });
+        }
       } catch (err) {
         // Suppress
       }

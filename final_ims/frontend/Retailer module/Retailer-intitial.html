@@ -1375,23 +1375,31 @@ function completeSetup(){
           designation: document.getElementById('o-title').value.trim() || undefined,
           directEmail: document.getElementById('o-email').value.trim() || undefined,
         },
-        profileStatus: 'active',
+        profileStatus: 'pending',
         stores: normalizedStores,
         suppliers: [],
         products: [],
       };
 
-      const retailerRecord = session.profileId
-        ? await apiRequest(`/retailers/${encodeURIComponent(session.profileId)}`, {
+      let retailerRecord = null;
+      if (session.profileId) {
+        try {
+          retailerRecord = await apiRequest(`/retailers/${encodeURIComponent(session.profileId)}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(retailerPayload)
-          })
-        : await apiRequest('/retailers/setup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(retailerPayload)
           });
+        } catch {
+          retailerRecord = null;
+        }
+      }
+      if (!retailerRecord) {
+        retailerRecord = await apiRequest('/retailers/setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(retailerPayload)
+        });
+      }
 
       const profileSummary = buildProfileSummary(session, normalizedStores, []);
 

@@ -13,12 +13,13 @@ const purchase_orders_service_1 = require("./purchase-orders.service");
 const retailers_module_1 = require("../retailers/retailers.module");
 const suppliers_module_1 = require("../suppliers/suppliers.module");
 const products_module_1 = require("../products/products.module");
+const platform_revenue_module_1 = require("../platform-revenue/platform-revenue.module");
 let PurchaseOrdersModule = class PurchaseOrdersModule {
 };
 exports.PurchaseOrdersModule = PurchaseOrdersModule;
 exports.PurchaseOrdersModule = PurchaseOrdersModule = __decorate([
     (0, common_1.Module)({
-        imports: [suppliers_module_1.SuppliersModule, retailers_module_1.RetailersModule, products_module_1.ProductsModule],
+        imports: [suppliers_module_1.SuppliersModule, retailers_module_1.RetailersModule, products_module_1.ProductsModule, platform_revenue_module_1.PlatformRevenueModule],
         controllers: [purchase_orders_controller_1.PurchaseOrdersController],
         providers: [purchase_orders_service_1.PurchaseOrdersService],
     })

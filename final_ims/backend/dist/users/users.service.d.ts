@@ -1,8 +1,10 @@
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { EmployeesService } from '../employees/employees.service';
 type PublicUser = Omit<User, 'password'>;
 export declare class UsersService {
+    private readonly employeesService;
     private readonly users;
     private readonly dataDirectory;
     private readonly dataFile;
@@ -10,7 +12,7 @@ export declare class UsersService {
     private readonly suppliersFile;
     private readonly billersFile;
     private readonly dbFile;
-    constructor();
+    constructor(employeesService: EmployeesService);
     findAll(role?: string, email?: string): PublicUser[];
     findOne(id: string): PublicUser;
     create(createUserDto: CreateUserDto): PublicUser;
@@ -37,6 +39,7 @@ export declare class UsersService {
     private writeAll;
     private loadFromDisk;
     private persistToDisk;
+    private writeRecordsToFile;
     private normalizeStoredUser;
     private toPublicUser;
     private normalizeRole;

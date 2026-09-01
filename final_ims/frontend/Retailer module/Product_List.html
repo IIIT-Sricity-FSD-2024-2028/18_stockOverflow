@@ -588,6 +588,7 @@ table.pl-table tbody tr:hover td{background:#fafafa}
         <div class="pl-breadcrumb">Products</div>
       </div>
       <div class="pl-toolbar">
+        <span id="skuPlanPill" style="font-size:12px;font-weight:700;color:#64748b;background:#f1f5f9;padding:6px 12px;border-radius:20px;border:1px solid #e2e8f0;display:inline-flex;align-items:center;gap:6px;">0 / 50 SKUs (Starter)</span>
         <!-- Add Product -->
         <button class="pl-btn-primary" onclick="window.location.href='Add_New_Product.html'">
           <svg viewBox="0 0 13 13" fill="none" stroke="#fff" stroke-width="1.5">
@@ -1217,6 +1218,21 @@ loadProducts = async function () {
       }
     }
     applyProductFilters(true);
+
+    try {
+      const sub = window.RetailerApi ? await window.RetailerApi.getActiveSubscription() : null;
+      const tier = (sub && sub.tier) ? sub.tier : 'free';
+      const pill = document.getElementById('skuPlanPill');
+      if (pill) {
+        if (tier === 'free') {
+          pill.textContent = `${products.length} / 50 SKUs (Starter)`;
+          pill.style.color = products.length >= 50 ? '#dc2626' : '#64748b';
+        } else {
+          pill.textContent = `${products.length} SKUs (${tier === 'enterprise' ? 'Enterprise' : 'Growth'})`;
+          pill.style.color = '#15803d';
+        }
+      }
+    } catch (_e) {}
   } catch (error) {
     console.error('Error loading products:', error);
     products = [];

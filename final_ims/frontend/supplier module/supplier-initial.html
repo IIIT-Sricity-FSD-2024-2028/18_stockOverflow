@@ -1249,6 +1249,7 @@ function buildLandingPayload() {
       designation: document.getElementById('c-title').value.trim() || undefined,
       directEmail: document.getElementById('c-email').value.trim() || undefined,
     },
+    profileStatus: 'pending',
     retailers: [],
     products: getProducts().map((product) => ({
       sku: product.sku,
@@ -1282,7 +1283,7 @@ function buildSupplierProfileSummary(record, session) {
     ownerName: primaryContact.fullName || session?.name || '',
     ownerTitle: primaryContact.designation || '',
     ownerEmail: primaryContact.directEmail || business.businessEmail || session?.email || '',
-    profileStatus: record?.profileStatus || 'active',
+    profileStatus: record?.profileStatus || 'pending',
     retailers: Array.isArray(record?.retailers) ? record.retailers : [],
     productCount: Array.isArray(record?.products) ? record.products.length : 0,
   };

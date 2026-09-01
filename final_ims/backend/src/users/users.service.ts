@@ -4,6 +4,8 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  forwardRef,
+  Inject,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import {
@@ -16,6 +18,7 @@ import { join } from 'node:path';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { EmployeesService } from '../employees/employees.service';
 
 type PublicUser = Omit<User, 'password'>;
 type RetailerProfileRecord = {
@@ -173,7 +176,10 @@ export class UsersService {
   private readonly billersFile = join(this.dataDirectory, 'billers.json');
   private readonly dbFile = join(this.dataDirectory, 'db.json');
 
-  constructor() {
+  constructor(
+    @Inject(forwardRef(() => EmployeesService))
+    private readonly employeesService: EmployeesService,
+  ) {
     this.loadFromDisk();
   }
 
@@ -242,9 +248,82 @@ export class UsersService {
       updatedAt: now,
     };
 
+    if (role === 'retailer') {
+      const existingRetailers = this.readRecordsFromFile<RetailerProfileRecord>(this.retailersFile);
+      const existingRetailer = existingRetailers.find(
+        (r) => this.normalizeEmail(r.business?.businessEmail) === email ||
+               this.normalizeEmail(r.primaryContact?.directEmail) === email
+      );
+      if (existingRetailer) {
+        created.profileId = existingRetailer.id;
+      } else {
+        const newRetailerId = randomUUID();
+        const code = `RET-${Math.floor(1000 + Math.random() * 9000)}`;
+        const retailerRecord: RetailerProfileRecord = {
+          id: newRetailerId,
+          profileStatus: 'pending',
+          business: {
+            businessName: created.name + ' Retail',
+            businessType: 'Retailer',
+            businessEmail: email,
+            retailerCode: code,
+            currency: 'INR',
+          },
+          primaryContact: {
+            fullName: created.name,
+            directEmail: email,
+          },
+          stores: [],
+          suppliers: [],
+          createdAt: now,
+          updatedAt: now,
+        };
+        existingRetailers.unshift(retailerRecord);
+        this.writeRecordsToFile(this.retailersFile, existingRetailers);
+        created.profileId = newRetailerId;
+      }
+    } else if (role === 'supplier') {
+      const existingSuppliers = this.readRecordsFromFile<SupplierProfileRecord>(this.suppliersFile);
+      const existingSupplier = existingSuppliers.find(
+        (s) => this.normalizeEmail(s.business?.businessEmail) === email ||
+               this.normalizeEmail(s.primaryContact?.directEmail) === email
+      );
+      if (existingSupplier) {
+        created.profileId = existingSupplier.id;
+      } else {
+        const newSupplierId = randomUUID();
+        const code = `SUP-${Math.floor(1000 + Math.random() * 9000)}`;
+        const supplierRecord: SupplierProfileRecord = {
+          id: newSupplierId,
+          profileStatus: 'pending',
+          business: {
+            companyName: created.name + ' Supplies',
+            businessType: 'Wholesaler',
+            businessEmail: email,
+            supplierCode: code,
+            currency: 'INR',
+            primaryCategory: 'General',
+          },
+          primaryContact: {
+            fullName: created.name,
+            directEmail: email,
+          },
+          retailers: [],
+          products: [],
+          createdAt: now,
+          updatedAt: now,
+        };
+        existingSuppliers.unshift(supplierRecord);
+        this.writeRecordsToFile(this.suppliersFile, existingSuppliers);
+        created.profileId = newSupplierId;
+      }
+    }
+
     const hydrated = this.hydrateLinkedProfile(created);
     users.unshift(hydrated);
     this.writeAll(users);
+    // Trigger employee assignment distribution for new retailer/supplier
+    this.employeesService.distributePendingWork();
     return this.toPublicUser(hydrated);
   }
 
@@ -349,7 +428,11 @@ export class UsersService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    if (this.normalizeText(user.status, 'Active') !== 'Active') {
+    const role = this.normalizeRole(user.role);
+    const status = this.normalizeText(user.status, 'Active');
+    // Allow rejected retailers/suppliers to log in so they can see the rejection reason
+    const isRejectedBusinessUser = (role === 'retailer' || role === 'supplier') && status !== 'Active';
+    if (status !== 'Active' && !isRejectedBusinessUser) {
       throw new UnauthorizedException('Account is inactive');
     }
 
@@ -569,6 +652,7 @@ export class UsersService {
         business.businessEmail,
       ),
       profileStatus: this.normalizeText(retailer.profileStatus, 'active'),
+      rejectionReason: (retailer as any).rejectionReason || '',
       stores,
       suppliers: Array.isArray(retailer.suppliers)
         ? JSON.parse(JSON.stringify(retailer.suppliers))
@@ -604,6 +688,7 @@ export class UsersService {
         business.businessEmail,
       ),
       profileStatus: this.normalizeText(supplier.profileStatus, 'active'),
+      rejectionReason: (supplier as any).rejectionReason || '',
       retailers: Array.isArray(supplier.retailers)
         ? JSON.parse(JSON.stringify(supplier.retailers))
         : [],
@@ -728,6 +813,15 @@ export class UsersService {
       );
     });
     writeFileSync(this.dataFile, JSON.stringify(users, null, 2), 'utf-8');
+  }
+
+  private writeRecordsToFile<T>(filePath: string, records: T[]) {
+    try {
+      mkdirSync(this.dataDirectory, { recursive: true });
+      writeFileSync(filePath, JSON.stringify(records, null, 2), 'utf-8');
+    } catch (err) {
+      console.error('Failed to write records to file:', filePath, err);
+    }
   }
 
   private normalizeStoredUser(user: Partial<User>): User {

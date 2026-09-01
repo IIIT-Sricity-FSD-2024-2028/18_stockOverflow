@@ -6,6 +6,12 @@ export declare class UpdateSubscriptionDto {
     userRole?: 'retailer' | 'supplier';
     tier: SubscriptionTier;
     billingCycle?: 'monthly' | 'yearly';
+    paymentMethod?: string;
+    paymentId?: string;
+}
+export declare class CancelSubscriptionDto {
+    userId: string;
+    reason?: string;
 }
 export declare class QueryPlatformRevenueDto {
     retailerId?: string;
