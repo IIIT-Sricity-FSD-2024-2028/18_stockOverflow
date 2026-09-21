@@ -1,28 +1,31 @@
+/**
+ * Navbar.jsx - Universal Top Navigation Bar
+ * 
+ * IN LAYMAN'S TERMS:
+ * This sticky top bar stays visible on every screen.
+ * It lets the customer jump to Home, Products, My Orders, Cart, Returns,
+ * and Restock Alerts. It also shows the store location picker, live cart badge count,
+ * and the user logout button.
+ */
+
 import React from 'react';
 import LocationWidget from './LocationWidget';
 
-/**
- * Navbar Component
- * 
- * Props:
- * - cartCount: number (lifted state from parent, item quantity count in cart)
- * - selectedStore: string (lifted state from parent)
- * - onLocationClick: function (callback from parent to open store selection modal)
- * - onLogout: function (callback from parent to log out the user)
- * - userSession: object | null (current logged in user data)
- */
 export default function Navbar({
+  currentView = 'home',
   cartCount = 0,
-  selectedStore = 'Global Hub',
+  selectedStore = 'Downtown Store',
   onLocationClick,
+  onNavigate,
   onLogout,
-  userSession
+  userSession,
 }) {
   return (
     <nav className="site-nav">
-      <div className="nav-brand">
+      {/* Brand Logo & Tag */}
+      <div className="nav-brand" onClick={() => onNavigate && onNavigate('home')}>
         <span className="nav-logo-text">StockOverflow</span>
-        <span className="nav-badge-role">Consumer</span>
+        <span className="nav-badge-role">Customer Portal</span>
       </div>
 
       {/* Location / Store Selector Widget */}
@@ -31,42 +34,83 @@ export default function Navbar({
         onLocationClick={onLocationClick}
       />
 
-      {/* Navigation Links */}
+      {/* Main Navigation Links */}
       <div className="nav-links">
-        <a href="#products-section" className="nav-link">Products</a>
-        <a href="#orders" onClick={(e) => { e.preventDefault(); alert('Redirecting to Orders page...'); }} className="nav-link">
-          Orders
-        </a>
-        <a
-          href="#cart"
-          className="nav-link nav-link-cart"
-          onClick={(e) => {
-            e.preventDefault();
-            alert(`Cart opened! You have ${cartCount} item(s) in your cart.`);
-          }}
+        {/* Home */}
+        <button
+          type="button"
+          className={`nav-link-btn ${currentView === 'home' ? 'active' : ''}`}
+          onClick={() => onNavigate && onNavigate('home')}
         >
-          <span>Cart</span>
-          <span
-            className={`cart-badge ${cartCount > 0 ? 'visible' : ''}`}
-            aria-label={`${cartCount} items in cart`}
-          >
-            {cartCount}
-          </span>
-        </a>
+          Home
+        </button>
+
+        {/* Products Search & Catalog */}
+        <button
+          type="button"
+          className={`nav-link-btn ${currentView === 'search' ? 'active' : ''}`}
+          onClick={() => onNavigate && onNavigate('search')}
+        >
+          Catalog & Search
+        </button>
+
+        {/* Orders & Tracking */}
+        <button
+          type="button"
+          className={`nav-link-btn ${currentView === 'orders' ? 'active' : ''}`}
+          onClick={() => onNavigate && onNavigate('orders')}
+        >
+          My Orders
+        </button>
+
+        {/* Returns / RMA */}
+        <button
+          type="button"
+          className={`nav-link-btn ${currentView === 'returns' ? 'active' : ''}`}
+          onClick={() => onNavigate && onNavigate('returns')}
+        >
+          Returns
+        </button>
+
+        {/* Restock Alerts */}
+        <button
+          type="button"
+          className={`nav-link-btn ${currentView === 'restock' ? 'active' : ''}`}
+          onClick={() => onNavigate && onNavigate('restock')}
+        >
+          🔔 Alerts
+        </button>
+
+        {/* Cart & Reservations with Live Badge */}
+        <button
+          type="button"
+          className={`nav-link-btn nav-link-cart ${currentView === 'cart' ? 'active' : ''}`}
+          onClick={() => onNavigate && onNavigate('cart')}
+          title="View Shopping & Reservation Cart"
+        >
+          <span>🛒 Cart</span>
+          {cartCount > 0 && (
+            <span className="cart-badge-pill" aria-label={`${cartCount} items in cart`}>
+              {cartCount}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* User info & Logout */}
+      {/* User Info & Logout Button */}
       <div className="nav-actions">
         {userSession?.name && (
-          <span className="user-greeting">Hi, {userSession.name.split(' ')[0]}</span>
+          <span className="user-greeting">
+            👤 {userSession.name.split(' ')[0]}
+          </span>
         )}
         <button
           type="button"
           className="btn-logout"
           onClick={onLogout}
-          title="Sign out of your account"
+          title="Sign out of your session"
         >
-          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
             <path
               d="M7.5 17.5H4.17A1.67 1.67 0 0 1 2.5 15.83V4.17A1.67 1.67 0 0 1 4.17 2.5H7.5"
               stroke="#EF4444"
