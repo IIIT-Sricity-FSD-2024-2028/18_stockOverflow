@@ -294,7 +294,7 @@
       "soldThisMonth": 2,
       "trend": "up",
       "description": "",
-      "descriptionHtml": "",
+      "descriptionHtml": "<p></p>",
       "supplier": "StockOverflow Supply",
       "supplierSku": "",
       "barcode": "",
@@ -343,8 +343,8 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T06:56:40.524Z",
-      "updatedAt": "2026-08-30T19:23:34.799Z",
-      "restockedAt": "2026-08-28T06:56:40.517Z",
+      "updatedAt": "2026-09-21T12:15:33.973Z",
+      "restockedAt": "2026-08-28T00:00:00.000Z",
       "lastStockChangeAt": "2026-08-28T06:56:40.524Z"
     },
     {

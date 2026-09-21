@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { retailerApi } from '../../api/retailerApi';
 
-export default function SuppliersView() {
+export default function SuppliersView({ onViewPerformance }) {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -179,7 +179,11 @@ export default function SuppliersView() {
                       </span>
                     </td>
                     <td style={{ padding: '12px 15px', verticalAlign: 'middle', textAlign: 'center' }}>
-                      <button style={{ width: '30px', height: '30px', border: '1px solid #e5e7eb', borderRadius: '5px', background: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                      <button
+                        title="View Supplier Performance"
+                        onClick={() => onViewPerformance && onViewPerformance(s)}
+                        style={{ width: '30px', height: '30px', border: '1px solid #e5e7eb', borderRadius: '5px', background: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                      >
                         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                       </button>
                     </td>

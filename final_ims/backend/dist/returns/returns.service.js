@@ -61,11 +61,17 @@ let ReturnsService = class ReturnsService {
             throw new common_1.NotFoundException('Return request not found');
         }
         const existing = this.normalizeReturnRecord(items[index]);
+        const nextStatus = this.normalizeStatus(updateReturnDto.status, existing.status);
+        if (updateReturnDto.status && existing.status !== 'Pending') {
+            if (existing.status === nextStatus) {
+                throw new common_1.BadRequestException(`Return request ${id} is already ${existing.status}.`);
+            }
+            throw new common_1.BadRequestException(`Return request ${id} has already been processed as ${existing.status} and cannot be modified.`);
+        }
         const updated = this.buildReturnRecord(updateReturnDto, {
             existing: items[index],
             id: items[index].id,
         });
-        const nextStatus = this.normalizeStatus(updateReturnDto.status, existing.status);
         const shouldRestock = !existing.inventoryProcessedAt &&
             (nextStatus === 'Approved' || nextStatus === 'Exchanged');
         items[index] = this.normalizeReturnRecord({

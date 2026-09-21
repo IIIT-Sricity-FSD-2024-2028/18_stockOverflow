@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { retailerApi } from '../../api/retailerApi';
 
 export default function RetailerLayout({ activeView, setActiveView, children }) {
-  const { user, logout } = useAuth();
+  const { user, logout, switchStore } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const popoverRef = useRef(null);
 
   const viewTitles = {
     dashboard: 'Retailer Dashboard',
@@ -17,17 +21,24 @@ export default function RetailerLayout({ activeView, setActiveView, children }) 
     customers: 'Customers',
     billers: 'Billers',
     suppliers: 'Suppliers',
+    'supplier-performance': 'Supplier Performance Scorecard',
     reorder: 'Reorder Recommendations',
     'purchase-orders': 'Purchase Orders',
+    'po-products': 'Add Products to PO',
     returns: 'Purchase Return',
+    'subscription-plan': 'Subscription Plans & Billing',
     profile: 'Retailer Profile',
   };
 
-  const storeName =
-    user?.store ||
-    user?.profile?.businessName ||
-    user?.profile?.stores?.[0]?.name ||
-    "John's Retail Store";
+  const stores = Array.isArray(user?.profile?.stores) && user.profile.stores.length > 0
+    ? user.profile.stores.map((s, idx) => ({
+        id: s.code || s.storeId || s.id || `store-${idx + 1}`,
+        name: s.name || `Store ${idx + 1}`,
+      }))
+    : [{ id: user?.storeId || 'JOHN-S-STORE', name: user?.store || "John's Retail Store" }];
+
+  const currentStoreId = user?.currentStoreId || user?.storeId || stores[0]?.id;
+  const storeName = stores.find((s) => s.id === currentStoreId)?.name || user?.store || "John's Retail Store";
 
   const initials = user?.name
     ? user.name
@@ -36,7 +47,102 @@ export default function RetailerLayout({ activeView, setActiveView, children }) 
         .join('')
         .slice(0, 2)
         .toUpperCase()
-    : 'J';
+    : 'JO';
+
+  // Load real notifications from backend products & returns
+  useEffect(() => {
+    async function loadNotifications() {
+      try {
+        const [returnsRes, productsRes] = await Promise.all([
+          retailerApi.getReturns().catch(() => []),
+          retailerApi.getProducts().catch(() => []),
+        ]);
+
+        const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
+        const returnList = Array.isArray(returnsRes) ? returnsRes : [];
+        const prodList = Array.isArray(productsRes) ? productsRes : [];
+
+        const notifs = [];
+
+        // 1. Pending Returns
+        returnList.forEach((r) => {
+          const status = String(r.status || '').toLowerCase();
+          if (status === 'pending') {
+            const id = `return-${r.id || Math.random()}`;
+            if (!dismissed.includes(id)) {
+              notifs.push({
+                id,
+                type: 'return',
+                title: 'Return Request Pending',
+                msg: `Customer ${r.customer || 'Consumer'} requested return for ${r.product || 'item'}${r.qty ? ` (Qty: ${r.qty})` : ''}`,
+                time: r.date ? new Date(r.date).toLocaleDateString('en-IN') : 'Recent',
+                view: 'returns',
+              });
+            }
+          }
+        });
+
+        // 2. Low Stock Alerts
+        prodList.forEach((p) => {
+          const qty = Number(p.qty != null ? p.qty : (p.initialQty || 0));
+          const min = Number(p.min != null ? p.min : (p.minStockAlert != null ? p.minStockAlert : 10));
+          if (qty <= min) {
+            const id = `stock-${p.sku || p.id}`;
+            if (!dismissed.includes(id)) {
+              notifs.push({
+                id,
+                type: 'stock',
+                title: qty === 0 ? 'Out of Stock Alert' : 'Low Stock Alert',
+                msg: `${p.name || 'Product'} is at ${qty} units (Min Alert: ${min})`,
+                time: 'Inventory Alert',
+                view: 'low-stocks',
+              });
+            }
+          }
+        });
+
+        setNotifications(notifs);
+      } catch (err) {
+        console.warn('Could not load notifications in layout:', err);
+      }
+    }
+
+    loadNotifications();
+  }, [user, activeView]);
+
+  // Dismiss a single notification
+  const handleDismissNotif = (e, notifId) => {
+    e.stopPropagation();
+    const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
+    if (!dismissed.includes(notifId)) {
+      dismissed.push(notifId);
+      localStorage.setItem('so_dismissed_notifications', JSON.stringify(dismissed));
+    }
+    setNotifications((prev) => prev.filter((n) => n.id !== notifId));
+  };
+
+  // Clear all notifications
+  const handleClearAllNotifs = (e) => {
+    e.stopPropagation();
+    const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
+    notifications.forEach((n) => {
+      if (!dismissed.includes(n.id)) dismissed.push(n.id);
+    });
+    localStorage.setItem('so_dismissed_notifications', JSON.stringify(dismissed));
+    setNotifications([]);
+  };
+
+  // Close popovers on click outside
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target)) {
+        setIsProfileOpen(false);
+        setIsNotifOpen(false);
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, []);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
@@ -233,7 +339,7 @@ export default function RetailerLayout({ activeView, setActiveView, children }) 
               </button>
 
               <button
-                className={`sb-item ${activeView === 'suppliers' ? 'active' : ''}`}
+                className={`sb-item ${activeView === 'suppliers' || activeView === 'supplier-performance' ? 'active' : ''}`}
                 onClick={() => setActiveView('suppliers')}
               >
                 <span className="sb-icon">
@@ -277,7 +383,7 @@ export default function RetailerLayout({ activeView, setActiveView, children }) 
               </button>
 
               <button
-                className={`sb-item ${activeView === 'purchase-orders' ? 'active' : ''}`}
+                className={`sb-item ${activeView === 'purchase-orders' || activeView === 'po-products' ? 'active' : ''}`}
                 onClick={() => setActiveView('purchase-orders')}
               >
                 <span className="sb-icon">
@@ -307,6 +413,27 @@ export default function RetailerLayout({ activeView, setActiveView, children }) 
                   </svg>
                 </span>
                 <span className="sb-item-label">Purchase Return</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="sb-divider"></div>
+
+          {/* PLANS & BILLING */}
+          <div className="sb-group">
+            <div className="sb-group-label">Plans & Billing</div>
+            <div className="sb-menus">
+              <button
+                className={`sb-item ${activeView === 'subscription-plan' ? 'active' : ''}`}
+                onClick={() => setActiveView('subscription-plan')}
+              >
+                <span className="sb-icon">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+                    <polygon points="8 1 10.3 5.7 15.5 6.5 11.8 10.1 12.6 15.3 8 12.8 3.4 15.3 4.2 10.1 0.5 6.5 5.7 5.7 8 1" />
+                  </svg>
+                </span>
+                <span className="sb-item-label">Subscription Plan</span>
+                <span className="sb-dot-badge" style={{ background: '#4e7fd9', width: '7px', height: '7px', borderRadius: '50%', display: 'inline-block' }}></span>
               </button>
             </div>
           </div>
@@ -351,34 +478,138 @@ export default function RetailerLayout({ activeView, setActiveView, children }) 
             <div className="breadcrumb">
               Home / <span>{viewTitles[activeView] || 'Retailer Dashboard'}</span>
             </div>
-            <div className="date-badge" style={{ marginLeft: '12px' }}>
-              Store <strong style={{ marginLeft: '4px' }}>{storeName}</strong>
-              <svg style={{ marginLeft: '4px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="6,9 12,15 18,9" />
-              </svg>
+
+            {/* Interactive Store Switcher matching Vanilla */}
+            <div
+              id="retailerStoreSwitcherWrap"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '5px 10px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '10px',
+                background: '#fff',
+                marginLeft: '14px',
+              }}
+            >
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#6b7280' }}>Store</span>
+              <select
+                id="retailerStoreSwitcher"
+                value={currentStoreId}
+                onChange={(e) => switchStore(e.target.value)}
+                style={{
+                  border: 'none',
+                  outline: 'none',
+                  background: 'transparent',
+                  fontFamily: '"Nunito Sans", sans-serif',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: '#111827',
+                  cursor: 'pointer',
+                }}
+              >
+                {stores.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          <div className="topbar-right">
-            <div className="topbar-icon-btn">
+          <div className="topbar-right" ref={popoverRef} style={{ position: 'relative' }}>
+            {/* Notification Icon Button with live badge */}
+            <div
+              className="topbar-icon-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsNotifOpen(!isNotifOpen);
+                setIsProfileOpen(false);
+              }}
+              title="Notifications"
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.73 21a2 2 0 01-3.46 0" />
               </svg>
-              <span className="notif-dot"></span>
+              {notifications.length > 0 && <span className="notif-dot"></span>}
             </div>
 
+            {/* Notification Popover matching Vanilla */}
+            {isNotifOpen && (
+              <div
+                className="so-notif-popover open"
+                id="retailerNotifPopover"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="so-notif-head">
+                  <div className="so-notif-head-title">
+                    Notifications <span className="so-notif-badge">{notifications.length}</span>
+                  </div>
+                  {notifications.length > 0 && (
+                    <button className="so-notif-clear" onClick={handleClearAllNotifs}>
+                      Clear All
+                    </button>
+                  )}
+                </div>
+                <div className="so-notif-list">
+                  {notifications.length === 0 ? (
+                    <div className="so-notif-empty">🎉 All caught up! No unread notifications.</div>
+                  ) : (
+                    notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        className="so-notif-item"
+                        onClick={() => {
+                          setActiveView(n.view);
+                          setIsNotifOpen(false);
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <div className={`so-notif-icon ${n.type}`}>
+                          {n.type === 'return' ? '↩️' : '⚠️'}
+                        </div>
+                        <div className="so-notif-body">
+                          <div className="so-notif-title">{n.title}</div>
+                          <div className="so-notif-msg">{n.msg}</div>
+                          <div className="so-notif-time">{n.time}</div>
+                        </div>
+                        <button
+                          className="so-notif-close"
+                          title="Dismiss"
+                          onClick={(e) => handleDismissNotif(e, n.id)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Avatar Button */}
             <button
               className="topbar-avatar"
               id="topbarAvatar"
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsProfileOpen(!isProfileOpen);
+                setIsNotifOpen(false);
+              }}
               type="button"
             >
               {initials}
             </button>
 
+            {/* Profile Popover matching Vanilla */}
             {isProfileOpen && (
-              <div className="profile-popover open" id="profilePopover">
+              <div
+                className="profile-popover open"
+                id="profilePopover"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="profile-popover-head">
                   <div className="profile-popover-avatar">{initials}</div>
                   <div>
@@ -420,3 +651,4 @@ export default function RetailerLayout({ activeView, setActiveView, children }) 
     </div>
   );
 }
+

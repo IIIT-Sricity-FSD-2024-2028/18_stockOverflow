@@ -21,7 +21,7 @@ export default function InventoryView() {
         const data = await retailerApi.getProducts(user?.retailerId);
         setProducts(Array.isArray(data) ? data : []);
       } catch (e) {
-        console.error(e);
+        console.error('Failed to load products for inventory overview:', e);
       } finally {
         setLoading(false);
       }
@@ -30,14 +30,29 @@ export default function InventoryView() {
   }, [user]);
 
   const totalSKUs = products.length;
-  const totalUnits = products.reduce((acc, p) => acc + (Number(p.qty) || 0), 0);
+  const totalUnits = products.reduce((acc, p) => acc + (Number(p.qty || p.quantity) || 0), 0);
   const totalValue = products.reduce(
-    (acc, p) => acc + (Number(p.qty) || 0) * (Number(p.price) || 0),
+    (acc, p) => acc + (Number(p.qty || p.quantity) || 0) * (Number(p.price) || 0),
     0
   );
-  const lowStockCount = products.filter((p) => (Number(p.qty) || 0) <= (Number(p.min) || 10) && (Number(p.qty) || 0) > 0).length;
-  const outStockCount = products.filter((p) => (Number(p.qty) || 0) === 0).length;
-  const inStockCount = products.filter((p) => (Number(p.qty) || 0) > (Number(p.min) || 10)).length;
+
+  const lowStockProducts = products.filter(
+    (p) => (Number(p.qty || p.quantity) || 0) <= (Number(p.min) || 10) && (Number(p.qty || p.quantity) || 0) > 0
+  );
+  const outStockProducts = products.filter((p) => (Number(p.qty || p.quantity) || 0) === 0);
+  const inStockProducts = products.filter(
+    (p) => (Number(p.qty || p.quantity) || 0) > (Number(p.min) || 10)
+  );
+
+  const inStockUnits = inStockProducts.reduce((acc, p) => acc + (Number(p.qty || p.quantity) || 0), 0);
+  const lowStockUnits = lowStockProducts.reduce((acc, p) => acc + (Number(p.qty || p.quantity) || 0), 0);
+  const outStockUnits = outStockProducts.reduce((acc, p) => acc + (Number(p.qty || p.quantity) || 0), 0);
+
+  const inStockPct = totalUnits > 0 ? Math.round((inStockUnits / totalUnits) * 100) : 100;
+  const lowStockPct = totalUnits > 0 ? Math.round((lowStockUnits / totalUnits) * 100) : 0;
+  const outStockPct = totalUnits > 0 ? Math.max(0, 100 - inStockPct - lowStockPct) : 0;
+
+  const inStockRate = totalSKUs > 0 ? Math.round(((totalSKUs - outStockProducts.length) / totalSKUs) * 100) : 100;
 
   useEffect(() => {
     if (donutChartRef.current) {
@@ -50,9 +65,9 @@ export default function InventoryView() {
           datasets: [
             {
               data: [
-                inStockCount || (products.length === 0 ? 1 : 0),
-                lowStockCount,
-                outStockCount,
+                inStockUnits || (totalUnits === 0 ? 1 : 0),
+                lowStockUnits,
+                outStockUnits,
               ],
               backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
               borderWidth: 0,
@@ -75,7 +90,7 @@ export default function InventoryView() {
       const catMap = {};
       products.forEach((p) => {
         const cat = p.category || 'General';
-        catMap[cat] = (catMap[cat] || 0) + (Number(p.qty) || 0);
+        catMap[cat] = (catMap[cat] || 0) + (Number(p.qty || p.quantity) || 0);
       });
       const catLabels = Object.keys(catMap).length > 0 ? Object.keys(catMap) : ['General'];
       const catData = Object.keys(catMap).length > 0 ? Object.values(catMap) : [0];
@@ -109,17 +124,25 @@ export default function InventoryView() {
       if (donutChartInstance.current) donutChartInstance.current.destroy();
       if (barChartInstance.current) barChartInstance.current.destroy();
     };
-  }, [products, inStockCount, lowStockCount, outStockCount]);
+  }, [products, inStockUnits, lowStockUnits, outStockUnits]);
 
-  const recentMovements = products.slice(0, 5).map((p) => ({
-    name: p.name,
-    sku: p.sku || 'SKU',
-    type: Number(p.qty || 0) <= Number(p.min || 10) ? 'out' : 'in',
-    typeText: Number(p.qty || 0) <= Number(p.min || 10) ? 'Low Stock' : 'Active Stock',
-    qty: `${p.qty || 0}`,
-    value: `₹${((Number(p.qty) || 0) * (Number(p.price) || 0)).toLocaleString('en-IN')}`,
-    date: p.restockedAt ? new Date(p.restockedAt).toLocaleDateString() : p.updatedAt ? new Date(p.updatedAt).toLocaleDateString() : 'Recent',
-  }));
+  const recentMovements = products.slice(0, 6).map((p) => {
+    const qty = Number(p.qty || p.quantity) || 0;
+    const isLow = qty <= (Number(p.min) || 10);
+    return {
+      name: p.name,
+      sku: p.sku || 'SKU',
+      type: isLow ? 'out' : 'in',
+      typeText: isLow ? 'Low Stock' : 'Active Stock',
+      qty: `${qty}`,
+      value: `₹${(qty * (Number(p.price) || 0)).toLocaleString('en-IN')}`,
+      date: p.restockedAt
+        ? new Date(p.restockedAt).toLocaleDateString()
+        : p.updatedAt
+        ? new Date(p.updatedAt).toLocaleDateString()
+        : 'Recent',
+    };
+  });
 
   return (
     <div className="page-wrap" style={{ padding: '24px 28px 48px', flex: 1, overflow: 'auto' }}>
@@ -138,7 +161,11 @@ export default function InventoryView() {
       {/* ALERT BANNER */}
       {!alertDismissed && (
         <div className="alert-banner" style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '8px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#9a3412', marginBottom: '18px', fontFamily: "'Nunito Sans', sans-serif" }}>
-          <span>⚠️ <strong>Notice:</strong> 0 items are critically low on stock. All SKU replenishment thresholds are optimal.</span>
+          <span>
+            ⚠️ <strong>Notice:</strong> {lowStockProducts.length + outStockProducts.length > 0
+              ? `${lowStockProducts.length + outStockProducts.length} items require replenishment or attention.`
+              : 'All SKU replenishment thresholds are optimal.'}
+          </span>
           <span style={{ marginLeft: 'auto', cursor: 'pointer', opacity: 0.7 }} onClick={() => setAlertDismissed(true)}>✕</span>
         </div>
       )}
@@ -153,8 +180,8 @@ export default function InventoryView() {
             <div className="metric-label" style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '4px' }}>Total SKUs</div>
             <div className="metric-value" style={{ fontSize: '22px', fontWeight: 800, color: '#092c4c' }}>{totalSKUs}</div>
             <div className="metric-footer" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '11.5px' }}>
-              <span className="metric-badge badge-up" style={{ padding: '2px 6px', borderRadius: '4px', fontWeight: 700, fontSize: '10.5px', background: 'var(--success-light)', color: 'var(--success-dark)' }}>+4.5%</span>
-              <span className="metric-sub" style={{ color: 'var(--text-muted)' }}>vs last mo</span>
+              <span className="metric-badge badge-up" style={{ padding: '2px 6px', borderRadius: '4px', fontWeight: 700, fontSize: '10.5px', background: 'var(--success-light)', color: 'var(--success-dark)' }}>Active</span>
+              <span className="metric-sub" style={{ color: 'var(--text-muted)' }}>catalog SKUs</span>
             </div>
           </div>
         </div>
@@ -167,8 +194,8 @@ export default function InventoryView() {
             <div className="metric-label" style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '4px' }}>Inventory Value</div>
             <div className="metric-value" style={{ fontSize: '22px', fontWeight: 800, color: '#092c4c' }}>₹{totalValue.toLocaleString('en-IN')}</div>
             <div className="metric-footer" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '11.5px' }}>
-              <span className="metric-badge badge-up" style={{ padding: '2px 6px', borderRadius: '4px', fontWeight: 700, fontSize: '10.5px', background: 'var(--success-light)', color: 'var(--success-dark)' }}>+8.2%</span>
-              <span className="metric-sub" style={{ color: 'var(--text-muted)' }}>asset value</span>
+              <span className="metric-badge badge-up" style={{ padding: '2px 6px', borderRadius: '4px', fontWeight: 700, fontSize: '10.5px', background: 'var(--success-light)', color: 'var(--success-dark)' }}>Asset</span>
+              <span className="metric-sub" style={{ color: 'var(--text-muted)' }}>total value</span>
             </div>
           </div>
         </div>
@@ -179,10 +206,12 @@ export default function InventoryView() {
           </div>
           <div className="metric-body">
             <div className="metric-label" style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '4px' }}>Low Stock Alerts</div>
-            <div className="metric-value" style={{ fontSize: '22px', fontWeight: 800, color: '#092c4c' }}>{lowStockCount}</div>
+            <div className="metric-value" style={{ fontSize: '22px', fontWeight: 800, color: '#092c4c' }}>{lowStockProducts.length}</div>
             <div className="metric-footer" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '11.5px' }}>
-              <span className="metric-badge badge-neutral" style={{ padding: '2px 6px', borderRadius: '4px', fontWeight: 700, fontSize: '10.5px', background: '#f1f5f9', color: '#475569' }}>Optimal</span>
-              <span className="metric-sub" style={{ color: 'var(--text-muted)' }}>0 critical</span>
+              <span className="metric-badge badge-neutral" style={{ padding: '2px 6px', borderRadius: '4px', fontWeight: 700, fontSize: '10.5px', background: '#f1f5f9', color: '#475569' }}>
+                {lowStockProducts.length > 0 ? 'Warning' : 'Optimal'}
+              </span>
+              <span className="metric-sub" style={{ color: 'var(--text-muted)' }}>{outStockProducts.length} out of stock</span>
             </div>
           </div>
         </div>
@@ -193,10 +222,10 @@ export default function InventoryView() {
           </div>
           <div className="metric-body">
             <div className="metric-label" style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '4px' }}>In-Stock Rate</div>
-            <div className="metric-value" style={{ fontSize: '22px', fontWeight: 800, color: '#092c4c' }}>100%</div>
+            <div className="metric-value" style={{ fontSize: '22px', fontWeight: 800, color: '#092c4c' }}>{inStockRate}%</div>
             <div className="metric-footer" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '11.5px' }}>
               <span className="metric-badge badge-up" style={{ padding: '2px 6px', borderRadius: '4px', fontWeight: 700, fontSize: '10.5px', background: 'var(--success-light)', color: 'var(--success-dark)' }}>Healthy</span>
-              <span className="metric-sub" style={{ color: 'var(--text-muted)' }}>64 units ready</span>
+              <span className="metric-sub" style={{ color: 'var(--text-muted)' }}>{totalUnits} units ready</span>
             </div>
           </div>
         </div>
@@ -220,19 +249,19 @@ export default function InventoryView() {
                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#22c55e' }}></span> In Stock
                 </span>
-                <strong>82% (52 units)</strong>
+                <strong>{inStockPct}% ({inStockUnits} units)</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#f59e0b' }}></span> Low Stock
                 </span>
-                <strong>13% (8 units)</strong>
+                <strong>{lowStockPct}% ({lowStockUnits} units)</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#ef4444' }}></span> Out of Stock
                 </span>
-                <strong>5% (4 units)</strong>
+                <strong>{outStockPct}% ({outStockUnits} units)</strong>
               </div>
             </div>
           </div>
@@ -270,20 +299,28 @@ export default function InventoryView() {
             </tr>
           </thead>
           <tbody>
-            {recentMovements.map((m, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '10px 16px', fontWeight: 700, color: '#092c4c' }}>{m.name}</td>
-                <td style={{ padding: '10px 16px', color: 'var(--text-muted)' }}>{m.sku}</td>
-                <td style={{ padding: '10px 16px' }}>
-                  <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, background: m.type === 'in' ? 'var(--success-light)' : m.type === 'out' ? 'var(--danger-light)' : 'var(--purple-light)', color: m.type === 'in' ? 'var(--success-dark)' : m.type === 'out' ? 'var(--danger-dark)' : 'var(--purple)' }}>
-                    {m.typeText}
-                  </span>
+            {recentMovements.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>
+                  No stock items found.
                 </td>
-                <td style={{ padding: '10px 16px', fontWeight: 700, color: m.type === 'in' ? '#16a34a' : '#dc2626' }}>{m.qty}</td>
-                <td style={{ padding: '10px 16px', fontWeight: 700 }}>{m.value}</td>
-                <td style={{ padding: '10px 16px', color: '#64748b' }}>{m.date}</td>
               </tr>
-            ))}
+            ) : (
+              recentMovements.map((m, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '10px 16px', fontWeight: 700, color: '#092c4c' }}>{m.name}</td>
+                  <td style={{ padding: '10px 16px', color: 'var(--text-muted)' }}>{m.sku}</td>
+                  <td style={{ padding: '10px 16px' }}>
+                    <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, background: m.type === 'in' ? 'var(--success-light)' : m.type === 'out' ? 'var(--danger-light)' : 'var(--purple-light)', color: m.type === 'in' ? 'var(--success-dark)' : m.type === 'out' ? 'var(--danger-dark)' : 'var(--purple)' }}>
+                      {m.typeText}
+                    </span>
+                  </td>
+                  <td style={{ padding: '10px 16px', fontWeight: 700, color: m.type === 'in' ? '#16a34a' : '#dc2626' }}>{m.qty}</td>
+                  <td style={{ padding: '10px 16px', fontWeight: 700 }}>{m.value}</td>
+                  <td style={{ padding: '10px 16px', color: '#646b72' }}>{m.date}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

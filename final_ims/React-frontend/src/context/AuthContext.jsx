@@ -71,8 +71,24 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const switchStore = (storeId) => {
+    if (!user) return;
+    const stores = Array.isArray(user.profile?.stores) ? user.profile.stores : [];
+    const matched = stores.find((s) => (s.code || s.storeId || s.id) === storeId);
+    const storeName = matched ? matched.name : user.store;
+
+    const updated = {
+      ...user,
+      currentStoreId: storeId,
+      storeId: storeId,
+      store: storeName,
+    };
+    localStorage.setItem('so_session', JSON.stringify(updated));
+    setUser(updated);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, switchStore }}>
       {children}
     </AuthContext.Provider>
   );

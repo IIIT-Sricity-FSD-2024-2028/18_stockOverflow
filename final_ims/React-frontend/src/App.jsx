@@ -17,11 +17,16 @@ import ReorderView from './components/retailer/ReorderView';
 import PurchaseOrdersView from './components/retailer/PurchaseOrdersView';
 import ReturnsView from './components/retailer/ReturnsView';
 import ProfileView from './components/retailer/ProfileView';
+import SubscriptionPlanView from './components/retailer/SubscriptionPlanView';
+import SupplierPerformanceView from './components/retailer/SupplierPerformanceView';
+import POProductsView from './components/retailer/POProductsView';
 
 export default function App() {
   const { user } = useAuth();
   const [activeView, setActiveView] = useState('dashboard');
   const [editingProduct, setEditingProduct] = useState(null);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [selectedSupplierForPO, setSelectedSupplierForPO] = useState(null);
 
   // If not authenticated, render the converted Landing Page
   if (!user) {
@@ -87,7 +92,19 @@ export default function App() {
       )}
 
       {activeView === 'suppliers' && (
-        <SuppliersView />
+        <SuppliersView
+          onViewPerformance={(supplier) => {
+            setSelectedSupplier(supplier);
+            setActiveView('supplier-performance');
+          }}
+        />
+      )}
+
+      {activeView === 'supplier-performance' && (
+        <SupplierPerformanceView
+          supplier={selectedSupplier}
+          onBack={() => setActiveView('suppliers')}
+        />
       )}
 
       {activeView === 'reorder' && (
@@ -95,7 +112,20 @@ export default function App() {
       )}
 
       {activeView === 'purchase-orders' && (
-        <PurchaseOrdersView />
+        <PurchaseOrdersView
+          onBrowseCatalogue={(sup) => {
+            setSelectedSupplierForPO(sup);
+            setActiveView('po-products');
+          }}
+        />
+      )}
+
+      {activeView === 'po-products' && (
+        <POProductsView
+          supplier={selectedSupplierForPO}
+          onBack={() => setActiveView('purchase-orders')}
+          onAddProducts={() => setActiveView('purchase-orders')}
+        />
       )}
 
       {activeView === 'returns' && (
@@ -104,6 +134,10 @@ export default function App() {
 
       {activeView === 'profile' && (
         <ProfileView />
+      )}
+
+      {activeView === 'subscription-plan' && (
+        <SubscriptionPlanView onNavigate={setActiveView} />
       )}
     </RetailerLayout>
   );
