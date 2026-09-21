@@ -1663,3 +1663,37 @@
 [2026-09-01T09:49:22.097Z] [GET] /api/suppliers 304 - 1ms - IP: ::1
 [2026-09-01T09:49:22.098Z] [GET] /api/platform-revenue/subscriptions/active?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 0ms - IP: ::1
 [2026-09-01T09:49:22.100Z] [GET] /api/platform-revenue/usage?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7&role=retailer 200 - 1ms - IP: ::1
+[2026-09-01T10:08:46.450Z] [POST] /api/users/login 201 - 3ms - IP: ::1
+[2026-09-01T10:08:46.504Z] [GET] /api/admin/dashboard/stats 304 - 11ms - IP: ::1
+[2026-09-01T10:08:46.513Z] [GET] /api/transactions?limit=5 304 - 0ms - IP: ::1
+[2026-09-01T10:08:46.513Z] [AUDIT] Action invoked on route: [GET] /api/transactions?limit=5
+[2026-09-01T10:13:03.799Z] [GET] /api/admin/users 200 - 16ms - IP: ::1
+[2026-09-01T10:13:38.823Z] [GET] /api/platform-revenue/summary 304 - 1ms - IP: ::1
+[2026-09-01T10:18:33.233Z] [GET] /api/platform-revenue/summary 304 - 1ms - IP: ::1
+[2026-09-01T10:19:09.400Z] [POST] /api/users/login 201 - 8ms - IP: ::1
+[2026-09-01T10:19:09.422Z] [GET] /api/users/8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 2ms - IP: ::1
+[2026-09-01T10:19:09.423Z] [GET] /api/users/8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 1ms - IP: ::1
+[2026-09-01T10:19:09.426Z] [GET] /api/users/8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 1ms - IP: ::1
+[2026-09-01T10:19:09.428Z] [GET] /api/platform-revenue/subscriptions/active?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 1ms - IP: ::1
+[2026-09-01T10:19:09.442Z] [GET] /api/returns?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 2ms - IP: ::1
+[2026-09-01T10:19:09.443Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
+[2026-09-01T10:19:09.443Z] [GET] /api/suppliers 304 - 0ms - IP: ::1
+[2026-09-01T10:19:09.445Z] [GET] /api/products?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 2ms - IP: ::1
+[2026-09-01T10:19:09.447Z] [GET] /api/platform-revenue/usage?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7&role=retailer 200 - 1ms - IP: ::1
+[2026-09-01T10:19:09.448Z] [GET] /api/returns?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 0ms - IP: ::1
+[2026-09-01T10:19:09.449Z] [GET] /api/platform-revenue/subscriptions/active?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 0ms - IP: ::1
+[2026-09-01T10:19:09.450Z] [GET] /api/products?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 0ms - IP: ::1
+[2026-09-01T10:19:09.451Z] [GET] /api/customers?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 1ms - IP: ::1
+[2026-09-01T10:19:09.451Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2
+[2026-09-01T10:19:09.452Z] [GET] /api/transactions?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 1ms - IP: ::1
+[2026-09-01T10:19:09.452Z] [GET] /api/purchase-orders?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 0ms - IP: ::1
+[2026-09-01T10:19:09.453Z] [GET] /api/platform-revenue/subscriptions/active?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 0ms - IP: ::1
+[2026-09-01T10:19:09.455Z] [GET] /api/platform-revenue/usage?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7&role=retailer 200 - 1ms - IP: ::1
+[2026-09-01T10:20:38.644Z] [GET] /api/products?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 2ms - IP: ::1
+[2026-09-01T10:20:38.646Z] [GET] /api/users/8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 1ms - IP: ::1
+[2026-09-01T10:20:38.647Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-09-01T10:20:38.649Z] [GET] /api/users/8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 1ms - IP: ::1
+[2026-09-01T10:20:38.651Z] [GET] /api/returns?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 1ms - IP: ::1
+[2026-09-01T10:20:38.652Z] [GET] /api/products?retailerId=a81acfc2-f8e5-4d80-8071-e4055d110b00&storeId=RETAILE2 304 - 1ms - IP: ::1
+[2026-09-01T10:20:38.653Z] [GET] /api/platform-revenue/subscriptions/active?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 1ms - IP: ::1
+[2026-09-01T10:20:38.654Z] [GET] /api/platform-revenue/subscriptions/active?userId=8afae6ea-3ef9-4cd4-a04b-07ec763b5ca7 304 - 1ms - IP: ::1
