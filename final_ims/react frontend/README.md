@@ -1,61 +1,62 @@
-# StockOverflow - Customer Module (Complete React Implementation)
+# StockOverflow - Consumer Landing Page (React Implementation)
 
-This directory contains the full, modular React conversion of the entire **Customer Module** for the StockOverflow Inventory Management System.
+This directory contains the full React conversion of the **Consumer Landing Page** for the StockOverflow Inventory Management System.
 
 ---
 
-## 🏗️ Architecture & Component Hierarchy
+## 🏗️ Architecture & Component Decomposition
 
 ```
-<App /> (Root Application State & SPA Router)
-  │
-  ├── <Navbar /> (Sticky Header with Search, Store Location Selector, Cart Badge & User Menu)
-  │     └── <LocationWidget /> (Triggers StoreModal)
-  │
-  ├── Dynamic Page Views (Single Page Application Routing):
-  │     ├── <ConsumerLandingPage />    (Home: Hero banner, Category chips, Featured Products)
-  │     ├── <ProductSearchPage />      (Full Search: Multi-facet filters for Brand, Stock, Category & Sorting)
-  │     ├── <ProductDetailPage />      (Detail: Image gallery, Specs table, Store stock, Reviews, Recommendations)
-  │     ├── <CartPage />               (Cart: Quantity steppers, line totals, cost summary, checkout CTA)
-  │     ├── <CheckoutPage />           (Checkout: Pickup vs Delivery, Contact details, Payment selection)
-  │     ├── <OrderConfirmationPage />  (Invoice: Printable receipt card, Save to PDF, Email & WhatsApp)
-  │     ├── <OrdersPage />             (Orders: Pending holds, Delivered orders, Review/Return/Invoice links)
-  │     ├── <ReturnManagementPage />   (RMA: Order lookup, item selector, reason dropdown, photo upload)
-  │     ├── <FeedbackPage />           (Reviews: 1-5 star picker, category tags, detailed comments)
-  │     └── <RestockAlertPage />       (Alerts: Subscribe for restock notifications on out-of-stock items)
-  │
-  ├── Global Modals & Overlays:
-  │     ├── <StoreModal />             (Physical store location switcher)
-  │     ├── <ReservationModal />       (Direct in-store hold dialog with stock validation)
-  │     └── <NotificationToast />      (Animated slide-in feedback alerts)
-  │
-  └── <Footer /> (Brand links and metadata)
+<ConsumerLandingPage /> (Parent / Common State Container)
+  ├── <Navbar />
+  │     ├── <LocationWidget />  (Child: invokes onLocationClick)
+  │     ├── Nav Links (renders dynamic Cart item count badge)
+  │     └── Logout Action       (Child: invokes onLogout callback)
+  ├── <HeroSection />           (Child: invokes onBrowseClick callback)
+  ├── <CategoryFilter />        (Child: invokes onSelectCategory & onSearchChange callbacks)
+  ├── <ProductGrid />           (Child: renders list of ProductCards)
+  │     └── <ProductCard />     (Child: invokes onViewProduct & onAddToCart callbacks)
+  ├── <StoreModal />            (Child: location picker, invokes onSelectStore & onClose callbacks)
+  ├── <NotificationToast />     (Child: displays alert feedback)
+  └── <Footer />                (Child: displays metadata and copyright)
 ```
 
 ---
 
-## 🔑 Key Features Implemented (in Layman's Terms)
+## 🔑 Key Concepts Implemented
 
-1. **Single Page Application (SPA) Router**:
-   - Smooth, instantaneous view transitions without page reloads.
-2. **Lifting State Up**:
-   - Cart item count and cart items are shared across Navbar, Cart, Checkout, and Confirmation.
-3. **Printable Invoice & PDF Generation**:
-   - One-click `window.print()` formatting for official tax receipts on the Confirmation page and in Order history.
-4. **Multi-Store Inventory Scoping**:
-   - Selecting a fulfillment store (`Downtown Store`, `East Coast Hub`, `Global Hub`) dynamically filters available product stock.
-5. **Verified Customer Feedback & Star Ratings**:
-   - 1–5 star ratings, feedback categories, review distribution breakdown, and review submission directly to the backend.
-6. **Return Management (RMA Claim Portal)**:
-   - Order search, item picker, return reasons, and evidence attachment.
-7. **Out-of-Stock Restock Alerts**:
-   - Email/SMS notification subscription for back-in-stock items.
+### 1. Lifting State Up (Shared Data in `ConsumerLandingPage`)
+- **`cart` & `cartCount`**: Shared between `<ProductCard />` (which adds items) and `<Navbar />` (which renders the live badge counter).
+- **`selectedCategory`**: Filter state shared between `<CategoryFilter />` (which changes active category) and `<ProductGrid />` (which displays only matching products).
+- **`searchQuery`**: Real-time keyword filter shared between `<CategoryFilter />` and `<ProductGrid />`.
+- **`selectedStore`**: Active fulfillment center shared between `<Navbar />` (`LocationWidget`) and `<StoreModal />`.
+- **`products`**: Catalog array loaded from the NestJS backend API (`/api/products`) with seamless fallback to `mockProducts.js` and `localStorage`.
+
+### 2. Props Data Flow (Parent to Child)
+- `<Navbar cartCount={cartCount} selectedStore={selectedStore} onLocationClick={...} onLogout={...} />`
+- `<HeroSection onBrowseClick={...} />`
+- `<CategoryFilter categories={categories} selectedCategory={selectedCategory} onSelectCategory={...} searchQuery={searchQuery} onSearchChange={...} totalCount={...} />`
+- `<ProductGrid products={filteredProducts} loading={loading} onViewProduct={...} onAddToCart={...} selectedCategory={selectedCategory} />`
+- `<ProductCard product={product} onViewProduct={...} onAddToCart={...} />`
+- `<StoreModal isOpen={isStoreModalOpen} currentStore={selectedStore} stores={stores} onSelectStore={...} onClose={...} />`
+- `<NotificationToast message={toastMessage} visible={!!toastMessage} />`
+- `<Footer companyName="StockOverflow" year={2026} />`
+
+### 3. Child-to-Parent Communication (Callbacks)
+- **`onSelectCategory(category)`**: Invoked by `<CategoryFilter />` button clicks to update parent filter state.
+- **`onSearchChange(text)`**: Invoked by `<CategoryFilter />` input box to update parent query state.
+- **`onAddToCart(product)`**: Invoked by `<ProductCard />` "+ Cart" button to add product to cart, update badge count, persist to localStorage, and display a confirmation toast.
+- **`onViewProduct(sku)`**: Invoked by `<ProductCard />` "View Details" button to store SKU in localStorage and notify user.
+- **`onLocationClick()`**: Invoked by `<LocationWidget />` to trigger opening the store modal in the parent container.
+- **`onSelectStore(storeName)`**: Invoked by `<StoreModal />` to update selected store location in the parent.
+- **`onLogout()`**: Invoked by `<Navbar />` to clear session and reset user state.
+- **`onBrowseClick()`**: Invoked by `<HeroSection />` to smoothly scroll down to the product catalog grid.
 
 ---
 
 ## 🚀 How to Run
 
-1. Navigate to this directory:
+1. Navigate to this folder:
    ```bash
    cd "react frontend"
    ```
