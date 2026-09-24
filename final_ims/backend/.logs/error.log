@@ -132,3 +132,7 @@
 [2026-09-21T13:10:59.755Z] [ERROR] PUT /api/returns/RET-003?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 404 - Return request not found
 [2026-09-21T13:12:08.953Z] [ERROR] PUT /api/returns/RET-003?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 404 - Return request not found
 [2026-09-21T13:13:38.668Z] [ERROR] PUT /api/returns/RET-003?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 404 - Return request not found
+[2026-09-24T16:48:13.183Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-09-24T16:48:13.239Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-09-24T16:50:30.798Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-09-24T16:50:30.849Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
