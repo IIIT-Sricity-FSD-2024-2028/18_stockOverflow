@@ -1,0 +1,129 @@
+<div class="section" id="sec-profile">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Supplier Profile</div>
+          <div class="page-sub">Manage your business info, contact details and branding</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="saveProfile()">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="2,7 5.5,10.5 11,3.5"/></svg>
+            Save Changes
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">
+            <div class="card-icon" style="background:#eef3fc"><svg viewBox="0 0 13 13" fill="none" stroke="#2e6bc5" stroke-width="1.4"><rect x="1" y="1" width="11" height="11" rx="1.5"/></svg></div>
+            Business Information
+          </div>
+        </div>
+        <div style="padding:20px">
+          <div class="fg fg-2">
+            <div class="field"><label class="field-label">Supplier Name <span class="req">*</span></label><input type="text" value="" id="p-name"/></div>
+            <div class="field"><label class="field-label">Supplier Code</label><input type="text" value="" readonly style="background:#f9fafb" id="p-code"/></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="field"><label class="field-label">Business Email <span class="req">*</span></label><input type="email" value="" id="p-email"/></div>
+            <div class="field"><label class="field-label">Phone</label><input type="tel" value="" id="p-phone"/></div>
+          </div>
+          <div class="fg fg-3">
+            <div class="field"><label class="field-label">Category</label><select id="p-cat"><option selected>Electronics</option><option>Computers</option><option>Fashion</option><option>Furniture</option><option>Food & Beverage</option><option>Appliances</option><option>Mobile</option><option>Sports</option><option>Beauty</option><option>Mixed</option></select></div>
+            <div class="field"><label class="field-label">State</label><select id="p-state"><option>Gujarat</option><option>Maharashtra</option><option selected>Uttar Pradesh</option><option>Delhi</option><option>Karnataka</option></select></div>
+            <div class="field"><label class="field-label">Payment Terms</label><select id="p-terms"><option selected>Net 30</option><option>Net 15</option><option>Net 45</option><option>COD</option><option>Prepaid</option></select></div>
+          </div>
+          <div class="fg fg-1">
+            <div class="field"><label class="field-label">Address</label><input type="text" value="" id="p-addr"/></div>
+          </div>
+          <div class="fg fg-2">
+            <div class="field"><label class="field-label">Website</label><input type="url" value="" id="p-web"/></div>
+            <div class="field"><label class="field-label">GST Number</label><input type="text" value="" id="p-gst"/></div>
+          </div>
+          <div class="fg fg-1">
+            <div class="field"><label class="field-label">About / Description</label><textarea id="p-desc" style="min-height:70px"></textarea></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">
+            <div class="card-icon" style="background:#dcfce7"><svg viewBox="0 0 13 13" fill="none" stroke="#22c55e" stroke-width="1.4"><circle cx="6.5" cy="4.5" r="2.5"/><path d="M1 12c0-3 2.46-5 5.5-5s5.5 2 5.5 5"/></svg></div>
+            Contact Person
+          </div>
+        </div>
+        <div style="padding:20px">
+          <div class="fg fg-3">
+            <div class="field"><label class="field-label">Full Name <span class="req">*</span></label><input type="text" value="" id="p-contact-name"/></div>
+            <div class="field"><label class="field-label">Designation</label><input type="text" value="" id="p-contact-title"/></div>
+            <div class="field"><label class="field-label">Direct Email</label><input type="email" value="" id="p-contact-email"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SUPPLIER DOCUMENTS & CERTIFICATIONS ══ -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">
+            <div class="card-icon" style="background:#fef3c7">
+              <svg viewBox="0 0 13 13" fill="none" stroke="#f59e0b" stroke-width="1.4"><path d="M7 1.5H3a1 1 0 00-1 1v8.5a1 1 0 001 1h7a1 1 0 001-1V5.5L7 1.5z"/><polyline points="7,1.5 7,5.5 11,5.5"/></svg>
+            </div>
+            Business Documents & Certifications (File Upload)
+          </div>
+        </div>
+        <div style="padding:20px">
+          <div class="fg fg-3">
+            <div class="field">
+              <label class="field-label">Document Type <span class="req">*</span></label>
+              <select id="doc-type-select">
+                <option value="GST Registration Certificate">GST Registration Certificate</option>
+                <option value="Trade License">Trade License</option>
+                <option value="ISO / Quality Compliance Certificate">ISO / Quality Compliance Certificate</option>
+                <option value="Product Specification Sheet">Product Specification Sheet</option>
+                <option value="Bank Authorization Letter">Bank Authorization Letter</option>
+                <option value="General Certification">General Certification</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">Select File (PDF, PNG, JPG, DOCX, CSV - Max 5MB) <span class="req">*</span></label>
+              <input type="file" id="doc-file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.docx,.csv" style="height:40px;padding:6px 12px" />
+            </div>
+            <div class="field" style="justify-content:flex-end">
+              <label class="field-label">&nbsp;</label>
+              <button class="btn btn-primary" onclick="uploadSupplierDocument()" id="doc-upload-btn" type="button">
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 10V2.5M6.5 2.5L3.5 5.5M6.5 2.5L9.5 5.5"/><line x1="2" y1="11" x2="11" y2="11"/></svg>
+                Upload Document
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-top:20px">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600;margin-bottom:10px;color:var(--text)">
+              Uploaded Documents & Certifications
+            </div>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>Document Type</th>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Uploaded Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="supplierDocsBody">
+                  <tr>
+                    <td colspan="5" style="padding:16px;text-align:center;color:var(--text-3)">
+                      No documents uploaded yet.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PRODUCTS ══ -->
+    

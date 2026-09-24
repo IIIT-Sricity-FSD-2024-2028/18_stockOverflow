@@ -1,0 +1,37 @@
+<div class="section" id="sec-products">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Product Catalog</div>
+          <div class="page-sub">Manage products you supply to retailers</div>
+        </div>
+        <div class="page-actions">
+          <div class="search-wrap">
+            <div class="search-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L13 13"/></svg></div>
+            <input type="text" placeholder="Search products…" oninput="filterProducts(this.value)" style="padding-left:34px"/>
+          </div>
+          <button class="btn btn-primary" onclick="openProductModal()">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
+            Add Product
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table class="tbl" id="prodTable">
+            <thead><tr>
+              <th class="tbl-check"><input type="checkbox"/></th>
+              <th>SKU</th><th>Product Name</th><th>Category</th><th>Unit Price</th><th>Min Order</th><th>Stock</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody id="prodBody"></tbody>
+          </table>
+          <div id="prodEmpty" class="empty" style="display:none">
+            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M22 4L40 13.5v17L22 40 4 30.5v-17L22 4z"/></svg>
+            <div class="empty-title">No products yet</div>
+            <div class="empty-sub">Add your first product to start receiving orders from retailers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PURCHASE ORDERS ══ -->
+    

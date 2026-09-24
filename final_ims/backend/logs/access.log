@@ -1840,3 +1840,181 @@
 [2026-09-24T16:50:30.853Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
 [2026-09-24T16:50:30.855Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::1
 [2026-09-24T16:50:30.858Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-09-24T18:18:06.266Z] [POST] /api/users/login 201 - 21ms - IP: ::1
+[2026-09-24T18:18:06.537Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:18:06.545Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d 200 - 9ms - IP: ::1
+[2026-09-24T18:18:06.645Z] [GET] /api/retailers 200 - 2ms - IP: ::1
+[2026-09-24T18:18:06.658Z] [GET] /api/purchase-orders 200 - 5ms - IP: ::1
+[2026-09-24T18:18:06.690Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:18:06.694Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 200 - 4ms - IP: ::1
+[2026-09-24T18:18:31.907Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:18:31.910Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 3ms - IP: ::1
+[2026-09-24T18:40:38.197Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:40:38.200Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 3ms - IP: ::1
+[2026-09-24T18:40:38.201Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:40:38.203Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d 304 - 2ms - IP: ::1
+[2026-09-24T18:40:38.275Z] [GET] /api/retailers 304 - 1ms - IP: ::1
+[2026-09-24T18:40:38.282Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:40:38.365Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:40:38.366Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 1ms - IP: ::1
+[2026-09-24T18:41:19.329Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:41:19.331Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 2ms - IP: ::1
+[2026-09-24T18:42:19.493Z] [GET] /api/users/0ccceb67-958d-4957-9728-e023994a8e8d 200 - 9ms - IP: ::1
+[2026-09-24T18:50:05.767Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:50:05.776Z] [GET] /api/suppliers/sup-1789751490622 404 - 9ms - IP: ::1
+[2026-09-24T18:50:05.778Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:50:05.783Z] [GET] /api/suppliers/sup-1789751490622 404 - 5ms - IP: ::1
+[2026-09-24T18:50:05.785Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:50:05.794Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 9ms - IP: ::1
+[2026-09-24T18:50:05.802Z] [GET] /api/purchase-orders 304 - 3ms - IP: ::1
+[2026-09-24T18:50:05.807Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:50:05.814Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 7ms - IP: ::1
+[2026-09-24T18:50:05.820Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:50:27.905Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:50:27.909Z] [GET] /api/suppliers/sup-1789751490622 404 - 4ms - IP: ::1
+[2026-09-24T18:50:27.911Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:50:27.914Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:50:27.919Z] [GET] /api/suppliers/sup-1789751490622 404 - 5ms - IP: ::1
+[2026-09-24T18:50:27.923Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:50:27.928Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 5ms - IP: ::1
+[2026-09-24T18:50:27.932Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:50:27.934Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:50:27.938Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 4ms - IP: ::1
+[2026-09-24T18:56:37.432Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:56:37.434Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d 304 - 2ms - IP: ::1
+[2026-09-24T18:56:37.981Z] [GET] /api/retailers 304 - 1ms - IP: ::1
+[2026-09-24T18:56:38.029Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:56:38.102Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:56:38.103Z] [GET] /api/suppliers/0ccceb67-958d-4957-9728-e023994a8e8d/documents 304 - 1ms - IP: ::1
+[2026-09-24T18:56:57.530Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:56:57.532Z] [GET] /api/suppliers/sup-1789751490622 404 - 3ms - IP: ::1
+[2026-09-24T18:56:57.533Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:56:57.533Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:56:57.534Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 1ms - IP: ::1
+[2026-09-24T18:56:57.539Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:56:57.536Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:56:57.537Z] [GET] /api/suppliers/sup-1789751490622 404 - 1ms - IP: ::1
+[2026-09-24T18:56:57.540Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:56:57.542Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T18:58:06.339Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:58:06.341Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T18:58:06.342Z] [GET] /api/purchase-orders 304 - 0ms - IP: ::1
+[2026-09-24T18:58:06.343Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:58:06.344Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 1ms - IP: ::1
+[2026-09-24T18:58:06.345Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:58:06.346Z] [GET] /api/suppliers/sup-1789751490622 404 - 1ms - IP: ::1
+[2026-09-24T18:58:06.350Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:58:06.358Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:58:06.360Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T18:58:58.951Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:58:58.954Z] [GET] /api/suppliers/sup-1789751490622 404 - 3ms - IP: ::1
+[2026-09-24T18:58:58.959Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:58:58.960Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:58:58.962Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T18:58:58.963Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:58:58.965Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T18:58:58.966Z] [GET] /api/purchase-orders 304 - 0ms - IP: ::1
+[2026-09-24T18:58:58.967Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:58:58.969Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T18:59:33.107Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:59:33.110Z] [GET] /api/suppliers/sup-1789751490622 404 - 3ms - IP: ::1
+[2026-09-24T18:59:33.148Z] [GET] /api/purchase-orders 304 - 2ms - IP: ::1
+[2026-09-24T18:59:33.239Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:59:33.242Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 3ms - IP: ::1
+[2026-09-24T18:59:33.602Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:59:33.607Z] [GET] /api/suppliers/sup-1789751490622 404 - 5ms - IP: ::1
+[2026-09-24T18:59:33.643Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:59:34.017Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:59:34.019Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T18:59:49.232Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:59:49.233Z] [GET] /api/suppliers/sup-1789751490622 404 - 1ms - IP: ::1
+[2026-09-24T18:59:49.237Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:59:49.237Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:59:49.239Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T18:59:49.240Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:59:49.241Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 1ms - IP: ::1
+[2026-09-24T18:59:49.242Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T18:59:49.249Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T18:59:49.251Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 1ms - IP: ::1
+[2026-09-24T19:00:21.704Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:00:21.706Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T19:00:21.707Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:00:21.711Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:00:21.712Z] [GET] /api/suppliers/sup-1789751490622 404 - 1ms - IP: ::1
+[2026-09-24T19:00:21.713Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:00:21.714Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 1ms - IP: ::1
+[2026-09-24T19:00:21.765Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:00:21.766Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:00:21.767Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 1ms - IP: ::1
+[2026-09-24T19:00:33.547Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:00:33.549Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T19:00:33.551Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:00:33.593Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:00:33.595Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T19:00:33.615Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:00:33.617Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T19:00:33.643Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:00:33.649Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:00:33.651Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T19:03:12.557Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:03:12.561Z] [GET] /api/suppliers/sup-1789751490622 404 - 4ms - IP: ::1
+[2026-09-24T19:03:12.574Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:03:12.586Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:03:12.587Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 1ms - IP: ::1
+[2026-09-24T19:03:12.589Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:03:12.591Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T19:03:12.698Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:03:12.707Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:03:12.711Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 4ms - IP: ::1
+[2026-09-24T19:06:37.223Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:06:37.226Z] [GET] /api/suppliers/sup-1789751490622 404 - 3ms - IP: ::1
+[2026-09-24T19:06:37.228Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:06:37.280Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:06:37.285Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 5ms - IP: ::1
+[2026-09-24T19:06:37.368Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:06:37.369Z] [GET] /api/suppliers/sup-1789751490622 404 - 1ms - IP: ::1
+[2026-09-24T19:06:37.443Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:06:37.446Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:06:37.449Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 3ms - IP: ::1
+[2026-09-24T19:10:55.998Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:10:56.000Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T19:10:56.001Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:10:56.005Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:10:56.002Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:10:56.004Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T19:10:56.006Z] [GET] /api/suppliers/sup-1789751490622 404 - 1ms - IP: ::1
+[2026-09-24T19:10:56.008Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:10:56.009Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:10:56.011Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T19:11:09.376Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:11:09.378Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T19:11:09.379Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:11:09.380Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:11:09.382Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T19:11:28.167Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:11:28.169Z] [GET] /api/suppliers/sup-1789751490622 404 - 2ms - IP: ::1
+[2026-09-24T19:11:28.170Z] [GET] /api/purchase-orders 304 - 0ms - IP: ::1
+[2026-09-24T19:11:28.172Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:11:28.174Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T19:12:11.847Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:12:11.848Z] [GET] /api/suppliers/sup-1789751490622 404 - 1ms - IP: ::1
+[2026-09-24T19:12:11.855Z] [GET] /api/purchase-orders 304 - 0ms - IP: ::1
+[2026-09-24T19:12:11.859Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:12:11.861Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 2ms - IP: ::1
+[2026-09-24T19:12:11.869Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:12:11.872Z] [GET] /api/suppliers/sup-1789751490622 404 - 3ms - IP: ::1
+[2026-09-24T19:12:11.873Z] [GET] /api/purchase-orders 304 - 0ms - IP: ::1
+[2026-09-24T19:12:11.884Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1789751490622/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:12:11.885Z] [GET] /api/suppliers/sup-1789751490622/documents 404 - 1ms - IP: ::1
+[2026-09-24T19:14:02.520Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:14:02.580Z] [POST] /api/suppliers/setup 400 - 60ms - IP: ::1
+[2026-09-24T19:14:13.920Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1790277242626 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:14:13.921Z] [GET] /api/suppliers/sup-1790277242626 404 - 1ms - IP: ::1
+[2026-09-24T19:14:13.935Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1790277242626/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:14:13.937Z] [GET] /api/suppliers/sup-1790277242626/documents 404 - 2ms - IP: ::1
+[2026-09-24T19:14:13.938Z] [GET] /api/purchase-orders 304 - 0ms - IP: ::1
+[2026-09-24T19:14:13.948Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1790277242626 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:14:13.950Z] [GET] /api/suppliers/sup-1790277242626 404 - 2ms - IP: ::1
+[2026-09-24T19:14:13.952Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-09-24T19:14:14.016Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/sup-1790277242626/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
+[2026-09-24T19:14:14.017Z] [GET] /api/suppliers/sup-1790277242626/documents 404 - 1ms - IP: ::1

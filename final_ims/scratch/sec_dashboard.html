@@ -1,0 +1,122 @@
+<div class="section active" id="sec-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Welcome back</div>
+          <div class="page-sub">Here's what's happening with your supply chain today.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="showSection('products',document.querySelector('.sb-item:nth-child(1)'))">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
+            Add Product
+          </button>
+        </div>
+      </div>
+      <div class="stat-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#ecfdf5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="stat-value" id="statTotalSalesVal" style="color:#059669">₹0.00</div>
+          <div class="stat-label">Total Completed Sales</div>
+          <div class="stat-trend trend-up" id="statTotalSalesTrend">↑ 0 POs Fulfilled</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#eff6ff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <div class="stat-value" id="statNetPayoutVal" style="color:#2563eb">₹0.00</div>
+          <div class="stat-label">Net Supplier Payout</div>
+          <div class="stat-trend trend-up" style="color:#2563eb;font-weight:700">98% Payout Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#faf5ff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#7e22ce" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5a2.5 2.5 0 0 0-5 0v5a2.5 2.5 0 0 0 5 0"/><path d="M9 12h6"/></svg>
+          </div>
+          <div class="stat-value" id="statPlatformFeeVal" style="color:#7e22ce">₹0.00</div>
+          <div class="stat-label">2% Platform Fee</div>
+          <div class="stat-trend trend-up" style="color:#7e22ce;font-weight:700">2.0% Commission</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/></svg>
+          </div>
+          <div class="stat-value" id="statPendingOrdersVal" style="color:#f59e0b">0</div>
+          <div class="stat-label">Pending Orders</div>
+          <div class="stat-trend" id="statPendingOrdersTrend" style="color:#d97706">0 total orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#ede9fe">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#8b5cf6" stroke-width="1.5"><polyline points="2,13 5.5,8.5 8.5,11 13.5,4"/></svg>
+          </div>
+          <div class="stat-value" id="statFulfilmentVal" style="color:#8b5cf6">100%</div>
+          <div class="stat-label">Fulfilment Rate</div>
+          <div class="stat-trend trend-up" id="statFulfilmentTrend">↑ 0 delivered orders</div>
+        </div>
+      </div>
+
+      <!-- Sales & PO Fulfilment Performance Banner -->
+      <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg, #092c4c 0%, #1e429f 100%);color:#fff;border:none;padding:20px 24px;border-radius:12px;position:relative;overflow:hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+          <div>
+            <div style="font-size:11.5px;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">Sales &amp; Fulfilment Intelligence</div>
+            <div style="font-size:22px;font-weight:800;font-family:'Space Grotesk',sans-serif;margin-bottom:4px" id="dashTotalSalesHeadline">₹0.00 Gross Fulfilled Sales</div>
+            <div style="font-size:13px;color:#cbd5e1" id="dashSalesSubheadline">Completing purchase orders automatically records gross revenue, calculates the 2% platform fee, and updates your network performance.</div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="background:rgba(255,255,255,0.12);padding:10px 16px;border-radius:8px;text-align:center;backdrop-filter:blur(4px);min-width:110px">
+              <div style="font-size:11px;color:#93c5fd;font-weight:600">Fulfilled POs</div>
+              <div style="font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif" id="dashDeliveredCount">0</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.12);padding:10px 16px;border-radius:8px;text-align:center;backdrop-filter:blur(4px);min-width:130px">
+              <div style="font-size:11px;color:#93c5fd;font-weight:600">Pending Value</div>
+              <div style="font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif" id="dashPendingValue">₹0.00</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.12);padding:10px 16px;border-radius:8px;text-align:center;backdrop-filter:blur(4px);min-width:130px">
+              <div style="font-size:11px;color:#93c5fd;font-weight:600">Avg PO Value</div>
+              <div style="font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif" id="dashAvgOrderValue">₹0.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">
+            <div class="card-icon" style="background:#eef3fc">
+              <svg viewBox="0 0 13 13" fill="none" stroke="#2e6bc5" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/></svg>
+            </div>
+            Recent Orders
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="showSection('orders',null)">View All</button>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr>
+              <th>Order ID</th><th>Retailer</th><th>Product</th><th>Qty</th><th>Date</th><th>Status</th>
+            </tr></thead>
+            <tbody id="dashboardRecentOrdersBody">
+              <tr>
+                <td colspan="6" style="padding:18px;text-align:center;color:var(--text-3)">No purchase orders linked yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">
+            <div class="card-icon" style="background:#dcfce7">
+              <svg viewBox="0 0 13 13" fill="none" stroke="#22c55e" stroke-width="1.4"><rect x="1" y="1" width="11" height="11" rx="1"/><line x1="4" y1="1" x2="4" y2="12"/><line x1="1" y1="6" x2="12" y2="6"/></svg>
+            </div>
+            Top Retailers by Volume
+          </div>
+        </div>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+          <div id="topRetailers"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SUPPLIER PROFILE ══ -->
+    

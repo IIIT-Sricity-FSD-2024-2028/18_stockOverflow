@@ -1,0 +1,42 @@
+<div class="section" id="sec-retailers">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Retailer List</div>
+          <div class="page-sub">Your registered retailers — fulfilment details & relationship status</div>
+        </div>
+        <div class="page-actions">
+          <div class="search-wrap">
+            <div class="search-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L13 13"/></svg></div>
+            <input type="text" placeholder="Search retailers…" oninput="filterRetailers(this.value)" style="padding-left:34px"/>
+          </div>
+          <button class="btn btn-primary" onclick="openRetailerModal()">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="6.5" y1="2" x2="6.5" y2="11"/><line x1="2" y1="6.5" x2="11" y2="6.5"/></svg>
+            Add Retailer
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tabs">
+          <div class="tab active" onclick="filterRetailerTab('all',this)">All Retailers</div>
+          <div class="tab" onclick="filterRetailerTab('active',this)">Active</div>
+          <div class="tab" onclick="filterRetailerTab('inactive',this)">Inactive</div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr>
+              <th class="tbl-check"><input type="checkbox"/></th>
+              <th>Retailer</th><th>Contact</th><th>State</th><th>Last Order</th><th>Fulfilment</th><th>Rating Given</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody id="retailerBody"></tbody>
+          </table>
+          <div id="retailerEmpty" class="empty" style="display:none">
+            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="5" width="34" height="34" rx="2"/><line x1="14" y1="5" x2="14" y2="39"/><line x1="5" y1="22" x2="39" y2="22"/></svg>
+            <div class="empty-title">No retailers added</div>
+            <div class="empty-sub">Add your first retailer to start tracking orders and performance</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PERFORMANCE ══ -->
+    

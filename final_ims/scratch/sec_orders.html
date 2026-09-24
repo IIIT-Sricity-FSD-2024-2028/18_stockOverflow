@@ -1,0 +1,48 @@
+<div class="section" id="sec-orders">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Purchase Orders</div>
+          <div class="page-sub">Orders received from all your retailers</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline btn-sm" onclick="exportOrders()">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 9l-3 3-3-3M8 12V4"/><polyline points="2,4 5,1 8,4"/><line x1="2" y1="7" x2="5" y2="7"/></svg>
+            Export
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding:14px 20px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="search-wrap" style="max-width:260px">
+            <div class="search-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L13 13"/></svg></div>
+            <input type="text" id="orderSearchInput" placeholder="Search orders…" style="padding-left:34px" onkeydown="if(event.key==='Enter'){applyOrderFilters();}"/>
+          </div>
+          <select id="orderStatusFilter" style="width:auto;height:40px;padding:0 30px 0 10px">
+            <option value="all">All Status</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="indelivery">In Delivery</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option>
+          </select>
+          <input type="date" id="orderDateFrom" style="height:40px;padding:0 10px;width:auto"/>
+          <input type="date" id="orderDateTo" style="height:40px;padding:0 10px;width:auto"/>
+          <button class="btn btn-primary btn-sm" onclick="applyOrderFilters()">Apply</button>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr>
+              <th>Order ID</th><th>Retailer</th><th>Product</th><th>Qty</th><th>Order Date</th><th>Est. Delivery</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+          <div id="ordersEmpty" class="empty" style="display:none">
+            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="8" width="32" height="28" rx="4"/><path d="M14 4v8M30 4v8M6 18h32"/></svg>
+            <div class="empty-title">No purchase orders found</div>
+            <div class="empty-sub">Try changing your filters or wait for new retailer orders</div>
+          </div>
+        </div>
+        <div style="padding:12px 20px;border-top:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between">
+          <div id="ordersSummary" style="font-family:'Nunito Sans',sans-serif;font-size:12.5px;color:var(--text-3)">Showing 0 of 0 orders</div>
+          <div id="ordersPagination" style="display:flex;gap:4px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RETAILER LIST ══ -->
+    

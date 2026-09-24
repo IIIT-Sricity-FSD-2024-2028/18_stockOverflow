@@ -1,0 +1,135 @@
+<div class="section" id="sec-plan">
+      <div class="page-header">
+        <div>
+          <div class="page-title">SaaS Growth &amp; Subscription Plans</div>
+          <div class="page-sub">Tiered membership plans designed for MSME suppliers, distributors, and manufacturers across India</div>
+        </div>
+      </div>
+
+      <!-- Current Active Plan Banner -->
+      <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);color:#fff;border:none;padding:24px;border-radius:12px;position:relative;overflow:hidden">
+        <div style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:12px;text-transform:uppercase;letter-spacing:1px;background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:20px;font-weight:700">Current Active Membership</span>
+              <span id="supplierPlanStatusBadge" style="background:#22c55e;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">Active</span>
+            </div>
+            <h2 id="supplierCurrentPlanName" style="font-size:24px;font-weight:800;margin:0 0 6px">Starter Kirana (Free Tier)</h2>
+            <p id="supplierPlanDesc" style="color:rgba(255,255,255,0.75);font-size:13px;margin:0">Basic catalog access. Allows up to 50 product items in your supplier catalog.</p>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11.5px;color:rgba(255,255,255,0.65);margin-bottom:4px">CATALOG UTILIZATION</div>
+            <div id="supplierPlanUsageText" style="font-size:18px;font-weight:800;color:#fff">0 / 50 Products</div>
+            <div style="width:160px;height:6px;background:rgba(255,255,255,0.2);border-radius:4px;overflow:hidden;margin-top:6px">
+              <div id="supplierPlanUsageBar" style="width:10%;height:100%;background:#38bdf8;border-radius:4px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Tier Pricing Cards Grid -->
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:18px;margin-bottom:24px">
+        <!-- Tier 1: Free -->
+        <div class="card" id="cardTierFree" style="padding:24px;display:flex;flex-direction:column;border-radius:12px;border:1px solid var(--border)">
+          <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px">Starter Kirana</div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">Free forever for MSME onboarding</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:16px">₹0 <span style="font-size:13px;font-weight:500;color:var(--text-3)">/ month</span></div>
+          <ul style="list-style:none;padding:0;margin:0 0 20px;flex:1;display:flex;flex-direction:column;gap:10px;font-size:13px">
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 1 Store Location</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Up to 50 Products Catalog</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> UPI QR &amp; POS Billing Terminal</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Daily WhatsApp Sales Summary</li>
+          </ul>
+          <button class="btn btn-outline" id="btnTierFree" onclick="setSupplierPlan('free')" style="width:100%;justify-content:center;font-weight:700" disabled>Current Active Plan</button>
+        </div>
+
+        <!-- Tier 2: Pro -->
+        <div class="card" id="cardTierPro" style="padding:24px;display:flex;flex-direction:column;border-radius:12px;border:2px solid #3b82f6;position:relative;box-shadow:0 8px 24px rgba(59,130,246,0.12)">
+          <div style="position:absolute;top:-12px;right:20px;background:#3b82f6;color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;letter-spacing:0.5px">MOST POPULAR (BHARAT)</div>
+          <div style="font-size:16px;font-weight:800;color:#2563eb;margin-bottom:4px">Vyapar Pro</div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">For growing distributors &amp; suppliers</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:16px">₹799 <span style="font-size:13px;font-weight:500;color:var(--text-3)">/ month</span></div>
+          <ul style="list-style:none;padding:0;margin:0 0 20px;flex:1;display:flex;flex-direction:column;gap:10px;font-size:13px">
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <strong>Up to 5 Retail Outlets</strong></li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <strong>Unlimited Products &amp; SKUs</strong></li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> GST E-Invoice &amp; e-Way Bill Generator</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> WhatsApp &amp; SMS Low Stock Alerts</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Automated Reorder Suggestions</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Priority Verification Staff Support</li>
+          </ul>
+          <button class="btn btn-primary" id="btnTierPro" onclick="openMockPaymentModal('pro')" style="width:100%;justify-content:center;font-weight:700">Upgrade to Vyapar Pro</button>
+        </div>
+
+        <!-- Tier 3: Enterprise -->
+        <div class="card" id="cardTierEnterprise" style="padding:24px;display:flex;flex-direction:column;border-radius:12px;border:1px solid #7e22ce">
+          <div style="font-size:16px;font-weight:800;color:#7e22ce;margin-bottom:4px">Bharat Enterprise</div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">Multi-depot suppliers &amp; large FMCG</div>
+          <div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:16px">₹3,499 <span style="font-size:13px;font-weight:500;color:var(--text-3)">/ month</span></div>
+          <ul style="list-style:none;padding:0;margin:0 0 20px;flex:1;display:flex;flex-direction:column;gap:10px;font-size:13px">
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <strong>Unlimited Stores &amp; Outlets</strong></li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Multi-Warehouse Stock Transfer &amp; Depots</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Bulk Supplier POs &amp; Credit Terms</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Dedicated 24/7 Account Manager</li>
+            <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Custom ERP &amp; Tally Prime Sync API</li>
+          </ul>
+          <button class="btn btn-dark" id="btnTierEnterprise" onclick="openMockPaymentModal('enterprise')" style="width:100%;justify-content:center;font-weight:700">Upgrade to Enterprise</button>
+        </div>
+      </div>
+
+      <!-- Billing & Tax Invoices History -->
+      <div class="card" style="padding:24px;border-radius:12px;border:1px solid var(--border);margin-top:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div>
+            <h3 style="font-size:16px;font-weight:800;color:var(--text);margin:0 0 4px">Billing &amp; Tax Invoices</h3>
+            <p style="font-size:12.5px;color:var(--text-3);margin:0">Download official GST-compliant tax invoices and manage automated SaaS renewals</p>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-outline btn-sm" onclick="toast('Next billing cycle: 1st of next month')">Next Renewal: 1st Next Month</button>
+            <button class="btn btn-outline btn-sm" onclick="toast('Invoices synchronized with banking switch.')">Sync Invoices</button>
+          </div>
+        </div>
+
+        <div class="tbl-wrap" style="border-radius:8px;border:1px solid var(--border)">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Billing Date</th>
+                <th>Plan Description</th>
+                <th>Amount (INR)</th>
+                <th>GST (18%)</th>
+                <th>Payment Mode</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="supplierInvoicesTbody">
+              <tr>
+                <td style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--primary)">SO-INV-2026-081</td>
+                <td>31 Aug 2026</td>
+                <td><strong>Vyapar Pro SaaS (Monthly)</strong></td>
+                <td>₹799.00</td>
+                <td>₹143.82</td>
+                <td><span style="font-weight:600">UPI Instant</span></td>
+                <td><span class="badge badge-delivered"><span class="badge-dot" style="background:#22c55e"></span>Paid</span></td>
+                <td><button class="btn btn-outline btn-sm" onclick="toast('Downloading GST Tax Invoice PDF for SO-INV-2026-081...')">Receipt</button></td>
+              </tr>
+              <tr>
+                <td style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--primary)">SO-INV-2026-071</td>
+                <td>01 Aug 2026</td>
+                <td>Starter Kirana Onboarding</td>
+                <td>₹0.00</td>
+                <td>₹0.00</td>
+                <td>Free Tier</td>
+                <td><span class="badge badge-delivered"><span class="badge-dot" style="background:#22c55e"></span>Active</span></td>
+                <td><button class="btn btn-outline btn-sm" onclick="toast('Starter tier has zero charge.')">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+

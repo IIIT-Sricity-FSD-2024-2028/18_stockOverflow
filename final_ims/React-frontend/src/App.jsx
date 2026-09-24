@@ -63,7 +63,7 @@ export default function App() {
   };
 
   return (
-    <div className="stockoverflow-root-app">
+    <div className="stockoverflow-root-app" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       {/* ── Top Multi-Module Quick Switcher (StockOverflow Hub) ── */}
       {showDevSwitcher && (
         <div
@@ -104,7 +104,7 @@ export default function App() {
                   cursor: 'pointer',
                 }}
               >
-                🏬 Retailer
+                Retailer
               </button>
 
               <button
@@ -122,7 +122,7 @@ export default function App() {
                   cursor: 'pointer',
                 }}
               >
-                🛒 Consumer
+                Consumer
               </button>
 
               <button
@@ -140,7 +140,7 @@ export default function App() {
                   cursor: 'pointer',
                 }}
               >
-                🚚 Supplier
+                Supplier
               </button>
 
               <button
@@ -158,7 +158,7 @@ export default function App() {
                   cursor: 'pointer',
                 }}
               >
-                🛡️ Admin
+                Admin
               </button>
             </div>
           </div>
