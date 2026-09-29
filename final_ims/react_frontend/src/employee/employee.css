@@ -1,0 +1,258 @@
+/* employee.css - Employee Command Center Styles */
+.emp-shell {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f6fa;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: #1a1d2e;
+}
+
+/* Sidebar */
+.emp-sidebar {
+  width: 252px;
+  min-width: 252px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.emp-sidebar-title {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.emp-sidebar-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 16px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.emp-sb-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.emp-sb-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #092c4c;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0 8px;
+  margin-bottom: 2px;
+}
+
+.emp-sb-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 4px 0;
+}
+
+.emp-sb-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  transition: background 0.13s, color 0.13s;
+  color: #4a5568;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.emp-sb-item:hover {
+  background: #f5f6fa;
+  color: #1a1d2e;
+}
+
+.emp-sb-item.active {
+  background: #fff6ee;
+  color: #4e7fd9;
+}
+
+.emp-sb-item.active svg {
+  stroke: #4e7fd9;
+}
+
+.emp-sb-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: #eef0fd;
+  color: #5b67ca;
+  margin-left: auto;
+}
+
+/* Main */
+.emp-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.emp-topbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px;
+  height: 58px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.emp-breadcrumb {
+  font-size: 12.5px;
+  color: #6b7280;
+}
+
+.emp-breadcrumb span {
+  color: #1a1d2e;
+  font-weight: 600;
+}
+
+.emp-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f6fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 7px 12px;
+  width: 240px;
+}
+
+.emp-search-bar input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: #1a1d2e;
+  width: 100%;
+}
+
+.emp-topbar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #5b67ca;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.emp-content {
+  padding: 22px 26px 40px;
+  max-width: 1280px;
+}
+
+.emp-page-title {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: #1a1d2e;
+}
+
+.emp-page-subtitle {
+  font-size: 12.5px;
+  color: #6b7280;
+  margin-top: 3px;
+}
+
+/* Cards & Badges */
+.emp-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 16px 20px;
+}
+
+.emp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.emp-pill.retailer { background: #dbeafe; color: #1d4ed8; }
+.emp-pill.supplier { background: #fef3c7; color: #b45309; }
+.emp-pill.store { background: #dcfce7; color: #15803d; }
+.emp-pill.pending { background: #fef3c7; color: #92400e; }
+.emp-pill.approved { background: #dcfce7; color: #15803d; }
+.emp-pill.rejected { background: #fee2e2; color: #b91c1c; }
+
+.emp-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+
+.emp-btn-primary {
+  background: #5b67ca;
+  color: #ffffff;
+}
+
+.emp-btn-primary:hover {
+  background: #4a55b5;
+}
+
+.emp-btn-success {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.emp-btn-success:hover {
+  background: #bbf7d0;
+}
+
+.emp-btn-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.emp-btn-danger:hover {
+  background: #fecaca;
+}
