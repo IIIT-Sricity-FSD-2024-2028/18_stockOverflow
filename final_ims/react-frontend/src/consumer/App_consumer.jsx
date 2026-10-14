@@ -54,7 +54,15 @@ export default function App_consumer({ onSwitchModule }) {
   const [error, setError] = useState(null);
 
   // ─── 3. Global Store Location State ─────────────────────────────────────────
-  const [selectedStore, setSelectedStore] = useState('Downtown Store');
+  // The API filters by a store ID, while the UI shows a store name.  Keeping
+  // the ID here prevents location changes from producing invalid API queries.
+  const [selectedStoreId, setSelectedStoreId] = useState(() => {
+    try {
+      return localStorage.getItem('imsSelectedStoreId') || '';
+    } catch {
+      return '';
+    }
+  });
 
   // ─── 4. Global Shopping Cart State ──────────────────────────────────────────
   const [cart, setCart] = useState(() => getLocalCart());
@@ -81,7 +89,7 @@ export default function App_consumer({ onSwitchModule }) {
       setError(null);
       try {
         const [fetchedProducts, fetchedStores] = await Promise.all([
-          fetchProducts(selectedStore),
+          fetchProducts(selectedStoreId),
           fetchStores(),
         ]);
 
@@ -104,12 +112,28 @@ export default function App_consumer({ onSwitchModule }) {
     return () => {
       isMounted = false;
     };
-  }, [selectedStore]);
+  }, [selectedStoreId]);
+
+  const selectedStore = useMemo(() => {
+    const matched = stores.find((store) => String(store.id) === String(selectedStoreId));
+    return matched?.name || 'Downtown Store';
+  }, [stores, selectedStoreId]);
 
   // ─── 8. Cart Operations ─────────────────────────────────────────────────────
   const handleAddToCart = (product, quantity = 1) => {
+    if (!product?.sku) return;
+
+    const productStoreId = product.storeId || selectedStoreId || '';
+    const productStoreName =
+      product.storeName ||
+      stores.find((store) => String(store.id) === String(productStoreId))?.name ||
+      selectedStore;
+
     setCart((prevCart) => {
-      const existingIdx = prevCart.findIndex((item) => item.sku === product.sku);
+      // A SKU held at two branches needs two separate reservation requests.
+      const existingIdx = prevCart.findIndex(
+        (item) => item.sku === product.sku && String(item.storeId || '') === String(productStoreId)
+      );
       let updatedCart;
       if (existingIdx > -1) {
         updatedCart = [...prevCart];
@@ -130,6 +154,8 @@ export default function App_consumer({ onSwitchModule }) {
             emoji: product.emoji || '📦',
             qty: Number(quantity),
             category: product.category || 'General',
+            storeId: productStoreId,
+            storeName: productStoreName,
           },
         ];
       }
@@ -140,14 +166,18 @@ export default function App_consumer({ onSwitchModule }) {
     showToast(`Added ${product.name} to cart!`);
   };
 
-  const handleUpdateCartQty = (sku, newQty) => {
+  const handleUpdateCartQty = (sku, newQty, storeId = '') => {
     setCart((prevCart) => {
       let updated;
       if (newQty <= 0) {
-        updated = prevCart.filter((item) => item.sku !== sku);
+        updated = prevCart.filter(
+          (item) => !(item.sku === sku && String(item.storeId || '') === String(storeId || ''))
+        );
       } else {
         updated = prevCart.map((item) =>
-          item.sku === sku ? { ...item, qty: newQty } : item
+          item.sku === sku && String(item.storeId || '') === String(storeId || '')
+            ? { ...item, qty: newQty }
+            : item
         );
       }
       saveLocalCart(updated);
@@ -155,9 +185,11 @@ export default function App_consumer({ onSwitchModule }) {
     });
   };
 
-  const handleRemoveFromCart = (sku) => {
+  const handleRemoveFromCart = (sku, storeId = '') => {
     setCart((prevCart) => {
-      const updated = prevCart.filter((item) => item.sku !== sku);
+      const updated = prevCart.filter(
+        (item) => !(item.sku === sku && String(item.storeId || '') === String(storeId || ''))
+      );
       saveLocalCart(updated);
       return updated;
     });
@@ -180,9 +212,19 @@ export default function App_consumer({ onSwitchModule }) {
     navigateTo('detail', { sku });
   };
 
-  const handleSelectStore = (storeName) => {
-    setSelectedStore(storeName);
-    showToast(`Store location switched to: ${storeName}`);
+  const handleSelectStore = (store) => {
+    const matched =
+      typeof store === 'object'
+        ? store
+        : stores.find((entry) => entry.name === store || String(entry.id) === String(store));
+    const nextStoreId = matched?.id || (typeof store === 'string' ? store : '');
+    const nextStoreName = matched?.name || (typeof store === 'string' ? store : 'Downtown Store');
+
+    setSelectedStoreId(nextStoreId);
+    try {
+      localStorage.setItem('imsSelectedStoreId', nextStoreId);
+    } catch {}
+    showToast(`Store location switched to: ${nextStoreName}`);
   };
 
   const handleLogout = () => {
@@ -192,9 +234,11 @@ export default function App_consumer({ onSwitchModule }) {
     navigateTo('home');
   };
 
-  const handleOrderPlaced = (orderId) => {
+  const handleReservationsSubmitted = () => {
     handleClearCart();
-    navigateTo('confirmation', { orderId });
+    // The vanilla checkout creates pending holds.  A sale confirmation is only
+    // available after a retailer fulfils the request at POS.
+    navigateTo('orders');
   };
 
   const handleWriteReview = (sku) => {
@@ -237,6 +281,7 @@ export default function App_consumer({ onSwitchModule }) {
             products={products}
             stores={stores}
             selectedStore={selectedStore}
+            selectedStoreId={selectedStoreId}
             cart={cart}
             userSession={userSession}
             loading={loading}
@@ -254,6 +299,7 @@ export default function App_consumer({ onSwitchModule }) {
             products={products}
             stores={stores}
             selectedStore={selectedStore}
+            selectedStoreId={selectedStoreId}
             cart={cart}
             userSession={userSession}
             onAddToCart={handleAddToCart}
@@ -283,7 +329,7 @@ export default function App_consumer({ onSwitchModule }) {
             selectedStore={selectedStore}
             stores={stores}
             userSession={userSession}
-            onOrderPlaced={handleOrderPlaced}
+            onReservationsSubmitted={handleReservationsSubmitted}
             onNavigate={navigateTo}
             onLogout={handleLogout}
             showToast={showToast}

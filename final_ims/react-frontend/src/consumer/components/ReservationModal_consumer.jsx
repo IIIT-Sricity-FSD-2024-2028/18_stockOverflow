@@ -12,11 +12,13 @@ export default function ReservationModal_consumer({
   isOpen = false,
   product = null,
   selectedStore = 'Downtown Store',
+  selectedStoreId = '',
   stores = [],
+  userSession,
   onClose,
   onConfirmReservation,
 }) {
-  const [storeId, setStoreId] = useState('s1');
+  const [storeId, setStoreId] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -28,17 +30,33 @@ export default function ReservationModal_consumer({
   // Auto-populate customer details from active session if logged in
   useEffect(() => {
     try {
-      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const session = userSession || JSON.parse(localStorage.getItem('so_session') || '{}');
       if (session.name) setCustomerName(session.name);
       if (session.email) setCustomerEmail(session.email);
     } catch (_e) {}
-  }, [isOpen]);
+  }, [isOpen, userSession]);
+
+  useEffect(() => {
+    if (!isOpen || !product) return;
+    const inventory = Array.isArray(product.storeInventory) ? product.storeInventory : [];
+    const inStockStores = stores.filter((store) => {
+      const entry = inventory.find((item) => String(item.storeId) === String(store.id));
+      return Number(entry?.qty ?? product.qty ?? 0) > 0;
+    });
+    const defaultStore =
+      inStockStores.find((store) => String(store.id) === String(selectedStoreId)) ||
+      inStockStores.find((store) => store.name === selectedStore) ||
+      inStockStores[0];
+    setStoreId(defaultStore?.id || '');
+    setQty(1);
+    setErrorMsg('');
+  }, [isOpen, product, stores, selectedStore, selectedStoreId]);
 
   if (!isOpen || !product) return null;
 
   // Find local stock for the selected store
   const storeInventory = Array.isArray(product.storeInventory) ? product.storeInventory : [];
-  const currentStoreEntry = storeInventory.find((s) => s.storeId === storeId) || {
+  const currentStoreEntry = storeInventory.find((s) => String(s.storeId) === String(storeId)) || {
     qty: product.qty || 0,
   };
   const maxAvailable = currentStoreEntry.qty || 0;
@@ -64,6 +82,7 @@ export default function ReservationModal_consumer({
         customer: customerName || 'Valued Customer',
         customerEmail,
         customerPhone,
+        customerId: userSession?.id || undefined,
         paymentMethod,
         status: 'pending',
       };
@@ -124,7 +143,7 @@ export default function ReservationModal_consumer({
             >
               {stores.map((s) => {
                 const sEntry = storeInventory.find((entry) => entry.storeId === s.id);
-                const count = sEntry ? sEntry.qty : 0;
+                const count = Number(sEntry?.qty ?? product.qty ?? 0);
                 return (
                   <option key={s.id} value={s.id} disabled={count <= 0}>
                     {s.name} ({s.location || 'Local Hub'}) — {count > 0 ? `${count} in stock` : 'Out of Stock'}

@@ -43,7 +43,7 @@ export default function StoreModal_consumer({
                 key={store.id || store.name}
                 className={`store-option ${isSelected ? 'selected' : ''}`}
                 onClick={() => {
-                  onSelectStore(store.name);
+                  onSelectStore(store);
                   onClose();
                 }}
               >

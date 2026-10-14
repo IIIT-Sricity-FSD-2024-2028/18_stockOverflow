@@ -461,7 +461,7 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule })
 
   return (
     <>
-      <div style={{ display: 'flex', width: '100%', height: '100%', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+      <div className="supplier-dashboard-wrapper" style={{ display: 'flex', width: '100%', minHeight: '100vh', flex: 1 }}>
 
         {/* ══════ SIDEBAR ══════ */}
         <aside className="sidebar">

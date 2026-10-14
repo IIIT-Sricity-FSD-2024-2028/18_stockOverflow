@@ -184,3 +184,28 @@
 [2026-09-24T19:14:13.936Z] [ERROR] GET /api/suppliers/sup-1790277242626/documents 404 - Supplier setup "sup-1790277242626" was not found
 [2026-09-24T19:14:13.949Z] [ERROR] GET /api/suppliers/sup-1790277242626 404 - Supplier setup "sup-1790277242626" was not found
 [2026-09-24T19:14:14.016Z] [ERROR] GET /api/suppliers/sup-1790277242626/documents 404 - Supplier setup "sup-1790277242626" was not found
+[2026-10-01T06:05:00.784Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:05:01.068Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:05:36.454Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:05:36.502Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:06:12.385Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:06:12.421Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:06:49.546Z] [ERROR] GET / 404 - Cannot GET /
+[2026-10-01T06:06:49.667Z] [ERROR] GET /favicon.ico 404 - Cannot GET /favicon.ico
+[2026-10-01T06:07:00.602Z] [ERROR] GET /retailer 404 - Cannot GET /retailer
+[2026-10-01T06:10:25.013Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:10:25.068Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:10:26.724Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:10:26.746Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:10:31.153Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:10:31.167Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:14:19.913Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:14:20.004Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T06:17:20.996Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
+[2026-10-01T06:17:21.130Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
+[2026-10-01T06:48:13.431Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
+[2026-10-01T06:48:13.500Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
+[2026-10-01T07:19:52.299Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-01T07:19:52.353Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-14T05:54:51.260Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d
+[2026-10-14T05:54:51.297Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d

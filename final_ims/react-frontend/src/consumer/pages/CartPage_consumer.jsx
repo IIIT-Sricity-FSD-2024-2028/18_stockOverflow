@@ -63,7 +63,7 @@ export default function CartPage_consumer({
               const itemQty = Number(item.qty || 1);
 
               return (
-                <div key={item.sku} className="cart-item">
+                <div key={`${item.sku}-${item.storeId || 'default'}`} className="cart-item">
                   {/* Thumbnail */}
                   <div className="item-img">
                     {item.productImg ? (
@@ -81,6 +81,11 @@ export default function CartPage_consumer({
                   <div className="item-info">
                     <div className="item-name">{item.name}</div>
                     <div className="item-sku">SKU: {item.sku}</div>
+                    {item.storeName && (
+                      <div className="item-sku" style={{ color: '#059669', fontWeight: 600, marginTop: '3px' }}>
+                        Pickup store: {item.storeName}
+                      </div>
+                    )}
                   </div>
 
                   {/* Quantity Stepper */}
@@ -88,7 +93,7 @@ export default function CartPage_consumer({
                     <button
                       type="button"
                       className="qty-btn"
-                      onClick={() => onUpdateQty(item.sku, itemQty - 1)}
+                      onClick={() => onUpdateQty(item.sku, itemQty - 1, item.storeId)}
                     >
                       −
                     </button>
@@ -96,7 +101,7 @@ export default function CartPage_consumer({
                     <button
                       type="button"
                       className="qty-btn"
-                      onClick={() => onUpdateQty(item.sku, itemQty + 1)}
+                      onClick={() => onUpdateQty(item.sku, itemQty + 1, item.storeId)}
                     >
                       +
                     </button>
@@ -111,7 +116,7 @@ export default function CartPage_consumer({
                   <button
                     type="button"
                     className="remove-btn"
-                    onClick={() => onRemoveItem(item.sku)}
+                    onClick={() => onRemoveItem(item.sku, item.storeId)}
                   >
                     Remove
                   </button>

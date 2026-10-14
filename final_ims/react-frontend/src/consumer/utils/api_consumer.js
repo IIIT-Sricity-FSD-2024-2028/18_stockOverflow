@@ -47,6 +47,12 @@ async function apiRequest(endpoint, options = {}) {
   return data;
 }
 
+function getCustomerLookup(customer = '') {
+  if (customer) return String(customer).trim();
+  const session = getLocalSession();
+  return String(session?.name || session?.email || session?.id || '').trim();
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. PRODUCTS & CATALOG (Customer Facing)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -200,7 +206,8 @@ export async function fetchReservationRequests(status = '', customer = '') {
     let query = '';
     const params = new URLSearchParams();
     if (status) params.set('status', status);
-    if (customer) params.set('customer', customer);
+    const customerLookup = getCustomerLookup(customer);
+    if (customerLookup) params.set('customer', customerLookup);
     const qStr = params.toString();
     if (qStr) query = `?${qStr}`;
 
@@ -210,7 +217,16 @@ export async function fetchReservationRequests(status = '', customer = '') {
 
   try {
     const local = JSON.parse(localStorage.getItem('ims_reservation_requests') || '[]');
-    return local.filter((r) => !status || r.status === status);
+    const customerLookup = getCustomerLookup(customer).toLowerCase();
+    return local.filter((r) => {
+      const matchesStatus = !status || String(r.status || '').toLowerCase() === String(status).toLowerCase();
+      const matchesCustomer =
+        !customerLookup ||
+        [r.customer, r.customerEmail, r.customerId]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase() === customerLookup);
+      return matchesStatus && matchesCustomer;
+    });
   } catch (_e) {
     return [];
   }
@@ -249,13 +265,22 @@ export async function createTransaction(payload) {
  */
 export async function fetchTransactions(customer = '') {
   try {
-    const query = customer ? `?customer=${encodeURIComponent(customer)}` : '';
+    const customerLookup = getCustomerLookup(customer);
+    const query = customerLookup ? `?customer=${encodeURIComponent(customerLookup)}` : '';
     const data = await apiRequest(`/transactions${query}`);
     if (Array.isArray(data)) return data;
   } catch (_e) {}
 
   try {
-    return JSON.parse(localStorage.getItem('ims_transactions') || '[]');
+    const customerLookup = getCustomerLookup(customer).toLowerCase();
+    const transactions = JSON.parse(localStorage.getItem('ims_transactions') || '[]');
+    return customerLookup
+      ? transactions.filter((transaction) =>
+          [transaction.customer, transaction.customerEmail, transaction.customerId]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase() === customerLookup)
+        )
+      : transactions;
   } catch (_e) {
     return [];
   }
@@ -267,10 +292,20 @@ export async function fetchTransactions(customer = '') {
 export async function fetchTransactionByOrderId(orderId) {
   if (!orderId) return null;
   try {
-    return await apiRequest(`/transactions/${encodeURIComponent(orderId)}`);
+    const customerLookup = getCustomerLookup();
+    const query = customerLookup ? `?customer=${encodeURIComponent(customerLookup)}` : '';
+    return await apiRequest(`/transactions/${encodeURIComponent(orderId)}${query}`);
   } catch (_e) {
     const local = JSON.parse(localStorage.getItem('ims_transactions') || '[]');
-    return local.find((t) => t.orderId === orderId) || null;
+    const customerLookup = getCustomerLookup().toLowerCase();
+    return local.find(
+      (transaction) =>
+        transaction.orderId === orderId &&
+        (!customerLookup ||
+          [transaction.customer, transaction.customerEmail, transaction.customerId]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase() === customerLookup))
+    ) || null;
   }
 }
 

@@ -1565,32 +1565,48 @@ table.pl-table tbody tr:hover td {
 }
 
 /* Product cell */
+/* Product cell */
 .prod-cell {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
+table.pl-table .prod-cell .prod-img-wrap,
+.prod-cell .prod-img-wrap,
 .prod-img-wrap {
-  width: 30px;
-  height: 30px;
-  border-radius: 5px;
-  background: #f2f2f2;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  max-width: 38px;
+  max-height: 38px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   flex-shrink: 0;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+table.pl-table .prod-cell .prod-img-wrap img,
+.prod-cell .prod-img-wrap img,
 .prod-img-wrap img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
 }
+table.pl-table .prod-cell .prod-name,
+.prod-cell .prod-name,
 .prod-name {
   font-weight: 700;
-  color: #212b36;
+  color: #1e293b;
   font-size: 14px;
   white-space: nowrap;
+  margin: 0;
+  line-height: 1.4;
 }
 
 /* Category / Brand / Price / Unit / Qty */

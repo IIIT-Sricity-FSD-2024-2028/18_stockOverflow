@@ -5,6 +5,11 @@
 @import './css/consumer.css';
 
 /* Additional resets to ensure pixel perfection */
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 body {
   font-family: 'DM Sans', 'Nunito Sans', sans-serif;
   background-color: var(--bg);

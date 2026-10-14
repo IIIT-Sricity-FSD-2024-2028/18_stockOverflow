@@ -63,7 +63,7 @@ export default function App() {
   };
 
   return (
-    <div className="stockoverflow-root-app" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+    <div className="stockoverflow-root-app" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
       {/* ── Top Multi-Module Quick Switcher (StockOverflow Hub) ── */}
       {showDevSwitcher && (
         <div

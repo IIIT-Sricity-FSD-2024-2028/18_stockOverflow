@@ -22,6 +22,7 @@ import {
   fetchRatingSummary,
   fetchProductFeedback,
   submitProductFeedback,
+  createReservationRequest,
 } from '../utils/api_consumer';
 
 export default function ProductDetailPage_consumer({
@@ -29,6 +30,7 @@ export default function ProductDetailPage_consumer({
   products = [],
   stores = [],
   selectedStore = 'Downtown Store',
+  selectedStoreId = '',
   cart = [],
   userSession,
   onAddToCart,
@@ -47,6 +49,7 @@ export default function ProductDetailPage_consumer({
   });
   const [reviews, setReviews] = useState([]);
   const [isReserveModalOpen, setIsReserveModalOpen] = useState(false);
+  const [pickupStoreId, setPickupStoreId] = useState(selectedStoreId);
 
   // Review Form State
   const [reviewRating, setReviewRating] = useState(5);
@@ -94,6 +97,10 @@ export default function ProductDetailPage_consumer({
       isMounted = false;
     };
   }, [sku]);
+
+  useEffect(() => {
+    setPickupStoreId(selectedStoreId);
+  }, [selectedStoreId, sku]);
 
   // Gallery Thumbnails
   const galleryThumbs = useMemo(() => {
@@ -202,6 +209,19 @@ export default function ProductDetailPage_consumer({
   const price = Number(product.priceUSD || product.price || 0);
   const totalStock = product.qty !== undefined ? product.qty : 10;
   const storeInventory = Array.isArray(product.storeInventory) ? product.storeInventory : [];
+  const availableStores = stores
+    .map((store) => {
+      const entry = storeInventory.find((inventory) => String(inventory.storeId) === String(store.id));
+      // The fallback catalog does not have branch inventory.  In that offline
+      // mode its quantity is available at each selectable mock branch.
+      return { ...store, availableQty: Math.max(0, Number(entry?.qty ?? totalStock) || 0) };
+    })
+    .filter((store) => store.availableQty > 0);
+  const selectedPickupStore =
+    availableStores.find((store) => String(store.id) === String(pickupStoreId)) ||
+    availableStores.find((store) => store.name === selectedStore) ||
+    availableStores[0] ||
+    null;
 
   return (
     <CustomerLayout_consumer
@@ -559,6 +579,27 @@ export default function ProductDetailPage_consumer({
               })}
             </div>
 
+            {/* Branch selection is required before placing a cart hold. */}
+            <div style={{ marginTop: '18px' }}>
+              <label htmlFor="detailPickupStore" style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: '#475569' }}>
+                Reserve from store
+              </label>
+              <select
+                id="detailPickupStore"
+                className="form-input"
+                value={selectedPickupStore?.id || ''}
+                onChange={(event) => setPickupStoreId(event.target.value)}
+                disabled={!availableStores.length}
+              >
+                {!availableStores.length && <option value="">No stores currently have this product</option>}
+                {availableStores.map((store) => (
+                  <option key={store.id} value={store.id}>
+                    {store.name} ({store.availableQty} units available)
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Direct Add to Cart Action */}
             <button
               type="button"
@@ -569,8 +610,16 @@ export default function ProductDetailPage_consumer({
                 color: '#fff',
                 fontWeight: 700,
               }}
-              disabled={totalStock <= 0}
-              onClick={() => onAddToCart(product)}
+              disabled={totalStock <= 0 || !selectedPickupStore}
+              onClick={() => {
+                if (!selectedPickupStore) return;
+                onAddToCart({
+                  ...product,
+                  storeId: selectedPickupStore.id,
+                  storeName: selectedPickupStore.name,
+                });
+                onNavigate('cart');
+              }}
             >
               🛒 {totalStock <= 0 ? 'Out of Stock' : `Add to Cart (₹${price.toLocaleString('en-IN')})`}
             </button>
@@ -620,9 +669,13 @@ export default function ProductDetailPage_consumer({
         product={product}
         stores={stores}
         selectedStore={selectedStore}
+        selectedStoreId={selectedStoreId}
+        userSession={userSession}
         onClose={() => setIsReserveModalOpen(false)}
         onConfirmReservation={async (payload) => {
-          showToast('In-store pickup hold placed! You can pick it up at your selected store.');
+          await createReservationRequest(payload);
+          showToast('In-store pickup hold placed. Track its approval in My Orders.');
+          onNavigate('orders');
         }}
       />
     </CustomerLayout_consumer>

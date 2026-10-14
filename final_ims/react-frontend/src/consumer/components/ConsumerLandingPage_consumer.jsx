@@ -1,19 +1,85 @@
 /**
  * ConsumerLandingPage_consumer.jsx - Consumer Storefront Landing Page
  * 
- * IN LAYMAN'S TERMS:
- * This is the exact customer landing page matching `consumer-landingpage.html`.
- * It has:
- * - Top navigation with the StockOverflow blue logo, location selector, links to Products, Orders, Cart, and Logout.
- * - Hero banner with "Shop All Inventory", description, and "Browse Products" button.
- * - Featured products section with category filter pills, search box, and product cards with stock status chips, "+ Cart", and "View Details".
- * - Store selection modal for changing locations.
- * - Footer.
+ * Exact port of `frontend/customer module/consumer-landingpage.html`:
+ * - Top nav with StockOverflow brand, store location selector, links to Products, Orders, Cart, and Logout.
+ * - Hero banner with "Find Products That Fit Your Workflow", description, and "Browse Products" button.
+ * - Top Rated Products By Category section featuring category winners in color-accented cards.
+ * - Product cards with thumbnail, category, brand, SKU, store name, rating, formatted INR price, stock status, and "View Product".
+ * - Store selection modal.
+ * - Standard footer.
  */
 
 import React, { useState, useMemo } from 'react';
 import StoreModal_consumer from './StoreModal_consumer';
 import NotificationToast_consumer from './NotificationToast_consumer';
+
+const CARD_BGS = [
+  '#f8fafc', '#f0fdf4', '#eff6ff', '#fefce8',
+  '#fdf2f8', '#f5f3ff', '#fff7ed', '#f0fdfa'
+];
+
+function getStockMeta(product) {
+  if (!product || Number(product.qty) === 0) {
+    return { key: 'out', label: 'Out of Stock' };
+  }
+  const max = Number(product.max || 0);
+  if (max > 0 && Number(product.qty) <= max * 0.2) {
+    return { key: 'low', label: 'Low Stock' };
+  }
+  if (Number(product.qty) <= 10) {
+    return { key: 'low', label: 'Low Stock' };
+  }
+  return { key: 'in', label: 'Available' };
+}
+
+function getRatingMeta(product) {
+  const directAvg = Number(product && product.ratingAvg);
+  const directCount = Number(product && product.ratingCount);
+  const feedback = Array.isArray(product && product.feedback) ? product.feedback : [];
+
+  if (Number.isFinite(directAvg) && directAvg > 0) {
+    return {
+      avg: directAvg,
+      count: Number.isFinite(directCount) && directCount > 0 ? Math.floor(directCount) : feedback.length
+    };
+  }
+
+  if (!feedback.length) {
+    return { avg: 0, count: 0 };
+  }
+
+  const total = feedback.reduce((sum, item) => sum + (Number(item.rating) || 0), 0);
+  return {
+    avg: total / feedback.length,
+    count: feedback.length
+  };
+}
+
+function pickTopRatedProductsByCategory(productsList) {
+  const winners = Object.create(null);
+
+  (Array.isArray(productsList) ? productsList : []).forEach((product) => {
+    const category = (product && product.category ? String(product.category).trim() : '') || 'General';
+    const current = winners[category];
+
+    const currentRating = current ? getRatingMeta(current) : { avg: -1, count: -1 };
+    const nextRating = getRatingMeta(product);
+
+    const isBetterRating = nextRating.avg > currentRating.avg;
+    const isSameRatingMoreReviews = nextRating.avg === currentRating.avg && nextRating.count > currentRating.count;
+    const isSameRatingAndReviewsMoreSales =
+      nextRating.avg === currentRating.avg &&
+      nextRating.count === currentRating.count &&
+      (Number(product.soldThisMonth) || 0) > (Number(current && current.soldThisMonth) || 0);
+
+    if (!current || isBetterRating || isSameRatingMoreReviews || isSameRatingAndReviewsMoreSales) {
+      winners[category] = product;
+    }
+  });
+
+  return Object.keys(winners).sort().map((category) => winners[category]);
+}
 
 export default function ConsumerLandingPage_consumer({
   products = [],
@@ -30,64 +96,34 @@ export default function ConsumerLandingPage_consumer({
   onLogout,
   toastMessage = '',
 }) {
-  const [activeCategory, setActiveCategory] = useState('ALL');
-  const [searchQuery, setSearchQuery] = useState('');
   const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
 
-  // Derive cart total quantity count
+  // Cart total quantity
   const cartCount = useMemo(() => {
     return cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
   }, [cart]);
 
-  // Derive unique categories from products
-  const categories = useMemo(() => {
-    const set = new Set();
-    products.forEach((p) => {
-      if (p.category && String(p.category).trim()) {
-        set.add(String(p.category).trim());
-      }
-    });
-    return ['ALL', ...Array.from(set).sort()];
+  // Pick top rated product per category matching consumer-landingpage.html
+  const topRatedProducts = useMemo(() => {
+    return pickTopRatedProductsByCategory(products);
   }, [products]);
-
-  // Filter products by category and search keyword
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      const matchCat =
-        activeCategory === 'ALL' ||
-        String(p.category || '').toLowerCase() === activeCategory.toLowerCase();
-
-      const query = searchQuery.trim().toLowerCase();
-      const matchSearch =
-        !query ||
-        String(p.name || '').toLowerCase().includes(query) ||
-        String(p.sku || '').toLowerCase().includes(query) ||
-        String(p.brand || '').toLowerCase().includes(query) ||
-        String(p.category || '').toLowerCase().includes(query);
-
-      return matchCat && matchSearch;
-    });
-  }, [products, activeCategory, searchQuery]);
-
-  const handleBrowseClick = () => {
-    const el = document.getElementById('products-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <div className="consumer-landing-page-wrapper">
       <div className="consumer">
-        {/* ── Top Navigation Bar ── */}
+        {/* ═══ NAV ═══ */}
         <nav>
           {/* Brand Logo */}
-          <div className="nav-logo" onClick={() => onNavigate('home')} style={{ cursor: 'pointer' }}>
+          <div className="nav-logo" onClick={() => onNavigate('home')}>
             StockOverflow
           </div>
 
-          {/* Location Selector */}
-          <div className="nav-location" onClick={() => setIsStoreModalOpen(true)}>
+          {/* Location Widget */}
+          <div
+            className="nav-location"
+            onClick={() => setIsStoreModalOpen(true)}
+            title="Select a nearby store"
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -100,9 +136,9 @@ export default function ConsumerLandingPage_consumer({
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
             <div className="nav-location-text">
-              <span className="nav-location-lbl">DELIVERING TO</span>
-              <span className="nav-location-val" id="activeStoreLabel">
-                {selectedStore} ▾
+              <span className="nav-location-lbl">Deliver to</span>
+              <span className="nav-location-val" id="globalStoreDisplay">
+                {selectedStore || 'Global'}
               </span>
             </div>
           </div>
@@ -133,19 +169,24 @@ export default function ConsumerLandingPage_consumer({
                 e.preventDefault();
                 onNavigate('cart');
               }}
-              style={{ display: 'flex', alignItems: 'center' }}
             >
-              Cart
-              {cartCount > 0 && (
-                <span className="cart-badge-inline" style={{ display: 'inline-block' }}>
-                  {cartCount}
-                </span>
-              )}
+              Cart{' '}
+              <span
+                className="cart-badge-inline cart-badge"
+                style={{ display: cartCount > 0 ? 'inline-block' : 'none' }}
+              >
+                {cartCount}
+              </span>
             </a>
           </div>
 
           {/* Logout Button */}
-          <button type="button" className="btn-logout" onClick={onLogout}>
+          <button
+            type="button"
+            className="btn-logout"
+            id="logoutbutton"
+            onClick={onLogout}
+          >
             <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M7.5 17.5H4.17A1.67 1.67 0 0 1 2.5 15.83V4.17A1.67 1.67 0 0 1 4.17 2.5H7.5"
@@ -173,206 +214,156 @@ export default function ConsumerLandingPage_consumer({
           </button>
         </nav>
 
-        {/* ── Hero Section ── */}
+        {/* ═══ HERO SECTION ═══ */}
         <section className="hero">
           <div className="hero-text">
             <h1>
-              Shop All <span>Inventory</span>
+              Find Products That Fit Your <span>Workflow</span>
             </h1>
             <p>
-              Find everything you need in one place. Discover amazing deals today.
+              Browse professional tools, electronics, and accessories. Reserve products instantly and review them after delivery.
             </p>
-            <button className="btn-browse" onClick={handleBrowseClick}>
+            <button
+              type="button"
+              className="btn-browse"
+              id="browseproduct"
+              onClick={() => onNavigate('search')}
+            >
               Browse Products
             </button>
           </div>
+
           <div className="hero-img-wrap">
             <div className="hero-img-placeholder">
               <img
                 src="/cart-image.png"
-                alt="Shopping Basket"
+                alt="Shopping cart with floating products"
                 onError={(e) => {
-                  e.target.style.display = 'none';
+                  e.target.src = '/cart-image.png';
                 }}
               />
             </div>
           </div>
         </section>
 
-        {/* ── Featured Products Section ── */}
+        {/* ═══ PRODUCTS SECTION ═══ */}
         <section className="products-section" id="products-section">
-          <h2>Featured Products</h2>
+          <h2>Top Rated Products By Category</h2>
 
-          {/* Filter Bar */}
-          <div className="landing-filter-bar">
-            <div className="landing-cat-chips">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  className={`landing-cat-btn ${activeCategory === cat ? 'active' : ''}`}
-                  onClick={() => setActiveCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            <div className="landing-search-wrap">
-              <span className="search-ico">🔍</span>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <button className="clear-btn" onClick={() => setSearchQuery('')}>
-                  ✕
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Products Grid */}
           {loading ? (
             <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-              <div className="spinner"></div>
-              <p style={{ color: '#64748b' }}>Loading inventory catalog...</p>
+              <div className="spinner" style={{ margin: '0 auto 12px' }}></div>
+              <p style={{ color: '#64748b' }}>Loading top rated products...</p>
             </div>
-          ) : filteredProducts.length === 0 ? (
+          ) : topRatedProducts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748b' }}>
-              <h3>No products found</h3>
-              <p>Try adjusting your search query or selecting a different category.</p>
+              <p>No products available right now.</p>
             </div>
           ) : (
-            <div className="products-grid">
-              {filteredProducts.map((p, idx) => {
-                const qty = p.qty !== undefined ? p.qty : 10;
-                const price = Number(p.priceUSD || p.price || 0);
-
-                let stockClass = 'stock-chip in-stock';
-                let stockLabel = `In Stock (${qty})`;
-                if (qty <= 0) {
-                  stockClass = 'stock-chip out-stock';
-                  stockLabel = 'Out of Stock';
-                } else if (qty <= 10) {
-                  stockClass = 'stock-chip low-stock';
-                  stockLabel = `Low Stock (${qty} left)`;
-                }
+            <div className="products-grid" id="productsGrid">
+              {topRatedProducts.map((p, idx) => {
+                const stock = getStockMeta(p);
+                const rating = getRatingMeta(p);
+                const price = Number(p.priceUSD ?? p.price ?? 0);
+                const bg = CARD_BGS[idx % CARD_BGS.length];
 
                 return (
-                  <div key={p.sku || idx} className="prod-card">
-                    {/* Image Box */}
-                    <div
-                      className="prod-img"
-                      onClick={() => onViewProduct(p.sku)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {p.productImg ? (
-                        <img
-                          src={p.productImg}
-                          alt={p.name}
-                          className="prod-img-photo"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'flex';
+                  <article
+                    key={p.sku || idx}
+                    className={`product-card card-${idx % 8}`}
+                    data-sku={p.sku}
+                    onClick={() => onViewProduct(p.sku)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="card-inner" style={{ background: bg }}>
+                      <div className="card-img">
+                        <div
+                          className="img-placeholder"
+                          style={{
+                            background:
+                              p.palette && p.palette[0]
+                                ? p.palette[0]
+                                : 'linear-gradient(135deg,#e0f7ff,#bae6fd)',
                           }}
-                        />
-                      ) : null}
-                      <div
-                        className="prod-img-fallback"
-                        style={{ display: p.productImg ? 'none' : 'flex' }}
-                      >
-                        {p.emoji || '📦'}
-                      </div>
-                      <span className={stockClass}>{stockLabel}</span>
-                    </div>
-
-                    {/* Card Body */}
-                    <div className="prod-body">
-                      <div className="prod-cat">{p.category || 'General'}</div>
-                      <div
-                        className="prod-name"
-                        title={p.name}
-                        onClick={() => onViewProduct(p.sku)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {p.name}
-                      </div>
-
-                      <hr className="prod-divider" />
-
-                      <div className="prod-footer">
-                        <span className="prod-price">₹{price.toLocaleString('en-IN')}</span>
-                        {qty > 0 && qty <= 10 && (
-                          <span className="low-stock-label">Only {qty} left!</span>
-                        )}
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                        <button
-                          type="button"
-                          className="view-btn"
-                          style={{ flex: 1, marginTop: 0 }}
-                          onClick={() => onViewProduct(p.sku)}
                         >
-                          View Details
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-add-cart"
-                          style={{ padding: '8px 12px' }}
-                          disabled={qty <= 0}
-                          onClick={() => onAddToCart(p)}
-                        >
-                          + Cart
-                        </button>
+                          <img
+                            src={p.productImg || ''}
+                            alt={p.name}
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              if (e.target.nextElementSibling) {
+                                e.target.nextElementSibling.style.display = 'flex';
+                              }
+                            }}
+                          />
+                          <div
+                            className="img-fallback"
+                            style={{ display: p.productImg ? 'none' : 'flex' }}
+                          >
+                            {p.emoji || '📦'}
+                          </div>
+                        </div>
                       </div>
+
+                      <div className="card-name">{p.name}</div>
+                      <div className="card-meta">
+                        {p.category || 'General'} · {p.brand || 'StockOverflow'} · {p.sku}
+                      </div>
+                      <div className="card-meta" style={{ color: '#0284c7', fontWeight: 600 }}>
+                        Store: {p.retailerName || selectedStore || "John's Retail Store"}
+                      </div>
+                      <div className="card-meta">
+                        Rating {rating.avg ? rating.avg.toFixed(1) : '0.0'} ({rating.count})
+                      </div>
+                      <div className="card-price">₹{price.toLocaleString('en-IN')}</div>
+                      <div
+                        className={`card-stock ${
+                          stock.key === 'low' ? 'low' : stock.key === 'out' ? 'out' : ''
+                        }`}
+                      >
+                        {stock.label} • {Number(p.qty || 0)} units
+                      </div>
+
+                      <button
+                        className="card-btn"
+                        type="button"
+                        data-sku={p.sku}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onViewProduct(p.sku);
+                        }}
+                      >
+                        View Product
+                      </button>
                     </div>
-                  </div>
+                  </article>
                 );
               })}
             </div>
           )}
         </section>
 
-        {/* ── Footer ── */}
-        <footer
-          style={{
-            borderTop: '1px solid #e5e7eb',
-            padding: '24px 32px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '13px',
-            color: '#64748b',
-          }}
-        >
-          <div>© 2026 StockOverflow. All rights reserved.</div>
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <span style={{ cursor: 'pointer' }} onClick={() => onNavigate('search')}>Catalog</span>
-            <span style={{ cursor: 'pointer' }} onClick={() => onNavigate('orders')}>Orders</span>
-            <span style={{ cursor: 'pointer' }} onClick={() => onNavigate('returns')}>Returns</span>
-            <span style={{ cursor: 'pointer' }} onClick={() => onNavigate('restock')}>Restock Alerts</span>
-          </div>
+        {/* ═══ FOOTER ═══ */}
+        <footer>
+          <p>© 2026 StockOverflow</p>
         </footer>
-
-        {/* Store Selection Modal */}
-        <StoreModal_consumer
-          isOpen={isStoreModalOpen}
-          currentStore={selectedStore}
-          stores={stores}
-          onSelectStore={(storeName) => {
-            onSelectStore(storeName);
-            setIsStoreModalOpen(false);
-          }}
-          onClose={() => setIsStoreModalOpen(false)}
-        />
-
-        {/* Notification Toast Alert */}
-        <NotificationToast_consumer message={toastMessage} visible={!!toastMessage} />
       </div>
+
+      {/* Store Selection Modal */}
+      <StoreModal_consumer
+        isOpen={isStoreModalOpen}
+        currentStore={selectedStore}
+        stores={stores}
+        onSelectStore={(store) => {
+          onSelectStore(store);
+          setIsStoreModalOpen(false);
+        }}
+        onClose={() => setIsStoreModalOpen(false)}
+      />
+
+      {/* Toast Notification */}
+      <NotificationToast_consumer message={toastMessage} />
     </div>
   );
 }

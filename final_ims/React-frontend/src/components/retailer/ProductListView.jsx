@@ -209,12 +209,50 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
                     </td>
                     <td>
                       <div className="prod-cell">
-                        <div className="prod-img-wrap">
+                        <div
+                          className="prod-img-wrap"
+                          style={{
+                            width: '38px',
+                            height: '38px',
+                            minWidth: '38px',
+                            minHeight: '38px',
+                            maxWidth: '38px',
+                            maxHeight: '38px',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            flexShrink: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: '#f8fafc',
+                            border: '1px solid #e2e8f0',
+                          }}
+                        >
                           {p.productImg || p.image ? (
-                            <img src={p.productImg || p.image} alt="" />
-                          ) : (
-                            <span style={{ fontSize: '16px' }}>{p.emoji || '📦'}</span>
-                          )}
+                            <img
+                              src={p.productImg || p.image}
+                              alt=""
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                if (e.target.nextSibling) {
+                                  e.target.nextSibling.style.display = 'flex';
+                                }
+                              }}
+                            />
+                          ) : null}
+                          <span
+                            style={{
+                              fontSize: '16px',
+                              display: p.productImg || p.image ? 'none' : 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: '100%',
+                              height: '100%',
+                            }}
+                          >
+                            {p.emoji || '📦'}
+                          </span>
                         </div>
                         <span className="prod-name">{p.name}</span>
                       </div>
