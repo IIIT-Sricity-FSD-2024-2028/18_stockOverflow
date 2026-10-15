@@ -117,61 +117,230 @@ export const PERMISSION_DEFINITIONS = [
 
 export const REVENUE_TIERS = [
   {
-    name: 'Starter Bharat',
-    price: '₹999',
+    name: 'Starter Free',
+    price: '₹0',
     period: '/month',
     featured: false,
+    orderLimit: '5 orders/week',
     features: [
-      'Single store location',
-      'Up to 500 SKUs',
-      'Standard POS terminal',
-      '2% Transaction commission',
-      'Email support'
+      'Single physical store location',
+      'Up to 50 active SKUs',
+      'Standard cashier POS terminal',
+      '2.0% Transaction commission',
+      'Standard community support'
     ]
   },
   {
-    name: 'Growth Retailer',
-    price: '₹2,499',
+    name: 'Growth Partner',
+    price: '₹799',
     period: '/month',
     featured: true,
+    orderLimit: '30 orders/week',
     features: [
-      'Up to 3 store locations',
-      'Up to 5,000 SKUs',
-      'Multi-biller checkout counters',
-      '1.5% Transaction commission',
-      'Supplier auto-reordering',
-      'Priority phone & chat support'
+      'Up to 5 multi-store branches',
+      'Up to 1,000 active SKUs',
+      'Multi-cashier billing sync',
+      '2.0% Transaction commission',
+      'Wholesale supplier auto-reorder',
+      'Priority employee verification'
     ]
   },
   {
-    name: 'Enterprise Hub',
-    price: '₹5,999',
+    name: 'Enterprise Logistics',
+    price: '₹3,499',
     period: '/month',
     featured: false,
+    orderLimit: 'Unlimited capacity',
     features: [
-      'Unlimited store locations & hubs',
-      'Unlimited SKUs & warehouses',
-      'Full API & ERP webhook access',
-      '1.0% Transaction commission',
-      'Custom role-based permissions',
-      'Dedicated account manager 24/7'
+      'Unlimited stores & warehouse hubs',
+      'Unlimited SKUs & catalog listings',
+      'Unlimited weekly order volume',
+      '2.0% Transaction commission',
+      'Full REST API & webhook web access',
+      'Dedicated 24/7 account support'
     ]
   }
 ];
 
+export const STAKEHOLDER_REVENUE_RECORDS = [
+  // Retailers
+  {
+    id: 'RET-01',
+    name: 'Downtown Retail Corp',
+    role: 'retailer',
+    store: 'Downtown Store',
+    plan: 'Growth Partner',
+    subscriptionFee: 799,
+    grossVolume: 185400,
+    transactionCount: 412,
+    commissionRate: 0.02,
+    commissionEarned: 3708, // 2% of 185,400
+    platformRevenue: 4507, // 799 + 3708
+    userEarnings: 181692, // 185,400 - 3,708
+    status: 'Active',
+    lastTransactionDate: '2024-06-18'
+  },
+  {
+    id: 'RET-02',
+    name: 'Apex Supermarket Ltd',
+    role: 'retailer',
+    store: 'Uptown Mall',
+    plan: 'Enterprise Logistics',
+    subscriptionFee: 3499,
+    grossVolume: 342000,
+    transactionCount: 780,
+    commissionRate: 0.02,
+    commissionEarned: 6840,
+    platformRevenue: 10339,
+    userEarnings: 335160,
+    status: 'Active',
+    lastTransactionDate: '2024-06-18'
+  },
+  {
+    id: 'RET-03',
+    name: 'Westside Provisions',
+    role: 'retailer',
+    store: 'Westside Outlet',
+    plan: 'Starter Free',
+    subscriptionFee: 0,
+    grossVolume: 42100,
+    transactionCount: 95,
+    commissionRate: 0.02,
+    commissionEarned: 842,
+    platformRevenue: 842,
+    userEarnings: 41258,
+    status: 'Active',
+    lastTransactionDate: '2024-06-17'
+  },
+  {
+    id: 'RET-04',
+    name: 'Kaveri Grocery & FMCG',
+    role: 'retailer',
+    store: 'Downtown Store',
+    plan: 'Growth Partner',
+    subscriptionFee: 799,
+    grossVolume: 94800,
+    transactionCount: 160,
+    commissionRate: 0.02,
+    commissionEarned: 1896,
+    platformRevenue: 2695,
+    userEarnings: 92904,
+    status: 'Active',
+    lastTransactionDate: '2024-06-16'
+  },
+  // Suppliers
+  {
+    id: 'SUP-01',
+    name: 'Nordic Direct Logistics',
+    role: 'supplier',
+    store: 'Central Warehouse',
+    plan: 'Enterprise Logistics',
+    subscriptionFee: 3499,
+    grossVolume: 490000, // Wholesale orders fulfilled
+    transactionCount: 48,
+    commissionRate: 0.015,
+    commissionEarned: 7350, // Logistics platform fee
+    platformRevenue: 10849, // 3499 + 7350
+    userEarnings: 482650,
+    status: 'Active',
+    lastTransactionDate: '2024-06-18'
+  },
+  {
+    id: 'SUP-02',
+    name: 'Global Supply Chain Ltd',
+    role: 'supplier',
+    store: 'Central Warehouse',
+    plan: 'Growth Partner',
+    subscriptionFee: 799,
+    grossVolume: 125000,
+    transactionCount: 22,
+    commissionRate: 0.015,
+    commissionEarned: 1875,
+    platformRevenue: 2674,
+    userEarnings: 123125,
+    status: 'Active',
+    lastTransactionDate: '2024-06-17'
+  },
+  {
+    id: 'SUP-03',
+    name: 'Bharat Agro Wholesale',
+    role: 'supplier',
+    store: 'Central Warehouse',
+    plan: 'Starter Free',
+    subscriptionFee: 0,
+    grossVolume: 32000,
+    transactionCount: 5,
+    commissionRate: 0.015,
+    commissionEarned: 480,
+    platformRevenue: 480,
+    userEarnings: 31520,
+    status: 'Active',
+    lastTransactionDate: '2024-06-15'
+  },
+  // Consumers
+  {
+    id: 'CUST-01',
+    name: 'Priya Sharma (Shopper)',
+    role: 'consumer',
+    store: 'Downtown Store',
+    plan: 'Consumer Account',
+    subscriptionFee: 0, // Consumers pay no subscription
+    grossVolume: 14200, // Total purchases made on website
+    transactionCount: 14,
+    commissionRate: 0.02,
+    commissionEarned: 284, // Commission generated to website
+    platformRevenue: 284,
+    userEarnings: 0, // Consumers are spenders
+    status: 'Active',
+    lastTransactionDate: '2024-06-18'
+  },
+  {
+    id: 'CUST-02',
+    name: 'Rahul Varma (Shopper)',
+    role: 'consumer',
+    store: 'Uptown Mall',
+    plan: 'Consumer Account',
+    subscriptionFee: 0,
+    grossVolume: 28900,
+    transactionCount: 26,
+    commissionRate: 0.02,
+    commissionEarned: 578,
+    platformRevenue: 578,
+    userEarnings: 0,
+    status: 'Active',
+    lastTransactionDate: '2024-06-17'
+  },
+  {
+    id: 'CUST-03',
+    name: 'Anita Desai (Shopper)',
+    role: 'consumer',
+    store: 'Westside Outlet',
+    plan: 'Consumer Account',
+    subscriptionFee: 0,
+    grossVolume: 8400,
+    transactionCount: 8,
+    commissionRate: 0.02,
+    commissionEarned: 168,
+    platformRevenue: 168,
+    userEarnings: 0,
+    status: 'Active',
+    lastTransactionDate: '2024-06-16'
+  }
+];
+
 export const REVENUE_LEDGER = [
-  { orderId: 'ORD-9021', store: 'Downtown Store', amount: 3450, commission: 69.00, date: '2024-06-18', status: 'Settled' },
-  { orderId: 'ORD-9022', store: 'Uptown Mall', amount: 8200, commission: 164.00, date: '2024-06-18', status: 'Settled' },
-  { orderId: 'ORD-9023', store: 'Westside Outlet', amount: 1250, commission: 25.00, date: '2024-06-17', status: 'Settled' },
-  { orderId: 'ORD-9024', store: 'Downtown Store', amount: 14600, commission: 292.00, date: '2024-06-17', status: 'Settled' },
-  { orderId: 'ORD-9025', store: 'Central Warehouse', amount: 45000, commission: 900.00, date: '2024-06-16', status: 'Settled' },
-  { orderId: 'ORD-9026', store: 'Uptown Mall', amount: 6700, commission: 134.00, date: '2024-06-16', status: 'Settled' }
+  { orderId: 'ORD-9021', store: 'Downtown Store', retailer: 'Downtown Retail Corp', amount: 3450, commission: 69.00, date: '2024-06-18', status: 'Settled' },
+  { orderId: 'ORD-9022', store: 'Uptown Mall', retailer: 'Apex Supermarket Ltd', amount: 8200, commission: 164.00, date: '2024-06-18', status: 'Settled' },
+  { orderId: 'ORD-9023', store: 'Westside Outlet', retailer: 'Westside Provisions', amount: 1250, commission: 25.00, date: '2024-06-17', status: 'Settled' },
+  { orderId: 'ORD-9024', store: 'Downtown Store', retailer: 'Downtown Retail Corp', amount: 14600, commission: 292.00, date: '2024-06-17', status: 'Settled' },
+  { orderId: 'ORD-9025', store: 'Central Warehouse', retailer: 'Nordic Direct Logistics', amount: 45000, commission: 900.00, date: '2024-06-16', status: 'Settled' },
+  { orderId: 'ORD-9026', store: 'Uptown Mall', retailer: 'Apex Supermarket Ltd', amount: 6700, commission: 134.00, date: '2024-06-16', status: 'Settled' }
 ];
 
 export const STORES_DATA = [
-  { id: 'store-1', name: 'Downtown Store', code: 'DWT-01', location: 'Commercial Ave, Block 4', manager: 'Sarah Connor', stockCount: 1420, staffCount: 12, status: 'Active' },
-  { id: 'store-2', name: 'Uptown Mall', code: 'UPT-02', location: 'Skyline Mall Level 2', manager: 'David Kim', stockCount: 980, staffCount: 8, status: 'Active' },
-  { id: 'store-3', name: 'Westside Outlet', code: 'WST-03', location: 'West End High Street', manager: 'Priya Sharma', stockCount: 650, staffCount: 6, status: 'Active' },
-  { id: 'store-4', name: 'Central Warehouse', code: 'CWH-04', location: 'Logistics Industrial Park', manager: 'Elena Rostova', stockCount: 8400, staffCount: 24, status: 'Active' },
-  { id: 'store-5', name: 'Global Hub', code: 'GLB-00', location: 'StockOverflow Tech Headquarters', manager: 'Super User', stockCount: 200, staffCount: 15, status: 'Active' }
+  { id: 'store-1', name: 'Downtown Store', code: 'DWT-01', location: 'Commercial Ave, Block 4', retailerId: 'RET-01', retailerName: 'Downtown Retail Corp', manager: 'Sarah Connor', stockCount: 1420, staffCount: 12, revenue: 185400, status: 'Active' },
+  { id: 'store-2', name: 'Uptown Mall', code: 'UPT-02', location: 'Skyline Mall Level 2', retailerId: 'RET-02', retailerName: 'Apex Supermarket Ltd', manager: 'David Kim', stockCount: 980, staffCount: 8, revenue: 342000, status: 'Active' },
+  { id: 'store-3', name: 'Westside Outlet', code: 'WST-03', location: 'West End High Street', retailerId: 'RET-03', retailerName: 'Westside Provisions', manager: 'Priya Sharma', stockCount: 650, staffCount: 6, revenue: 42100, status: 'Active' },
+  { id: 'store-4', name: 'Central Warehouse', code: 'CWH-04', location: 'Logistics Industrial Park', retailerId: 'SUP-01', retailerName: 'Nordic Direct Logistics', manager: 'Elena Rostova', stockCount: 8400, staffCount: 24, revenue: 490000, status: 'Active' },
+  { id: 'store-5', name: 'Global Hub', code: 'GLB-00', location: 'StockOverflow Tech Headquarters', retailerId: 'ADM-01', retailerName: 'StockOverflow Admin Corp', manager: 'Super User', stockCount: 200, staffCount: 15, revenue: 32910, status: 'Active' }
 ];

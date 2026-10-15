@@ -1,11 +1,14 @@
 /**
  * AdminLayout_admin.jsx - Universal Sidebar & Header Layout for Admin Pages
  * 
- * Follows the same pattern as CustomerLayout_consumer.jsx:
- * Provides sidebar navigation on the left and the topbar header for all admin views.
+ * Features:
+ * 1. Clean, de-duplicated sidebar navigation.
+ * 2. Active Store Scope Picker in topbar header.
+ * 3. Quick module navigation to Employee Desk and Landing.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
+import { STORES_DATA } from '../../data/mockData_admin';
 
 export default function AdminLayout_admin({
   activeMenu = 'dashboard',
@@ -13,6 +16,26 @@ export default function AdminLayout_admin({
   onSwitchModule,
   children,
 }) {
+  const [activeStoreId, setActiveStoreId] = useState(() => {
+    try {
+      return localStorage.getItem('stockoverflow_active_store_id') || 'store-1';
+    } catch {
+      return 'store-1';
+    }
+  });
+
+  const handleScopeChange = (e) => {
+    const val = e.target.value;
+    setActiveStoreId(val);
+    try {
+      localStorage.setItem('stockoverflow_active_store_id', val);
+      // Trigger a window event so current page knows store scope changed
+      window.dispatchEvent(new Event('storage'));
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   return (
     <div className="admin-shell">
       {/* ── Fixed Left Sidebar ── */}
@@ -51,15 +74,16 @@ export default function AdminLayout_admin({
             <span>Platform Revenue</span>
           </button>
 
+          {/* Unified Stores Link */}
           <button
             type="button"
-            className={`admin-nav-item ${activeMenu === 'stores' ? 'active' : ''}`}
+            className={`admin-nav-item ${activeMenu === 'stores' || activeMenu === 'multistore' ? 'active' : ''}`}
             onClick={() => onNavigate && onNavigate('stores')}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             </svg>
-            <span>Store Selection</span>
+            <span>Stores &amp; Multi-Store</span>
           </button>
 
           <button
@@ -70,7 +94,7 @@ export default function AdminLayout_admin({
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
-            <span>Users</span>
+            <span>Users &amp; Staff</span>
           </button>
 
           <button
@@ -86,24 +110,13 @@ export default function AdminLayout_admin({
 
           <button
             type="button"
-            className={`admin-nav-item ${activeMenu === 'multistore' ? 'active' : ''}`}
-            onClick={() => onNavigate && onNavigate('multistore')}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-            <span>Multi-Store Setup</span>
-          </button>
-
-          <button
-            type="button"
             className={`admin-nav-item ${activeMenu === 'reports' ? 'active' : ''}`}
             onClick={() => onNavigate && onNavigate('reports')}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
             </svg>
-            <span>Reports</span>
+            <span>Reports &amp; Audits</span>
           </button>
 
           <button
@@ -118,16 +131,26 @@ export default function AdminLayout_admin({
           </button>
         </nav>
 
-        <div className="admin-sidebar-footer">
+        <div className="admin-sidebar-footer" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {onSwitchModule && (
-            <button
-              type="button"
-              className="admin-btn admin-btn-outline"
-              style={{ width: '100%', fontSize: '0.8rem' }}
-              onClick={() => onSwitchModule('consumer')}
-            >
-              ← Consumer Storefront
-            </button>
+            <>
+              <button
+                type="button"
+                className="admin-btn admin-btn-primary"
+                style={{ width: '100%', fontSize: '0.82rem', justifyContent: 'center' }}
+                onClick={() => onSwitchModule('employee')}
+              >
+                👔 Switch to Employee Desk →
+              </button>
+              <button
+                type="button"
+                className="admin-btn admin-btn-outline"
+                style={{ width: '100%', fontSize: '0.78rem', justifyContent: 'center', color: '#64748b' }}
+                onClick={() => onSwitchModule('landing')}
+              >
+                ← Back to Landing Page
+              </button>
+            </>
           )}
         </div>
       </aside>
@@ -136,11 +159,35 @@ export default function AdminLayout_admin({
       <div className="admin-main">
         {/* Topbar Header */}
         <header className="admin-topbar">
-          <div className="admin-topbar-search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" color="#64748b">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input type="text" placeholder="Search admin system..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* Active Store Scope Picker */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
+                Store Scope:
+              </span>
+              <select
+                value={activeStoreId}
+                onChange={handleScopeChange}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: '6px',
+                  border: '1px solid #cbd5e1',
+                  background: '#ffffff',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  color: '#0f172a',
+                  outline: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <option value="all">🌐 All Store Branches (Global)</option>
+                {STORES_DATA.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    🏬 {s.name} ({s.code})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="admin-topbar-right">

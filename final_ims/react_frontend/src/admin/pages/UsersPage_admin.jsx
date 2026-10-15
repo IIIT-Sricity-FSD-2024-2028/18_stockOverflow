@@ -9,10 +9,33 @@ import { INITIAL_ADMIN_USERS } from '../data/mockData_admin';
 import UserModal_admin from '../components/UserModal_admin';
 
 export default function UsersPage_admin() {
-  const [users, setUsers] = useState(INITIAL_ADMIN_USERS);
+  const [users, setUsers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('stockoverflow_admin_users');
+      return saved ? JSON.parse(saved) : INITIAL_ADMIN_USERS;
+    } catch {
+      return INITIAL_ADMIN_USERS;
+    }
+  });
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  // Persist users to localStorage
+  const persistUsers = (newUsers) => {
+    setUsers(newUsers);
+    try {
+      localStorage.setItem('stockoverflow_admin_users', JSON.stringify(newUsers));
+    } catch (e) {
+      console.warn('Could not save users to localStorage', e);
+    }
+  };
+
+  const handleResetUsers = () => {
+    if (window.confirm('Reset users back to default demo seed data?')) {
+      persistUsers(INITIAL_ADMIN_USERS);
+    }
+  };
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,19 +98,18 @@ export default function UsersPage_admin() {
     }
 
     if (editingUser) {
-      setUsers((prev) =>
-        prev.map((u) => (u.id === editingUser.id ? { ...u, ...formData } : u))
-      );
+      const updated = users.map((u) => (u.id === editingUser.id ? { ...u, ...formData } : u));
+      persistUsers(updated);
     } else {
       const newId = `u-${formData.role.slice(0, 3)}-${Date.now().toString().slice(-4)}`;
-      setUsers((prev) => [{ id: newId, ...formData }, ...prev]);
+      persistUsers([{ id: newId, ...formData }, ...users]);
     }
     setIsModalOpen(false);
   };
 
   const handleDeleteUser = (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}?`)) {
-      setUsers((prev) => prev.filter((u) => u.id !== id));
+      persistUsers(users.filter((u) => u.id !== id));
     }
   };
 
@@ -122,16 +144,26 @@ export default function UsersPage_admin() {
           <h1 className="admin-page-title">Manage Users</h1>
           <p className="admin-page-subtitle">View, edit, and manage all users in your system</p>
         </div>
-        <button
-          type="button"
-          className="admin-btn admin-btn-primary"
-          onClick={handleOpenAdd}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          Add User
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            type="button"
+            className="admin-btn admin-btn-outline"
+            onClick={handleResetUsers}
+            title="Reset to initial seed users"
+          >
+            ↻ Reset Demo Data
+          </button>
+          <button
+            type="button"
+            className="admin-btn admin-btn-primary"
+            onClick={handleOpenAdd}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Add User
+          </button>
+        </div>
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>

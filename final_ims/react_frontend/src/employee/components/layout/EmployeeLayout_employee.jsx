@@ -77,16 +77,26 @@ export default function EmployeeLayout_employee({
           </div>
         </div>
 
-        <div style={{ padding: '16px', borderTop: '1px solid #e5e7eb' }}>
+        <div style={{ padding: '16px', borderTop: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {onSwitchModule && (
-            <button
-              type="button"
-              className="emp-btn"
-              style={{ width: '100%', background: '#f3f4f6', color: '#4b5563', border: '1px solid #e5e7eb' }}
-              onClick={() => onSwitchModule('consumer')}
-            >
-              ← Consumer View
-            </button>
+            <>
+              <button
+                type="button"
+                className="emp-btn emp-btn-primary"
+                style={{ width: '100%', fontSize: '12px', justifyContent: 'center' }}
+                onClick={() => onSwitchModule('admin')}
+              >
+                🛡️ Switch to Admin Portal →
+              </button>
+              <button
+                type="button"
+                className="emp-btn"
+                style={{ width: '100%', background: '#f9fafb', color: '#6b7280', border: '1px solid #e5e7eb', fontSize: '11.5px', justifyContent: 'center' }}
+                onClick={() => onSwitchModule('consumer')}
+              >
+                🛒 Consumer View
+              </button>
+            </>
           )}
         </div>
       </aside>

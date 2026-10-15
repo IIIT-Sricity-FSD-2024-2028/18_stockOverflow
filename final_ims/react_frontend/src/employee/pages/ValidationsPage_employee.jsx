@@ -1,7 +1,12 @@
 /**
  * ValidationsPage_employee.jsx - Employee Entity Verification Desk Page View
  * 
- * Converted from final_ims/frontend/employee module/employee-validations.html
+ * Features:
+ * 1. Filter tabs across entity types and statuses (Pending, Approved, Rejected).
+ * 2. Real-time search by entity name, owner, and GSTIN.
+ * 3. Approve and Reject state transitions with audit notes.
+ * 4. Dossier modal with deep legal document inspection.
+ * 5. Dynamic persistence that updates the Employee Dashboard immediately.
  */
 
 import React, { useState, useMemo } from 'react';
@@ -9,17 +14,41 @@ import { INITIAL_VALIDATIONS } from '../data/mockData_employee';
 import DossierModal_employee from '../components/DossierModal_employee';
 
 export default function ValidationsPage_employee() {
-  const [validations, setValidations] = useState(INITIAL_VALIDATIONS);
+  const [validations, setValidations] = useState(() => {
+    try {
+      const saved = localStorage.getItem('stockoverflow_employee_validations');
+      return saved ? JSON.parse(saved) : INITIAL_VALIDATIONS;
+    } catch {
+      return INITIAL_VALIDATIONS;
+    }
+  });
+
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedEntity, setSelectedEntity] = useState(null);
+
+  const persistValidations = (newItems) => {
+    setValidations(newItems);
+    try {
+      localStorage.setItem('stockoverflow_employee_validations', JSON.stringify(newItems));
+      window.dispatchEvent(new Event('storage'));
+    } catch (e) {
+      console.warn('Could not save validations to localStorage', e);
+    }
+  };
+
+  const handleResetValidations = () => {
+    if (window.confirm('Reset verification queue back to initial demo entities?')) {
+      persistValidations(INITIAL_VALIDATIONS);
+    }
+  };
 
   const filteredItems = useMemo(() => {
     return validations.filter((item) => {
       const matchesSearch =
         item.entityName.toLowerCase().includes(search.toLowerCase()) ||
         item.owner.toLowerCase().includes(search.toLowerCase()) ||
-        item.gstin.toLowerCase().includes(search.toLowerCase());
+        (item.gstin && item.gstin.toLowerCase().includes(search.toLowerCase()));
 
       if (!matchesSearch) return false;
 
@@ -34,25 +63,63 @@ export default function ValidationsPage_employee() {
     });
   }, [validations, filter, search]);
 
-  const handleStatusChange = (id, newStatus) => {
-    setValidations((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
-    );
+  const handleStatusChange = (id, newStatus, reason = '') => {
+    const updated = validations.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          status: newStatus,
+          notes: reason ? reason : item.notes,
+          decidedAt: new Date().toISOString(),
+          decidedBy: 'Sarah Connor (Compliance Auditor)',
+        };
+      }
+      return item;
+    });
+
+    persistValidations(updated);
+
     if (selectedEntity && selectedEntity.id === id) {
-      setSelectedEntity((prev) => ({ ...prev, status: newStatus }));
+      setSelectedEntity((prev) => ({
+        ...prev,
+        status: newStatus,
+        notes: reason ? reason : prev.notes,
+      }));
+    }
+  };
+
+  const handleQuickReject = (id, name) => {
+    const reason = window.prompt(
+      `Enter rejection reason for ${name}:`,
+      'Invalid tax documentation or missing store lease.'
+    );
+    if (reason !== null && reason.trim()) {
+      handleStatusChange(id, 'rejected', reason.trim());
     }
   };
 
   return (
     <div>
-      <div style={{ marginBottom: '1.25rem' }}>
-        <h1 className="emp-page-title">Entity Verification Desk</h1>
-        <p className="emp-page-subtitle">
-          Review, validate, approve, or reject new retailer, supplier, and store registrations.
-        </p>
+      {/* ── Page Header ── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '10px' }}>
+        <div>
+          <h1 className="emp-page-title">Entity Verification Desk</h1>
+          <p className="emp-page-subtitle">
+            Review legal dossiers, verify GSTIN certificates, and approve or reject onboarding registrations.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="emp-btn"
+          style={{ background: '#ffffff', color: '#4b5563', border: '1px solid #d1d5db' }}
+          onClick={handleResetValidations}
+          title="Reset to default verification queue"
+        >
+          ↻ Reset Queue Data
+        </button>
       </div>
 
-      {/* Filter Tabs & Search Card */}
+      {/* ── Filter Tabs & Search Card ── */}
       <div
         style={{
           background: '#ffffff',
@@ -67,13 +134,13 @@ export default function ValidationsPage_employee() {
           gap: '12px',
         }}
       >
-        <div style={{ display: 'flex', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', flexWrap: 'wrap' }}>
           {[
-            { key: 'all', label: 'All Items' },
+            { key: 'all', label: `All (${validations.length})` },
+            { key: 'pending', label: `⏳ Pending (${validations.filter(v => v.status === 'pending').length})` },
             { key: 'retailer', label: 'Retailers' },
             { key: 'supplier', label: 'Suppliers' },
             { key: 'store', label: 'Stores' },
-            { key: 'pending', label: 'Pending' },
             { key: 'approved', label: 'Approved' },
             { key: 'rejected', label: 'Rejected' },
           ].map((tab) => (
@@ -100,7 +167,7 @@ export default function ValidationsPage_employee() {
 
         <input
           type="text"
-          placeholder="Filter by name, GSTIN..."
+          placeholder="Filter by name, GSTIN, owner..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           style={{
@@ -109,12 +176,12 @@ export default function ValidationsPage_employee() {
             borderRadius: '8px',
             fontSize: '12.5px',
             outline: 'none',
-            width: '220px',
+            width: '240px',
           }}
         />
       </div>
 
-      {/* Validations Queue Table */}
+      {/* ── Validations Queue Table ── */}
       <div
         style={{
           background: '#ffffff',
@@ -129,16 +196,16 @@ export default function ValidationsPage_employee() {
             <thead>
               <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                 <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
-                  Entity
+                  Business Entity
                 </th>
                 <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
                   Type
                 </th>
                 <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
-                  Tax ID / GSTIN
+                  GSTIN / Tax ID
                 </th>
                 <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
-                  Submitted
+                  Submitted Date
                 </th>
                 <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
                   Status
@@ -152,7 +219,7 @@ export default function ValidationsPage_employee() {
               {filteredItems.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af' }}>
-                    No validation records found.
+                    No validation records found matching filter.
                   </td>
                 </tr>
               ) : (
@@ -187,11 +254,11 @@ export default function ValidationsPage_employee() {
                     </td>
 
                     <td style={{ padding: '12px 16px' }}>
-                      <span className={`emp-pill ${item.type}`}>{item.type}</span>
+                      <span className={`emp-pill ${item.type}`}>{item.type.toUpperCase()}</span>
                     </td>
 
                     <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontSize: '12px', color: '#4b5563' }}>
-                      {item.gstin}
+                      {item.gstin || 'PENDING'}
                     </td>
 
                     <td style={{ padding: '12px 16px', color: '#6b7280', fontSize: '12px' }}>
@@ -199,7 +266,7 @@ export default function ValidationsPage_employee() {
                     </td>
 
                     <td style={{ padding: '12px 16px' }}>
-                      <span className={`emp-pill ${item.status}`}>{item.status}</span>
+                      <span className={`emp-pill ${item.status}`}>{item.status.toUpperCase()}</span>
                     </td>
 
                     <td style={{ padding: '12px 16px', textAlign: 'right' }}>
@@ -210,15 +277,17 @@ export default function ValidationsPage_employee() {
                               type="button"
                               className="emp-btn emp-btn-success"
                               onClick={() => handleStatusChange(item.id, 'approved')}
+                              title="Approve entity"
                             >
-                              Approve
+                              ✓ Approve
                             </button>
                             <button
                               type="button"
                               className="emp-btn emp-btn-danger"
-                              onClick={() => handleStatusChange(item.id, 'rejected')}
+                              onClick={() => handleQuickReject(item.id, item.entityName)}
+                              title="Reject with note"
                             >
-                              Reject
+                              ✕ Reject
                             </button>
                           </>
                         )}

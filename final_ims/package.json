@@ -1,0 +1,14 @@
+{
+  "name": "stock-overflow-fullstack",
+  "version": "1.0.0",
+  "description": "StockOverflow - Multi-Stakeholder Inventory Lifecycle Management System",
+  "private": true,
+  "scripts": {
+    "start": "npm run dev:frontend",
+    "dev": "npm run dev:frontend",
+    "dev:frontend": "cd react_frontend && npm run dev",
+    "build:frontend": "cd react_frontend && npm run build",
+    "start:backend": "cd backend && npm run start:dev",
+    "install:all": "npm --prefix backend install && npm --prefix react_frontend install"
+  }
+}

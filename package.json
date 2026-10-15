@@ -1,0 +1,14 @@
+{
+  "name": "stockoverflow-workspace",
+  "version": "1.0.0",
+  "description": "StockOverflow - Multi-Stakeholder Inventory Lifecycle Management System (React Frontend + Express Backend)",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix final_ims/react_frontend run dev",
+    "dev": "npm --prefix final_ims/react_frontend run dev",
+    "build": "npm --prefix final_ims/react_frontend run build",
+    "dev:frontend": "npm --prefix final_ims/react_frontend run dev",
+    "start:backend": "npm --prefix final_ims/backend run start:dev",
+    "install:all": "npm --prefix final_ims/backend install && npm --prefix final_ims/react_frontend install"
+  }
+}
