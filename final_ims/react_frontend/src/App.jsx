@@ -28,14 +28,17 @@ import App_supplier from './supplier/App_supplier';
 export default function App() {
   // Current active view: 'landing' | 'login' | 'register' | 'admin' | 'employee' | 'consumer' | 'retailer' | 'supplier'
   const [currentView, setCurrentView] = useState('landing');
+  const [navParams, setNavParams] = useState({});
   const [showHubBar, setShowHubBar] = useState(true);
 
-  const handleNavigate = (view) => {
+  const handleNavigate = (view, params = {}) => {
     setCurrentView(view);
+    setNavParams(params || {});
   };
 
   const handleSwitchModule = (moduleName) => {
     setCurrentView(moduleName);
+    setNavParams({});
   };
 
   const handleLoginSuccess = (role) => {
@@ -53,7 +56,14 @@ export default function App() {
       case 'login':
         return <LoginPage onNavigate={handleNavigate} onLoginSuccess={handleLoginSuccess} />;
       case 'register':
-        return <RegisterPage onNavigate={handleNavigate} onRegisterSuccess={handleRegisterSuccess} />;
+        return (
+          <RegisterPage 
+            onNavigate={handleNavigate} 
+            onRegisterSuccess={handleRegisterSuccess} 
+            initialRole={navParams.role || 'retailer'}
+            initialPlan={navParams.plan || 'free'}
+          />
+        );
       case 'admin':
         return <App_admin onSwitchModule={handleSwitchModule} />;
       case 'employee':
