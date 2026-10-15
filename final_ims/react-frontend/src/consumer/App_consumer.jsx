@@ -43,7 +43,7 @@ import {
 } from './utils/api_consumer';
 import { MOCK_PRODUCTS, MOCK_STORES } from './data/mockProducts_consumer';
 
-export default function App_consumer({ onSwitchModule }) {
+export default function App_consumer({ onSwitchModule, onLogout }) {
   // ─── 1. Navigation & View Routing State ─────────────────────────────────────
   const [currentView, setCurrentView] = useState(() => {
     try {
@@ -262,9 +262,14 @@ export default function App_consumer({ onSwitchModule }) {
 
   const handleLogout = () => {
     localStorage.removeItem('so_session');
+    localStorage.removeItem('so_token');
     setUserSession(null);
     showToast('Logged out successfully.');
-    navigateTo('home');
+    if (onLogout) {
+      onLogout();
+    } else {
+      navigateTo('home');
+    }
   };
 
   const handleReservationsSubmitted = () => {

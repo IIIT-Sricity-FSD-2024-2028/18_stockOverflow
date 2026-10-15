@@ -7,7 +7,25 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem('so_session');
-      return saved ? JSON.parse(saved) : null;
+      const token = localStorage.getItem('so_token');
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (!parsed || !parsed.id || !parsed.role) {
+        localStorage.removeItem('so_session');
+        localStorage.removeItem('so_token');
+        return null;
+      }
+      const effectiveToken = parsed.token || token;
+      if (!effectiveToken) {
+        localStorage.removeItem('so_session');
+        localStorage.removeItem('so_token');
+        return null;
+      }
+      parsed.token = effectiveToken;
+      if (!token) {
+        localStorage.setItem('so_token', effectiveToken);
+      }
+      return parsed;
     } catch {
       return null;
     }
@@ -28,6 +46,11 @@ export function AuthProvider({ children }) {
       (userData.store && userData.profileId && userData.profileId !== userData.id)
     );
 
+    const token =
+      userData.token ||
+      localStorage.getItem('so_token') ||
+      `sotk_${(userData.id || 'usr').replace(/[^a-zA-Z0-9]/g, '')}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+
     const sessionData = {
       id: userData.id,
       name: userData.name || (userData.email ? userData.email.split('@')[0] : 'User'),
@@ -44,9 +67,11 @@ export function AuthProvider({ children }) {
       hasProfile: hasProfile,
       initials: initials,
       plan: userData.plan || 'growth',
+      token: token,
     };
 
     localStorage.setItem('so_session', JSON.stringify(sessionData));
+    localStorage.setItem('so_token', token);
     setUser(sessionData);
     return sessionData;
   };
@@ -74,6 +99,11 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('so_session');
+    localStorage.removeItem('so_token');
+    localStorage.removeItem('so_active_module');
+    localStorage.removeItem('supplier-module-current-supplier-id');
+    localStorage.removeItem('imsAppStateV1');
+    localStorage.removeItem('biller_pending_email');
     setUser(null);
   };
 

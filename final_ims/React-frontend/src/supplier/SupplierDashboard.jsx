@@ -57,7 +57,7 @@ const DEFAULT_DEMO_ORDERS = [
   { id: 'PO-2026-0001', retailer: "John's Retail Store", product: 'op3', qty: 1, amount: 525, date: '25 Aug 2026', delivery: '27 Aug 2026', status: 'delivered' }
 ];
 
-export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule }) {
+export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, onLogout }) {
   // ── ACTIVE NAVIGATION TAB ──
   const [activeTab, setActiveTab] = useState(() => {
     try {
@@ -746,7 +746,7 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule })
                 )}
                 <div
                   className="sb-item"
-                  onClick={() => onSwitchModule ? onSwitchModule('login') : (window.location.href = '/')}
+                  onClick={() => onLogout ? onLogout() : (onSwitchModule ? onSwitchModule('login') : (window.location.href = '/'))}
                 >
                   <span className="sb-item-icon">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">

@@ -125,15 +125,6 @@ export default function LandingPage({
               >
                 Become a Biller
               </button>
-
-              <button
-                type="button"
-                className="btn"
-                onClick={onEnterRetailer}
-                style={{ background: '#f1f5f9', color: '#334155', padding: '0.9rem 1.5rem', fontSize: '0.95rem', fontWeight: 700, borderRadius: '8px', border: '1px solid #cbd5e1' }}
-              >
-                Guest Preview ⚡
-              </button>
             </div>
 
             <div className="hero-perks mt-2" style={{ display: 'flex', gap: '1.5rem', fontSize: '0.875rem', color: '#64748b' }}>

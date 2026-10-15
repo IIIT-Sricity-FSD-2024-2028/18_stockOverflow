@@ -35,15 +35,13 @@ import SubscriptionPlanView from '../components/retailer/SubscriptionPlanView';
 import SupplierPerformanceView from '../components/retailer/SupplierPerformanceView';
 import POProductsView from '../components/retailer/POProductsView';
 
-export default function App_retailer({ onSwitchModule }) {
+export default function App_retailer({ onSwitchModule, onLogout }) {
   const { user } = useAuth();
   const [activeView, setActiveView] = useState('dashboard');
-  const [authScreen, setAuthScreen] = useState('landing'); // 'landing' | 'login' | 'register' | 'biller-pending' | 'retailer-wizard'
   const [editingProduct, setEditingProduct] = useState(null);
   const [selectProductModalOpen, setSelectProductModalOpen] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [selectedSupplierForPO, setSelectedSupplierForPO] = useState(null);
-  const [guestMode, setGuestMode] = useState(false);
 
   const handleNavigate = (view) => {
     if (view === 'edit-product' && !editingProduct) {
@@ -57,146 +55,9 @@ export default function App_retailer({ onSwitchModule }) {
     setActiveView(view);
   };
 
-  const hasRetailerProfile = Boolean(
-    (user?.profile && (user.profile.businessName || (Array.isArray(user.profile.stores) && user.profile.stores.length > 0))) ||
-    (user?.store && user?.profileId && user.profileId !== user.id)
-  );
-
-  // If user is a biller and still pending
-  if (user && user.role === 'biller' && !guestMode) {
-    const isApproved = Boolean(user.profileId && (user.currentStoreId || user.storeId));
-    if (!isApproved) {
-      return (
-        <BillerPendingPage
-          onBackToHome={() => {
-            setGuestMode(false);
-            setAuthScreen('landing');
-          }}
-          onGoToLogin={() => {
-            setAuthScreen('login');
-          }}
-          onApproved={() => {
-            setGuestMode(true);
-            setActiveView('dashboard');
-          }}
-        />
-      );
-    }
-  }
-
-  // If user is retailer and has no profile setup -> MUST GO TO WIZARD FIRST
-  if (user && user.role === 'retailer' && !hasRetailerProfile && !guestMode) {
-    return (
-      <RetailerInitialWizard
-        onCompleteSetup={() => {
-          setActiveView('dashboard');
-        }}
-        onCancel={() => {
-          setGuestMode(true);
-          setActiveView('dashboard');
-        }}
-      />
-    );
-  }
-
-  // If not authenticated and not in guest preview mode, handle auth screens
-  if (!user && !guestMode) {
-    if (authScreen === 'login') {
-      return (
-        <AuthPage
-          initialMode="login"
-          onClose={() => setAuthScreen('landing')}
-          onLoginSuccess={(session) => {
-            const role = (session?.role || '').toLowerCase();
-            const sessionHasProfile = Boolean(
-              (session?.profile && (session.profile.businessName || (Array.isArray(session.profile.stores) && session.profile.stores.length > 0))) ||
-              (session?.store && session?.profileId && session.profileId !== session.id)
-            );
-            if (role === 'retailer' && !sessionHasProfile) {
-              setAuthScreen('retailer-wizard');
-            } else if (role === 'biller') {
-              setAuthScreen('biller-pending');
-            } else if (role === 'supplier') {
-              if (onSwitchModule) onSwitchModule('supplier');
-            } else if (role === 'consumer' || role === 'customer') {
-              if (onSwitchModule) onSwitchModule('consumer');
-            } else {
-              setGuestMode(true);
-              setActiveView('dashboard');
-            }
-          }}
-          onOpenBillerPending={() => setAuthScreen('biller-pending')}
-          onOpenRetailerSetup={() => setAuthScreen('retailer-wizard')}
-          onSwitchModule={onSwitchModule}
-        />
-      );
-    }
-
-    if (authScreen === 'register') {
-      return (
-        <AuthPage
-          initialMode="register"
-          onClose={() => setAuthScreen('landing')}
-          onLoginSuccess={(session) => {
-            const role = (session?.role || '').toLowerCase();
-            if (role === 'retailer') {
-              setAuthScreen('retailer-wizard');
-            } else if (role === 'biller') {
-              setAuthScreen('biller-pending');
-            } else if (role === 'supplier') {
-              if (onSwitchModule) onSwitchModule('supplier');
-            } else if (role === 'consumer' || role === 'customer') {
-              if (onSwitchModule) onSwitchModule('consumer');
-            } else {
-              setGuestMode(true);
-              setActiveView('dashboard');
-            }
-          }}
-          onOpenBillerPending={() => setAuthScreen('biller-pending')}
-          onOpenRetailerSetup={() => setAuthScreen('retailer-wizard')}
-          onSwitchModule={onSwitchModule}
-        />
-      );
-    }
-
-    if (authScreen === 'biller-pending') {
-      return (
-        <BillerPendingPage
-          onBackToHome={() => setAuthScreen('landing')}
-          onGoToLogin={() => setAuthScreen('login')}
-          onApproved={() => {
-            setGuestMode(true);
-            setActiveView('dashboard');
-          }}
-        />
-      );
-    }
-
-    if (authScreen === 'retailer-wizard') {
-      return (
-        <RetailerInitialWizard
-          onCompleteSetup={() => {
-            setGuestMode(false);
-            setActiveView('dashboard');
-          }}
-          onCancel={() => setAuthScreen('landing')}
-        />
-      );
-    }
-
-    // Default: Landing Page
-    return (
-      <LandingPage
-        onOpenLogin={() => setAuthScreen('login')}
-        onOpenRegister={() => setAuthScreen('register')}
-        onOpenBillerPending={() => setAuthScreen('biller-pending')}
-        onEnterRetailer={() => {
-          setGuestMode(true);
-          setActiveView('dashboard');
-        }}
-        onSwitchModule={onSwitchModule}
-      />
-    );
+  // If unauthenticated, App.jsx handles the landing page
+  if (!user) {
+    return null;
   }
 
   // If user requested setup wizard from inside the app

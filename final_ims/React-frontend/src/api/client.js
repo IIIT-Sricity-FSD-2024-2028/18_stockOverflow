@@ -73,10 +73,14 @@ export async function request(path, options = {}) {
     }
   }
 
+  const token = session?.token || localStorage.getItem('so_token');
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+
   const url = scopedPath.startsWith('/api') ? scopedPath : `${API_BASE}${scopedPath}`;
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
+      ...authHeaders,
       ...options.headers,
     },
     ...options,

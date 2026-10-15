@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 
-export default function App_admin({ onSwitchModule }) {
+export default function App_admin({ onSwitchModule, onLogout }) {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
@@ -30,38 +30,23 @@ export default function App_admin({ onSwitchModule }) {
               Executive oversight, role governance, user management, and system-wide inventory auditing.
             </p>
           </div>
-          {onSwitchModule && (
+          {onLogout && (
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 type="button"
-                onClick={() => onSwitchModule('retailer')}
+                onClick={onLogout}
                 style={{
                   padding: '8px 16px',
-                  background: '#eff6ff',
-                  border: '1px solid #bfdbfe',
+                  background: '#fee2e2',
+                  border: '1px solid #fecaca',
                   borderRadius: '8px',
                   fontWeight: 600,
                   cursor: 'pointer',
                   fontSize: '13px',
-                  color: '#1d4ed8',
+                  color: '#dc2626',
                 }}
               >
-                🏬 Retailer Portal
-              </button>
-              <button
-                type="button"
-                onClick={() => onSwitchModule('consumer')}
-                style={{
-                  padding: '8px 16px',
-                  background: '#f1f5f9',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                }}
-              >
-                🛒 Consumer Store
+                Sign Out
               </button>
             </div>
           )}

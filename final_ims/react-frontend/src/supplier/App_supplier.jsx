@@ -22,7 +22,7 @@ import SupplierDashboard from './SupplierDashboard';
 import '../css/supplier.css';
 import { readSupplierId } from '../api/supplierApi';
 
-export default function App_supplier({ onSwitchModule }) {
+export default function App_supplier({ onSwitchModule, onLogout }) {
   // Current view: 'dashboard' | 'setup'
   const [currentView, setCurrentView] = useState(() => {
     try {
@@ -52,11 +52,13 @@ export default function App_supplier({ onSwitchModule }) {
         <SupplierSetup
           onNavigateToDashboard={() => handleSwitchView('dashboard')}
           onSwitchModule={onSwitchModule}
+          onLogout={onLogout}
         />
       ) : (
         <SupplierDashboard
           onNavigateToSetup={() => handleSwitchView('setup')}
           onSwitchModule={onSwitchModule}
+          onLogout={onLogout}
         />
       )}
     </div>
