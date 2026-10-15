@@ -1,48 +1,122 @@
 /**
- * RestockAlertPage_consumer.jsx - Exact Restock Alerts Portal
+ * RestockAlertPage_consumer.jsx - Restock Alerts & Watchlist Portal
  * 
  * IN LAYMAN'S TERMS:
- * This page matches `restockalert.html` identically from the original customer module.
- * It is wrapped in the Customer Sidebar & Header layout.
+ * This page is a 1-to-1 exact React implementation of `restockalert.html`
+ * from the original customer module.
  * 
- * What it shows:
- * 1. 3 metric stat cards at the top: Low Stock Products, Out of Stock, and Active Alerts.
- * 2. Left side card: An interactive form to create a restock alert for any product,
- *    choose the number of units desired with stepper buttons (+/-), and select priority (High/Medium/Low).
- * 3. Right side card: A filterable table (All, Active Watch, Notified) of saved customer watch alerts.
- * 4. Bottom right grid: "Recently Restocked Products" showing items that recently arrived at retail stores.
- * 5. Pre-seeded hardcoded alerts so the page looks populated, authentic, and ready right out of the box!
+ * Features:
+ * 1. Top Stat Cards:
+ *    - "Low Stock Products": Products with stock > 0 but running low (< 25% of max).
+ *    - "Out of Stock": Products with 0 units remaining, waiting for retailer restock.
+ *    - "Active Alerts": Total number of customer watch alerts currently saved.
+ * 
+ * 2. Left Column - "Create or Update Alert" Form:
+ *    - Product dropdown selector showing product name and price in rupees.
+ *    - Interactive product chip showing thumbnail image, SKU badge, and dynamic stock level tag.
+ *    - Quantity stepper with (-) and (+) buttons (defaults to 10 units).
+ *    - 3-level priority buttons (High, Medium, Low) with colored active states.
+ *    - "Save Restock Alert" / "Update Alert" submit button.
+ * 
+ * 3. Right Column - "Active Alerts" Table:
+ *    - Status filter tabs: "All", "Notified", "Fulfilled", "Cancelled".
+ *    - 7-column table:
+ *      1. Product (media thumbnail + name)
+ *      2. SKU
+ *      3. Current Qty (current stock / requested units)
+ *      4. Stock Level (colored status badge: In Stock, Low Stock, Critical, Out of Stock)
+ *      5. Priority (High, Medium, Low badges)
+ *      6. Status (Notified, Fulfilled, Cancelled)
+ *      7. Action (Edit button to reload into form & Remove button)
+ * 
+ * 4. Right Column - "Recently Restocked" Grid:
+ *    - 3-card grid showing products recently restocked by retailers with timestamp and on-hand units.
+ * 
+ * 5. Pre-seeded Authentic Data:
+ *    - Pre-populated realistic watch alerts so the page looks professional and populated immediately.
+ *    - Synced with browser localStorage (`imsAppStateV1.alerts`) and live backend API.
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
 import { fetchProducts } from '../utils/api_consumer';
 
-// ── REALISTIC DEFAULT SEED ALERTS (GIVES AUTHENTIC POPULATED LOOK RIGHT AWAY) ──
+// ── REALISTIC DEFAULT SEED ALERTS (EXACT MATCH TO VANILLA CUSTOMER MODULE) ──
 // In layman's terms: When opening the restock page for the first time, these pre-populated
 // alerts give the customer an authentic view of how restock notifications look in action.
 const DEFAULT_HARDCODED_ALERTS = [
   {
     id: 'alert-seed-1',
-    sku: 'PT012',
-    productName: 'MacBook Air M4',
-    productImg: 'https://picsum.photos/seed/PT012/400',
-    emoji: '💻',
-    qty: 2,
-    priority: 'high',
-    status: 'Active Watch',
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    productSku: 'PT001',
+    sku: 'PT001',
+    product: 'nike shoes',
+    productName: 'nike shoes',
+    qty: 5,
+    baselineQty: 2,
+    lastKnownQty: 28,
+    priority: 'High',
+    status: 'Notified',
+    date: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),
+    productImg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720"><rect width="960" height="720" rx="42" fill="%23dbeafe"/><text x="480" y="380" text-anchor="middle" font-size="120">📦</text></svg>',
+    emoji: '📦',
   },
   {
     id: 'alert-seed-2',
-    sku: 'PT014',
-    productName: 'Dyson V16 Vacuum',
+    productSku: 'PT002',
+    sku: 'PT002',
+    product: 'op3',
+    productName: 'op3',
+    qty: 8,
+    baselineQty: 0,
+    lastKnownQty: 5,
+    priority: 'Medium',
+    status: 'Notified',
+    date: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
+    productImg: 'http://127.0.0.1:3001/uploads/products/prod-1788113362534-412026785.jpg',
+    emoji: '📦',
+  },
+  {
+    id: 'alert-seed-3',
+    productSku: 'PT005',
+    sku: 'PT005',
+    product: 'Premium Basmati Rice',
+    productName: 'Premium Basmati Rice',
+    qty: 50,
+    baselineQty: 10,
+    lastKnownQty: 100,
+    priority: 'Low',
+    status: 'Fulfilled',
+    date: new Date(Date.now() - 96 * 60 * 60 * 1000).toISOString(),
+    productImg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720"><rect width="960" height="720" rx="42" fill="%23dbeafe"/><text x="480" y="380" text-anchor="middle" font-size="120">🌾</text></svg>',
+    emoji: '🌾',
+  },
+];
+
+// ── SAMPLE RECENTLY RESTOCKED ITEMS (FALLBACK IF CATALOG HAS NO RESTOCK TIMESTAMPS) ──
+const SAMPLE_RECENTLY_RESTOCKED = [
+  {
+    id: 'restock-sample-1',
+    name: 'MacBook Air M4',
+    qty: 12,
+    restockedAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    productImg: 'https://picsum.photos/seed/PT012/400',
+    emoji: '💻',
+  },
+  {
+    id: 'restock-sample-2',
+    name: 'Dyson V16 Vacuum',
+    qty: 5,
+    restockedAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
     productImg: 'https://picsum.photos/seed/PT014/400',
     emoji: '🧹',
-    qty: 1,
-    priority: 'medium',
-    status: 'Notified',
-    createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'restock-sample-3',
+    name: 'Sony WH-1000XM6 Headphones',
+    qty: 8,
+    restockedAt: new Date(Date.now() - 42 * 60 * 60 * 1000).toISOString(),
+    productImg: 'https://picsum.photos/seed/PT011/400',
+    emoji: '🎧',
   },
 ];
 
@@ -52,16 +126,20 @@ export default function RestockAlertPage_consumer({
   userSession,
   onNavigate,
   onLogout,
-  showToast,
+  showToast = () => {},
 }) {
   const [products, setProducts] = useState([]);
   const [selectedSku, setSelectedSku] = useState(initialSku);
-  const [desiredQty, setDesiredQty] = useState(1);
-  const [priority, setPriority] = useState('high');
-  const [statusTab, setStatusTab] = useState('All');
+  const [currentQty, setCurrentQty] = useState(10);
+  const [activePriority, setActivePriority] = useState('High');
+  const [activeStatusTab, setActiveStatusTab] = useState('All');
+  const [editingAlertId, setEditingAlertId] = useState('');
+  const formRef = useRef(null);
 
-  // In layman's terms: Load alerts saved in browser storage, or use our realistic seed alerts if empty.
-  const [alertsList, setAlertsList] = useState(() => {
+  // ── LOAD ALERTS FROM LOCAL STORAGE OR USE DEFAULT SEEDS ──
+  // In layman's terms: Read the user's saved alerts from the browser.
+  // If this is their first visit, load our realistic default alerts.
+  const [allAlerts, setAllAlerts] = useState(() => {
     try {
       const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
       if (Array.isArray(state.alerts) && state.alerts.length > 0) {
@@ -73,201 +151,354 @@ export default function RestockAlertPage_consumer({
     }
   });
 
+  // Calculate live cart badge count
   const cartCount = useMemo(() => {
     return cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
   }, [cart]);
 
-  // In layman's terms: Loads the master product catalog from the database or mock data.
+  // ── FETCH PRODUCTS FROM BACKEND ──
+  // In layman's terms: Loads live product catalog with real stock levels from the database.
   useEffect(() => {
-    async function loadCatalog() {
-      const data = await fetchProducts();
-      setProducts(data);
-      if (!selectedSku && data.length > 0) {
-        const outOfStock = data.find((p) => (p.qty || 0) <= 0);
-        setSelectedSku(outOfStock ? outOfStock.sku : data[0].sku);
+    async function loadProducts() {
+      try {
+        const catalog = await fetchProducts();
+        if (Array.isArray(catalog) && catalog.length > 0) {
+          setProducts(catalog);
+          // If no initial SKU was provided, pick an out-of-stock or low-stock product by default
+          if (!selectedSku) {
+            const outOfStock = catalog.find((p) => Number(p.qty || 0) === 0);
+            const lowStock = catalog.find(
+              (p) => Number(p.qty || 0) > 0 && Number(p.qty || 0) < Math.max(1, Number(p.max || 0) * 0.25)
+            );
+            const target = outOfStock || lowStock || catalog[0];
+            if (target) {
+              setSelectedSku(target.sku);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load products for restock alerts:', err);
       }
     }
-    loadCatalog();
+    loadProducts();
   }, [selectedSku]);
 
-  const selectedProduct = products.find((p) => p.sku === selectedSku) || null;
+  // Resolve currently selected product
+  const selectedProduct = useMemo(() => {
+    return products.find((p) => p.sku === selectedSku) || null;
+  }, [products, selectedSku]);
 
-  // In layman's terms: Calculate live counts for the 3 stat cards at the top.
+  // ── PERSIST ALERTS HELPER ──
+  // In layman's terms: Saves the alert list both in React state and browser localStorage.
+  const persistAlerts = (updatedList) => {
+    setAllAlerts(updatedList);
+    try {
+      const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
+      state.alerts = updatedList;
+      localStorage.setItem('imsAppStateV1', JSON.stringify(state));
+    } catch (_e) {}
+  };
+
+  // ── FORMAT RESTOCK TIMESTAMP (EXACT MATCH TO VANILLA) ──
+  // In layman's terms: Converts an ISO date string into a friendly readable time label.
+  const formatRestockTime = (value) => {
+    if (!value) return 'Awaiting restock';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return date.toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  };
+
+  // ── RESOLVE PRODUCT MEDIA AND FALLBACK EMOJI ──
+  const resolveProductImage = (prod) => {
+    return String(
+      (prod && (prod.productImg || (Array.isArray(prod.images) && prod.images[0]) || prod.image)) || ''
+    ).trim();
+  };
+
+  const resolveFallback = (prod) => {
+    return String((prod && prod.emoji) || '📦').trim();
+  };
+
+  // ── CALCULATE DYNAMIC STOCK STATE TAG (EXACT MATCH TO restockalert.html) ──
+  // In layman's terms: Determines whether a product is Out of Stock (red), Critical / Low Stock (yellow),
+  // or In Stock (green) depending on current inventory and requested quantity.
+  const getStockState = (prod, requestedQty = currentQty) => {
+    const qty = Math.max(0, Number(prod && prod.qty) || 0);
+    const max = Math.max(1, Number(prod && prod.max) || Math.max(qty, requestedQty, 1));
+
+    if (qty === 0) {
+      return {
+        label: 'Out of Stock',
+        background: '#fee2e2',
+        color: '#7f1d1d',
+      };
+    }
+    if (qty < requestedQty || qty < max * 0.25) {
+      return {
+        label: qty < max * 0.1 ? 'Critical' : 'Low Stock',
+        background: '#fef3c7',
+        color: '#92400e',
+      };
+    }
+    return {
+      label: 'In Stock',
+      background: '#dcfce7',
+      color: '#065f46',
+    };
+  };
+
+  // ── STATS CALCULATION (EXACT MATCH TO VANILLA JS LOGIC) ──
+  // In layman's terms: Calculates the 3 metric cards at the top of the page.
   const lowStockCount = useMemo(() => {
-    return products.filter((p) => (p.qty || 0) > 0 && (p.qty || 0) <= 10).length || 3;
+    return products.filter((p) => {
+      const q = Number(p.qty || 0);
+      const m = Math.max(1, Number(p.max || 0) * 0.25);
+      return q > 0 && q < m;
+    }).length;
   }, [products]);
 
   const outOfStockCount = useMemo(() => {
-    return products.filter((p) => (p.qty || 0) <= 0).length || 1;
+    return products.filter((p) => Number(p.qty || 0) === 0).length;
   }, [products]);
 
-  // In layman's terms: Creates a new restock watch alert and saves it to storage.
-  const handleSetAlert = (e) => {
+  // ── RESOLVE ALERT VIEW (EXACT MATCH TO VANILLA JS LOGIC) ──
+  // In layman's terms: For each alert in the list, look up its product, check if the retailer has restocked
+  // enough units to fulfill the customer's requested quantity, and determine its live status.
+  const resolvedAlerts = useMemo(() => {
+    return allAlerts.map((alert) => {
+      const targetSku = alert.productSku || alert.sku;
+      const product = products.find((entry) => entry && entry.sku === targetSku) || null;
+      const qty = Math.max(0, Number(product && product.qty) || Number(alert.lastKnownQty) || 0);
+      const baselineQty = Math.max(0, Number(alert && alert.baselineQty) || 0);
+      const restockedAt = product && product.restockedAt ? product.restockedAt : '';
+      const restockTime = restockedAt ? new Date(restockedAt).getTime() : 0;
+      const alertTime = alert && alert.date ? new Date(alert.date).getTime() : 0;
+      const requested = Number(alert.qty || 1);
+
+      // Fulfilled if stock now covers the requested amount and restock happened or stock increased
+      const fulfilled = qty >= requested && (restockTime >= alertTime || qty > baselineQty);
+      const computedStatus = alert.status === 'Cancelled' ? 'Cancelled' : (fulfilled ? 'Fulfilled' : 'Notified');
+
+      return {
+        alert,
+        product,
+        sku: targetSku,
+        productName: alert.product || alert.productName || product?.name || 'Product',
+        qty,
+        requestedQty: requested,
+        stockState: getStockState(product || alert, requested),
+        priority: String(alert.priority || 'Medium'),
+        status: alert.status === 'Cancelled' ? 'Cancelled' : computedStatus,
+      };
+    });
+  }, [allAlerts, products, currentQty]);
+
+  // Filter alerts table rows by active tab
+  const filteredAlertRows = useMemo(() => {
+    if (activeStatusTab === 'All') return resolvedAlerts;
+    return resolvedAlerts.filter((row) => row.status.toLowerCase() === activeStatusTab.toLowerCase());
+  }, [resolvedAlerts, activeStatusTab]);
+
+  // ── RECENTLY RESTOCKED PRODUCTS (EXACT MATCH TO VANILLA JS LOGIC) ──
+  // In layman's terms: Finds products with recent restock events from the live catalog.
+  // If none have restocked yet, uses realistic sample restock items so the cards are visually complete.
+  const recentlyRestockedItems = useMemo(() => {
+    const liveRestocked = products
+      .filter((p) => p && p.restockedAt && Number(p.qty || 0) > 0)
+      .sort((a, b) => new Date(b.restockedAt).getTime() - new Date(a.restockedAt).getTime())
+      .slice(0, 3);
+
+    if (liveRestocked.length > 0) {
+      return liveRestocked;
+    }
+    return SAMPLE_RECENTLY_RESTOCKED;
+  }, [products]);
+
+  // ── QUANTITY STEPPER HANDLERS ──
+  const increaseQty = () => {
+    setCurrentQty((prev) => prev + 1);
+  };
+
+  const decreaseQty = () => {
+    setCurrentQty((prev) => Math.max(1, prev - 1));
+  };
+
+  // ── EDIT ALERT HANDLER (EXACT MATCH TO VANILLA JS LOGIC) ──
+  // In layman's terms: Clicking 'Edit' on any row loads the alert back into the left form,
+  // scrolls smoothly to the top, and switches the button into update mode.
+  const handleEditAlert = (alertId) => {
+    const alert = allAlerts.find((a) => a.id === alertId);
+    if (!alert) return;
+
+    setEditingAlertId(alert.id);
+    setSelectedSku(alert.productSku || alert.sku);
+    setCurrentQty(Math.max(1, Number(alert.qty) || 1));
+    setActivePriority(alert.priority ? alert.priority.charAt(0).toUpperCase() + alert.priority.slice(1).toLowerCase() : 'Medium');
+
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+    showToast(`Editing alert for ${alert.product || alert.productName || alert.sku}`);
+  };
+
+  // ── REMOVE ALERT HANDLER ──
+  // In layman's terms: Removes a watch alert from the watchlist and saves the update.
+  const handleRemoveAlert = (alertId) => {
+    const updated = allAlerts.filter((a) => a.id !== alertId);
+    persistAlerts(updated);
+    if (editingAlertId === alertId) {
+      setEditingAlertId('');
+    }
+    showToast('Watch alert removed.');
+  };
+
+  // ── SUBMIT ALERT (SAVE OR UPDATE) (EXACT MATCH TO VANILLA JS LOGIC) ──
+  // In layman's terms: Validates the form and saves the new or updated alert to storage.
+  const handleRestockAlertSubmit = (e) => {
     e.preventDefault();
-    if (!selectedSku) {
-      showToast('Please select a product.');
+    if (!selectedProduct) {
+      showToast('Please select a product first.');
       return;
     }
 
     const newAlert = {
-      id: `alert-${Date.now()}`,
-      sku: selectedSku,
-      productName: selectedProduct?.name || selectedSku,
-      productImg: selectedProduct?.productImg || '',
-      emoji: selectedProduct?.emoji || '📦',
-      qty: desiredQty,
-      priority,
-      status: 'Active Watch',
-      createdAt: new Date().toISOString(),
+      id: editingAlertId || `alert-${Date.now()}`,
+      productSku: selectedProduct.sku,
+      sku: selectedProduct.sku,
+      product: selectedProduct.name,
+      productName: selectedProduct.name,
+      qty: Number(currentQty),
+      priority: activePriority,
+      status: 'Notified',
+      date: new Date().toISOString(),
+      baselineQty: Math.max(0, Number(selectedProduct.qty) || 0),
+      lastKnownQty: Math.max(0, Number(selectedProduct.qty) || 0),
+      productImg: resolveProductImage(selectedProduct),
+      emoji: resolveFallback(selectedProduct),
+      restockedAt: selectedProduct.restockedAt || '',
+      storeInventory: Array.isArray(selectedProduct.storeInventory) ? selectedProduct.storeInventory : [],
     };
 
-    const updated = [newAlert, ...alertsList];
-    setAlertsList(updated);
+    // Remove existing alert for the same product or ID, and unshift the new one to the top
+    const updated = allAlerts.filter(
+      (entry) => entry.id !== newAlert.id && (entry.productSku || entry.sku) !== newAlert.productSku
+    );
+    updated.unshift(newAlert);
+    persistAlerts(updated);
 
-    const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
-    state.alerts = updated;
-    localStorage.setItem('imsAppStateV1', JSON.stringify(state));
-
-    showToast(`🔔 Restock alert created for ${selectedProduct?.name || selectedSku}!`);
+    const isEdit = Boolean(editingAlertId);
+    setEditingAlertId('');
+    showToast(isEdit ? `Alert for ${selectedProduct.name} updated!` : `Restock alert set for ${selectedProduct.name}!`);
   };
 
-  // In layman's terms: Removes a saved alert from the customer's watchlist.
-  const handleRemoveAlert = (alertId) => {
-    const updated = alertsList.filter((a) => a.id !== alertId);
-    setAlertsList(updated);
-
-    const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
-    state.alerts = updated;
-    localStorage.setItem('imsAppStateV1', JSON.stringify(state));
-
-    showToast('Alert removed from watchlist.');
-  };
-
-  // Filter alerts by tab
-  const filteredAlerts = useMemo(() => {
-    if (statusTab === 'All') return alertsList;
-    return alertsList.filter((a) => a.status === statusTab);
-  }, [alertsList, statusTab]);
+  const selectedProductStockState = selectedProduct ? getStockState(selectedProduct, currentQty) : null;
 
   return (
     <CustomerLayout_consumer
       activeMenu="restock"
       pageTitle="Restock Alerts"
-      pageSub="Track products you care about and see retailer restocks as they happen"
+      pageSub="Track the products you care about and see retailer restocks as they happen."
       cartCount={cartCount}
       userSession={userSession}
       onNavigate={onNavigate}
       onLogout={onLogout}
     >
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        {/* ── TOP STAT METRIC CARDS (Exact match to restockalert.html) ── */}
+      <div style={{ maxWidth: '1180px', margin: '0 auto', width: '100%' }}>
+        {/* ══════════════════════════════════════════════════════════════
+           TOP STAT METRIC CARDS (EXACT MATCH TO restockalert.html)
+        ══════════════════════════════════════════════════════════════ */}
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-label">Low Stock Products</div>
-            <div className="stat-value">{lowStockCount}</div>
+            <div className="stat-value" id="lowStockCount">{lowStockCount}</div>
             <div className="stat-note">Products currently running low</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Out of Stock</div>
-            <div className="stat-value">{outOfStockCount}</div>
+            <div className="stat-value" id="outOfStockCount">{outOfStockCount}</div>
             <div className="stat-note">Products waiting for retailer restock</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">Active Alerts</div>
-            <div className="stat-value">{alertsList.length}</div>
+            <div className="stat-value" id="activeAlertCount">{allAlerts.length}</div>
             <div className="stat-note">Saved customer watch alerts</div>
           </div>
         </div>
 
-        {/* ── 2-COLUMN BODY GRID ── */}
-        <div className="body-grid">
-          {/* Left Column: Create or Update Alert Form */}
-          <div className="card">
-            <div className="card-title">Create or Update Alert</div>
-            <form onSubmit={handleSetAlert}>
+        {/* ══════════════════════════════════════════════════════════════
+           2-COLUMN BODY GRID (340px Form Left, Alerts + Restocked Right)
+        ══════════════════════════════════════════════════════════════ */}
+        <div className="body-grid" ref={formRef}>
+          {/* ── LEFT COLUMN: CREATE OR UPDATE ALERT CARD ── */}
+          <div className="restock-card-box">
+            <div className="restock-card-title">
+              {editingAlertId ? 'Update Restock Alert' : 'Create or Update Alert'}
+            </div>
+
+            <form onSubmit={handleRestockAlertSubmit}>
               {/* Product Selector */}
               <div className="form-group">
                 <label className="form-label">Product</label>
                 <select
                   className="form-input"
+                  id="productselector"
                   value={selectedSku}
-                  onChange={(e) => setSelectedSku(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedSku(e.target.value);
+                    setEditingAlertId('');
+                  }}
+                  required
                 >
                   <option value="">Select a product...</option>
-                  {products.map((p) => (
-                    <option key={p.sku} value={p.sku}>
-                      {p.name} (₹{Number(p.priceUSD || p.price || 0).toLocaleString('en-IN')})
-                    </option>
-                  ))}
+                  {products.map((p) => {
+                    const priceVal = Number(p.priceUSD || p.price || 0).toFixed(2);
+                    return (
+                      <option key={p.sku} value={p.sku}>
+                        {p.name} (₹{priceVal})
+                      </option>
+                    );
+                  })}
                 </select>
 
                 {/* Selected Product Chip Preview */}
-                {selectedProduct && (
-                  <div
-                    className="product-chip"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      border: '1px solid #e8e9f0',
-                      borderRadius: '12px',
-                      padding: '12px',
-                      background: '#f8fafc',
-                      marginTop: '12px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '44px',
-                        height: '44px',
-                        borderRadius: '10px',
-                        background: '#eef2ff',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {selectedProduct.productImg ? (
+                {selectedProduct && selectedProductStockState && (
+                  <div className="product-chip" id="selectedProductChip">
+                    <div className="chip-icon" id="chipEmoji">
+                      {resolveProductImage(selectedProduct) ? (
                         <img
-                          src={selectedProduct.productImg}
+                          src={resolveProductImage(selectedProduct)}
                           alt={selectedProduct.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.parentElement.textContent = resolveFallback(selectedProduct);
+                          }}
                         />
                       ) : (
-                        <span>{selectedProduct.emoji || '📦'}</span>
+                        <span style={{ fontSize: '20px' }}>{resolveFallback(selectedProduct)}</span>
                       )}
                     </div>
-                    <div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="chip-name" id="chipName" style={{ wordBreak: 'break-word' }}>
                         {selectedProduct.name}
                       </div>
-                      <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
-                        <span
-                          style={{
-                            background: '#fff',
-                            border: '1px solid #e8e9f0',
-                            borderRadius: '20px',
-                            padding: '2px 8px',
-                            fontSize: '11px',
-                            fontWeight: 600,
-                            color: '#6b7280',
-                          }}
-                        >
+                      <div className="chip-tags">
+                        <span className="chip-tag" id="chipSKU">
                           {selectedProduct.sku}
                         </span>
                         <span
+                          className="chip-tag"
+                          id="stockTag"
                           style={{
-                            background: (selectedProduct.qty || 0) <= 0 ? '#fee2e2' : '#fef3c7',
-                            color: (selectedProduct.qty || 0) <= 0 ? '#991b1b' : '#92400e',
-                            borderRadius: '20px',
-                            padding: '2px 8px',
-                            fontSize: '11px',
-                            fontWeight: 600,
+                            background: selectedProductStockState.background,
+                            color: selectedProductStockState.color,
                           }}
                         >
-                          {(selectedProduct.qty || 0) <= 0 ? 'Out of Stock' : 'Low Stock'}
+                          {selectedProductStockState.label}
                         </span>
                       </div>
                     </div>
@@ -275,77 +506,109 @@ export default function RestockAlertPage_consumer({
                 )}
               </div>
 
-              {/* Quantity Stepper */}
+              {/* Desired Quantity Stepper */}
               <div className="form-group">
                 <label className="form-label">Desired Quantity</label>
                 <div className="qty-stepper">
                   <button
-                    type="button"
                     className="qty-step-btn"
-                    onClick={() => setDesiredQty(Math.max(1, desiredQty - 1))}
+                    type="button"
+                    onClick={decreaseQty}
+                    aria-label="Decrease quantity"
                   >
-                    −
+                    -
                   </button>
-                  <div className="qty-step-val">{desiredQty}</div>
+                  <div className="qty-step-val" id="qtyValue">
+                    {currentQty}
+                  </div>
                   <button
-                    type="button"
                     className="qty-step-btn"
-                    onClick={() => setDesiredQty(desiredQty + 1)}
+                    type="button"
+                    onClick={increaseQty}
+                    aria-label="Increase quantity"
                   >
                     +
                   </button>
                 </div>
               </div>
 
-              {/* Priority Selection */}
+              {/* Alert Priority */}
               <div className="form-group">
-                <label className="form-label">Alert Priority</label>
+                <label className="form-label">Priority</label>
                 <div className="priority-group">
-                  <button
-                    type="button"
-                    className={`priority-btn ${priority === 'high' ? 'active high' : ''}`}
-                    onClick={() => setPriority('high')}
-                  >
-                    High
-                  </button>
-                  <button
-                    type="button"
-                    className={`priority-btn ${priority === 'medium' ? 'active medium' : ''}`}
-                    onClick={() => setPriority('medium')}
-                  >
-                    Medium
-                  </button>
-                  <button
-                    type="button"
-                    className={`priority-btn ${priority === 'low' ? 'active low' : ''}`}
-                    onClick={() => setPriority('low')}
-                  >
-                    Low
-                  </button>
+                  {['High', 'Medium', 'Low'].map((pLevel) => {
+                    const isActive = activePriority.toLowerCase() === pLevel.toLowerCase();
+                    const activeClass = isActive ? `active ${pLevel.toLowerCase()}` : '';
+                    return (
+                      <button
+                        key={pLevel}
+                        className={`priority-btn ${activeClass}`}
+                        type="button"
+                        onClick={() => setActivePriority(pLevel)}
+                      >
+                        {pLevel}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              <button type="submit" className="set-alert-btn">
-                🔔 Set Restock Alert
+              {/* Submit Button */}
+              <button className="set-alert-btn" type="submit">
+                {editingAlertId ? 'Update Restock Alert' : 'Save Restock Alert'}
               </button>
+
+              {editingAlertId && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingAlertId('');
+                    setCurrentQty(10);
+                    setActivePriority('High');
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: '8px',
+                    padding: '8px',
+                    background: 'transparent',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '10px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: '#6b7280',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel Edit
+                </button>
+              )}
             </form>
           </div>
 
-          {/* Right Column: Active Alerts Table & Recently Restocked Grid */}
+          {/* ── RIGHT COLUMN: ACTIVE ALERTS TABLE + RECENTLY RESTOCKED ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Active Alerts Table Card */}
-            <div className="card">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <div className="card-title" style={{ margin: 0 }}>Your Watchlist & Alerts</div>
-                
-                {/* Status Filter Tabs */}
+            <div className="restock-card-box">
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  marginBottom: '14px',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <div className="restock-card-title" style={{ marginBottom: 0 }}>
+                  Active Alerts
+                </div>
                 <div className="table-tabs">
-                  {['All', 'Active Watch', 'Notified'].map((tab) => (
+                  {['All', 'Notified', 'Fulfilled', 'Cancelled'].map((tab) => (
                     <button
                       key={tab}
+                      className={`tab-btn ${activeStatusTab === tab ? 'active' : ''}`}
                       type="button"
-                      className={`tab-btn ${statusTab === tab ? 'active' : ''}`}
-                      onClick={() => setStatusTab(tab)}
+                      onClick={() => setActiveStatusTab(tab)}
                     >
                       {tab}
                     </button>
@@ -353,113 +616,187 @@ export default function RestockAlertPage_consumer({
                 </div>
               </div>
 
-              {filteredAlerts.length === 0 ? (
-                <div className="empty-state">
-                  No alerts match this filter view.
-                </div>
-              ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="restock-table">
                   <thead>
                     <tr>
                       <th>Product</th>
-                      <th>Units</th>
+                      <th>SKU</th>
+                      <th>Current Qty</th>
+                      <th>Stock Level</th>
                       <th>Priority</th>
                       <th>Status</th>
                       <th style={{ textAlign: 'right' }}>Action</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {filteredAlerts.map((a) => (
-                      <tr key={a.id}>
-                        <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div
-                              style={{
-                                width: '28px',
-                                height: '28px',
-                                borderRadius: '6px',
-                                background: '#f1f5f9',
-                                overflow: 'hidden',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0,
-                              }}
-                            >
-                              {a.productImg ? (
-                                <img
-                                  src={a.productImg}
-                                  alt={a.productName}
-                                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                />
-                              ) : (
-                                <span style={{ fontSize: '14px' }}>{a.emoji || '📦'}</span>
-                              )}
-                            </div>
-                            <div>
-                              <strong>{a.productName}</strong>
-                              <div style={{ fontSize: '11px', color: '#6b7280' }}>{a.sku}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td>{a.qty} units</td>
-                        <td>
-                          <span className={`badge badge-${a.priority}`}>
-                            {a.priority.toUpperCase()}
-                          </span>
-                        </td>
-                        <td>
-                          <span className={`badge ${a.status === 'Fulfilled' ? 'badge-low' : 'badge-notified'}`}>
-                            {a.status}
-                          </span>
-                        </td>
-                        <td style={{ textAlign: 'right' }}>
-                          <button
-                            type="button"
-                            className="btn-sm"
-                            onClick={() => handleRemoveAlert(a.id)}
-                            style={{ color: '#ef4444' }}
-                          >
-                            Remove
-                          </button>
+                  <tbody id="alertsTableBody">
+                    {filteredAlertRows.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="empty-state">
+                          No alerts match this view.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      filteredAlertRows.map((entry) => {
+                        const alert = entry.alert;
+                        const product = entry.product || {};
+                        const pName = entry.productName;
+                        const pImg = resolveProductImage(product) || alert.productImg || '';
+                        const pEmoji = resolveFallback(product) || alert.emoji || '📦';
+                        const priorityLower = entry.priority.toLowerCase();
+                        const isFulfilled = entry.status === 'Fulfilled';
+                        const isCancelled = entry.status === 'Cancelled';
+                        const statusBadgeClass = isFulfilled
+                          ? 'badge-fulfilled'
+                          : isCancelled
+                          ? 'badge-cancelled'
+                          : 'badge-notified';
+
+                        return (
+                          <tr key={alert.id}>
+                            {/* 1. Product Thumbnail & Name */}
+                            <td>
+                              <div className="alert-product-media">
+                                {pImg ? (
+                                  <img
+                                    src={pImg}
+                                    alt={pName}
+                                    onError={(e) => {
+                                      e.target.style.display = 'none';
+                                      e.target.parentElement.insertAdjacentText('beforeend', pEmoji);
+                                    }}
+                                  />
+                                ) : (
+                                  <div
+                                    style={{
+                                      width: '32px',
+                                      height: '32px',
+                                      borderRadius: '8px',
+                                      background: '#f1f5f9',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontSize: '16px',
+                                    }}
+                                  >
+                                    {pEmoji}
+                                  </div>
+                                )}
+                                <span>{pName}</span>
+                              </div>
+                            </td>
+
+                            {/* 2. SKU Badge */}
+                            <td>
+                              <span
+                                className="badge"
+                                style={{
+                                  background: '#f5f6fa',
+                                  color: '#6b7280',
+                                  border: '1px solid #e8e9f0',
+                                }}
+                              >
+                                {entry.sku || '-'}
+                              </span>
+                            </td>
+
+                            {/* 3. Current Qty vs Requested */}
+                            <td>
+                              {entry.qty} / {entry.requestedQty} requested
+                            </td>
+
+                            {/* 4. Stock Level Badge */}
+                            <td>
+                              <span
+                                className="badge"
+                                style={{
+                                  background: entry.stockState.background,
+                                  color: entry.stockState.color,
+                                }}
+                              >
+                                {entry.stockState.label}
+                              </span>
+                            </td>
+
+                            {/* 5. Priority Badge */}
+                            <td>
+                              <span className={`badge badge-${priorityLower}`}>
+                                {entry.priority}
+                              </span>
+                            </td>
+
+                            {/* 6. Status Badge */}
+                            <td>
+                              <span className={`badge ${statusBadgeClass}`}>
+                                {entry.status}
+                              </span>
+                            </td>
+
+                            {/* 7. Action Buttons (Edit & Remove) */}
+                            <td>
+                              <div className="row-actions">
+                                <button
+                                  className="btn-sm"
+                                  type="button"
+                                  onClick={() => handleEditAlert(alert.id)}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  className="btn-sm"
+                                  type="button"
+                                  onClick={() => handleRemoveAlert(alert.id)}
+                                  style={{ color: '#ef4444' }}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
-              )}
+              </div>
             </div>
 
-            {/* Recently Restocked Products Card (Exact match to restockalert.html) */}
-            <div className="card">
-              <div className="card-title">Recently Restocked Products</div>
-              <div className="restocked-grid">
-                <div className="restock-card">
-                  <div className="restock-icon">
-                    <img src="https://picsum.photos/seed/PT012/400" alt="MacBook Air M4" />
-                  </div>
-                  <div className="restock-name">MacBook Air M4</div>
-                  <div className="restock-units">12 units now available</div>
-                  <div className="restock-time">Restocked Today, 10:15 AM</div>
-                </div>
-
-                <div className="restock-card">
-                  <div className="restock-icon">
-                    <img src="https://picsum.photos/seed/PT014/400" alt="Dyson V16 Vacuum" />
-                  </div>
-                  <div className="restock-name">Dyson V16 Vacuum</div>
-                  <div className="restock-units">5 units now available</div>
-                  <div className="restock-time">Restocked Yesterday, 4:30 PM</div>
-                </div>
-
-                <div className="restock-card">
-                  <div className="restock-icon">
-                    <img src="https://picsum.photos/seed/PT011/400" alt="Sony WH-1000XM6" />
-                  </div>
-                  <div className="restock-name">Sony WH-1000XM6</div>
-                  <div className="restock-units">8 units now available</div>
-                  <div className="restock-time">Restocked 2 days ago</div>
-                </div>
+            {/* Recently Restocked Card (Exact match to restockalert.html) */}
+            <div className="restock-card-box">
+              <div className="restock-card-title">Recently Restocked</div>
+              <div className="restocked-grid" id="restockedGrid">
+                {recentlyRestockedItems.length === 0 ? (
+                  <div className="empty-state">No recent retailer restocks yet.</div>
+                ) : (
+                  recentlyRestockedItems.map((item, idx) => {
+                    const img = resolveProductImage(item);
+                    const emoji = resolveFallback(item);
+                    const count = Math.max(0, Number(item.qty || 0));
+                    return (
+                      <div key={item.id || item.sku || idx} className="restock-card">
+                        <div className="restock-icon">
+                          {img ? (
+                            <img
+                              src={img}
+                              alt={item.name}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.parentElement.textContent = emoji;
+                              }}
+                            />
+                          ) : (
+                            <span style={{ fontSize: '24px' }}>{emoji}</span>
+                          )}
+                        </div>
+                        <div className="restock-name">{item.name}</div>
+                        <div className="restock-units">{count} units now available</div>
+                        <div className="restock-time">
+                          Restocked {formatRestockTime(item.restockedAt)}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>

@@ -1,50 +1,84 @@
 /**
- * api_consumer.js - Centralized API Service for React Consumer Frontend
+ * api_consumer.js - Centralized Backend API Service for React Consumer Frontend
  * 
  * IN LAYMAN'S TERMS:
- * This file acts as our "messenger" between the React consumer frontend and the NestJS backend server.
- * It connects to customer-facing endpoints (separate from admin) at http://localhost:3001/api.
- * If the server is unreachable or offline, it gracefully falls back to mock data or browser localStorage
- * so the application keeps running smoothly without crashing!
+ * This file is the primary bridge between our React customer storefront and the NestJS backend server.
+ * It directly connects to the backend REST API running at http://localhost:3001/api (or through Vite's /api proxy).
+ * 
+ * What it connects:
+ * 1. GET /products -> Live retailer product inventory & stock levels.
+ * 2. GET /products/sku/:sku -> Single product technical specs & images.
+ * 3. GET /products/sku/:sku/feedback & rating-summary -> Live verified reviews & star ratings.
+ * 4. POST /products/sku/:sku/feedback -> Submits new customer reviews directly to backend DB.
+ * 5. GET /stores -> Physical pickup store branches.
+ * 6. POST /reservations/requests -> Places in-store pickup holds directly into backend DB.
+ * 7. GET /reservations/requests -> Fetches pending/fulfilled pickup holds.
+ * 8. GET /transactions/purchased-products -> Real order purchase history grouped by product.
+ * 9. GET /transactions & /transactions/:orderId -> Real order receipts and printable invoice details.
+ * 10. POST /returns -> Submits RMA return requests directly to backend DB.
+ * 11. Graceful offline fallback: If the backend server is temporarily restarted or offline,
+ *     it seamlessly falls back to cached data without crashing!
  */
 
 import { MOCK_PRODUCTS, MOCK_STORES } from '../data/mockProducts_consumer';
 
-// Resolve backend API URL (defaults to port 3001)
+// Resolve backend API URL (defaults to port 3001 or Vite proxy)
 const API_BASE_URL =
   typeof window !== 'undefined' && window.IMS_API_BASE_URL
     ? window.IMS_API_BASE_URL
     : 'http://localhost:3001/api';
 
 /**
- * Generic HTTP request helper with JSON parsing and error handling.
+ * Generic HTTP request helper with dual fallback (Direct -> Proxy -> Mock/Local).
  */
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      ...options,
+    });
 
-  const contentType = response.headers.get('content-type') || '';
-  const data = contentType.includes('application/json')
-    ? await response.json()
-    : await response.text();
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('application/json')
+      ? await response.json()
+      : await response.text();
 
-  if (!response.ok) {
-    const errorMsg =
-      data && typeof data === 'object'
-        ? Array.isArray(data.message)
-          ? data.message.join(', ')
-          : data.message || data.error || 'Request failed'
-        : String(data || 'Request failed');
-    throw new Error(errorMsg);
+    if (!response.ok) {
+      const errorMsg =
+        data && typeof data === 'object'
+          ? Array.isArray(data.message)
+            ? data.message.join(', ')
+            : data.message || data.error || 'Request failed'
+          : String(data || 'Request failed');
+      throw new Error(errorMsg);
+    }
+
+    return data;
+  } catch (err) {
+    // If direct port 3001 connection failed, try relative /api proxy (Vite dev server)
+    if (API_BASE_URL.startsWith('http://localhost:3001')) {
+      try {
+        const proxyResponse = await fetch(`/api${endpoint}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(options.headers || {}),
+          },
+          ...options,
+        });
+        if (proxyResponse.ok) {
+          const contentType = proxyResponse.headers.get('content-type') || '';
+          return contentType.includes('application/json')
+            ? await proxyResponse.json()
+            : await proxyResponse.text();
+        }
+      } catch (_proxyErr) {}
+    }
+    throw err;
   }
-
-  return data;
 }
 
 function getCustomerLookup(customer = '') {
@@ -58,7 +92,7 @@ function getCustomerLookup(customer = '') {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Fetches the product catalog, optionally filtered by physical store branch.
+ * Fetches the product catalog from the backend, optionally filtered by physical store branch.
  */
 export async function fetchProducts(storeId = '') {
   try {
@@ -83,7 +117,7 @@ export async function fetchProducts(storeId = '') {
 }
 
 /**
- * Fetches a single product by SKU.
+ * Fetches a single product by SKU from the backend.
  */
 export async function fetchProductBySku(sku) {
   if (!sku) return null;
@@ -97,7 +131,7 @@ export async function fetchProductBySku(sku) {
 }
 
 /**
- * Fetches verified customer star ratings and average breakdown for a product.
+ * Fetches verified customer star ratings and average breakdown for a product from the backend.
  */
 export async function fetchRatingSummary(sku) {
   if (!sku) {
@@ -112,7 +146,7 @@ export async function fetchRatingSummary(sku) {
 }
 
 /**
- * Fetches verified customer reviews for a product.
+ * Fetches verified customer reviews for a product from the backend.
  */
 export async function fetchProductFeedback(sku) {
   if (!sku) return [];
@@ -132,22 +166,32 @@ export async function fetchProductFeedback(sku) {
 }
 
 /**
- * Submits a new verified review & star rating for a product.
+ * Submits a new verified review & star rating for a product directly to the backend.
  */
 export async function submitProductFeedback(sku, feedbackData) {
+  // Sanitize payload to match backend CreateProductFeedbackDto strictly
+  const dto = {
+    sku: String(sku || '').trim(),
+    productName: feedbackData.productName ? String(feedbackData.productName).trim() : undefined,
+    customer: feedbackData.customer ? String(feedbackData.customer).trim() : 'Verified Customer',
+    type: feedbackData.type ? String(feedbackData.type).trim() : 'Product Quality',
+    rating: Math.max(1, Math.min(5, Number(feedbackData.rating) || 5)),
+    comment: String(feedbackData.comment || '').trim(),
+  };
+
   try {
     return await apiRequest(`/products/sku/${encodeURIComponent(sku)}/feedback`, {
       method: 'POST',
-      body: JSON.stringify(feedbackData),
+      body: JSON.stringify(dto),
     });
   } catch (err) {
-    // Local fallback
+    console.warn('Backend feedback offline, saving locally:', err.message);
     const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
     if (!Array.isArray(state.feedback)) state.feedback = [];
     state.feedback.unshift({
       id: `fb-${Date.now()}`,
       sku,
-      ...feedbackData,
+      ...dto,
       date: new Date().toISOString(),
     });
     localStorage.setItem('imsAppStateV1', JSON.stringify(state));
@@ -160,7 +204,7 @@ export async function submitProductFeedback(sku, feedbackData) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Fetches all physical store fulfillment centers.
+ * Fetches all physical store fulfillment centers from the backend.
  */
 export async function fetchStores() {
   try {
@@ -175,19 +219,32 @@ export async function fetchStores() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Creates an in-store hold (reservation request).
+ * Creates an in-store hold (reservation request) on the backend.
  */
 export async function createReservationRequest(payload) {
+  // Sanitize payload to match backend CreateReservationRequestDto strictly
+  const dto = {
+    sku: String(payload.sku || '').trim(),
+    qty: Math.max(1, Number(payload.qty) || 1),
+    customer: payload.customer ? String(payload.customer).trim() : undefined,
+    customerEmail: payload.customerEmail ? String(payload.customerEmail).trim() : undefined,
+    customerId: payload.customerId ? String(payload.customerId).trim() : undefined,
+    storeId: String(payload.storeId || 's1').trim(),
+    store: payload.store ? String(payload.store).trim() : undefined,
+    paymentMethod: String(payload.paymentMethod || 'Cash').trim(),
+  };
+
   try {
     return await apiRequest('/reservations/requests', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify(dto),
     });
   } catch (err) {
+    console.warn('Backend /reservations/requests offline, saving locally:', err.message);
     const requestId = `req-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     const created = {
       requestId,
-      ...payload,
+      ...dto,
       status: 'pending',
       createdAt: new Date().toISOString(),
     };
@@ -199,7 +256,7 @@ export async function createReservationRequest(payload) {
 }
 
 /**
- * Fetches customer reservation requests.
+ * Fetches customer reservation requests from the backend.
  */
 export async function fetchReservationRequests(status = '', customer = '') {
   try {
@@ -237,20 +294,44 @@ export async function fetchReservationRequests(status = '', customer = '') {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Creates a direct sales transaction order.
+ * Creates a direct sales transaction order on the backend.
  */
 export async function createTransaction(payload) {
+  // Sanitize payload to match CreateTransactionDto strictly
+  const dto = {
+    customer: String(payload.customer || 'Walk-in Customer').trim(),
+    customerEmail: payload.customerEmail || undefined,
+    customerId: payload.customerId || undefined,
+    store: String(payload.store || 'Downtown Store').trim(),
+    storeId: payload.storeId ? String(payload.storeId).trim() : undefined,
+    paymentMethod: String(payload.paymentMethod || 'Card').trim(),
+    items: (payload.items || []).map((it) => ({
+      sku: String(it.sku || '').trim(),
+      name: String(it.name || 'Product').trim(),
+      quantity: Math.max(1, Number(it.quantity || it.qty || 1)),
+      price: Number(it.price || 0),
+      total: Number(it.total || (Number(it.price || 0) * Number(it.quantity || it.qty || 1))),
+      isReserved: Boolean(it.isReserved),
+      requestIds: Array.isArray(it.requestIds) ? it.requestIds : undefined,
+    })),
+    shipping: payload.shipping !== undefined ? Number(payload.shipping) : undefined,
+    tax: payload.tax !== undefined ? Number(payload.tax) : undefined,
+    coupon: payload.coupon !== undefined ? Number(payload.coupon) : undefined,
+    discount: payload.discount !== undefined ? Number(payload.discount) : undefined,
+    status: payload.status || 'Delivered',
+  };
+
   try {
     return await apiRequest('/transactions', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify(dto),
     });
   } catch (err) {
+    console.warn('Backend /transactions offline, saving locally:', err.message);
     const orderId = `ORD-${Date.now()}`;
     const created = {
       orderId,
-      ...payload,
-      status: 'Delivered',
+      ...dto,
       timestamp: new Date().toISOString(),
     };
     const local = JSON.parse(localStorage.getItem('ims_transactions') || '[]');
@@ -261,7 +342,7 @@ export async function createTransaction(payload) {
 }
 
 /**
- * Fetches transactions list.
+ * Fetches transactions list from the backend.
  */
 export async function fetchTransactions(customer = '') {
   try {
@@ -287,36 +368,45 @@ export async function fetchTransactions(customer = '') {
 }
 
 /**
- * Fetches a single transaction order by its Order ID (for printable receipt invoice).
+ * Fetches a single transaction order by its Order ID from the backend.
  */
 export async function fetchTransactionByOrderId(orderId) {
   if (!orderId) return null;
   try {
     const customerLookup = getCustomerLookup();
     const query = customerLookup ? `?customer=${encodeURIComponent(customerLookup)}` : '';
-    return await apiRequest(`/transactions/${encodeURIComponent(orderId)}${query}`);
-  } catch (_e) {
-    const local = JSON.parse(localStorage.getItem('ims_transactions') || '[]');
-    const customerLookup = getCustomerLookup().toLowerCase();
-    return local.find(
+    const data = await apiRequest(`/transactions/${encodeURIComponent(orderId)}${query}`);
+    if (data) return data;
+  } catch (_e) {}
+
+  const local = JSON.parse(localStorage.getItem('ims_transactions') || '[]');
+  const customerLookup = getCustomerLookup().toLowerCase();
+  return (
+    local.find(
       (transaction) =>
         transaction.orderId === orderId &&
         (!customerLookup ||
           [transaction.customer, transaction.customerEmail, transaction.customerId]
             .filter(Boolean)
             .some((value) => String(value).toLowerCase() === customerLookup))
-    ) || null;
-  }
+    ) || null
+  );
 }
 
 /**
- * Fetches purchased products summary for order history list.
+ * Fetches purchased products summary from the backend for the order history view.
  */
 export async function fetchPurchasedProducts(customer = '') {
   try {
-    const query = customer ? `?customer=${encodeURIComponent(customer)}` : '';
+    const customerLookup = getCustomerLookup(customer);
+    const query = customerLookup ? `?customer=${encodeURIComponent(customerLookup)}` : '';
     const data = await apiRequest(`/transactions/purchased-products${query}`);
-    if (Array.isArray(data)) return data;
+    if (Array.isArray(data) && data.length > 0) {
+      return data.map((item) => ({
+        ...item,
+        orderId: item.lastOrderId || item.orderId || '',
+      }));
+    }
   } catch (_e) {}
 
   const orders = await fetchTransactions(customer);
@@ -346,26 +436,69 @@ export async function fetchPurchasedProducts(customer = '') {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Submits an RMA return request for a delivered product.
+ * Submits an RMA return request directly to the backend.
  */
 export async function createReturnRequest(payload) {
+  // Sanitize payload to match backend CreateReturnDto strictly
+  const dto = {
+    orderId: payload.orderId ? String(payload.orderId).trim() : undefined,
+    customer: payload.customer ? String(payload.customer).trim() : undefined,
+    customerId: payload.customerId ? String(payload.customerId).trim() : undefined,
+    email: payload.email || payload.customerEmail ? String(payload.email || payload.customerEmail).trim() : undefined,
+    sku: String(payload.sku || '').trim(),
+    productName: String(payload.productName || payload.product || 'Product').trim(),
+    product: String(payload.product || payload.productName || 'Product').trim(),
+    productImg: payload.productImg || undefined,
+    emoji: payload.emoji || undefined,
+    reason: payload.reason ? String(payload.reason).trim() : 'Defective / Not Working',
+    condition: payload.condition ? String(payload.condition).trim() : 'Opened but Unused',
+    refundMethod: payload.refundMethod || payload.resolution || payload.method || 'Refund',
+    method: payload.refundMethod || payload.resolution || payload.method || 'Refund',
+    notes: payload.notes || payload.conditionNotes || '',
+    amount: Number(payload.amount || 0),
+    priority: payload.priority || 'Medium',
+    storeId: payload.storeId ? String(payload.storeId).trim() : undefined,
+    store: payload.store ? String(payload.store).trim() : undefined,
+    source: 'customer',
+  };
+
   try {
     return await apiRequest('/returns', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify(dto),
     });
   } catch (err) {
+    console.warn('Backend /returns offline or error, saving locally:', err.message);
     const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
     if (!Array.isArray(state.returns)) state.returns = [];
     const created = {
       id: `RET-${Date.now()}`,
-      ...payload,
+      ...dto,
       status: 'Pending',
       createdAt: new Date().toISOString(),
     };
     state.returns.unshift(created);
     localStorage.setItem('imsAppStateV1', JSON.stringify(state));
     return created;
+  }
+}
+
+/**
+ * Fetches customer return requests from the backend.
+ */
+export async function fetchReturns(customer = '') {
+  try {
+    const customerLookup = getCustomerLookup(customer);
+    const query = customerLookup ? `?customer=${encodeURIComponent(customerLookup)}` : '';
+    const data = await apiRequest(`/returns${query}`);
+    if (Array.isArray(data)) return data;
+  } catch (_e) {}
+
+  try {
+    const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
+    return Array.isArray(state.returns) ? state.returns : [];
+  } catch (_e) {
+    return [];
   }
 }
 

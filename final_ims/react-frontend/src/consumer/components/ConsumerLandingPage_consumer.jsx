@@ -272,7 +272,7 @@ export default function ConsumerLandingPage_consumer({
                     key={p.sku || idx}
                     className={`product-card card-${idx % 8}`}
                     data-sku={p.sku}
-                    onClick={() => onViewProduct(p.sku)}
+                    onClick={() => onViewProduct(p.sku || p.id || p.name)}
                     style={{ cursor: 'pointer' }}
                   >
                     <div className="card-inner" style={{ background: bg }}>
@@ -331,7 +331,7 @@ export default function ConsumerLandingPage_consumer({
                         data-sku={p.sku}
                         onClick={(e) => {
                           e.stopPropagation();
-                          onViewProduct(p.sku);
+                          onViewProduct(p.sku || p.id || p.name);
                         }}
                       >
                         View Product

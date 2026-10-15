@@ -115,8 +115,9 @@ export default function OrdersPage_consumer({
               const matched = allCatalog.find((c) => c.sku === p.sku);
               return {
                 ...p,
-                productImg: matched?.productImg || '',
-                emoji: matched?.emoji || '📦',
+                orderId: p.orderId || p.lastOrderId || '',
+                productImg: p.productImg || matched?.productImg || '',
+                emoji: p.emoji || matched?.emoji || '📦',
                 isPending: false,
               };
             })
@@ -141,15 +142,22 @@ export default function OrdersPage_consumer({
           );
         }
       } catch (err) {
-        console.error('Failed to load orders:', err);
+        console.error('Failed to load orders from backend:', err);
       } finally {
         if (isMounted) setLoading(false);
       }
     }
 
     loadOrders();
+
+    // Auto-refresh orders every 5 seconds to sync with backend updates (e.g. POS sales or holds)
+    const interval = setInterval(() => {
+      loadOrders();
+    }, 5000);
+
     return () => {
       isMounted = false;
+      clearInterval(interval);
     };
   }, []);
 
