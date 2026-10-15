@@ -25,20 +25,28 @@ export default function ProductSearchPage_consumer({
   const [searchQuery, setSearchQuery] = useState('');
   const [storeFilter, setStoreFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [brandFilter, setBrandFilter] = useState('');
   const [stockFilter, setStockFilter] = useState('');
   const [sortFilter, setSortFilter] = useState('featured');
 
+  // Total quantity of items in our cart (for the top cart badge)
   const cartCount = useMemo(() => {
     return cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
   }, [cart]);
 
-  // Extract unique categories
+  // Extract unique categories from catalog list (in layman's terms: collect all distinct category tags)
   const categories = useMemo(() => {
     const list = Array.from(new Set(products.map((p) => p.category).filter(Boolean)));
     return list.sort();
   }, [products]);
 
-  // Filter products
+  // Extract unique brands from catalog list (in layman's terms: collect all distinct brand names)
+  const brands = useMemo(() => {
+    const list = Array.from(new Set(products.map((p) => p.brand).filter(Boolean)));
+    return list.sort();
+  }, [products]);
+
+  // Filter products by search text, category, brand, and stock status
   const filteredProducts = useMemo(() => {
     return products
       .filter((product) => {
@@ -51,6 +59,7 @@ export default function ProductSearchPage_consumer({
           product.category?.toLowerCase().includes(q);
 
         const matchesCategory = !categoryFilter || product.category === categoryFilter;
+        const matchesBrand = !brandFilter || product.brand === brandFilter;
 
         const qty = product.qty !== undefined ? product.qty : 10;
         let matchesStock = true;
@@ -58,7 +67,7 @@ export default function ProductSearchPage_consumer({
         else if (stockFilter === 'low-stock') matchesStock = qty > 0 && qty <= 10;
         else if (stockFilter === 'out-stock') matchesStock = qty <= 0;
 
-        return matchesSearch && matchesCategory && matchesStock;
+        return matchesSearch && matchesCategory && matchesBrand && matchesStock;
       })
       .sort((a, b) => {
         const priceA = Number(a.priceUSD || a.price || 0);
@@ -68,7 +77,7 @@ export default function ProductSearchPage_consumer({
         if (sortFilter === 'name-asc') return (a.name || '').localeCompare(b.name || '');
         return 0;
       });
-  }, [products, searchQuery, categoryFilter, stockFilter, sortFilter]);
+  }, [products, searchQuery, categoryFilter, brandFilter, stockFilter, sortFilter]);
 
   return (
     <CustomerLayout_consumer
@@ -80,8 +89,9 @@ export default function ProductSearchPage_consumer({
       onNavigate={onNavigate}
       onLogout={onLogout}
     >
-      {/* ── Filter Bar ── */}
+      {/* ── Filter Bar matching productsearch.html ── */}
       <div className="filter-bar">
+        {/* Search Box input */}
         <div className="search-box">
           <span>🔍</span>
           <input
@@ -118,6 +128,21 @@ export default function ProductSearchPage_consumer({
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Brand Filter (matching vanilla productsearch.html) */}
+        <div className="filter-select">
+          <select
+            value={brandFilter}
+            onChange={(e) => setBrandFilter(e.target.value)}
+          >
+            <option value="">All Brands</option>
+            {brands.map((b) => (
+              <option key={b} value={b}>
+                {b}
               </option>
             ))}
           </select>
@@ -178,21 +203,25 @@ export default function ProductSearchPage_consumer({
             }
 
             return (
-              <div key={p.sku || idx} className="prod-card">
-                {/* Image Box */}
-                <div
-                  className="prod-img"
-                  onClick={() => onViewProduct(p.sku)}
-                  style={{ cursor: 'pointer' }}
-                >
+              <div
+                key={p.sku || idx}
+                className="prod-card"
+                onClick={() => onViewProduct(p.sku)}
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Product Image & Stock Badge (in layman's terms: thumbnail showing photo and stock tag) */}
+                <div className="prod-img">
                   {p.productImg ? (
                     <img
                       src={p.productImg}
                       alt={p.name}
                       className="prod-img-photo"
+                      loading="lazy"
                       onError={(e) => {
                         e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
+                        if (e.target.nextSibling) {
+                          e.target.nextSibling.style.display = 'flex';
+                        }
                       }}
                     />
                   ) : null}
@@ -202,49 +231,43 @@ export default function ProductSearchPage_consumer({
                   >
                     {p.emoji || '📦'}
                   </div>
-                  <span className={stockClass}>{stockLabel}</span>
+                  <span className={stockClass}>● {stockLabel}</span>
                 </div>
 
-                {/* Card Body */}
+                {/* Card Body & Details */}
                 <div className="prod-body">
-                  <div className="prod-cat">{p.category || 'General'}</div>
+                  <div className="prod-cat">
+                    {p.category || 'General'} · {p.brand || 'StockOverflow'} · {p.sku}
+                  </div>
                   <div
                     className="prod-name"
                     title={p.name}
-                    onClick={() => onViewProduct(p.sku)}
-                    style={{ cursor: 'pointer' }}
                   >
                     {p.name}
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: '#0284c7', fontWeight: 600, marginTop: '2px' }}>
+                    Store: {p.retailerName || selectedStore || "John's Retail Store"}
                   </div>
 
                   <hr className="prod-divider" />
 
                   <div className="prod-footer">
-                    <span className="prod-price">₹{price.toLocaleString('en-IN')}</span>
-                    {qty > 0 && qty <= 10 && (
-                      <span className="low-stock-label">Only {qty} left!</span>
-                    )}
+                    <div className="prod-price">₹{price.toLocaleString('en-IN')}</div>
+                    {qty <= 10 && qty > 0 ? (
+                      <div className="low-stock-label">Low stock</div>
+                    ) : null}
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                    <button
-                      type="button"
-                      className="view-btn"
-                      style={{ flex: 1, marginTop: 0 }}
-                      onClick={() => onViewProduct(p.sku)}
-                    >
-                      View Details
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-add-cart"
-                      style={{ padding: '8px 12px' }}
-                      disabled={qty <= 0}
-                      onClick={() => onAddToCart(p)}
-                    >
-                      + Cart
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="view-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onViewProduct(p.sku);
+                    }}
+                  >
+                    View Details →
+                  </button>
                 </div>
               </div>
             );
