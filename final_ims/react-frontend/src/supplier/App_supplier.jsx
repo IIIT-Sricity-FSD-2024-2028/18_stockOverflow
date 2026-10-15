@@ -16,51 +16,17 @@
  *    - SaaS Growth & Subscription Plans with GST & Payment Simulation
  */
 
-import React, { useState, useEffect } from 'react';
-import SupplierSetup from './SupplierSetup';
+import React from 'react';
 import SupplierDashboard from './SupplierDashboard';
 import '../css/supplier.css';
-import { readSupplierId } from '../api/supplierApi';
 
 export default function App_supplier({ onSwitchModule, onLogout }) {
-  // Current view: 'dashboard' | 'setup'
-  const [currentView, setCurrentView] = useState(() => {
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('view') === 'setup') return 'setup';
-      if (urlParams.get('view') === 'dashboard') return 'dashboard';
-      const storedView = localStorage.getItem('so_supplier_active_view');
-      if (storedView === 'setup' || storedView === 'dashboard') {
-        return storedView;
-      }
-      return 'dashboard';
-    } catch {
-      return 'dashboard';
-    }
-  });
-
-  const handleSwitchView = (viewName) => {
-    setCurrentView(viewName);
-    try {
-      localStorage.setItem('so_supplier_active_view', viewName);
-    } catch {}
-  };
-
   return (
     <div className="supplier-portal-container">
-      {currentView === 'setup' ? (
-        <SupplierSetup
-          onNavigateToDashboard={() => handleSwitchView('dashboard')}
-          onSwitchModule={onSwitchModule}
-          onLogout={onLogout}
-        />
-      ) : (
-        <SupplierDashboard
-          onNavigateToSetup={() => handleSwitchView('setup')}
-          onSwitchModule={onSwitchModule}
-          onLogout={onLogout}
-        />
-      )}
+      <SupplierDashboard
+        onSwitchModule={onSwitchModule}
+        onLogout={onLogout}
+      />
     </div>
   );
 }

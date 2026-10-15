@@ -451,3 +451,26 @@
 [2026-10-15T18:32:03.253Z] [ERROR] GET /api/suppliers/sup-1792076071696/documents 404 - Supplier setup "sup-1792076071696" was not found
 [2026-10-15T18:32:03.255Z] [ERROR] GET /api/suppliers/sup-1792076071696 404 - Supplier setup "sup-1792076071696" was not found
 [2026-10-15T18:32:03.258Z] [ERROR] GET /api/suppliers/sup-1792076071696/documents 404 - Supplier setup "sup-1792076071696" was not found
+[2026-10-15T18:36:28.635Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:36:28.645Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:36:28.696Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:36:28.742Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:49:37.575Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:49:37.586Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:49:37.595Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:49:37.600Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:20.803Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:20.821Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:20.840Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:20.939Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:21.070Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:21.093Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:42.417Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:42.437Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:42.453Z] [ERROR] GET /api/suppliers/sup-1792078651442/documents 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:56:42.471Z] [ERROR] GET /api/suppliers/sup-1792078651442 404 - Supplier setup "sup-1792078651442" was not found
+[2026-10-15T18:58:11.062Z] [ERROR] POST /api/suppliers/setup 400 - products.0.category must be one of the following values: Electronics, Computers, Fashion, Furniture, Mobile, Bags, Appliances, Food & Beverage, Sports, Beauty, Mixed, products.1.category must be one of the following values: Electronics, Computers, Fashion, Furniture, Mobile, Bags, Appliances, Food & Beverage, Sports, Beauty, Mixed, products.2.category must be one of the following values: Electronics, Computers, Fashion, Furniture, Mobile, Bags, Appliances, Food & Beverage, Sports, Beauty, Mixed
+[2026-10-15T18:58:13.010Z] [ERROR] GET /api/suppliers/sup-1792090691065 404 - Supplier setup "sup-1792090691065" was not found
+[2026-10-15T18:58:13.030Z] [ERROR] GET /api/suppliers/sup-1792090691065 404 - Supplier setup "sup-1792090691065" was not found
+[2026-10-15T18:58:13.047Z] [ERROR] GET /api/suppliers/sup-1792090691065/documents 404 - Supplier setup "sup-1792090691065" was not found
+[2026-10-15T18:58:13.073Z] [ERROR] GET /api/suppliers/sup-1792090691065/documents 404 - Supplier setup "sup-1792090691065" was not found

@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import './setup.css';
+import { useAuth } from '../context/AuthContext';
 import {
   writeSupplierId, writeSession,
-  createSupplierSetup, updateSupplier
+  createSupplierSetup, updateSupplier, updateUser
 } from '../api/supplierApi';
 
 const STEPS = [
@@ -69,79 +70,37 @@ const EMOJIS = {
   'Mixed / General': '📦'
 };
 
-const DEFAULT_PRODUCTS = [
-  {
-    id: 'SP-101',
-    sku: 'SP-101',
-    name: 'Wireless Ergonomic Keyboard',
-    brand: 'Logitech',
-    variant: 'Matte Black',
-    cat: 'Computers & Peripherals',
-    unit: 'Piece',
-    price: 1850,
-    stock: 120,
-    moq: 5,
-    emoji: '💻',
-    description: 'High-precision mechanical key switches with wrist rest cushion.'
-  },
-  {
-    id: 'SP-102',
-    sku: 'SP-102',
-    name: 'Ultra HD 4K Monitor 27"',
-    brand: 'Dell',
-    variant: 'IPS Panel',
-    cat: 'Electronics & Technology',
-    unit: 'Piece',
-    price: 18999,
-    stock: 24,
-    moq: 2,
-    emoji: '🎧',
-    description: 'IPS panel with 99% sRGB color gamut and USB-C connectivity.'
-  },
-  {
-    id: 'SP-103',
-    sku: 'SP-103',
-    name: 'Fast Charging Power Bank 20000mAh',
-    brand: 'Mi',
-    variant: 'Pocket Pro',
-    cat: 'Mobile & Telecom',
-    unit: 'Piece',
-    price: 1299,
-    stock: 85,
-    moq: 10,
-    emoji: '📱',
-    description: 'Triple port output with 22.5W fast two-way power delivery.'
-  }
-];
+const DEFAULT_PRODUCTS = [];
 
-export default function SupplierSetup({ onNavigateToDashboard }) {
+export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
+  const { user, saveSession, refreshUser } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [setupComplete, setSetupComplete] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'ok' });
 
   // ── Step 1: Profile ──
-  const [business, setBusiness] = useState({
-    companyName: 'Apex Supply Dynamics',
+  const [business, setBusiness] = useState(() => ({
+    companyName: user?.name || '',
     businessType: 'Wholesaler',
-    businessEmail: 'contact@apexsupply.in',
-    phoneNumber: '+91 98765 43210',
-    gstNumber: '24AADCA2230G1ZO',
-    supplierCode: 'ASD-7821',
+    businessEmail: user?.email || '',
+    phoneNumber: '',
+    gstNumber: '',
+    supplierCode: `SUP-${Math.floor(1000 + Math.random() * 9000)}`,
     currency: 'INR',
-    businessAddress: 'Plot 42, GIDC Electronic Zone, Gandhinagar',
+    businessAddress: '',
     state: 'Gujarat',
-    website: 'https://apexsupply.in',
+    website: '',
     primaryCategory: 'Electronics & Technology',
     paymentTerms: 'Net 30',
     sellingType: 'Wholesale',
-    description: 'Leading wholesale distributor of premium electronics and IT accessories.'
-  });
+    description: ''
+  }));
 
-  const [contact, setContact] = useState({
-    fullName: 'Hansraj Verma',
+  const [contact, setContact] = useState(() => ({
+    fullName: user?.name || '',
     designation: 'Managing Director',
-    directEmail: 'hans@apexsupply.in'
-  });
+    directEmail: user?.email || ''
+  }));
 
   const [errors, setErrors] = useState({});
 
@@ -197,12 +156,6 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
     if (currentStep === 1) {
       if (!validateStep1()) {
         showToast('Please fill in all required fields.', 'err');
-        return;
-      }
-    }
-    if (currentStep === 2) {
-      if (!products.length) {
-        showToast('Add at least one product to your catalog.', 'err');
         return;
       }
     }
@@ -363,23 +316,95 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
       const res = await createSupplierSetup(payload);
       const supplierId = res?.id || res?.supplier?.id || `sup-${Date.now()}`;
       writeSupplierId(supplierId);
+
+      if (user?.id) {
+        try {
+          await updateUser(user.id, { profileId: supplierId });
+        } catch (e) {
+          console.warn('Could not link profileId to user in backend:', e);
+        }
+        try {
+          localStorage.setItem(`so_supplier_setup_completed_${user.id}`, 'true');
+        } catch {}
+      }
+
+      const updatedProfile = {
+        businessName: business.companyName.trim(),
+        businessEmail: business.businessEmail.trim(),
+        businessPhone: business.phoneNumber.trim(),
+        supplierCode: business.supplierCode.trim(),
+        address: business.businessAddress.trim(),
+        website: business.website.trim(),
+        businessType: business.businessType,
+        currency: business.currency,
+        primaryCategory: business.primaryCategory,
+        paymentTerms: business.paymentTerms,
+        sellingType: business.sellingType,
+        description: business.description.trim(),
+        state: business.state,
+        ownerName: contact.fullName.trim(),
+        ownerTitle: contact.designation.trim(),
+        ownerEmail: contact.directEmail.trim(),
+        profileStatus: 'active',
+        retailers: [],
+        productCount: products.length
+      };
+
       writeSession({
+        ...user,
         supplierId,
+        profileId: supplierId,
         supplierName: business.companyName,
         email: business.businessEmail,
-        role: 'supplier'
+        role: 'supplier',
+        profile: updatedProfile
       });
+
+      if (saveSession) {
+        saveSession({
+          ...user,
+          profileId: supplierId,
+          profile: updatedProfile
+        });
+      }
+
       showToast('Setup saved to backend.');
     } catch {
       // Local fallback
       const dummyId = `sup-${Date.now()}`;
       writeSupplierId(dummyId);
+      if (user?.id) {
+        try {
+          localStorage.setItem(`so_supplier_setup_completed_${user.id}`, 'true');
+        } catch {}
+      }
+      const fallbackProfile = {
+        businessName: business.companyName.trim(),
+        businessEmail: business.businessEmail.trim(),
+        businessPhone: business.phoneNumber.trim(),
+        supplierCode: business.supplierCode.trim(),
+        address: business.businessAddress.trim(),
+        state: business.state,
+        profileStatus: 'active',
+        retailers: [],
+        productCount: products.length
+      };
       writeSession({
+        ...user,
         supplierId: dummyId,
+        profileId: dummyId,
         supplierName: business.companyName,
         email: business.businessEmail,
-        role: 'supplier'
+        role: 'supplier',
+        profile: fallbackProfile
       });
+      if (saveSession) {
+        saveSession({
+          ...user,
+          profileId: dummyId,
+          profile: fallbackProfile
+        });
+      }
       showToast('Setup saved locally.');
     }
 
@@ -400,7 +425,19 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
           </div>
           <span className="brand-name">StockOverflow</span>
         </div>
-        <span className="brand-badge">Supplier Setup Wizard</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span className="brand-badge">Supplier Setup Wizard</span>
+          {onLogout && (
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)', fontSize: '12px', padding: '5px 12px', background: 'rgba(255,255,255,0.08)' }}
+              onClick={onLogout}
+            >
+              Logout
+            </button>
+          )}
+        </div>
       </header>
 
       {/* ── HERO BANNER ── */}

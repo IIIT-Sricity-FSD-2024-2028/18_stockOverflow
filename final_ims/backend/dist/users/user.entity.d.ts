@@ -12,6 +12,7 @@ export declare class User {
     profileId?: string;
     profile?: Record<string, unknown>;
     plan?: string;
+    token?: string;
     createdAt?: string;
     updatedAt?: string;
 }

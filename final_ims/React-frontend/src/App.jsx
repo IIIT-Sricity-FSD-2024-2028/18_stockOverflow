@@ -19,6 +19,7 @@ import LandingPage from './components/landing/LandingPage';
 import AuthPage from './components/auth/AuthPage';
 import BillerPendingPage from './components/auth/BillerPendingPage';
 import RetailerInitialWizard from './components/retailer/RetailerInitialWizard';
+import SupplierSetup from './supplier/SupplierSetup';
 
 // ── Secure Module Entry Points ──
 import App_consumer from './consumer/App_consumer';
@@ -115,6 +116,21 @@ export default function App() {
 
   // 2. Supplier Module
   if (role === 'supplier') {
+    const hasSupplierProfile = Boolean(
+      (user.profile && (user.profile.businessName || user.profile.supplierCode)) ||
+      (user.profileId && user.profileId !== user.id) ||
+      (typeof localStorage !== 'undefined' && localStorage.getItem(`so_supplier_setup_completed_${user.id}`))
+    );
+
+    if (!hasSupplierProfile) {
+      return (
+        <SupplierSetup
+          onNavigateToDashboard={() => refreshUser()}
+          onLogout={logout}
+        />
+      );
+    }
+
     return <App_supplier onLogout={logout} />;
   }
 

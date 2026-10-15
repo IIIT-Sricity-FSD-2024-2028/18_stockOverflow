@@ -30,34 +30,11 @@ const STATES = [
   'Karnataka', 'Maharashtra', 'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal'
 ];
 
-const DEFAULT_DEMO_PRODUCTS = [
-  { id: 'OP3-BLK-2026', name: 'op3', brand: 'OnePlus', variant: 'Standard', cat: 'Electronics', unit: 'Piece', price: 525, stock: 147, moq: 1, status: 'active', desc: 'Flagship mobile handset' },
-  { id: 'SP-101', name: 'Wireless Ergonomic Keyboard', brand: 'Logitech', variant: 'Matte Black', cat: 'Computers', unit: 'Piece', price: 1850, stock: 120, moq: 5, status: 'active', desc: 'Dual mode mechanical keyboard' },
-  { id: 'SP-102', name: 'Ultra HD 4K Monitor 27"', brand: 'Dell', variant: 'IPS Panel', cat: 'Electronics', unit: 'Piece', price: 18999, stock: 24, moq: 2, status: 'active', desc: 'Color accurate 4K display' },
-  { id: 'SP-103', name: 'Fast Charging Power Bank 20000mAh', brand: 'Mi', variant: 'Pocket Pro', cat: 'Mobile', unit: 'Piece', price: 1299, stock: 8, moq: 10, status: 'active', desc: '22.5W fast charge with triple output' },
-  { id: 'SP-104', name: 'Noise Cancelling Headphones', brand: 'Sony', variant: 'Silver', cat: 'Electronics', unit: 'Piece', price: 9499, stock: 45, moq: 3, status: 'active', desc: 'Active noise cancellation 30hr battery' },
-  { id: 'SP-105', name: 'Solid Wood Ergonomic Desk', brand: 'UrbanCraft', variant: 'Teak Finish', cat: 'Furniture', unit: 'Piece', price: 7499, stock: 0, moq: 1, status: 'inactive', desc: 'Cable-managed solid engineered workspace' }
-];
+const DEFAULT_DEMO_PRODUCTS = [];
+const DEFAULT_DEMO_RETAILERS = [];
+const DEFAULT_DEMO_ORDERS = [];
 
-const DEFAULT_DEMO_RETAILERS = [
-  { id: 'RET-101', code: 'RET-101', name: "John's Retail Store", contact: 'John', email: 'john@gmail.com', phone: '+91 98765 43210', state: 'Gujarat, India', terms: 'Net 30', status: 'active', lastOrder: '30 Aug 2026', fulfilment: 100, ratingGiven: 3.0, orders: 4 },
-  { id: 'RET-950', code: 'RET-950', name: 'Taylor', contact: 'Taylor', email: 'taylor@gmail.com', phone: '+91 98450 11223', state: 'Maharashtra', terms: 'Net 15', status: 'active', lastOrder: 'Unknown', fulfilment: 0, ratingGiven: 0.0, orders: 0 },
-  { id: 'RET-947', code: 'RET-947', name: 'Retailer', contact: 'ABHIRAJ AAAYUSH', email: 'abhirajaayush@gmail.com', phone: '+91 98110 54321', state: 'Delhi', terms: 'Net 30', status: 'active', lastOrder: 'Unknown', fulfilment: 0, ratingGiven: 0.0, orders: 0 },
-  { id: 'RET-765', code: 'RET-765', name: 'r11', contact: 'r11', email: 'r11@gmail.com', phone: '+91 98200 98765', state: 'Karnataka', terms: 'COD', status: 'active', lastOrder: 'Unknown', fulfilment: 0, ratingGiven: 0.0, orders: 0 },
-  { id: 'RET-005', code: 'RET-005', name: 'r10', contact: 'r10', email: 'r10@gmail.com', phone: '+91 98330 45678', state: 'Telangana', terms: 'Net 45', status: 'active', lastOrder: 'Unknown', fulfilment: 0, ratingGiven: 0.0, orders: 0 },
-  { id: 'RET-680', code: 'RET-680', name: 'r8', contact: 'r8', email: 'r8@gmail.com', phone: '+91 98440 23456', state: 'Gujarat', terms: 'Net 30', status: 'active', lastOrder: 'Unknown', fulfilment: 0, ratingGiven: 0.0, orders: 0 },
-  { id: 'RET-567', code: 'RET-567', name: 'r7', contact: 'r7', email: 'r7@gmail.com', phone: '+91 98550 87654', state: 'Tamil Nadu', terms: 'Net 15', status: 'active', lastOrder: 'Unknown', fulfilment: 0, ratingGiven: 0.0, orders: 0 },
-  { id: 'RET-923', code: 'RET-923', name: 'r2', contact: 'r2', email: 'r2@gmail.com', phone: '+91 98660 34567', state: 'West Bengal', terms: 'Net 30', status: 'active', lastOrder: 'Unknown', fulfilment: 0, ratingGiven: 0.0, orders: 0 }
-];
-
-const DEFAULT_DEMO_ORDERS = [
-  { id: 'PO-2026-0004', retailer: "John's Retail Store", product: 'op3', qty: 1, amount: 525, date: '30 Aug 2026', delivery: '02 Sept 2026', status: 'delivered' },
-  { id: 'PO-2026-0003', retailer: "John's Retail Store", product: 'op3', qty: 1, amount: 525, date: '28 Aug 2026', delivery: '29 Aug 2026', status: 'delivered' },
-  { id: 'PO-2026-0002', retailer: "John's Retail Store", product: 'op3', qty: 1, amount: 525, date: '28 Aug 2026', delivery: '29 Aug 2026', status: 'delivered' },
-  { id: 'PO-2026-0001', retailer: "John's Retail Store", product: 'op3', qty: 1, amount: 525, date: '25 Aug 2026', delivery: '27 Aug 2026', status: 'delivered' }
-];
-
-export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, onLogout }) {
+export default function SupplierDashboard({ onSwitchModule, onLogout }) {
   // ── ACTIVE NAVIGATION TAB ──
   const [activeTab, setActiveTab] = useState(() => {
     try {
@@ -73,48 +50,49 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
   const [profile, setProfile] = useState(() => {
     try {
       const sess = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const p = sess.profile || {};
       if (sess && (sess.role === 'supplier' || sess.role === 'wholesale')) {
         return {
-          supplierName: sess.name || (sess.email ? sess.email.split('@')[0] : 'Hans'),
-          supplierCode: sess.profileId || `SUP-${String(sess.name || 'SUP').toUpperCase().slice(0, 4)}-001`,
-          email: sess.email || 'supplier@example.com',
-          phone: sess.phone || '+91 98765 43210',
-          category: sess.category || 'General Wholesale',
-          state: sess.state || 'Gujarat',
-          paymentTerms: 'Net 30',
-          address: sess.address || 'Tech Park, Ahmedabad',
-          website: sess.website || '',
-          gstNumber: '24AAAAA0000A1Z5',
-          taxId: '24AAAAA0000A1Z5',
+          supplierName: p.businessName || sess.name || 'Supplier',
+          supplierCode: p.supplierCode || sess.profileId || '',
+          email: p.businessEmail || sess.email || '',
+          phone: p.businessPhone || sess.phone || '',
+          category: p.primaryCategory || sess.category || 'General Wholesale',
+          state: p.state || sess.state || 'Gujarat',
+          paymentTerms: p.paymentTerms || 'Net 30',
+          address: p.address || sess.address || '',
+          website: p.website || sess.website || '',
+          gstNumber: p.taxId || '',
+          taxId: p.taxId || '',
           leadTime: '3',
-          description: `${sess.name || 'Supplier'} Wholesale Portal`,
-          planTier: sess.plan === 'enterprise' ? 'Bharat Enterprise' : 'Bharat Growth',
-          planPrice: 3499,
+          description: p.description || '',
+          planTier: sess.plan === 'enterprise' ? 'Bharat Enterprise' : (sess.plan === 'growth' ? 'Bharat Growth' : 'Starter Kirana'),
+          planPrice: sess.plan === 'enterprise' ? 3499 : (sess.plan === 'growth' ? 1499 : 0),
         };
       }
     } catch {}
     return {
-      supplierName: 'Hans',
-      supplierCode: 'SUP-HANS-001',
-      email: 'hans@gmail.com',
-      phone: '+91 98765 43210',
-      category: 'Electronics',
+      supplierName: 'Supplier',
+      supplierCode: '',
+      email: '',
+      phone: '',
+      category: 'General Wholesale',
       state: 'Gujarat',
       paymentTerms: 'Net 30',
-      address: '123 Tech Park, Ahmedabad',
-      website: 'https://hans.supplier.local',
-      gstNumber: '24AAAAA0000A1Z5',
-      taxId: '24AAAAA0000A1Z5',
+      address: '',
+      website: '',
+      gstNumber: '',
+      taxId: '',
       leadTime: '3',
-      description: 'Primary Electronics Supplier Hans',
-      planTier: 'Bharat Enterprise',
-      planPrice: 3499,
+      description: '',
+      planTier: 'Starter Kirana',
+      planPrice: 0,
     };
   });
 
-  const [products, setProducts] = useState(DEFAULT_DEMO_PRODUCTS);
-  const [retailers, setRetailers] = useState(DEFAULT_DEMO_RETAILERS);
-  const [orders, setOrders] = useState(DEFAULT_DEMO_ORDERS);
+  const [products, setProducts] = useState([]);
+  const [retailers, setRetailers] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [profilePopoverOpen, setProfilePopoverOpen] = useState(false);
 
@@ -162,7 +140,8 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
   // ── INITIAL DATA LOAD ──
   useEffect(() => {
     async function initSupplierPortal() {
-      let sid = readSupplierId();
+      const sess = readSession() || {};
+      let sid = readSupplierId() || sess.profileId || sess.supplierId || '';
       if (!sid) {
         try {
           const p = new URLSearchParams(window.location.search).get('supplierId');
@@ -173,19 +152,22 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
         } catch {}
       }
 
-      // If still no sid, fetch from backend and default to Hans or the first supplier
-      if (!sid) {
+      // If still no sid, search specifically for the logged-in user's supplier profile
+      if (!sid && (sess.email || sess.profileId)) {
         try {
           const sups = await supplierRequest('/suppliers').catch(() => []);
           if (Array.isArray(sups) && sups.length > 0) {
-            const hans = sups.find(
+            const userEmail = (sess.email || '').toLowerCase();
+            const matched = sups.find(
               (s) =>
-                s.business?.businessEmail === 'hans@gmail.com' ||
-                s.business?.companyName?.toLowerCase() === 'hans',
+                (s.id && s.id === sess.profileId) ||
+                (s.business?.businessEmail && s.business.businessEmail.toLowerCase() === userEmail) ||
+                (s.primaryContact?.directEmail && s.primaryContact.directEmail.toLowerCase() === userEmail)
             );
-            const target = hans || sups[0];
-            sid = target.id;
-            writeSupplierId(sid);
+            if (matched) {
+              sid = matched.id;
+              writeSupplierId(sid);
+            }
           }
         } catch (e) {
           console.error('Error auto-resolving supplier:', e);
@@ -222,10 +204,25 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
                 description:
                   s.business?.description || s.description || prev.description,
               }));
-              if (Array.isArray(s.products) && s.products.length > 0) {
-                setProducts(s.products);
+              if (Array.isArray(s.products)) {
+                setProducts(s.products.map(p => ({
+                  ...p,
+                  id: p.sku || p.id || `SKU-${Date.now()}`,
+                  sku: p.sku || p.id || '',
+                  cat: p.category || p.cat || 'Electronics',
+                  category: p.category || p.cat || 'Electronics',
+                  price: Number(p.unitPrice ?? p.price ?? 0),
+                  unitPrice: Number(p.unitPrice ?? p.price ?? 0),
+                  stock: Number(p.stockAvailable ?? p.stock ?? 0),
+                  stockAvailable: Number(p.stockAvailable ?? p.stock ?? 0),
+                  moq: Number(p.minOrderQty ?? p.moq ?? 1),
+                  minOrderQty: Number(p.minOrderQty ?? p.moq ?? 1),
+                  unit: p.unit || 'Piece',
+                  status: p.status || 'active',
+                  desc: p.description || p.desc || ''
+                })));
               }
-              if (Array.isArray(s.retailers) && s.retailers.length > 0) {
+              if (Array.isArray(s.retailers)) {
                 setRetailers(s.retailers);
               }
             }
@@ -234,19 +231,27 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
 
         fetchPurchaseOrders()
           .then((pos) => {
-            if (Array.isArray(pos) && pos.length > 0) {
-              const mapped = pos.map((po) => {
+            if (Array.isArray(pos)) {
+              const userEmail = (sess.email || '').toLowerCase();
+              const myOrders = pos.filter((po) => {
+                return (
+                  po.supplierId === sid ||
+                  (po.supplierEmail && userEmail && po.supplierEmail.toLowerCase() === userEmail)
+                );
+              });
+
+              const mapped = myOrders.map((po) => {
                 const statusClean = String(po.status || 'pending')
                   .toLowerCase()
                   .replace(/\s+/g, '');
                 return {
-                  id: po.orderNumber || po.id || 'PO-2026-0001',
+                  id: po.orderNumber || po.id || 'PO-0001',
                   retailer: po.retailerName || 'Retail Store',
                   product:
                     po.items?.[0]?.name ||
                     po.items?.[0]?.productName ||
                     po.productName ||
-                    'op3',
+                    'Product',
                   qty:
                     po.items?.[0]?.qty ||
                     po.items?.[0]?.quantity ||
@@ -257,14 +262,14 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
                     po.totalAmount ||
                     (po.items?.[0]?.price
                       ? po.items[0].price * (po.items[0].qty || 1)
-                      : 525),
+                      : 0),
                   date: po.createdAt
                     ? new Date(po.createdAt).toLocaleDateString('en-GB', {
                         day: '2-digit',
                         month: 'short',
                         year: 'numeric',
                       })
-                    : '30 Aug 2026',
+                    : 'Recent',
                   delivery:
                     po.deliveryDate ||
                     (po.expectedDeliveryDate
@@ -276,7 +281,7 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
                             year: 'numeric',
                           },
                         )
-                      : '02 Sept 2026'),
+                      : 'Scheduled'),
                   status: statusClean,
                   rawStatus: po.status || 'Pending',
                   supplierId: po.supplierId,
@@ -293,6 +298,10 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
             if (Array.isArray(docs)) setDocuments(docs);
           })
           .catch(console.error);
+      } else {
+        setProducts([]);
+        setRetailers([]);
+        setOrders([]);
       }
     }
     initSupplierPortal();
@@ -300,14 +309,14 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
 
   // ── DERIVED METRICS ──
   const stats = useMemo(() => {
-    const totalSales = orders.reduce((acc, o) => acc + (Number(o.amount) || (Number(o.qty) * 525) || 0), 0);
+    const totalSales = orders.reduce((acc, o) => acc + (Number(o.amount) || 0), 0);
     const fee = totalSales * 0.02;
     const netPayout = totalSales - fee;
     const deliveredCount = orders.filter(o => o.status === 'delivered').length;
     const pendingOrders = orders.filter(o => o.status === 'pending');
     const pendingCount = pendingOrders.length;
     const pendingVal = pendingOrders.reduce((acc, o) => acc + (Number(o.amount) || 0), 0);
-    const fulfillmentRate = orders.length > 0 ? Math.round((deliveredCount / orders.length) * 100) : 100;
+    const fulfillmentRate = orders.length > 0 ? Math.round((deliveredCount / orders.length) * 100) : 0;
     const avgPoVal = orders.length > 0 ? (totalSales / orders.length) : 0;
 
     return {
@@ -370,16 +379,28 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
 
   const handleSaveProduct = async () => {
     if (!productForm.name || !productForm.price) {
-      alert('Please fill in Product Name and Unit Price.');
+      showToast('Please fill in Product Name and Unit Price.');
       return;
     }
     const newProd = {
       ...productForm,
       id: productForm.sku || productForm.id || `SKU-${Date.now()}`,
+      sku: productForm.sku || productForm.id || `SKU-${Date.now()}`,
+      name: productForm.name.trim(),
+      brand: productForm.brand?.trim() || '—',
+      variant: productForm.variant?.trim() || '',
+      cat: productForm.cat || 'Electronics',
+      category: productForm.cat || 'Electronics',
+      unit: productForm.unit || 'Piece',
       price: Number(productForm.price),
+      unitPrice: Number(productForm.price),
       stock: Number(productForm.stock || 0),
+      stockAvailable: Number(productForm.stock || 0),
       moq: Number(productForm.moq || 1),
-      status: 'active'
+      minOrderQty: Number(productForm.moq || 1),
+      status: 'active',
+      desc: productForm.desc?.trim() || '',
+      description: productForm.desc?.trim() || ''
     };
 
     let updated;
@@ -392,10 +413,14 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
     setProductModalOpen(false);
     showToast(editingProductIdx !== null ? 'Product updated successfully!' : 'New product added to catalog!');
 
-    if (supplierId) {
+    const sess = readSession() || {};
+    const sid = supplierId || readSupplierId() || sess.profileId || sess.supplierId;
+    if (sid) {
       try {
-        await updateSupplier(supplierId, { products: updated });
-      } catch {}
+        await updateSupplier(sid, { products: updated });
+      } catch (e) {
+        console.warn('Failed to update products in backend:', e);
+      }
     }
   };
 
@@ -730,20 +755,6 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
             <div className="sb-group">
               <div className="sb-group-label">Settings</div>
               <div className="sb-menus">
-                {onNavigateToSetup && (
-                  <div
-                    className="sb-item"
-                    onClick={onNavigateToSetup}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <span className="sb-item-icon">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-                        <polygon points="8 1 10.3 5.7 15.5 6.5 11.8 10.1 12.6 15.3 8 12.8 3.4 15.3 4.2 10.1 0.5 6.5 5.7 5.7 8 1"/>
-                      </svg>
-                    </span>
-                    <span className="sb-item-label">Setup Wizard</span>
-                  </div>
-                )}
                 <div
                   className="sb-item"
                   onClick={() => onLogout ? onLogout() : (onSwitchModule ? onSwitchModule('login') : (window.location.href = '/'))}
@@ -1655,21 +1666,31 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td style={{ fontWeight: 700 }}>John's Retail Store</td>
-                          <td>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <div className="pbar" style={{ width: '60px' }}><div className="pbar-fill" style={{ width: '60%', background: '#d97706' }}></div></div>
-                              <span style={{ fontSize: '12px', fontWeight: 700 }}>3.0 / 5</span>
-                            </div>
-                          </td>
-                          <td style={{ color: 'var(--text-3)' }}>4 orders • 100% fulfilment</td>
-                          <td>-</td>
-                          <td>-</td>
-                          <td style={{ color: '#d97706', fontWeight: 800, fontSize: '13px' }}>3.0</td>
-                          <td style={{ color: 'var(--text-2)', fontSize: '12.5px' }}>Overall rating given by John's Retail Store</td>
-                          <td style={{ color: 'var(--text-3)', fontSize: '12px' }}>25 Sept 2026</td>
-                        </tr>
+                        {retailers.filter(r => Number(r.ratingGiven) > 0).length > 0 ? (
+                          retailers.filter(r => Number(r.ratingGiven) > 0).map(ret => (
+                            <tr key={ret.id || ret.code}>
+                              <td style={{ fontWeight: 700 }}>{ret.name}</td>
+                              <td>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <div className="pbar" style={{ width: '60px' }}><div className="pbar-fill" style={{ width: `${(Number(ret.ratingGiven) / 5) * 100}%`, background: '#d97706' }}></div></div>
+                                  <span style={{ fontSize: '12px', fontWeight: 700 }}>{Number(ret.ratingGiven).toFixed(1)} / 5</span>
+                                </div>
+                              </td>
+                              <td style={{ color: 'var(--text-3)' }}>{ret.orders || 0} orders • {ret.fulfilment || 100}% fulfilment</td>
+                              <td>-</td>
+                              <td>-</td>
+                              <td style={{ color: '#d97706', fontWeight: 800, fontSize: '13px' }}>{Number(ret.ratingGiven).toFixed(1)}</td>
+                              <td style={{ color: 'var(--text-2)', fontSize: '12.5px' }}>Overall rating given by {ret.name}</td>
+                              <td style={{ color: 'var(--text-3)', fontSize: '12px' }}>{ret.lastOrder || 'Recent'}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-3)' }}>
+                              No retailer ratings received yet.
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -1686,32 +1707,38 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
                     </div>
                   </div>
                   <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    {retailers.slice(0, 5).map((ret, index) => {
-                      const color = COLORS[index % COLORS.length];
-                      return (
-                        <div key={ret.code || index} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '8px 0', borderBottom: index < 4 ? '1px solid var(--border-light)' : 'none' }}>
-                          <div className="sup-avt" style={{ background: color, width: '36px', height: '36px', borderRadius: '8px', fontSize: '12px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 }}>
-                            {ret.name.slice(0, 2).toUpperCase()}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                              <div style={{ fontFamily: "'Nunito Sans', sans-serif", fontWeight: 700, fontSize: '13px' }}>{ret.name}</div>
-                              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', fontWeight: 700, color: ret.ratingGiven > 0 ? '#d97706' : 'var(--text-3)' }}>
-                                {ret.ratingGiven > 0 ? `Score ${ret.ratingGiven.toFixed(1)}` : 'Score N/A'}
+                    {retailers.length > 0 ? (
+                      retailers.slice(0, 5).map((ret, index) => {
+                        const color = COLORS[index % COLORS.length];
+                        return (
+                          <div key={ret.code || index} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '8px 0', borderBottom: index < 4 ? '1px solid var(--border-light)' : 'none' }}>
+                            <div className="sup-avt" style={{ background: color, width: '36px', height: '36px', borderRadius: '8px', fontSize: '12px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 }}>
+                              {(ret.name || 'RT').slice(0, 2).toUpperCase()}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <div style={{ fontFamily: "'Nunito Sans', sans-serif", fontWeight: 700, fontSize: '13px' }}>{ret.name}</div>
+                                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', fontWeight: 700, color: ret.ratingGiven > 0 ? '#d97706' : 'var(--text-3)' }}>
+                                  {ret.ratingGiven > 0 ? `Score ${Number(ret.ratingGiven).toFixed(1)}` : 'Score N/A'}
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <div className="pbar" style={{ flex: 1 }}>
+                                  <div className="pbar-fill" style={{ width: `${ret.fulfilment || 0}%`, background: (ret.fulfilment || 0) >= 90 ? 'var(--success)' : (ret.fulfilment || 0) >= 80 ? 'var(--warning)' : 'var(--danger)' }}></div>
+                                </div>
+                                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-3)', whiteSpace: 'nowrap' }}>
+                                  {ret.fulfilment || 0}% fulfilment | {ret.orders || 0} orders
+                                </div>
                               </div>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                              <div className="pbar" style={{ flex: 1 }}>
-                                <div className="pbar-fill" style={{ width: `${ret.fulfilment}%`, background: ret.fulfilment >= 90 ? 'var(--success)' : ret.fulfilment >= 80 ? 'var(--warning)' : 'var(--danger)' }}></div>
-                              </div>
-                              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-3)', whiteSpace: 'nowrap' }}>
-                                {ret.fulfilment}% fulfilment | {ret.orders} orders
-                              </div>
-                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '24px 16px', color: 'var(--text-3)' }}>
+                        No retailer activity recorded yet.
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1875,7 +1902,11 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
       {/* ══════════════════════════════════════════════
           MODAL 1: ADD / EDIT PRODUCT
           ══════════════════════════════════════════════ */}
-      <div className={`modal-bg ${productModalOpen ? 'active' : ''}`} id="productModal">
+      <div
+        className={`modal-bg ${productModalOpen ? 'open active' : ''}`}
+        id="productModal"
+        onClick={e => { if (e.target.classList.contains('modal-bg')) setProductModalOpen(false); }}
+      >
         <div className="modal">
           <div className="modal-title">
             <div className="card-icon" style={{ background: '#eef3fc', marginRight: '4px' }}>
@@ -2009,7 +2040,11 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
       {/* ══════════════════════════════════════════════
           MODAL 2: ADD RETAILER
           ══════════════════════════════════════════════ */}
-      <div className={`modal-bg ${retailerModalOpen ? 'active' : ''}`} id="retailerModal">
+      <div
+        className={`modal-bg ${retailerModalOpen ? 'open active' : ''}`}
+        id="retailerModal"
+        onClick={e => { if (e.target.classList.contains('modal-bg')) setRetailerModalOpen(false); }}
+      >
         <div className="modal">
           <div className="modal-title">
             <div className="card-icon" style={{ background: '#dbeafe', marginRight: '4px' }}>
@@ -2120,7 +2155,11 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
       {/* ══════════════════════════════════════════════
           MODAL 3: VIEW ORDER DETAILS
           ══════════════════════════════════════════════ */}
-      <div className={`modal-bg ${orderModalOpen ? 'active' : ''}`} id="orderModal">
+      <div
+        className={`modal-bg ${orderModalOpen ? 'open active' : ''}`}
+        id="orderModal"
+        onClick={e => { if (e.target.classList.contains('modal-bg')) setOrderModalOpen(false); }}
+      >
         <div className="modal" style={{ width: 'min(580px,94vw)' }}>
           <div className="modal-title">
             <div className="card-icon" style={{ background: '#eef3fc', marginRight: '4px' }}>
@@ -2204,7 +2243,11 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
       {/* ══════════════════════════════════════════════
           MODAL 4: VIEW RETAILER DETAILS
           ══════════════════════════════════════════════ */}
-      <div className={`modal-bg ${retailerViewModalOpen ? 'active' : ''}`} id="retailerViewModal">
+      <div
+        className={`modal-bg ${retailerViewModalOpen ? 'open active' : ''}`}
+        id="retailerViewModal"
+        onClick={e => { if (e.target.classList.contains('modal-bg')) setRetailerViewModalOpen(false); }}
+      >
         <div className="modal" style={{ width: 'min(500px,94vw)' }}>
           <div className="modal-title">
             <div className="card-icon" style={{ background: '#dcfce7', marginRight: '4px' }}>
@@ -2251,7 +2294,11 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule, o
       {/* ══════════════════════════════════════════════
           MODAL 5: PAYMENT GATEWAY
           ══════════════════════════════════════════════ */}
-      <div className={`modal-bg ${paymentModalOpen ? 'active' : ''}`} id="paymentGatewayModal">
+      <div
+        className={`modal-bg ${paymentModalOpen ? 'open active' : ''}`}
+        id="paymentGatewayModal"
+        onClick={e => { if (e.target.classList.contains('modal-bg')) setPaymentModalOpen(false); }}
+      >
         <div className="modal" style={{ width: 'min(520px,94vw)', borderRadius: '14px', padding: '0', overflow: 'hidden' }}>
           <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e429f 100%)', padding: '20px 24px', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

@@ -262,7 +262,12 @@ let UsersService = class UsersService {
         if (this.normalizeText(user.status, 'Active') !== 'Active') {
             throw new common_1.UnauthorizedException('Account is inactive');
         }
-        return this.toPublicUser(this.syncLinkedProfileForUserId(user.id));
+        const publicUser = this.toPublicUser(this.syncLinkedProfileForUserId(user.id));
+        const token = `sotk_${user.id}_${Buffer.from(user.email).toString('base64').replace(/=/g, '')}_${Date.now()}`;
+        return {
+            ...publicUser,
+            token,
+        };
     }
     syncLinkedProfileForUserId(id) {
         const users = this.readAll();

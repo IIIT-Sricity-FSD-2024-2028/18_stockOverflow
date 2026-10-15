@@ -1,5 +1,31 @@
 [
   {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "Clean Supplier",
+      "businessType": "Wholesaler",
+      "businessEmail": "clean_supplier_99@test.com",
+      "supplierCode": "SUP-9700",
+      "state": "Gujarat",
+      "primaryCategory": "Electronics & Technology"
+    },
+    "primaryContact": {
+      "fullName": "Clean Supplier",
+      "designation": "Managing Director",
+      "directEmail": "clean_supplier_99@test.com"
+    },
+    "retailers": [],
+    "products": [],
+    "documents": [],
+    "id": "8db84cd6-b87e-4691-ac52-138f20ceed2b",
+    "status": "completed",
+    "profileStatus": "pending",
+    "createdAt": "2026-10-15T19:27:10.626Z",
+    "updatedAt": "2026-10-15T19:27:10.626Z"
+  },
+  {
     "id": "0ccceb67-958d-4957-9728-e023994a8e8d",
     "status": "completed",
     "profileStatus": "active",
