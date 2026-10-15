@@ -463,20 +463,6 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                 <span className="sb-item-label">Retailer Profile</span>
               </button>
 
-              <button
-                className={`sb-item ${activeView === 'retailer-wizard' ? 'active' : ''}`}
-                onClick={() => setActiveView('retailer-wizard')}
-              >
-                <span className="sb-icon">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-                    <rect x="2" y="2" width="12" height="12" rx="2" />
-                    <line x1="2" y1="6" x2="14" y2="6" />
-                    <line x1="6" y1="10" x2="10" y2="10" />
-                  </svg>
-                </span>
-                <span className="sb-item-label">Setup Wizard</span>
-              </button>
-
               <button className="sb-item" onClick={logout}>
                 <span className="sb-icon">
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -561,65 +547,348 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                 setIsNotifOpen(!isNotifOpen);
                 setIsProfileOpen(false);
               }}
+              style={{
+                position: 'relative',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '38px',
+                height: '38px',
+                borderRadius: '10px',
+                background: isNotifOpen ? '#eff6ff' : '#f8fafc',
+                border: isNotifOpen ? '1px solid #bfdbfe' : '1px solid #e2e8f0',
+                color: isNotifOpen ? '#2563eb' : '#475569',
+                transition: 'all 0.15s ease',
+              }}
               title="Notifications"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="19" height="19">
                 <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.73 21a2 2 0 01-3.46 0" />
               </svg>
-              {notifications.length > 0 && <span className="notif-dot"></span>}
+              {notifications.length > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '-2px',
+                    right: '-2px',
+                    minWidth: '18px',
+                    height: '18px',
+                    padding: '0 5px',
+                    borderRadius: '999px',
+                    background: '#ef4444',
+                    color: '#ffffff',
+                    fontSize: '10.5px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 0 0 2px #ffffff',
+                  }}
+                >
+                  {notifications.length}
+                </span>
+              )}
             </div>
 
-            {/* Notification Popover matching Vanilla */}
+            {/* Notification Popover */}
             {isNotifOpen && (
               <div
                 className="so-notif-popover open"
                 id="retailerNotifPopover"
                 onClick={(e) => e.stopPropagation()}
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 10px)',
+                  right: 0,
+                  width: '380px',
+                  maxWidth: 'calc(100vw - 24px)',
+                  background: '#ffffff',
+                  borderRadius: '16px',
+                  border: '1px solid #e2e8f0',
+                  boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(15, 23, 42, 0.05)',
+                  zIndex: 99999,
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  textAlign: 'left',
+                }}
               >
-                <div className="so-notif-head">
-                  <div className="so-notif-head-title">
-                    Notifications <span className="so-notif-badge">{notifications.length}</span>
+                {/* Header */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '14px 18px',
+                    borderBottom: '1px solid #f1f5f9',
+                    background: '#fafbfc',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.2px' }}>
+                      Notifications
+                    </span>
+                    {notifications.length > 0 ? (
+                      <span
+                        style={{
+                          background: '#eff6ff',
+                          color: '#2563eb',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          border: '1px solid #dbeafe',
+                        }}
+                      >
+                        {notifications.length} new
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          background: '#f1f5f9',
+                          color: '#64748b',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        0 unread
+                      </span>
+                    )}
                   </div>
                   {notifications.length > 0 && (
-                    <button className="so-notif-clear" onClick={handleClearAllNotifs}>
-                      Clear All
+                    <button
+                      type="button"
+                      onClick={handleClearAllNotifs}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#64748b',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        transition: 'all 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.background = '#fef2f2'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = '#64748b'; e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      Clear all
                     </button>
                   )}
                 </div>
-                <div className="so-notif-list">
+
+                {/* Notification List */}
+                <div
+                  style={{
+                    maxHeight: '380px',
+                    overflowY: 'auto',
+                    padding: '4px 0',
+                  }}
+                >
                   {notifications.length === 0 ? (
-                    <div className="so-notif-empty">🎉 All caught up! No unread notifications.</div>
-                  ) : (
-                    notifications.map((n) => (
+                    <div
+                      style={{
+                        padding: '36px 20px',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '10px',
+                      }}
+                    >
                       <div
-                        key={n.id}
-                        className="so-notif-item"
-                        onClick={() => {
-                          setActiveView(n.view);
-                          setIsNotifOpen(false);
+                        style={{
+                          width: '46px',
+                          height: '46px',
+                          borderRadius: '50%',
+                          background: '#f1f5f9',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#64748b',
+                          fontSize: '22px',
                         }}
-                        style={{ cursor: 'pointer' }}
                       >
-                        <div className={`so-notif-icon ${n.type}`}>
-                          {n.type === 'return' ? '↩️' : '⚠️'}
-                        </div>
-                        <div className="so-notif-body">
-                          <div className="so-notif-title">{n.title}</div>
-                          <div className="so-notif-msg">{n.msg}</div>
-                          <div className="so-notif-time">{n.time}</div>
-                        </div>
-                        <button
-                          className="so-notif-close"
-                          title="Dismiss"
-                          onClick={(e) => handleDismissNotif(e, n.id)}
-                        >
-                          ✕
-                        </button>
+                        🔔
                       </div>
-                    ))
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>
+                          All caught up!
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                          No pending return requests or low stock alerts.
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    notifications.map((n) => {
+                      const isReturn = n.type === 'return';
+                      const iconBg = isReturn ? '#ede9fe' : '#fef3c7';
+                      const iconColor = isReturn ? '#7c3aed' : '#d97706';
+
+                      return (
+                        <div
+                          key={n.id}
+                          onClick={() => {
+                            setActiveView(n.view);
+                            setIsNotifOpen(false);
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '12px',
+                            padding: '12px 18px',
+                            borderBottom: '1px solid #f1f5f9',
+                            cursor: 'pointer',
+                            transition: 'background 0.15s ease',
+                            position: 'relative',
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = '#f8fafc'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                        >
+                          {/* Type Icon */}
+                          <div
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '10px',
+                              background: iconBg,
+                              color: iconColor,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                              marginTop: '2px',
+                            }}
+                          >
+                            {isReturn ? (
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="9 14 4 9 9 4" />
+                                <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
+                              </svg>
+                            ) : (
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                <line x1="12" y1="9" x2="12" y2="13" />
+                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                              </svg>
+                            )}
+                          </div>
+
+                          {/* Body */}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>
+                              {n.title}
+                            </div>
+                            <div style={{ fontSize: '12px', color: '#475569', lineHeight: 1.45, marginBottom: '6px' }}>
+                              {n.msg}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  color: isReturn ? '#6d28d9' : '#b45309',
+                                  background: isReturn ? '#f5f3ff' : '#fffbeb',
+                                  padding: '1px 7px',
+                                  borderRadius: '4px',
+                                  border: `1px solid ${isReturn ? '#ddd6fe' : '#fde68a'}`,
+                                }}
+                              >
+                                {n.time}
+                              </span>
+                              <span style={{ fontSize: '11px', color: '#94a3b8' }}>• Click to review</span>
+                            </div>
+                          </div>
+
+                          {/* Dismiss Close Button */}
+                          <button
+                            type="button"
+                            title="Dismiss notification"
+                            onClick={(e) => handleDismissNotif(e, n.id)}
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '6px',
+                              border: 'none',
+                              background: 'transparent',
+                              color: '#94a3b8',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              flexShrink: 0,
+                              padding: 0,
+                              transition: 'all 0.15s ease',
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = '#fee2e2'; e.currentTarget.style.color = '#ef4444'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#94a3b8'; }}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                        </div>
+                      );
+                    })
                   )}
                 </div>
+
+                {/* Footer Quick Action */}
+                {notifications.length > 0 && (
+                  <div
+                    style={{
+                      padding: '10px 16px',
+                      background: '#fafbfc',
+                      borderTop: '1px solid #f1f5f9',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      fontSize: '12px',
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => { setActiveView('low-stocks'); setIsNotifOpen(false); }}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#2563eb',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        padding: '4px 6px',
+                        borderRadius: '4px',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
+                    >
+                      Low Stocks View &rarr;
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setActiveView('returns'); setIsNotifOpen(false); }}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#7c3aed',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        padding: '4px 6px',
+                        borderRadius: '4px',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
+                    >
+                      Returns View &rarr;
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

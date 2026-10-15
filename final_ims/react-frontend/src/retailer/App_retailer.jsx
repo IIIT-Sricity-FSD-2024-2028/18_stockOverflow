@@ -11,10 +11,6 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import LandingPage from '../components/landing/LandingPage';
-import AuthPage from '../components/auth/AuthPage';
-import BillerPendingPage from '../components/auth/BillerPendingPage';
-import RetailerInitialWizard from '../components/retailer/RetailerInitialWizard';
 import RetailerLayout from '../components/retailer/RetailerLayout';
 import DashboardView from '../components/retailer/DashboardView';
 import ProductListView from '../components/retailer/ProductListView';
@@ -60,15 +56,6 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
     return null;
   }
 
-  // If user requested setup wizard from inside the app
-  if (activeView === 'retailer-wizard') {
-    return (
-      <RetailerInitialWizard
-        onCompleteSetup={() => setActiveView('dashboard')}
-        onCancel={() => setActiveView('dashboard')}
-      />
-    );
-  }
 
   // Render Full Retailer Module
   return (
