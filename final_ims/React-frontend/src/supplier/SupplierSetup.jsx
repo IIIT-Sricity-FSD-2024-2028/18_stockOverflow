@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import './setup.css';
 import {
   writeSupplierId, writeSession,
@@ -18,7 +18,7 @@ const HERO_META = [
   },
   {
     title: 'Add Your Product Catalog',
-    sub: 'Enter the products you supply with pricing and minimum order quantities.'
+    sub: 'Enter the products you supply — SKU, name, brand, category, and stock details.'
   },
   {
     title: 'Review & Complete Setup',
@@ -45,16 +45,79 @@ const STATES = [
   'Karnataka', 'Maharashtra', 'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal'
 ];
 
+const EMOJIS = {
+  'Electronics': '🎧',
+  'Electronics & Technology': '🎧',
+  'Computers': '💻',
+  'Computers & Peripherals': '💻',
+  'Fashion': '👖',
+  'Fashion & Apparel': '👖',
+  'Furniture': '🛋️',
+  'Home & Furniture': '🛋️',
+  'Food & Grocery': '🍎',
+  'Food & Beverage': '🍎',
+  'Health & Beauty': '💄',
+  'Beauty': '💄',
+  'Mobile': '📱',
+  'Mobile & Telecom': '📱',
+  'Sports': '🏃',
+  'Sports & Outdoors': '🏃',
+  'Bags': '👜',
+  'Bags & Accessories': '👜',
+  'Appliances': '🧹',
+  'Mixed': '📦',
+  'Mixed / General': '📦'
+};
+
 const DEFAULT_PRODUCTS = [
-  { id: 'SP-101', sku: 'SP-101', name: 'Wireless Ergonomic Keyboard', brand: 'Logitech', variant: 'Matte Black', cat: 'Computers & Peripherals', unit: 'Piece', price: 1850, stock: 120, moq: 5, status: 'active' },
-  { id: 'SP-102', sku: 'SP-102', name: 'Ultra HD 4K Monitor 27"', brand: 'Dell', variant: 'IPS Panel', cat: 'Electronics & Technology', unit: 'Piece', price: 18999, stock: 24, moq: 2, status: 'active' },
-  { id: 'SP-103', sku: 'SP-103', name: 'Fast Charging Power Bank 20000mAh', brand: 'Mi', variant: 'Pocket Pro', cat: 'Mobile & Telecom', unit: 'Piece', price: 1299, stock: 85, moq: 10, status: 'active' }
+  {
+    id: 'SP-101',
+    sku: 'SP-101',
+    name: 'Wireless Ergonomic Keyboard',
+    brand: 'Logitech',
+    variant: 'Matte Black',
+    cat: 'Computers & Peripherals',
+    unit: 'Piece',
+    price: 1850,
+    stock: 120,
+    moq: 5,
+    emoji: '💻',
+    description: 'High-precision mechanical key switches with wrist rest cushion.'
+  },
+  {
+    id: 'SP-102',
+    sku: 'SP-102',
+    name: 'Ultra HD 4K Monitor 27"',
+    brand: 'Dell',
+    variant: 'IPS Panel',
+    cat: 'Electronics & Technology',
+    unit: 'Piece',
+    price: 18999,
+    stock: 24,
+    moq: 2,
+    emoji: '🎧',
+    description: 'IPS panel with 99% sRGB color gamut and USB-C connectivity.'
+  },
+  {
+    id: 'SP-103',
+    sku: 'SP-103',
+    name: 'Fast Charging Power Bank 20000mAh',
+    brand: 'Mi',
+    variant: 'Pocket Pro',
+    cat: 'Mobile & Telecom',
+    unit: 'Piece',
+    price: 1299,
+    stock: 85,
+    moq: 10,
+    emoji: '📱',
+    description: 'Triple port output with 22.5W fast two-way power delivery.'
+  }
 ];
 
 export default function SupplierSetup({ onNavigateToDashboard }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [setupComplete, setSetupComplete] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: '' });
+  const [toast, setToast] = useState({ show: false, message: '', type: 'ok' });
 
   // ── Step 1: Profile ──
   const [business, setBusiness] = useState({
@@ -85,6 +148,8 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
   // ── Step 2: Products ──
   const [products, setProducts] = useState(DEFAULT_PRODUCTS);
   const [prodModalOpen, setProdModalOpen] = useState(false);
+  const [editingProdSku, setEditingProdSku] = useState(null);
+  const [prodFormErrors, setProdFormErrors] = useState({});
   const [prodForm, setProdForm] = useState({
     name: '',
     sku: '',
@@ -93,13 +158,16 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
     cat: 'Electronics & Technology',
     unit: 'Piece',
     price: '',
-    stock: '',
-    moq: '1'
+    stock: 0,
+    moq: 10,
+    expiryDate: '',
+    reviewSummary: '',
+    description: ''
   });
 
-  const showToast = useCallback((msg) => {
-    setToast({ show: true, message: msg });
-    setTimeout(() => setToast({ show: false, message: '' }), 3000);
+  const showToast = useCallback((msg, type = 'ok') => {
+    setToast({ show: true, message: msg, type });
+    setTimeout(() => setToast({ show: false, message: '', type: 'ok' }), 3000);
   }, []);
 
   const genCode = () => {
@@ -107,14 +175,19 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
     const prefix = name ? name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3) : 'SUP';
     const num = Math.floor(1000 + Math.random() * 9000);
     setBusiness(prev => ({ ...prev, supplierCode: `${prefix}-${num}` }));
-    showToast('Supplier Code generated: ' + `${prefix}-${num}`);
+    showToast(`Supplier Code generated: ${prefix}-${num}`);
   };
 
   const validateStep1 = () => {
     const errs = {};
     if (!business.companyName.trim()) errs.companyName = 'Company name is required';
     if (!business.businessType) errs.businessType = 'Business type is required';
-    if (!business.businessEmail.trim()) errs.businessEmail = 'Business email is required';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!business.businessEmail.trim()) {
+      errs.businessEmail = 'Business email is required';
+    } else if (!emailRegex.test(business.businessEmail.trim())) {
+      errs.businessEmail = 'Valid email is required';
+    }
     if (!contact.fullName.trim()) errs.contactName = 'Contact name is required';
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -123,7 +196,13 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
   const handleNext = () => {
     if (currentStep === 1) {
       if (!validateStep1()) {
-        showToast('Please fill in required fields.');
+        showToast('Please fill in all required fields.', 'err');
+        return;
+      }
+    }
+    if (currentStep === 2) {
+      if (!products.length) {
+        showToast('Add at least one product to your catalog.', 'err');
         return;
       }
     }
@@ -142,96 +221,174 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
     }
   };
 
-  const handleAddProduct = () => {
-    if (!prodForm.name || !prodForm.price) {
-      alert('Product Name and Unit Price are required.');
+  const openAddProductModal = () => {
+    if (products.length >= 50) {
+      showToast('Starter Kirana plan is limited to 50 products. Upgrade to Pro for unlimited.', 'err');
       return;
     }
-    const newProd = {
-      id: prodForm.sku || `SKU-${Date.now()}`,
-      sku: prodForm.sku || `SKU-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: prodForm.name,
-      brand: prodForm.brand || 'Generic',
-      variant: prodForm.variant || 'Standard',
-      cat: prodForm.cat || 'General',
-      unit: prodForm.unit || 'Piece',
-      price: Number(prodForm.price),
-      stock: Number(prodForm.stock || 0),
-      moq: Number(prodForm.moq || 1),
-      status: 'active'
-    };
-    setProducts(prev => [newProd, ...prev]);
-    setProdModalOpen(false);
+    const nextSku = `SP-${Math.floor(100 + products.length + 1)}`;
+    setEditingProdSku(null);
+    setProdFormErrors({});
     setProdForm({
       name: '',
-      sku: '',
+      sku: nextSku,
       brand: '',
       variant: '',
       cat: 'Electronics & Technology',
       unit: 'Piece',
       price: '',
-      stock: '',
-      moq: '1'
+      stock: 50,
+      moq: 5,
+      expiryDate: '',
+      reviewSummary: '',
+      description: ''
     });
-    showToast('Product added to catalog.');
+    setProdModalOpen(true);
   };
 
-  const handleDeleteProduct = (id) => {
-    setProducts(prev => prev.filter(p => p.id !== id && p.sku !== id));
+  const openEditProduct = (p) => {
+    setEditingProdSku(p.sku);
+    setProdFormErrors({});
+    setProdForm({
+      name: p.name || '',
+      sku: p.sku || '',
+      brand: p.brand || '',
+      variant: p.variant || '',
+      cat: p.cat || 'Electronics & Technology',
+      unit: p.unit || 'Piece',
+      price: p.price ?? '',
+      stock: p.stock ?? 0,
+      moq: p.moq ?? 1,
+      expiryDate: p.expiryDate || '',
+      reviewSummary: p.reviewSummary || '',
+      description: p.description || ''
+    });
+    setProdModalOpen(true);
+  };
+
+  const handleSaveProduct = () => {
+    const errs = {};
+    if (!prodForm.name.trim()) errs.name = 'Product name is required';
+    if (!prodForm.cat) errs.cat = 'Category is required';
+    const priceNum = parseFloat(prodForm.price);
+    if (isNaN(priceNum) || priceNum < 0 || prodForm.price === '') {
+      errs.price = 'Valid price is required';
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setProdFormErrors(errs);
+      return;
+    }
+
+    const emoji = EMOJIS[prodForm.cat] || '📦';
+    const productObj = {
+      id: prodForm.sku,
+      sku: prodForm.sku,
+      name: prodForm.name.trim(),
+      brand: prodForm.brand.trim() || '—',
+      variant: prodForm.variant.trim(),
+      cat: prodForm.cat,
+      unit: prodForm.unit || 'Piece',
+      price: priceNum,
+      stock: parseInt(prodForm.stock, 10) || 0,
+      moq: parseInt(prodForm.moq, 10) || 1,
+      expiryDate: prodForm.expiryDate,
+      reviewSummary: prodForm.reviewSummary.trim(),
+      description: prodForm.description.trim(),
+      emoji
+    };
+
+    if (editingProdSku) {
+      setProducts(prev => prev.map(p => (p.sku === editingProdSku ? productObj : p)));
+      showToast('Product updated!');
+    } else {
+      setProducts(prev => [...prev, productObj]);
+      showToast('Product added to catalog!');
+    }
+
+    setProdModalOpen(false);
+  };
+
+  const handleDeleteProduct = (sku) => {
+    if (!window.confirm('Remove this product from catalog?')) return;
+    setProducts(prev => prev.filter(p => p.sku !== sku));
     showToast('Product removed.');
   };
 
+  const totalStock = useMemo(() => {
+    return products.reduce((acc, p) => acc + (parseInt(p.stock, 10) || 0), 0);
+  }, [products]);
+
   const handleCompleteSetup = async () => {
     const payload = {
-      name: business.companyName,
-      supplierName: business.companyName,
-      supplierCode: business.supplierCode || 'SUP-2026',
-      email: business.businessEmail,
-      phone: business.phoneNumber,
-      gst: business.gstNumber,
-      gstNumber: business.gstNumber,
-      businessType: business.businessType,
-      primaryCategory: business.primaryCategory,
-      state: business.state,
-      address: business.businessAddress,
-      website: business.website,
-      contactPerson: contact.fullName,
-      contactDesignation: contact.designation,
-      contactEmail: contact.directEmail,
-      paymentTerms: business.paymentTerms,
-      sellingType: business.sellingType,
-      description: business.description,
-      currency: business.currency,
-      products: products
+      business: {
+        companyName: business.companyName.trim(),
+        businessType: business.businessType || 'Wholesaler',
+        businessEmail: business.businessEmail.trim(),
+        phoneNumber: business.phoneNumber.trim() || undefined,
+        gstNumber: business.gstNumber.trim() || undefined,
+        supplierCode: business.supplierCode.trim() || undefined,
+        currency: business.currency || 'INR',
+        businessAddress: business.businessAddress.trim() || undefined,
+        state: business.state || undefined,
+        website: business.website.trim() || undefined,
+        primaryCategory: business.primaryCategory || undefined,
+        paymentTerms: business.paymentTerms || undefined,
+        sellingType: business.sellingType || undefined,
+        description: business.description.trim() || undefined
+      },
+      primaryContact: {
+        fullName: contact.fullName.trim(),
+        designation: contact.designation.trim() || undefined,
+        directEmail: contact.directEmail.trim() || undefined
+      },
+      retailers: [],
+      products: products.map(p => ({
+        sku: p.sku,
+        name: p.name,
+        brand: p.brand || undefined,
+        variant: p.variant || undefined,
+        category: p.cat || undefined,
+        stockAvailable: Number(p.stock || 0),
+        unitPrice: Number(p.price || 0),
+        minOrderQty: Number(p.moq || 1),
+        unit: p.unit || 'Piece',
+        expiryDate: p.expiryDate || undefined,
+        reviewSummary: p.reviewSummary || undefined,
+        description: p.description || undefined
+      }))
     };
 
     try {
       const res = await createSupplierSetup(payload);
-      if (res && res.supplier && res.supplier.id) {
-        writeSupplierId(res.supplier.id);
-        writeSession({
-          supplierId: res.supplier.id,
-          supplierName: business.companyName,
-          email: business.businessEmail
-        });
-      }
+      const supplierId = res?.id || res?.supplier?.id || `sup-${Date.now()}`;
+      writeSupplierId(supplierId);
+      writeSession({
+        supplierId,
+        supplierName: business.companyName,
+        email: business.businessEmail,
+        role: 'supplier'
+      });
+      showToast('Setup saved to backend.');
     } catch {
-      // Fallback local persistence
+      // Local fallback
       const dummyId = `sup-${Date.now()}`;
       writeSupplierId(dummyId);
       writeSession({
         supplierId: dummyId,
         supplierName: business.companyName,
-        email: business.businessEmail
+        email: business.businessEmail,
+        role: 'supplier'
       });
+      showToast('Setup saved locally.');
     }
 
     setSetupComplete(true);
-    showToast('Supplier setup completed successfully!');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="shell">
+    <div className="supplier-setup-shell">
       {/* ── BRAND BAR ── */}
       <header className="brand-bar">
         <div className="brand-logo">
@@ -246,7 +403,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
         <span className="brand-badge">Supplier Setup Wizard</span>
       </header>
 
-      {/* ── HERO ── */}
+      {/* ── HERO BANNER ── */}
       <div className="hero">
         <div className="hero-title">{HERO_META[currentStep - 1].title}</div>
         <div className="hero-sub">{HERO_META[currentStep - 1].sub}</div>
@@ -259,14 +416,20 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
             <div className="st-item" key={s.id}>
               <div
                 className={`st-node ${currentStep === s.id ? 'active' : ''} ${currentStep > s.id ? 'done' : ''}`}
-                onClick={() => !setupComplete && setCurrentStep(s.id)}
+                onClick={() => {
+                  if (s.id < currentStep && !setupComplete) {
+                    setCurrentStep(s.id);
+                  }
+                }}
               >
                 <div className={`st-circle ${currentStep === s.id ? 'active' : ''} ${currentStep > s.id ? 'done' : ''}`}>
                   {currentStep > s.id ? (
-                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ width: 14, height: 14 }}>
-                      <polyline points="2,7 5.5,10.5 12,3.5" />
+                    <svg viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="2.2" style={{ width: 14, height: 14 }}>
+                      <polyline points="2.5,7 5.5,10 11.5,4" />
                     </svg>
-                  ) : s.id}
+                  ) : (
+                    s.id
+                  )}
                 </div>
                 <span className="st-label">{s.label}</span>
               </div>
@@ -280,56 +443,60 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
 
       {/* ── CONTENT CONTAINER ── */}
       <div className="content">
-
         {setupComplete ? (
-          /* ── FINISH STATE ── */
+          /* ── FINISH HERO STATE ── */
           <div className="finish-hero">
             <div className="finish-icon">
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <polyline points="2,7 5.5,10.5 12,3.5"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polyline points="20,6 9,17 4,12" />
               </svg>
             </div>
-            <div className="finish-title">You're All Set!</div>
+            <div className="finish-title">You're All Set! 🎉</div>
             <div className="finish-sub">
               Your supplier account has been fully configured. Launch your dashboard now to begin managing inventory, orders, and retail distribution.
             </div>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               <button
+                type="button"
                 className="btn btn-primary"
                 onClick={onNavigateToDashboard}
-                style={{ padding: '12px 28px', fontSize: '14px' }}
+                style={{ padding: '10px 24px' }}
               >
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                  <rect x="1.5" y="1.5" width="5" height="5" rx="1"/>
-                  <rect x="9.5" y="1.5" width="5" height="5" rx="1"/>
-                  <rect x="1.5" y="9.5" width="5" height="5" rx="1"/>
-                  <rect x="9.5" y="9.5" width="5" height="5" rx="1"/>
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <rect x="1.5" y="1.5" width="4" height="4" rx=".8" />
+                  <rect x="7.5" y="1.5" width="4" height="4" rx=".8" />
+                  <rect x="1.5" y="7.5" width="4" height="4" rx=".8" />
+                  <rect x="7.5" y="7.5" width="4" height="4" rx=".8" />
                 </svg>
                 Launch Supplier Dashboard
               </button>
               <button
+                type="button"
                 className="btn btn-outline"
-                onClick={() => setSetupComplete(false)}
-                style={{ padding: '12px 24px', fontSize: '14px' }}
+                onClick={() => {
+                  setSetupComplete(false);
+                  setCurrentStep(1);
+                }}
               >
-                Review Setup
+                Edit Setup
               </button>
             </div>
           </div>
         ) : (
           <>
-            {/* ══════ SECTION 1: SUPPLIER PROFILE ══════ */}
+            {/* ══════ SECTION 1: PROFILE ══════ */}
             {currentStep === 1 && (
               <div className="section active">
+                {/* Business Information Card */}
                 <div className="card">
                   <div className="card-head">
                     <div className="card-title">
                       <div className="card-icon">
                         <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.4">
-                          <rect x="1" y="1" width="11" height="11" rx="1.5"/>
-                          <line x1="4" y1="4.5" x2="9" y2="4.5"/>
-                          <line x1="4" y1="6.5" x2="9" y2="6.5"/>
-                          <line x1="4" y1="8.5" x2="7" y2="8.5"/>
+                          <rect x="1" y="1" width="11" height="11" rx="1.5" />
+                          <line x1="4" y1="4.5" x2="9" y2="4.5" />
+                          <line x1="4" y1="6.5" x2="9" y2="6.5" />
+                          <line x1="4" y1="8.5" x2="7" y2="8.5" />
                         </svg>
                       </div>
                       Business Information
@@ -338,23 +505,29 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                   <div className="card-body">
                     <div className="fg fg-2">
                       <div className="field">
-                        <label className="field-label">Supplier / Company Name <span className="req">*</span></label>
+                        <label className="field-label">
+                          Supplier / Company Name <span className="req">*</span>
+                        </label>
                         <input
                           type="text"
                           value={business.companyName}
-                          onChange={(e) => setBusiness({ ...business, companyName: e.target.value })}
+                          onChange={e => setBusiness({ ...business, companyName: e.target.value })}
                           placeholder="Enter supplier name"
                           className={errors.companyName ? 'err' : ''}
                         />
-                        {errors.companyName && <div className="field-error show">{errors.companyName}</div>}
+                        <div className={`field-error ${errors.companyName ? 'show' : ''}`}>
+                          {errors.companyName}
+                        </div>
                       </div>
 
                       <div className="field">
-                        <label className="field-label">Business Type <span className="req">*</span></label>
+                        <label className="field-label">
+                          Business Type <span className="req">*</span>
+                        </label>
                         <div className="sel-wrap">
                           <select
                             value={business.businessType}
-                            onChange={(e) => setBusiness({ ...business, businessType: e.target.value })}
+                            onChange={e => setBusiness({ ...business, businessType: e.target.value })}
                             className={errors.businessType ? 'err' : ''}
                           >
                             <option value="">Select type</option>
@@ -365,21 +538,27 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                             <option>Trading Company</option>
                           </select>
                         </div>
-                        {errors.businessType && <div className="field-error show">{errors.businessType}</div>}
+                        <div className={`field-error ${errors.businessType ? 'show' : ''}`}>
+                          {errors.businessType}
+                        </div>
                       </div>
                     </div>
 
                     <div className="fg fg-2">
                       <div className="field">
-                        <label className="field-label">Business Email <span className="req">*</span></label>
+                        <label className="field-label">
+                          Business Email <span className="req">*</span>
+                        </label>
                         <input
                           type="email"
                           value={business.businessEmail}
-                          onChange={(e) => setBusiness({ ...business, businessEmail: e.target.value })}
+                          onChange={e => setBusiness({ ...business, businessEmail: e.target.value })}
                           placeholder="admin@yoursupply.com"
                           className={errors.businessEmail ? 'err' : ''}
                         />
-                        {errors.businessEmail && <div className="field-error show">{errors.businessEmail}</div>}
+                        <div className={`field-error ${errors.businessEmail ? 'show' : ''}`}>
+                          {errors.businessEmail}
+                        </div>
                       </div>
 
                       <div className="field">
@@ -387,7 +566,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <input
                           type="tel"
                           value={business.phoneNumber}
-                          onChange={(e) => setBusiness({ ...business, phoneNumber: e.target.value })}
+                          onChange={e => setBusiness({ ...business, phoneNumber: e.target.value })}
                           placeholder="+91 98765 43210"
                         />
                       </div>
@@ -399,7 +578,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <input
                           type="text"
                           value={business.gstNumber}
-                          onChange={(e) => setBusiness({ ...business, gstNumber: e.target.value })}
+                          onChange={e => setBusiness({ ...business, gstNumber: e.target.value })}
                           placeholder="e.g. 24AADCA2230G1ZO"
                         />
                       </div>
@@ -410,24 +589,29 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                           <input
                             type="text"
                             value={business.supplierCode}
-                            onChange={(e) => setBusiness({ ...business, supplierCode: e.target.value })}
+                            onChange={e => setBusiness({ ...business, supplierCode: e.target.value })}
                             placeholder="Auto-generated"
                           />
-                          <button type="button" className="btn-gen" onClick={genCode}>Generate</button>
+                          <button type="button" className="btn-gen" onClick={genCode}>
+                            Generate
+                          </button>
                         </div>
                       </div>
 
                       <div className="field">
-                        <label className="field-label">Currency <span className="req">*</span></label>
+                        <label className="field-label">
+                          Currency <span className="req">*</span>
+                        </label>
                         <div className="sel-wrap">
                           <select
                             value={business.currency}
-                            onChange={(e) => setBusiness({ ...business, currency: e.target.value })}
+                            onChange={e => setBusiness({ ...business, currency: e.target.value })}
                           >
                             <option value="INR">INR – Indian Rupee</option>
                             <option value="USD">USD – US Dollar</option>
                             <option value="EUR">EUR – Euro</option>
                             <option value="GBP">GBP – British Pound</option>
+                            <option value="AUD">AUD – Australian Dollar</option>
                           </select>
                         </div>
                       </div>
@@ -439,7 +623,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <input
                           type="text"
                           value={business.businessAddress}
-                          onChange={(e) => setBusiness({ ...business, businessAddress: e.target.value })}
+                          onChange={e => setBusiness({ ...business, businessAddress: e.target.value })}
                           placeholder="Street address, city, state, PIN"
                         />
                       </div>
@@ -449,10 +633,12 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <div className="sel-wrap">
                           <select
                             value={business.state}
-                            onChange={(e) => setBusiness({ ...business, state: e.target.value })}
+                            onChange={e => setBusiness({ ...business, state: e.target.value })}
                           >
                             <option value="">Select state</option>
-                            {STATES.map(s => <option key={s}>{s}</option>)}
+                            {STATES.map(s => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
                           </select>
                         </div>
                       </div>
@@ -464,7 +650,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <input
                           type="url"
                           value={business.website}
-                          onChange={(e) => setBusiness({ ...business, website: e.target.value })}
+                          onChange={e => setBusiness({ ...business, website: e.target.value })}
                           placeholder="https://yoursupply.com"
                         />
                       </div>
@@ -474,10 +660,12 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <div className="sel-wrap">
                           <select
                             value={business.primaryCategory}
-                            onChange={(e) => setBusiness({ ...business, primaryCategory: e.target.value })}
+                            onChange={e => setBusiness({ ...business, primaryCategory: e.target.value })}
                           >
                             <option value="">Select category</option>
-                            {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                            {CATEGORIES.map(c => (
+                              <option key={c} value={c}>{c}</option>
+                            ))}
                           </select>
                         </div>
                       </div>
@@ -489,7 +677,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <div className="sel-wrap">
                           <select
                             value={business.paymentTerms}
-                            onChange={(e) => setBusiness({ ...business, paymentTerms: e.target.value })}
+                            onChange={e => setBusiness({ ...business, paymentTerms: e.target.value })}
                           >
                             <option>Net 30</option>
                             <option>Net 15</option>
@@ -505,7 +693,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <div className="sel-wrap">
                           <select
                             value={business.sellingType}
-                            onChange={(e) => setBusiness({ ...business, sellingType: e.target.value })}
+                            onChange={e => setBusiness({ ...business, sellingType: e.target.value })}
                           >
                             <option>Wholesale</option>
                             <option>Retail</option>
@@ -520,22 +708,23 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <label className="field-label">About / Description</label>
                         <textarea
                           value={business.description}
-                          onChange={(e) => setBusiness({ ...business, description: e.target.value })}
-                          placeholder="Briefly describe your business, specialisations, and supply capabilities…"
+                          onChange={e => setBusiness({ ...business, description: e.target.value })}
+                          placeholder="Briefly describe your business, specialisations, and what makes you a great supply partner…"
+                          style={{ minHeight: '80px' }}
                         />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Primary Contact Card */}
+                {/* Primary Contact Person Card */}
                 <div className="card">
                   <div className="card-head">
                     <div className="card-title">
                       <div className="card-icon">
                         <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.4">
-                          <circle cx="6.5" cy="4.5" r="2.5"/>
-                          <path d="M1 12c0-3.04 2.46-5 5.5-5s5.5 1.96 5.5 5"/>
+                          <circle cx="6.5" cy="4.5" r="2.5" />
+                          <path d="M1 12c0-3.04 2.46-5 5.5-5s5.5 1.96 5.5 5" />
                         </svg>
                       </div>
                       Primary Contact Person
@@ -544,15 +733,19 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                   <div className="card-body">
                     <div className="fg fg-3">
                       <div className="field">
-                        <label className="field-label">Full Name <span className="req">*</span></label>
+                        <label className="field-label">
+                          Full Name <span className="req">*</span>
+                        </label>
                         <input
                           type="text"
                           value={contact.fullName}
-                          onChange={(e) => setContact({ ...contact, fullName: e.target.value })}
+                          onChange={e => setContact({ ...contact, fullName: e.target.value })}
                           placeholder="e.g. Arjun Tiwari"
                           className={errors.contactName ? 'err' : ''}
                         />
-                        {errors.contactName && <div className="field-error show">{errors.contactName}</div>}
+                        <div className={`field-error ${errors.contactName ? 'show' : ''}`}>
+                          {errors.contactName}
+                        </div>
                       </div>
 
                       <div className="field">
@@ -560,7 +753,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <input
                           type="text"
                           value={contact.designation}
-                          onChange={(e) => setContact({ ...contact, designation: e.target.value })}
+                          onChange={e => setContact({ ...contact, designation: e.target.value })}
                           placeholder="e.g. Sales Manager"
                         />
                       </div>
@@ -570,7 +763,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                         <input
                           type="email"
                           value={contact.directEmail}
-                          onChange={(e) => setContact({ ...contact, directEmail: e.target.value })}
+                          onChange={e => setContact({ ...contact, directEmail: e.target.value })}
                           placeholder="arjun@yoursupply.com"
                         />
                       </div>
@@ -580,7 +773,7 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
               </div>
             )}
 
-            {/* ══════ SECTION 2: PRODUCT CATALOG ══════ */}
+            {/* ══════ SECTION 2: PRODUCTS ══════ */}
             {currentStep === 2 && (
               <div className="section active">
                 <div className="card">
@@ -588,20 +781,20 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                     <div className="card-title">
                       <div className="card-icon">
                         <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.4">
-                          <path d="M6.5 1L12 4.5v4L6.5 12 1 8.5v-4L6.5 1z"/>
-                          <path d="M1 4.5L6.5 8 12 4.5M6.5 8v4"/>
+                          <path d="M6.5 1L12 4.5v4L6.5 12 1 8.5v-4L6.5 1z" />
+                          <path d="M1 4.5L6.5 8 12 4.5M6.5 8v4" />
                         </svg>
                       </div>
                       Product Catalog
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span style={{ fontFamily: "'Nunito Sans', sans-serif", fontSize: '12px', color: 'var(--text-muted)' }}>
-                        {products.length} products added
+                        {products.length} {products.length === 1 ? 'product' : 'products'}
                       </span>
-                      <button className="btn btn-primary btn-sm" onClick={() => setProdModalOpen(true)}>
+                      <button type="button" className="btn btn-primary btn-sm" onClick={openAddProductModal}>
                         <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
-                          <line x1="6.5" y1="2" x2="6.5" y2="11"/>
-                          <line x1="2" y1="6.5" x2="11" y2="6.5"/>
+                          <line x1="6.5" y1="2" x2="6.5" y2="11" />
+                          <line x1="2" y1="6.5" x2="11" y2="6.5" />
                         </svg>
                         Add Product
                       </button>
@@ -610,55 +803,84 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
 
                   <div className="prod-table-wrap">
                     {products.length === 0 ? (
-                      <div className="empty-state">
+                      <div className="empty-state" style={{ padding: '36px 20px' }}>
                         <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" strokeWidth="1.2">
-                          <path d="M22 4L40 13.5v17L22 40 4 30.5v-17L22 4z"/>
-                          <path d="M4 13.5L22 23l18-9.5M22 23V40"/>
+                          <path d="M22 4L40 13.5v17L22 40 4 30.5v-17L22 4z" />
+                          <path d="M4 13.5L22 23l18-9.5M22 23V40" />
                         </svg>
                         <p>No products in catalog yet</p>
-                        <span>Click "Add Product" to add wholesale items with pricing and MOQ</span>
+                        <span>Click "Add Product" to configure detailed product specifications</span>
                       </div>
                     ) : (
                       <table className="prod-table">
                         <thead>
                           <tr>
-                            <th style={{ width: '100px' }}>SKU</th>
+                            <th style={{ width: '38px' }}></th>
+                            <th style={{ width: '90px' }}>SKU</th>
                             <th>Product Name</th>
                             <th>Brand / Variant</th>
                             <th>Category</th>
-                            <th style={{ width: '110px' }}>Unit Price (₹)</th>
-                            <th style={{ width: '80px' }}>MOQ</th>
-                            <th style={{ width: '80px' }}>Stock</th>
-                            <th style={{ width: '80px' }}>Unit</th>
-                            <th style={{ width: '70px', textAlign: 'center' }}>Action</th>
+                            <th style={{ width: '105px' }}>Unit Price (₹)</th>
+                            <th style={{ width: '75px' }}>MOQ</th>
+                            <th style={{ width: '75px' }}>Stock</th>
+                            <th style={{ width: '75px' }}>Unit</th>
+                            <th style={{ width: '80px', textAlign: 'center' }}>Actions</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {products.map((p) => (
-                            <tr key={p.id}>
-                              <td className="sku-cell">{p.sku || p.id}</td>
-                              <td style={{ fontWeight: 600 }}>{p.name}</td>
-                              <td style={{ color: 'var(--text-secondary)' }}>{p.brand} {p.variant && `• ${p.variant}`}</td>
+                          {products.map(p => (
+                            <tr key={p.sku}>
+                              <td className="emoji-cell">{p.emoji || EMOJIS[p.cat] || '📦'}</td>
+                              <td className="sku-cell">{p.sku}</td>
                               <td>
-                                <span style={{ fontSize: '11px', background: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                                <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{p.name}</div>
+                                {p.description && (
+                                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>
+                                    {p.description}
+                                  </div>
+                                )}
+                              </td>
+                              <td>
+                                <div style={{ fontWeight: 600 }}>{p.brand || '—'}</div>
+                                {p.variant && <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{p.variant}</div>}
+                              </td>
+                              <td>
+                                <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '12px', background: '#eef3fc', color: '#2e6bc5', fontSize: '11.5px', fontWeight: 700 }}>
                                   {p.cat}
                                 </span>
                               </td>
-                              <td style={{ fontWeight: 700 }}>₹{Number(p.price).toLocaleString('en-IN')}</td>
-                              <td>{p.moq}</td>
-                              <td>{p.stock}</td>
-                              <td>{p.unit}</td>
-                              <td className="del-td">
-                                <button
-                                  type="button"
-                                  onClick={() => handleDeleteProduct(p.id)}
-                                  title="Delete product"
-                                >
-                                  <svg viewBox="0 0 12 12" fill="none" stroke="#ef4444" strokeWidth="1.8">
-                                    <line x1="2" y1="2" x2="10" y2="10"/>
-                                    <line x1="10" y1="2" x2="2" y2="10"/>
-                                  </svg>
-                                </button>
+                              <td style={{ fontWeight: 700, color: '#15803d' }}>
+                                ₹{Number(p.price || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </td>
+                              <td style={{ color: 'var(--text-secondary)' }}>{p.moq || 1}</td>
+                              <td style={{ fontWeight: 700 }}>{p.stock || 0}</td>
+                              <td style={{ color: 'var(--text-secondary)' }}>{p.unit || 'Piece'}</td>
+                              <td>
+                                <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline btn-sm"
+                                    style={{ padding: '3px 7px' }}
+                                    onClick={() => openEditProduct(p)}
+                                    title="Edit"
+                                  >
+                                    <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 11, height: 11 }}>
+                                      <path d="M10 1.5l1.5 1.5L4 10.5H2.5V9L10 1.5z" />
+                                    </svg>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline btn-sm"
+                                    style={{ padding: '3px 7px', borderColor: '#fca5a5' }}
+                                    onClick={() => handleDeleteProduct(p.sku)}
+                                    title="Delete"
+                                  >
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="#ef4444" strokeWidth="1.6" style={{ width: 11, height: 11 }}>
+                                      <polyline points="1,3 11,3" />
+                                      <path d="M3.5 3V2a1 1 0 011-1h3a1 1 0 011 1v1M4 3v7.5M8 3v7.5M2 3l.6 7.5a1 1 0 001 .9h4.8a1 1 0 001-.9L10 3" />
+                                    </svg>
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))}
@@ -666,111 +888,133 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
                       </table>
                     )}
                   </div>
+
+                  <div style={{ padding: '12px 16px', borderTop: '1px solid #f0f2f4', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ fontFamily: "'Nunito Sans', sans-serif", fontSize: '12px', color: 'var(--text-muted)' }}>
+                      Starter Kirana plan includes up to 50 products catalog. Upgrade to Vyapar Pro for unlimited products.
+                    </div>
+                    <button type="button" className="btn btn-primary btn-sm" onClick={openAddProductModal}>
+                      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
+                        <line x1="6.5" y1="2" x2="6.5" y2="11" />
+                        <line x1="2" y1="6.5" x2="11" y2="6.5" />
+                      </svg>
+                      Add Product
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* ══════ SECTION 3: REVIEW & LAUNCH ══════ */}
+            {/* ══════ SECTION 3: REVIEW ══════ */}
             {currentStep === 3 && (
               <div className="section active">
                 <div className="review-grid">
                   <div className="rev-card">
                     <div className="rev-card-icon">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                        <rect x="2" y="2" width="12" height="12" rx="2"/>
-                        <path d="M5 8h6M8 5v6"/>
+                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+                        <path d="M8 1L15 4.5v7L8 15 1 11.5v-7L8 1z" />
                       </svg>
                     </div>
-                    <div className="rev-card-label">Catalog Products</div>
+                    <div className="rev-card-label">Products</div>
                     <div className="rev-card-value">{products.length}</div>
-                    <div className="rev-card-sub">Items ready for retail orders</div>
+                    <div className="rev-card-sub">{totalStock} units available</div>
                   </div>
 
                   <div className="rev-card">
                     <div className="rev-card-icon">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                        <circle cx="8" cy="8" r="6"/>
-                        <path d="M8 5v6M5.5 6.5h5"/>
+                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+                        <circle cx="8" cy="5.5" r="3" />
+                        <path d="M2 14c0-3.31 2.69-5 6-5s6 1.69 6 5" />
                       </svg>
                     </div>
-                    <div className="rev-card-label">Primary Currency</div>
-                    <div className="rev-card-value">{business.currency}</div>
-                    <div className="rev-card-sub">Pricing base for PO invoicing</div>
+                    <div className="rev-card-label">Company</div>
+                    <div className="rev-card-value" style={{ fontSize: '18px' }}>
+                      {business.companyName || '—'}
+                    </div>
+                    <div className="rev-card-sub">{business.businessType || 'Supplier'}</div>
                   </div>
 
                   <div className="rev-card">
                     <div className="rev-card-icon">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                        <circle cx="8" cy="5" r="3"/>
-                        <path d="M2 14c0-3 3-5 6-5s6 2 6 5"/>
+                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+                        <rect x="1" y="3" width="14" height="10" rx="1.5" />
+                        <line x1="1" y1="7" x2="15" y2="7" />
                       </svg>
                     </div>
-                    <div className="rev-card-label">Primary Contact</div>
-                    <div className="rev-card-value" style={{ fontSize: '18px' }}>{contact.fullName || 'Admin'}</div>
-                    <div className="rev-card-sub">{contact.designation || 'Supplier Admin'}</div>
+                    <div className="rev-card-label">Contact</div>
+                    <div className="rev-card-value" style={{ fontSize: '15px' }}>
+                      {contact.fullName || '—'}
+                    </div>
+                    <div className="rev-card-sub">{business.businessEmail || ''}</div>
                   </div>
                 </div>
 
                 <div className="rev-list-card">
                   <div className="rev-list-head">
                     <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4">
-                      <path d="M7 1L13 4.5v5L7 13 1 9.5v-5L7 1z"/>
+                      <path d="M7 1L13 4.5v5L7 13 1 9.5v-5L7 1z" />
                     </svg>
-                    Supplier Information Summary
+                    Products Summary
                   </div>
-                  <div style={{ padding: '16px 20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '13px' }}>
-                    <div><strong>Company:</strong> {business.companyName}</div>
-                    <div><strong>Type:</strong> {business.businessType}</div>
-                    <div><strong>Email:</strong> {business.businessEmail}</div>
-                    <div><strong>Phone:</strong> {business.phoneNumber || 'Not provided'}</div>
-                    <div><strong>GST:</strong> {business.gstNumber || 'Not provided'}</div>
-                    <div><strong>State:</strong> {business.state || 'Not provided'}</div>
-                    <div><strong>Terms:</strong> {business.paymentTerms}</div>
-                    <div><strong>Selling:</strong> {business.sellingType}</div>
-                  </div>
-                </div>
-
-                <div className="rev-list-card">
-                  <div className="rev-list-head">
-                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4">
-                      <rect x="1" y="1" width="12" height="12" rx="1"/>
-                      <line x1="4" y1="1" x2="4" y2="13"/>
-                      <line x1="1" y1="7" x2="13" y2="7"/>
-                    </svg>
-                    Products In Catalog ({products.length})
-                  </div>
-                  <table className="prod-table" style={{ borderTop: 'none' }}>
-                    <thead>
-                      <tr>
-                        <th>SKU</th>
-                        <th>Product Name</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products.map(p => (
-                        <tr key={p.id}>
-                          <td className="sku-cell">{p.sku || p.id}</td>
-                          <td style={{ fontWeight: 600 }}>{p.name}</td>
-                          <td>{p.cat}</td>
-                          <td style={{ fontWeight: 700 }}>₹{Number(p.price).toLocaleString('en-IN')}</td>
-                          <td>{p.stock} {p.unit}</td>
+                  {products.length === 0 ? (
+                    <div className="empty-state" style={{ padding: '20px' }}>
+                      <p>No products added</p>
+                    </div>
+                  ) : (
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Nunito Sans', sans-serif", fontSize: '12.5px' }}>
+                      <thead>
+                        <tr style={{ background: '#f5f6fa' }}>
+                          <th style={{ padding: '8px 14px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)' }}>
+                            SKU
+                          </th>
+                          <th style={{ padding: '8px 14px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)' }}>
+                            Product
+                          </th>
+                          <th style={{ padding: '8px 14px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)' }}>
+                            Brand
+                          </th>
+                          <th style={{ padding: '8px 14px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)' }}>
+                            Category
+                          </th>
+                          <th style={{ padding: '8px 14px', textAlign: 'right', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)' }}>
+                            Stock
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {products.map((p, idx) => (
+                          <tr key={p.sku} style={{ background: idx % 2 === 0 ? '#ffffff' : '#fafbfc' }}>
+                            <td style={{ padding: '8px 14px', borderBottom: '1px solid #f0f2f4', color: 'var(--text-secondary)', fontWeight: 700 }}>
+                              {p.sku}
+                            </td>
+                            <td style={{ padding: '8px 14px', borderBottom: '1px solid #f0f2f4' }}>
+                              {p.emoji || '📦'} {p.name}
+                            </td>
+                            <td style={{ padding: '8px 14px', borderBottom: '1px solid #f0f2f4', color: 'var(--text-secondary)' }}>
+                              {p.brand || '—'}
+                            </td>
+                            <td style={{ padding: '8px 14px', borderBottom: '1px solid #f0f2f4', color: 'var(--text-secondary)' }}>
+                              {p.cat || '—'}
+                            </td>
+                            <td style={{ padding: '8px 14px', borderBottom: '1px solid #f0f2f4', textAlign: 'right', fontWeight: 700 }}>
+                              {p.stock}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                   <button
+                    type="button"
                     className="btn btn-dark"
                     style={{ padding: '12px 32px', fontSize: '14px' }}
                     onClick={handleCompleteSetup}
                   >
                     <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="2,7 5.5,10.5 12,3.5"/>
+                      <polyline points="2,7 5.5,10.5 12,3.5" />
                     </svg>
                     Complete Setup &amp; Launch Dashboard
                   </button>
@@ -779,19 +1023,19 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
             )}
           </>
         )}
-
-      </div>{/* /content */}
+      </div>
 
       {/* ── BOTTOM STICKY BAR ── */}
       {!setupComplete && (
         <div className="bottom-bar">
           <button
+            type="button"
             className="btn btn-outline"
             onClick={handleBack}
             style={{ visibility: currentStep === 1 ? 'hidden' : 'visible' }}
           >
             <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
-              <polyline points="8,2 4,6.5 8,11"/>
+              <polyline points="8,2 4,6.5 8,11" />
             </svg>
             Back
           </button>
@@ -806,111 +1050,244 @@ export default function SupplierSetup({ onNavigateToDashboard }) {
               ))}
             </div>
             <span className="bb-info">
-              Step <strong>{currentStep}</strong> of <strong>3</strong>
+              Step <strong style={{ color: 'var(--text-primary)' }}>{currentStep}</strong> of <strong>3</strong>
             </span>
           </div>
 
-          <button className="btn btn-primary" onClick={handleNext}>
-            {currentStep === 3 ? 'Launch Dashboard' : 'Continue'}
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
-              <polyline points="5,2 9,6.5 5,11"/>
-            </svg>
+          <button type="button" className="btn btn-primary" onClick={handleNext}>
+            {currentStep === 3 ? (
+              <>
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <polyline points="2,7 5.5,10.5 11,3.5" />
+                </svg>
+                Complete Setup
+              </>
+            ) : (
+              <>
+                Continue
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <polyline points="5,2 9,6.5 5,11" />
+                </svg>
+              </>
+            )}
           </button>
         </div>
       )}
 
-      {/* ── MODAL: ADD PRODUCT ── */}
+      {/* ══ MODAL: ADD / EDIT PRODUCT ══ */}
       {prodModalOpen && (
-        <div className="modal-bg open" onClick={(e) => { if (e.target.classList.contains('modal-bg')) setProdModalOpen(false); }}>
-          <div className="modal">
+        <div
+          className="modal-bg open"
+          onClick={e => {
+            if (e.target.classList.contains('modal-bg')) setProdModalOpen(false);
+          }}
+        >
+          <div className="modal" style={{ width: 'min(600px, 94vw)', maxHeight: '90vh', overflowY: 'auto' }}>
             <div className="modal-title">
               <div className="card-icon" style={{ background: 'var(--primary-light)' }}>
                 <svg viewBox="0 0 13 13" fill="none" stroke="#2e6bc5" strokeWidth="1.4">
-                  <path d="M6.5 1L12 4.5v4L6.5 12 1 8.5v-4L6.5 1z"/>
-                  <path d="M1 4.5L6.5 8 12 4.5M6.5 8v4"/>
+                  <path d="M6.5 1L12 4.5v4L6.5 12 1 8.5v-4L6.5 1z" />
                 </svg>
               </div>
-              Add Product to Catalog
+              <span>{editingProdSku ? 'Edit Product' : 'Add Product to Catalog'}</span>
             </div>
 
-            <div className="fg fg-1" style={{ marginBottom: '12px' }}>
+            <div className="fg fg-2" style={{ marginBottom: '14px' }}>
               <div className="field">
-                <label className="field-label">Product Name <span className="req">*</span></label>
+                <label className="field-label">
+                  Product Name <span className="req">*</span>
+                </label>
                 <input
                   type="text"
-                  placeholder="e.g. Ergonomic Gaming Mouse"
+                  placeholder="e.g. Basmati Rice 5kg / Laptop 15-inch"
                   value={prodForm.name}
-                  onChange={(e) => setProdForm({ ...prodForm, name: e.target.value })}
+                  onChange={e => setProdForm({ ...prodForm, name: e.target.value })}
+                  className={prodFormErrors.name ? 'err' : ''}
+                />
+                <div className={`field-error ${prodFormErrors.name ? 'show' : ''}`}>
+                  {prodFormErrors.name}
+                </div>
+              </div>
+              <div className="field">
+                <label className="field-label">SKU</label>
+                <input
+                  type="text"
+                  value={prodForm.sku}
+                  style={{ background: '#f9fafb' }}
+                  readOnly
                 />
               </div>
             </div>
 
-            <div className="fg fg-2" style={{ marginBottom: '12px' }}>
+            <div className="fg fg-2" style={{ marginBottom: '14px' }}>
               <div className="field">
                 <label className="field-label">Brand</label>
                 <input
                   type="text"
-                  placeholder="e.g. Razer"
+                  placeholder="e.g. India Gate / Lenovo"
                   value={prodForm.brand}
-                  onChange={(e) => setProdForm({ ...prodForm, brand: e.target.value })}
+                  onChange={e => setProdForm({ ...prodForm, brand: e.target.value })}
                 />
               </div>
               <div className="field">
-                <label className="field-label">Category</label>
+                <label className="field-label">Product Variant</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 5kg Bag / 16GB RAM"
+                  value={prodForm.variant}
+                  onChange={e => setProdForm({ ...prodForm, variant: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="fg fg-2" style={{ marginBottom: '14px' }}>
+              <div className="field">
+                <label className="field-label">
+                  Category <span className="req">*</span>
+                </label>
                 <div className="sel-wrap">
                   <select
                     value={prodForm.cat}
-                    onChange={(e) => setProdForm({ ...prodForm, cat: e.target.value })}
+                    onChange={e => setProdForm({ ...prodForm, cat: e.target.value })}
+                    className={prodFormErrors.cat ? 'err' : ''}
                   >
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                    <option value="">Select Category</option>
+                    {CATEGORIES.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className={`field-error ${prodFormErrors.cat ? 'show' : ''}`}>
+                  {prodFormErrors.cat}
+                </div>
+              </div>
+              <div className="field">
+                <label className="field-label">Unit of Measure</label>
+                <div className="sel-wrap">
+                  <select
+                    value={prodForm.unit}
+                    onChange={e => setProdForm({ ...prodForm, unit: e.target.value })}
+                  >
+                    <option>Piece</option>
+                    <option>Box</option>
+                    <option>Kg</option>
+                    <option>Ltr</option>
+                    <option>Set</option>
+                    <option>Pair</option>
+                    <option>Meter</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            <div className="fg fg-3" style={{ marginBottom: '16px' }}>
+            <div className="fg fg-3" style={{ marginBottom: '14px' }}>
               <div className="field">
-                <label className="field-label">Unit Price (₹) <span className="req">*</span></label>
+                <label className="field-label">
+                  Unit Price (₹) <span className="req">*</span>
+                </label>
                 <input
                   type="number"
-                  placeholder="500"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
                   value={prodForm.price}
-                  onChange={(e) => setProdForm({ ...prodForm, price: e.target.value })}
+                  onChange={e => setProdForm({ ...prodForm, price: e.target.value })}
+                  className={prodFormErrors.price ? 'err' : ''}
                 />
+                <div className={`field-error ${prodFormErrors.price ? 'show' : ''}`}>
+                  {prodFormErrors.price}
+                </div>
               </div>
               <div className="field">
-                <label className="field-label">Initial Stock</label>
+                <label className="field-label">Min Order Qty</label>
                 <input
                   type="number"
-                  placeholder="100"
-                  value={prodForm.stock}
-                  onChange={(e) => setProdForm({ ...prodForm, stock: e.target.value })}
-                />
-              </div>
-              <div className="field">
-                <label className="field-label">MOQ</label>
-                <input
-                  type="number"
-                  placeholder="1"
+                  min="1"
                   value={prodForm.moq}
-                  onChange={(e) => setProdForm({ ...prodForm, moq: e.target.value })}
+                  onChange={e => setProdForm({ ...prodForm, moq: e.target.value })}
+                />
+              </div>
+              <div className="field">
+                <label className="field-label">Available Stock</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={prodForm.stock}
+                  onChange={e => setProdForm({ ...prodForm, stock: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="fg fg-2" style={{ marginBottom: '14px' }}>
+              <div className="field">
+                <label className="field-label">Expiry Date</label>
+                <input
+                  type="date"
+                  value={prodForm.expiryDate}
+                  onChange={e => setProdForm({ ...prodForm, expiryDate: e.target.value })}
+                />
+              </div>
+              <div className="field">
+                <label className="field-label">Review Summary</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 4.8/5 Rating"
+                  value={prodForm.reviewSummary}
+                  onChange={e => setProdForm({ ...prodForm, reviewSummary: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="fg fg-1" style={{ marginBottom: '14px' }}>
+              <div className="field">
+                <label className="field-label">Product Description</label>
+                <textarea
+                  value={prodForm.description}
+                  onChange={e => setProdForm({ ...prodForm, description: e.target.value })}
+                  placeholder="Details regarding product specs, packaging, materials, warranty..."
+                  style={{ minHeight: '70px' }}
                 />
               </div>
             </div>
 
             <div className="modal-actions">
-              <button type="button" className="btn btn-outline" onClick={() => setProdModalOpen(false)}>Cancel</button>
-              <button type="button" className="btn btn-primary" onClick={handleAddProduct}>Save Product</button>
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => setProdModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveProduct}
+              >
+                <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <polyline points="2,7 5.5,10.5 11,3.5" />
+                </svg>
+                {editingProdSku ? 'Update Product' : 'Save Product'}
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── TOAST ── */}
+      {/* ── FLOATING TOAST ── */}
       <div className={`toast ${toast.show ? 'show' : ''}`}>
-        <svg viewBox="0 0 18 18" fill="none" stroke="#22c55e" strokeWidth="2">
-          <circle cx="9" cy="9" r="7.5"/>
-          <polyline points="5.5,9 7.5,11.5 12,6.5"/>
+        <svg viewBox="0 0 20 20" fill="none" stroke={toast.type === 'err' ? '#ef4444' : '#22c55e'} strokeWidth="2">
+          {toast.type === 'err' ? (
+            <>
+              <circle cx="10" cy="10" r="8.5" />
+              <line x1="7" y1="7" x2="13" y2="13" />
+              <line x1="13" y1="7" x2="7" y2="13" />
+            </>
+          ) : (
+            <>
+              <circle cx="10" cy="10" r="8.5" />
+              <polyline points="6.5,10 9,12.5 13.5,7" />
+            </>
+          )}
         </svg>
         <span>{toast.message}</span>
       </div>
