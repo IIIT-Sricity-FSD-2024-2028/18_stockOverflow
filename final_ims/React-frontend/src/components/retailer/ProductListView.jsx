@@ -140,7 +140,13 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
               className="pl-filter-btn"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              style={{ outline: 'none', border: '1px solid #e6eaed', cursor: 'pointer' }}
+              style={{
+                outline: 'none',
+                border: '1px solid #e6eaed',
+                cursor: 'pointer',
+                width: 'auto',
+                minWidth: selectedCategory !== 'All' ? '215px' : '115px',
+              }}
             >
               {categories.map((c) => (
                 <option key={c} value={c}>
@@ -153,7 +159,13 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
               className="pl-filter-btn"
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
-              style={{ outline: 'none', border: '1px solid #e6eaed', cursor: 'pointer' }}
+              style={{
+                outline: 'none',
+                border: '1px solid #e6eaed',
+                cursor: 'pointer',
+                width: 'auto',
+                minWidth: selectedBrand !== 'All' ? '160px' : '100px',
+              }}
             >
               {brands.map((b) => (
                 <option key={b} value={b}>
@@ -283,25 +295,38 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
                       </span>
                     </td>
                     <td>
-                      <div className="creator-cell">
-                        <div
-                          style={{
-                            width: '26px',
-                            height: '26px',
-                            borderRadius: '50%',
-                            background: '#5b67ca',
-                            color: '#fff',
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {(p.createdBy || user?.name || 'A')[0].toUpperCase()}
-                        </div>
-                        <span className="creator-name">{p.createdBy || user?.name || 'Admin'}</span>
-                      </div>
+                      {(() => {
+                        const retailerName = user?.name || user?.profile?.name || (user?.email ? user.email.split('@')[0] : '') || 'John';
+                        const creatorName =
+                          p.createdBy && p.createdBy !== 'Admin' && p.createdBy !== 'Retail Manager'
+                            ? p.createdBy
+                            : p.creator && p.creator !== 'Admin' && p.creator !== 'Retail Manager'
+                            ? p.creator
+                            : retailerName;
+                        const initial = creatorName.charAt(0).toUpperCase();
+
+                        return (
+                          <div className="creator-cell">
+                            <div
+                              style={{
+                                width: '26px',
+                                height: '26px',
+                                borderRadius: '50%',
+                                background: '#5b67ca',
+                                color: '#fff',
+                                fontSize: '11px',
+                                fontWeight: 700,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              {initial}
+                            </div>
+                            <span className="creator-name">{creatorName}</span>
+                          </div>
+                        );
+                      })()}
                     </td>
                     <td>
                       <div className="action-cell">

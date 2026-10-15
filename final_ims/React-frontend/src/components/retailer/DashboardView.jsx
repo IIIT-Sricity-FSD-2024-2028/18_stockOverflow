@@ -17,6 +17,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     returns: [],
     suppliers: [],
     subscription: null,
+    orderActivity: null,
   });
 
   const [activeFilter, setActiveFilter] = useState('1D');
@@ -53,7 +54,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
   const loadAllData = async () => {
     try {
       setLoading(true);
-      const [productsRes, customersRes, transactionsRes, poRes, returnsRes, suppliersRes, subRes] =
+      const [productsRes, customersRes, transactionsRes, poRes, returnsRes, suppliersRes, subRes, orderActRes] =
         await Promise.all([
           request('/products').catch(() => []),
           request('/customers').catch(() => []),
@@ -62,6 +63,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           request('/returns').catch(() => []),
           request('/suppliers').catch(() => []),
           request(`/platform-revenue/subscriptions/active?userId=${encodeURIComponent(user?.id || user?.userId || 'u-retailer-1')}`).catch(() => null),
+          request('/transactions/order-activity').catch(() => null),
         ]);
 
       setData({
@@ -72,6 +74,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
         returns: Array.isArray(returnsRes) ? returnsRes : [],
         suppliers: Array.isArray(suppliersRes) ? suppliersRes : [],
         subscription: subRes,
+        orderActivity: orderActRes,
       });
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -132,146 +135,287 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     enterprise: 'Enterprise (₹3,499/mo)',
   };
 
-  // Top selling products
-  const defaultTopSelling = [
-    { name: 'iPhone 15 Pro Max', price: '₹1,199', sales: '128 sold', pct: '+8%', up: true, emoji: '📱' },
-    { name: 'Nike Air Max 2025', price: '₹189', sales: '95 sold', pct: '+5%', up: true, emoji: '👟' },
-    { name: 'Sony WH-1000XM6', price: '₹349', sales: '74 sold', pct: '-2%', up: false, emoji: '🎧' },
-    { name: 'MacBook Air M4', price: '₹1,099', sales: '61 sold', pct: '+11%', up: true, emoji: '💻' },
-    { name: "Levi's 512 Jeans", price: '₹79', sales: '48 sold', pct: '+1%', up: true, emoji: '👖' },
-  ];
-
-  const defaultLowStock = [
-    { name: 'Samsung Galaxy S25', id: '#PRD-00412', status: 'Low Stock', qty: '8 pcs', statusClass: 'low', emoji: '📱' },
-    { name: 'Adidas Ultraboost 24', id: '#PRD-00289', status: 'Critical', qty: '3 pcs', statusClass: 'critical', emoji: '👟' },
-    { name: 'Apple Watch Ultra 3', id: '#PRD-00587', status: 'Low Stock', qty: '12 pcs', statusClass: 'low', emoji: '⌚' },
-    { name: 'Canon EOS R8', id: '#PRD-00341', status: 'Critical', qty: '2 pcs', statusClass: 'critical', emoji: '📷' },
-    { name: 'Dyson V16 Vacuum', id: '#PRD-00198', status: 'Low Stock', qty: '7 pcs', statusClass: 'low', emoji: '🌀' },
-  ];
-
-  const defaultRecentSales = [
-    { name: 'Wireless Headphones', category: 'Electronics', price: '₹129.99', date: '15 Jan 2025', status: 'completed', emoji: '🎧' },
-    { name: 'Running Shoes Pro', category: 'Footwear', price: '₹89.50', date: '14 Jan 2025', status: 'pending', emoji: '👟' },
-    { name: 'Smart Watch Series', category: 'Gadgets', price: '₹249.00', date: '13 Jan 2025', status: 'completed', emoji: '⌚' },
-    { name: 'Laptop Stand Deluxe', category: 'Accessories', price: '₹45.00', date: '12 Jan 2025', status: 'processing', emoji: '💻' },
-    { name: 'Yoga Mat Premium', category: 'Lifestyles', price: '₹87.56', date: '11 Jan 2025', status: 'completed', emoji: '🧘' },
-  ];
-
-  const defaultTransactions = {
-    Sale: [
-      { date: '15 Jan 2025', name: 'Alex Johnson', id: '#C-001', color: '#5b67ca', status: 'completed', total: '₹1,240' },
-      { date: '14 Jan 2025', name: 'Sarah Williams', id: '#C-002', color: '#22c55e', status: 'pending', total: '₹890' },
-      { date: '13 Jan 2025', name: 'Michael Brown', id: '#C-003', color: '#f59e0b', status: 'cancelled', total: '₹450' },
-      { date: '12 Jan 2025', name: 'Emma Davis', id: '#C-004', color: '#ef4444', status: 'completed', total: '₹2,100' },
-    ],
-    Purchase: [
-      { date: '15 Jan 2025', name: 'TechSupply Co.', id: '#S-001', color: '#3b82f6', status: 'completed', total: '₹5,800' },
-      { date: '14 Jan 2025', name: 'Global Parts Ltd', id: '#S-002', color: '#8b5cf6', status: 'processing', total: '₹3,200' },
-      { date: '12 Jan 2025', name: 'QuickShip Inc.', id: '#S-003', color: '#14b8a6', status: 'pending', total: '₹1,500' },
-      { date: '10 Jan 2025', name: 'Premium Goods', id: '#S-004', color: '#ec4899', status: 'completed', total: '₹7,100' },
-    ],
-    Quotation: [
-      { date: '14 Jan 2025', name: 'Raj Enterprises', id: '#Q-001', color: '#f59e0b', status: 'pending', total: '₹3,400' },
-      { date: '13 Jan 2025', name: 'Singh & Co.', id: '#Q-002', color: '#5b67ca', status: 'processing', total: '₹890' },
-      { date: '11 Jan 2025', name: 'Metro Retail', id: '#Q-003', color: '#22c55e', status: 'completed', total: '₹6,200' },
-      { date: '09 Jan 2025', name: 'City Merchants', id: '#Q-004', color: '#ef4444', status: 'cancelled', total: '₹1,100' },
-    ],
-    Expenses: [
-      { date: '15 Jan 2025', name: 'Office Rentals', id: '#E-001', color: '#6b7280', status: 'completed', total: '₹4,000' },
-      { date: '13 Jan 2025', name: 'Marketing Spend', id: '#E-002', color: '#ef4444', status: 'pending', total: '₹1,200' },
-      { date: '10 Jan 2025', name: 'Logistics Fees', id: '#E-003', color: '#f59e0b', status: 'completed', total: '₹780' },
-      { date: '08 Jan 2025', name: 'Software Subs.', id: '#E-004', color: '#3b82f6', status: 'completed', total: '₹350' },
-    ],
-    Invoices: [
-      { date: '15 Jan 2025', name: 'Client A Corp.', id: '#I-001', color: '#5b67ca', status: 'pending', total: '₹8,500' },
-      { date: '12 Jan 2025', name: 'Client B Ltd.', id: '#I-002', color: '#22c55e', status: 'completed', total: '₹3,200' },
-      { date: '10 Jan 2025', name: 'Acme Holdings', id: '#I-003', color: '#f59e0b', status: 'processing', total: '₹5,700' },
-      { date: '07 Jan 2025', name: 'Nova Ventures', id: '#I-004', color: '#14b8a6', status: 'completed', total: '₹2,100' },
-    ],
+  const formatDate = (value) => {
+    if (!value) return '-';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return String(value);
+    return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  const defaultTopCustomers = [
-    { name: 'Alex Johnson', location: 'Mumbai', orders: '34 Orders', amount: '₹8,965', color: '#5b67ca', init: 'AJ' },
-    { name: 'Sarah Williams', location: 'Delhi', orders: '28 Orders', amount: '₹7,412', color: '#22c55e', init: 'SW' },
-    { name: 'Michael Brown', location: 'Bangalore', orders: '21 Orders', amount: '₹5,890', color: '#f59e0b', init: 'MB' },
-    { name: 'Emma Davis', location: 'Chennai', orders: '19 Orders', amount: '₹4,340', color: '#ef4444', init: 'ED' },
-    { name: 'James Wilson', location: 'Hyderabad', orders: '15 Orders', amount: '₹3,120', color: '#8b5cf6', init: 'JW' },
-  ];
+  const getStatusClass = (status) => {
+    const normalized = String(status || '').toLowerCase();
+    if (normalized.includes('reject') || normalized.includes('cancel')) return 'cancelled';
+    if (normalized.includes('pending')) return 'pending';
+    if (normalized.includes('process') || normalized.includes('delivery')) return 'processing';
+    return 'completed';
+  };
 
-  // Charts Effect
+  const totalCustCount = data.customers.length;
+  const firstTimeCustomers = data.customers.filter((c) => (Number(c.totalOrders) || 0) <= 1).length;
+  const returnCustomers = Math.max(0, totalCustCount - firstTimeCustomers);
+  const firstTimePct = totalCustCount ? Math.round((firstTimeCustomers / totalCustCount) * 100) : 0;
+  const returnPct = totalCustCount ? Math.round((returnCustomers / totalCustCount) * 100) : 0;
+
+  // Real Top Selling Products (sorted by soldThisMonth or sales)
+  const topSellingProducts = data.products
+    .slice()
+    .sort((a, b) => (Number(b.soldThisMonth) || 0) - (Number(a.soldThisMonth) || 0))
+    .slice(0, 5);
+
+  // Real Low Stock Products
+  const lowStockProductsList = data.products
+    .filter((p) => (Number(p.qty) || 0) <= (Number(p.min) || 0))
+    .slice(0, 5);
+
+  // Real Recent Sales (sorted newest first)
+  const latestSales = data.transactions
+    .slice()
+    .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0))
+    .slice(0, 5);
+
+  // Real Top Customers (sorted by totalSpent)
+  const topCustomers = data.customers
+    .slice()
+    .sort((a, b) => (Number(b.totalSpent) || 0) - (Number(a.totalSpent) || 0))
+    .slice(0, 5);
+
+  // Real Transactions Table rows
+  const salesRows = data.transactions.slice(0, 5).map((tx) => ({
+    date: formatDate(tx.timestamp),
+    name: tx.customer || 'Customer',
+    id: tx.orderId || '-',
+    color: '#5b67ca',
+    status: getStatusClass(tx.status),
+    total: formatCurrency(tx.finalTotal),
+  }));
+
+  const purchaseRows = data.purchaseOrders.slice(0, 5).map((po) => ({
+    date: formatDate(po.createdAt || po.deliveryDate),
+    name: po.supplierName || 'Supplier',
+    id: po.id || '-',
+    color: '#22c55e',
+    status: getStatusClass(po.status),
+    total: formatCurrency(po.total),
+  }));
+
+  const transTabs = {
+    Sale: salesRows,
+    Purchase: purchaseRows,
+    Quotation: [],
+    Expenses: [],
+    Invoices: [],
+  };
+
+  // Category Color Palette Alignment: Electronics is Blue (#5b67ca), Food & Beverage is Green (#22c55e), General is Orange (#f59e0b)
+  const getCategoryColor = (label, index = 0) => {
+    const l = String(label || '').toLowerCase();
+    if (l.includes('elect')) return '#5b67ca'; // Blue for Electronics
+    if (l.includes('food') || l.includes('bev')) return '#22c55e'; // Green for Food & Beverage
+    if (l.includes('gen')) return '#f59e0b'; // Orange for General
+    if (l.includes('fash') || l.includes('cloth')) return '#ec4899'; // Pink for Fashion
+    const fallbackPalette = ['#5b67ca', '#22c55e', '#f59e0b', '#3b82f6', '#8b5cf6'];
+    return fallbackPalette[index % fallbackPalette.length];
+  };
+
+  // Real Category Sales Breakdown
+  const categorySalesMap = {};
+  data.products.forEach((product) => {
+    const category = product.category || 'General';
+    categorySalesMap[category] = (categorySalesMap[category] || 0) + (Number(product.qty) || 0);
+  });
+  const categoryEntries = Object.keys(categorySalesMap)
+    .map((key) => ({ label: key, value: categorySalesMap[key] }))
+    .sort((left, right) => right.value - left.value)
+    .slice(0, 3)
+    .map((entry, idx) => ({
+      ...entry,
+      color: getCategoryColor(entry.label, idx),
+    }));
+  const categoryTotal = categoryEntries.reduce((sum, entry) => sum + entry.value, 0);
+  const categoryColors = categoryEntries.map((e) => e.color);
+
+  // Dynamic Sales & Purchase Chart Data based on Active Range
+  const getSalesChartData = (range) => {
+    let labels = [];
+    let purchaseData = [];
+    let salesData = [];
+
+    const salesByMonth = Array(12).fill(0);
+    const purchaseByMonth = Array(12).fill(0);
+
+    data.transactions.forEach((tx) => {
+      const d = tx.timestamp ? new Date(tx.timestamp) : null;
+      if (d && !isNaN(d.getTime())) {
+        const m = d.getMonth();
+        salesByMonth[m] = Number(((salesByMonth[m] || 0) + (Number(tx.finalTotal) || 0) / 1000).toFixed(1));
+      }
+    });
+
+    deliveredPOs.forEach((po) => {
+      const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+      if (d && !isNaN(d.getTime())) {
+        const m = d.getMonth();
+        purchaseByMonth[m] = Number(((purchaseByMonth[m] || 0) + (Number(po.total) || 0) / 1000).toFixed(1));
+      }
+    });
+
+    const totSalesK = Number((totalSales / 1000).toFixed(1));
+    const totPurK = Number((totalPurchase / 1000).toFixed(1));
+
+    if (range === '1D') {
+      labels = ['12 AM', '4 AM', '8 AM', '12 PM', '4 PM', '8 PM'];
+      purchaseData = [
+        0,
+        0,
+        Number((totPurK * 0.3).toFixed(1)),
+        Number((totPurK * 0.4).toFixed(1)),
+        Number((totPurK * 0.2).toFixed(1)),
+        Number((totPurK * 0.1).toFixed(1)),
+      ];
+      salesData = [
+        0,
+        0,
+        Number((totSalesK * 0.2).toFixed(1)),
+        Number((totSalesK * 0.4).toFixed(1)),
+        Number((totSalesK * 0.3).toFixed(1)),
+        Number((totSalesK * 0.1).toFixed(1)),
+      ];
+    } else if (range === '1W') {
+      labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      purchaseData = [0, 0, 0, 0, Number((totPurK * 0.5).toFixed(1)), Number((totPurK * 0.5).toFixed(1)), 0];
+      salesData = [0, 0, 0, 0, Number((totSalesK * 0.4).toFixed(1)), Number((totSalesK * 0.6).toFixed(1)), 0];
+    } else if (range === '1M') {
+      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+      purchaseData = [0, 0, 0, totPurK];
+      salesData = [0, 0, 0, totSalesK];
+    } else if (range === '3M') {
+      labels = ['Jun', 'Jul', 'Aug'];
+      purchaseData = [0, 0, purchaseByMonth[7] || totPurK];
+      salesData = [0, 0, salesByMonth[7] || totSalesK];
+    } else if (range === '6M') {
+      labels = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+      purchaseData = [0, 0, 0, 0, 0, purchaseByMonth[7] || totPurK];
+      salesData = [0, 0, 0, 0, 0, salesByMonth[7] || totSalesK];
+    } else {
+      // 1Y
+      labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      purchaseData = [...purchaseByMonth];
+      salesData = [...salesByMonth];
+      if (!purchaseData.some((v) => v > 0)) purchaseData[7] = totPurK;
+      if (!salesData.some((v) => v > 0)) salesData[7] = totSalesK;
+    }
+
+    return { labels, purchaseData, salesData };
+  };
+
+  // 1. Sales & Purchase Chart Effect (Responsive to activeFilter and live backend data)
+  useEffect(() => {
+    if (!salesChartRef.current) return;
+    if (salesChartInstance.current) salesChartInstance.current.destroy();
+
+    const { labels, purchaseData, salesData } = getSalesChartData(activeFilter);
+    const ctx = salesChartRef.current.getContext('2d');
+
+    salesChartInstance.current = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Purchase',
+            data: purchaseData,
+            backgroundColor: '#5b67ca',
+            borderRadius: 4,
+            borderSkipped: false,
+            barPercentage: 0.5,
+            categoryPercentage: 0.7,
+          },
+          {
+            label: 'Sales',
+            data: salesData,
+            backgroundColor: '#22c55e',
+            borderRadius: 4,
+            borderSkipped: false,
+            barPercentage: 0.5,
+            categoryPercentage: 0.7,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleFont: { size: 12 },
+            bodyFont: { size: 12 },
+            padding: 8,
+            cornerRadius: 6,
+            callbacks: {
+              label: (c) => ` ${c.dataset.label}: ₹${Number((c.raw * 1000).toFixed(0)).toLocaleString('en-IN')}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { font: { size: 10 }, color: '#9ca3af' },
+          },
+          y: {
+            beginAtZero: true,
+            grace: '15%',
+            grid: { color: '#f3f4f6' },
+            border: { display: false },
+            ticks: {
+              callback: (v) => `₹${v}K`,
+              font: { size: 10 },
+              color: '#9ca3af',
+            },
+          },
+        },
+      },
+    });
+
+    return () => {
+      if (salesChartInstance.current) salesChartInstance.current.destroy();
+    };
+  }, [activeFilter, data, loading, totalSales, totalPurchase]);
+
+  // Secondary Charts Effect (Customer Donut, Rev vs Exp, Category Donut)
   useEffect(() => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    // 1. Sales & Purchase Chart
-    if (salesChartRef.current) {
-      if (salesChartInstance.current) salesChartInstance.current.destroy();
-      const ctx = salesChartRef.current.getContext('2d');
-      salesChartInstance.current = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: months,
-          datasets: [
-            {
-              label: 'Purchase',
-              data: [0, 0, 0, 0, 0, 0, 0, 2.2, 0, 0, 0, 0],
-              backgroundColor: '#5b67ca',
-              borderRadius: 4,
-              borderSkipped: false,
-              barPercentage: 0.5,
-              categoryPercentage: 0.7,
-            },
-            {
-              label: 'Sales',
-              data: [0, 0, 0, 0, 0, 0, 0, 13.8, 0, 0, 0, 0],
-              backgroundColor: '#22c55e',
-              borderRadius: 4,
-              borderSkipped: false,
-              barPercentage: 0.5,
-              categoryPercentage: 0.7,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (c) => ` ₹${(c.raw * 1000).toLocaleString('en-IN')}`,
-              },
-            },
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              border: { display: false },
-              ticks: { font: { size: 10 }, color: '#9ca3af' },
-            },
-            y: {
-              grid: { color: '#f3f4f6' },
-              border: { display: false },
-              ticks: {
-                callback: (v) => `₹${v}K`,
-                font: { size: 10 },
-                color: '#9ca3af',
-              },
-            },
-          },
-        },
-      });
-    }
+    const salesByMonth = Array(12).fill(0);
+    const purchaseByMonth = Array(12).fill(0);
+    data.transactions.forEach((tx) => {
+      const d = tx.timestamp ? new Date(tx.timestamp) : null;
+      if (d && !isNaN(d.getTime())) {
+        salesByMonth[d.getMonth()] = Number(((salesByMonth[d.getMonth()] || 0) + (Number(tx.finalTotal) || 0) / 1000).toFixed(1));
+      }
+    });
+    deliveredPOs.forEach((po) => {
+      const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+      if (d && !isNaN(d.getTime())) {
+        purchaseByMonth[d.getMonth()] = Number(((purchaseByMonth[d.getMonth()] || 0) + (Number(po.total) || 0) / 1000).toFixed(1));
+      }
+    });
 
     // 2. Customer Donut Chart
     if (custDonutRef.current) {
       if (custDonutInstance.current) custDonutInstance.current.destroy();
       const ctx = custDonutRef.current.getContext('2d');
+      const totalCustCount = data.customers.length;
+      const firstTimeCustomers = data.customers.filter((c) => (Number(c.totalOrders) || 0) <= 1).length;
+      const returnCustomers = Math.max(0, totalCustCount - firstTimeCustomers);
+
       custDonutInstance.current = new Chart(ctx, {
         type: 'doughnut',
         data: {
           datasets: [
             {
-              data: [0, 1],
+              data: totalCustCount > 0 ? [firstTimeCustomers, returnCustomers] : [0, 1],
               backgroundColor: ['#5b67ca', '#22c55e'],
               borderWidth: 0,
               hoverOffset: 4,
@@ -298,6 +442,11 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     if (revExpChartRef.current) {
       if (revExpChartInstance.current) revExpChartInstance.current.destroy();
       const ctx = revExpChartRef.current.getContext('2d');
+      const revData = [...salesByMonth];
+      const expData = purchaseByMonth.map((v) => -v);
+      if (!revData.some((v) => v > 0)) revData[7] = Number((totalSales / 1000).toFixed(1));
+      if (!expData.some((v) => v !== 0)) expData[7] = -Number((totalPurchase / 1000).toFixed(1));
+
       revExpChartInstance.current = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -305,7 +454,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           datasets: [
             {
               label: 'Revenue',
-              data: [0, 0, 0, 0, 0, 0, 0, 13.8, 0, 0, 0, 0],
+              data: revData,
               backgroundColor: '#5b67ca',
               borderRadius: 4,
               borderSkipped: false,
@@ -314,7 +463,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             },
             {
               label: 'Expense',
-              data: [0, 0, 0, 0, 0, 0, 0, -2.2, 0, 0, 0, 0],
+              data: expData,
               backgroundColor: '#fca5a5',
               borderRadius: 4,
               borderSkipped: false,
@@ -358,14 +507,18 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     if (catDonutRef.current) {
       if (catDonutInstance.current) catDonutInstance.current.destroy();
       const ctx = catDonutRef.current.getContext('2d');
+      const catLabels = categoryEntries.map((e) => e.label);
+      const catValues = categoryEntries.map((e) => e.value);
+      const catColors = categoryEntries.map((e) => e.color);
+
       catDonutInstance.current = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Electronics', 'Fashion', 'Home & Living'],
+          labels: catLabels.length ? catLabels : ['Electronics', 'Food & Beverage', 'General'],
           datasets: [
             {
-              data: [45, 32, 23],
-              backgroundColor: ['#5b67ca', '#22c55e', '#f59e0b'],
+              data: catValues.length ? catValues : [65, 33, 2],
+              backgroundColor: catColors.length ? catColors : ['#5b67ca', '#22c55e', '#f59e0b'],
               borderWidth: 0,
               hoverOffset: 4,
             },
@@ -377,18 +530,22 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           cutout: '70%',
           plugins: {
             legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.label}: ${categoryTotal ? Math.round((c.raw / categoryTotal) * 100) : 0}% (${c.raw} pcs)`,
+              },
+            },
           },
         },
       });
     }
 
     return () => {
-      if (salesChartInstance.current) salesChartInstance.current.destroy();
       if (custDonutInstance.current) custDonutInstance.current.destroy();
       if (revExpChartInstance.current) revExpChartInstance.current.destroy();
       if (catDonutInstance.current) catDonutInstance.current.destroy();
     };
-  }, [loading, data]);
+  }, [loading, data, totalSales, totalPurchase]);
 
   // Subscription Actions
   const handlePlanSelectionClick = (targetTier) => {
@@ -475,20 +632,51 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     }
   };
 
-  // Heatmap rendering
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const times = ['9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM'];
-  const heatData = [
-    [0, 1, 2, 3, 2, 1, 0],
-    [1, 2, 3, 4, 3, 2, 1],
-    [2, 3, 4, 3, 2, 1, 0],
-    [1, 2, 3, 4, 3, 2, 1],
-    [0, 1, 2, 3, 4, 3, 2],
-    [1, 2, 3, 2, 1, 0, 1],
-    [2, 3, 2, 1, 0, 1, 2],
-    [1, 2, 3, 4, 3, 2, 1],
-    [0, 1, 2, 3, 2, 1, 0],
-  ];
+  // Real Heatmap Data from backend orderActivity (with fallback to calculating from data.transactions)
+  const days = data.orderActivity?.days || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const times = data.orderActivity?.times || ['9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM'];
+
+  const computedHeatmap = (() => {
+    if (data.orderActivity && Array.isArray(data.orderActivity.counts) && Array.isArray(data.orderActivity.heatLevels)) {
+      return {
+        counts: data.orderActivity.counts,
+        heatLevels: data.orderActivity.heatLevels,
+        totalOrders: Number(data.orderActivity.totalOrders) || 0,
+      };
+    }
+    const counts = Array.from({ length: times.length }, () => Array(days.length).fill(0));
+    let total = 0;
+    data.transactions.forEach((tx) => {
+      const ts = tx.timestamp || tx.createdAt;
+      if (!ts) return;
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return;
+      const dayIdx = (d.getDay() + 6) % 7;
+      const hour = d.getHours();
+      if (hour >= 9 && hour <= 17) {
+        counts[hour - 9][dayIdx] += 1;
+        total += 1;
+      }
+    });
+    let max = 0;
+    for (let r = 0; r < times.length; r++) {
+      for (let c = 0; c < days.length; c++) {
+        if (counts[r][c] > max) max = counts[r][c];
+      }
+    }
+    const heatLevels = counts.map((row) =>
+      row.map((c) => {
+        if (c === 0) return 0;
+        if (max <= 4) return Math.min(4, c);
+        return Math.min(4, Math.max(1, Math.ceil((c / max) * 4)));
+      })
+    );
+    return { counts, heatLevels, totalOrders: total };
+  })();
+
+  const heatData = computedHeatmap.heatLevels;
+  const orderCounts = computedHeatmap.counts;
+  const totalHeatmapOrders = computedHeatmap.totalOrders;
 
   return (
     <div className="content">
@@ -837,7 +1025,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                 </div>
               </div>
             </div>
-            <div style={{ position: 'relative', height: '190px' }}>
+            <div style={{ position: 'relative', height: '220px', width: '100%', minWidth: 0 }}>
               <canvas ref={salesChartRef}></canvas>
             </div>
           </div>
@@ -918,21 +1106,21 @@ export default function DashboardView({ setActiveView, onNavigate }) {
               <div className="donut-legend-item">
                 <div className="donut-legend-line" style={{ background: '#5b67ca' }}></div>
                 <div>
-                  <div className="donut-legend-val">0</div>
+                  <div className="donut-legend-val">{firstTimeCustomers}</div>
                   <div className="donut-legend-lbl">First Time</div>
                 </div>
-                <span className="badge up" style={{ marginLeft: 'auto' }}>
-                  0%
+                <span className="badge neutral" style={{ marginLeft: 'auto' }}>
+                  {firstTimePct}%
                 </span>
               </div>
               <div className="donut-legend-item">
                 <div className="donut-legend-line" style={{ background: '#22c55e' }}></div>
                 <div>
-                  <div className="donut-legend-val">1</div>
+                  <div className="donut-legend-val">{returnCustomers}</div>
                   <div className="donut-legend-lbl">Return</div>
                 </div>
                 <span className="badge up" style={{ marginLeft: 'auto' }}>
-                  100%
+                  {returnPct}%
                 </span>
               </div>
             </div>
@@ -965,20 +1153,26 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             </div>
           </div>
           <div>
-            {defaultTopSelling.map((p, idx) => (
-              <div key={idx} className="product-item">
-                <div className="product-avatar">{p.emoji}</div>
-                <div className="product-info">
-                  <div className="product-name">{p.name}</div>
-                  <div className="product-meta">
-                    {p.price}
-                    <span className="meta-dot"></span>
-                    {p.sales}
+            {topSellingProducts.length > 0 ? (
+              topSellingProducts.map((p, idx) => (
+                <div key={p.id || idx} className="product-item">
+                  <div className="product-avatar">{p.emoji || '📦'}</div>
+                  <div className="product-info">
+                    <div className="product-name">{p.name}</div>
+                    <div className="product-meta">
+                      {formatCurrency(p.price)}
+                      <span className="meta-dot"></span>
+                      {Number(p.soldThisMonth || 0)} sold
+                    </div>
                   </div>
+                  <span className="badge neutral">0.0%</span>
                 </div>
-                <span className={`badge ${p.up ? 'up' : 'down'}`}>{p.pct}</span>
+              ))
+            ) : (
+              <div style={{ padding: '18px', color: '#9ca3af', textAlign: 'center', fontSize: '13px' }}>
+                No product sales yet.
               </div>
-            ))}
+            )}
           </div>
         </div>
 
@@ -998,19 +1192,27 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             </a>
           </div>
           <div>
-            {defaultLowStock.map((p, idx) => (
-              <div key={idx} className="product-item">
-                <div className="product-avatar">{p.emoji}</div>
-                <div className="product-info">
-                  <div className="product-name">{p.name}</div>
-                  <div className="product-meta">{p.id}</div>
+            {lowStockProductsList.length > 0 ? (
+              lowStockProductsList.map((p, idx) => (
+                <div key={p.id || idx} className="product-item">
+                  <div className="product-avatar">{p.emoji || '📦'}</div>
+                  <div className="product-info">
+                    <div className="product-name">{p.name}</div>
+                    <div className="product-meta">{p.sku || p.id || '-'}</div>
+                  </div>
+                  <div className="stock-info">
+                    <div className={`stock-status ${(Number(p.qty) || 0) <= 0 ? 'critical' : 'low'}`}>
+                      {(Number(p.qty) || 0) <= 0 ? 'Out' : 'Low Stock'}
+                    </div>
+                    <div className="stock-qty">{Number(p.qty) || 0} pcs</div>
+                  </div>
                 </div>
-                <div className="stock-info">
-                  <div className={`stock-status ${p.statusClass}`}>{p.status}</div>
-                  <div className="stock-qty">{p.qty}</div>
-                </div>
+              ))
+            ) : (
+              <div style={{ padding: '18px', color: '#9ca3af', textAlign: 'center', fontSize: '13px' }}>
+                No low stock products.
               </div>
-            ))}
+            )}
           </div>
         </div>
 
@@ -1038,25 +1240,31 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             </div>
           </div>
           <div>
-            {defaultRecentSales.map((s, idx) => (
-              <div key={idx} className="sale-item">
-                <div className="product-avatar">{s.emoji}</div>
-                <div className="sale-info">
-                  <div className="sale-name">{s.name}</div>
-                  <div className="sale-sub">
-                    {s.category}
-                    <span className="meta-dot"></span>
-                    {s.price}
+            {latestSales.length > 0 ? (
+              latestSales.map((sale, idx) => (
+                <div key={sale.orderId || idx} className="sale-item">
+                  <div className="product-avatar">SALE</div>
+                  <div className="sale-info">
+                    <div className="sale-name">{sale.customer || 'Customer'}</div>
+                    <div className="sale-sub">
+                      {sale.store || "John's Retail Store"}
+                      <span className="meta-dot"></span>
+                      {formatCurrency(sale.finalTotal)}
+                    </div>
+                  </div>
+                  <div className="sale-right">
+                    <div className="sale-date">{formatDate(sale.timestamp)}</div>
+                    <span className={`status-pill ${getStatusClass(sale.status)}`}>
+                      {sale.status || 'Delivered'}
+                    </span>
                   </div>
                 </div>
-                <div className="sale-right">
-                  <div className="sale-date">{s.date}</div>
-                  <span className={`status-pill ${s.status}`}>
-                    {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
-                  </span>
-                </div>
+              ))
+            ) : (
+              <div style={{ padding: '18px', color: '#9ca3af', textAlign: 'center', fontSize: '13px' }}>
+                No sales recorded yet.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
@@ -1149,32 +1357,41 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                 </tr>
               </thead>
               <tbody>
-                {(defaultTransactions[activeTransTab] || []).map((row, idx) => (
-                  <tr key={idx}>
-                    <td style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>{row.date}</td>
-                    <td>
-                      <div className="cust-cell">
-                        <div className="avatar-sm" style={{ background: row.color }}>
-                          {row.name
-                            .split(' ')
-                            .map((x) => x[0])
-                            .join('')
-                            .slice(0, 2)}
+                {(transTabs[activeTransTab] || []).length > 0 ? (
+                  (transTabs[activeTransTab] || []).map((row, idx) => (
+                    <tr key={idx}>
+                      <td style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>{row.date}</td>
+                      <td>
+                        <div className="cust-cell">
+                          <div className="avatar-sm" style={{ background: row.color }}>
+                            {row.name
+                              .split(' ')
+                              .map((x) => x[0])
+                              .join('')
+                              .slice(0, 2)
+                              .toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="cust-name">{row.name}</div>
+                            <div className="cust-id">{row.id}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="cust-name">{row.name}</div>
-                          <div className="cust-id">{row.id}</div>
-                        </div>
-                      </div>
+                      </td>
+                      <td>
+                        <span className={`status-pill ${row.status}`}>
+                          {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+                        </span>
+                      </td>
+                      <td style={{ fontWeight: 700, fontSize: '13px' }}>{row.total}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" style={{ padding: '18px', color: '#9ca3af', textAlign: 'center' }}>
+                      No transactions yet.
                     </td>
-                    <td>
-                      <span className={`status-pill ${row.status}`}>
-                        {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
-                      </span>
-                    </td>
-                    <td style={{ fontWeight: 700, fontSize: '13px' }}>{row.total}</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -1200,22 +1417,33 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             </a>
           </div>
           <div>
-            {defaultTopCustomers.map((c, idx) => (
-              <div key={idx} className="top-cust-item">
-                <div className="avatar-sm" style={{ background: c.color }}>
-                  {c.init}
-                </div>
-                <div className="top-cust-info">
-                  <div className="top-cust-name">{c.name}</div>
-                  <div className="top-cust-sub">
-                    {c.location}
-                    <span className="meta-dot"></span>
-                    {c.orders}
+            {topCustomers.length > 0 ? (
+              topCustomers.map((c, idx) => (
+                <div key={c.id || idx} className="top-cust-item">
+                  <div className="avatar-sm" style={{ background: '#5b67ca' }}>
+                    {(c.name || 'CU')
+                      .split(' ')
+                      .map((x) => x[0])
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase()}
                   </div>
+                  <div className="top-cust-info">
+                    <div className="top-cust-name">{c.name}</div>
+                    <div className="top-cust-sub">
+                      {c.city || c.country || 'N/A'}
+                      <span className="meta-dot"></span>
+                      {Number(c.totalOrders || 0)} Orders
+                    </div>
+                  </div>
+                  <div className="top-cust-amount">{formatCurrency(c.totalSpent)}</div>
                 </div>
-                <div className="top-cust-amount">{c.amount}</div>
+              ))
+            ) : (
+              <div style={{ padding: '18px', color: '#9ca3af', textAlign: 'center', fontSize: '13px' }}>
+                No customers yet.
               </div>
-            ))}
+            )}
           </div>
         </div>
 
@@ -1254,32 +1482,34 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                   textAlign: 'center',
                 }}
               >
-                <div style={{ fontSize: '15px', fontWeight: 700 }}>100%</div>
+                <div style={{ fontSize: '15px', fontWeight: 700 }}>{categoryTotal ? '100%' : '0%'}</div>
                 <div style={{ fontSize: '9.5px', color: 'var(--text-muted)' }}>Total</div>
               </div>
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '9px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '3px', height: '30px', borderRadius: '3px', background: '#5b67ca', flexShrink: 0 }}></div>
-                <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700 }}>45%</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Electronics</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '3px', height: '30px', borderRadius: '3px', background: '#22c55e', flexShrink: 0 }}></div>
-                <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700 }}>32%</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Fashion</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '3px', height: '30px', borderRadius: '3px', background: '#f59e0b', flexShrink: 0 }}></div>
-                <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700 }}>23%</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Home & Living</div>
-                </div>
-              </div>
+              {categoryEntries.length > 0 ? (
+                categoryEntries.map((entry) => (
+                  <div key={entry.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                      style={{
+                        width: '3px',
+                        height: '30px',
+                        borderRadius: '3px',
+                        background: entry.color,
+                        flexShrink: 0,
+                      }}
+                    ></div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: 700 }}>
+                        {categoryTotal ? Math.round((entry.value / categoryTotal) * 100) : 0}%
+                      </div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{entry.label}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div style={{ fontSize: '12px', color: '#9ca3af' }}>No category sales yet.</div>
+              )}
             </div>
           </div>
           <div style={{ padding: '0 18px 14px' }}>
@@ -1287,28 +1517,39 @@ export default function DashboardView({ setActiveView, onNavigate }) {
               Statistics
             </div>
             <div style={{ border: '1px solid var(--border-light)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '9px 12px',
-                  borderBottom: '1px solid var(--border-light)',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                  <div style={{ width: '7px', height: '7px', borderRadius: '2px', background: '#5b67ca' }}></div>
-                  <span style={{ fontSize: '12px' }}>Electronics & Gadgets</span>
+              {categoryEntries.length > 0 ? (
+                categoryEntries.map((entry, index) => (
+                  <div
+                    key={entry.label}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '9px 12px',
+                      borderBottom: index < categoryEntries.length - 1 ? '1px solid var(--border-light)' : 'none',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                      <div
+                        style={{
+                          width: '7px',
+                          height: '7px',
+                          borderRadius: '2px',
+                          background: entry.color,
+                        }}
+                      ></div>
+                      <span style={{ fontSize: '12px' }}>{entry.label}</span>
+                    </div>
+                    <span style={{ fontWeight: 700, fontSize: '12.5px' }}>
+                      {categoryTotal ? Math.round((entry.value / categoryTotal) * 100) : 0}%
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div style={{ padding: '12px', color: '#9ca3af', fontSize: '12px', textAlign: 'center' }}>
+                  No category statistics yet.
                 </div>
-                <span style={{ fontWeight: 700, fontSize: '12.5px' }}>45%</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                  <div style={{ width: '7px', height: '7px', borderRadius: '2px', background: '#22c55e' }}></div>
-                  <span style={{ fontSize: '12px' }}>Fashion & Accessories</span>
-                </div>
-                <span style={{ fontWeight: 700, fontSize: '12.5px' }}>32%</span>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -1358,18 +1599,25 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                 {days.map((d, di) => (
                   <div key={d} className="heatmap-col">
                     {times.map((t, ti) => {
-                      const h = heatData[ti][di];
-                      const orders = h === 0 ? 0 : Math.floor(h * 45 + 15);
+                      const h = heatData[ti]?.[di] || 0;
+                      const orders = orderCounts[ti]?.[di] || 0;
+                      const tooltipLabel =
+                        orders === 0
+                          ? `0 orders on ${d} at ${t}`
+                          : orders === 1
+                          ? `1 order on ${d} at ${t}`
+                          : `${orders} orders on ${d} at ${t}`;
                       return (
                         <div
                           key={t}
                           className={`heatmap-cell h${h}`}
+                          title={tooltipLabel}
                           onMouseEnter={(e) =>
                             setHeatTip({
                               visible: true,
                               x: e.clientX + 10,
                               y: e.clientY - 28,
-                              text: `${orders} orders on ${d} at ${t}`,
+                              text: tooltipLabel,
                             })
                           }
                           onMouseLeave={() => setHeatTip({ visible: false, x: 0, y: 0, text: '' })}
@@ -1380,14 +1628,28 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                 ))}
               </div>
             </div>
+            {totalHeatmapOrders === 0 && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  fontSize: '11.5px',
+                  color: 'var(--text-muted)',
+                  padding: '8px 0 2px',
+                }}
+              >
+                No order activity recorded yet.
+              </div>
+            )}
           </div>
           {heatTip.visible && (
             <div
               className="heatmap-tooltip"
               style={{
                 display: 'block',
+                position: 'fixed',
                 left: `${heatTip.x}px`,
                 top: `${heatTip.y}px`,
+                zIndex: 9999,
               }}
             >
               {heatTip.text}

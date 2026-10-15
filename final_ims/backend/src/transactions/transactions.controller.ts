@@ -90,6 +90,19 @@ export class TransactionsController {
     );
   }
 
+  @Get('order-activity')
+  getOrderActivity(
+    @Query('retailerId') retailerId?: string,
+    @Query('storeId') storeId?: string,
+    @Query('timeframe') timeframe?: string,
+  ) {
+    return this.transactionsService.getOrderActivity(
+      retailerId,
+      storeId,
+      timeframe,
+    );
+  }
+
   @Post('upload-receipt')
   @UseInterceptors(FileInterceptor('file', receiptMulterOptions))
   uploadReceiptFile(@UploadedFile() file: any) {

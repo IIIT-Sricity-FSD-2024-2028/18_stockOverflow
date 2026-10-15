@@ -57,6 +57,9 @@ let TransactionsController = class TransactionsController {
     findPurchasedProducts(retailerId, storeId, customerLookup) {
         return this.transactionsService.getPurchasedProducts(retailerId, storeId, customerLookup);
     }
+    getOrderActivity(retailerId, storeId, timeframe) {
+        return this.transactionsService.getOrderActivity(retailerId, storeId, timeframe);
+    }
     uploadReceiptFile(file) {
         if (!file) {
             throw new common_1.BadRequestException('Receipt file is required.');
@@ -121,6 +124,15 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], TransactionsController.prototype, "findPurchasedProducts", null);
+__decorate([
+    (0, common_1.Get)('order-activity'),
+    __param(0, (0, common_1.Query)('retailerId')),
+    __param(1, (0, common_1.Query)('storeId')),
+    __param(2, (0, common_1.Query)('timeframe')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", void 0)
+], TransactionsController.prototype, "getOrderActivity", null);
 __decorate([
     (0, common_1.Post)('upload-receipt'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', receiptMulterOptions)),

@@ -404,6 +404,8 @@ export default function AddProductView({ onNavigate }) {
         visibility: formData.visibility || 'published',
         retailerId: user?.id || user?.userId || 'cedc0064-0c9e-445e-9649-d344d6fe094d',
         storeId: user?.storeId || undefined,
+        creator: user?.name || 'John',
+        createdBy: user?.name || 'John',
       };
 
       await request('/products', {

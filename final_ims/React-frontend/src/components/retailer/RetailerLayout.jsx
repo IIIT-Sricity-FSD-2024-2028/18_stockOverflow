@@ -507,6 +507,9 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                   fontWeight: 700,
                   color: '#111827',
                   cursor: 'pointer',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  paddingRight: '2px',
                 }}
               >
                 {stores.map((s) => (
@@ -515,33 +518,21 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                   </option>
                 ))}
               </select>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                stroke="#6b7280"
+                strokeWidth="1.8"
+                style={{ pointerEvents: 'none', flexShrink: 0, marginLeft: '2px' }}
+              >
+                <polyline points="2.5,4.5 6,8 9.5,4.5" />
+              </svg>
             </div>
           </div>
 
           <div className="topbar-right" ref={popoverRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {onSwitchModule && (
-              <button
-                type="button"
-                onClick={() => onSwitchModule('consumer')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  border: '1px solid #bae6fd',
-                  background: '#f0f9ff',
-                  color: '#0284c7',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-                title="Switch to Consumer Storefront"
-              >
-                🛒 Consumer Store
-              </button>
-            )}
-
             {/* Notification Icon Button with live badge */}
             <div
               className="topbar-icon-btn"

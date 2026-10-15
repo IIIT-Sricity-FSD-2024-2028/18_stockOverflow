@@ -34,6 +34,60 @@ let TransactionsService = class TransactionsService {
     findLatest(retailerId, storeId, customerLookup) {
         return this.findAll(retailerId, storeId, customerLookup)[0] || null;
     }
+    getOrderActivity(retailerId, storeId, timeframe) {
+        const transactions = this.findAll(retailerId, storeId);
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const times = [
+            '9 AM',
+            '10 AM',
+            '11 AM',
+            '12 PM',
+            '1 PM',
+            '2 PM',
+            '3 PM',
+            '4 PM',
+            '5 PM',
+        ];
+        const counts = Array.from({ length: times.length }, () => Array(days.length).fill(0));
+        let totalOrders = 0;
+        transactions.forEach((tx) => {
+            const ts = tx.timestamp || tx.createdAt;
+            if (!ts)
+                return;
+            const d = new Date(ts);
+            if (isNaN(d.getTime()))
+                return;
+            const dayIndex = (d.getDay() + 6) % 7;
+            const hour = d.getHours();
+            if (hour >= 9 && hour <= 17) {
+                const timeIndex = hour - 9;
+                counts[timeIndex][dayIndex] += 1;
+                totalOrders += 1;
+            }
+        });
+        let maxCount = 0;
+        for (let r = 0; r < times.length; r++) {
+            for (let c = 0; c < days.length; c++) {
+                if (counts[r][c] > maxCount)
+                    maxCount = counts[r][c];
+            }
+        }
+        const heatLevels = counts.map((row) => row.map((count) => {
+            if (count === 0)
+                return 0;
+            if (maxCount <= 4)
+                return Math.min(4, count);
+            return Math.min(4, Math.max(1, Math.ceil((count / maxCount) * 4)));
+        }));
+        return {
+            days,
+            times,
+            counts,
+            heatLevels,
+            totalOrders,
+            hasData: totalOrders > 0,
+        };
+    }
     findOne(orderId, retailerId, storeId, customerLookup) {
         const transaction = this.findAll(retailerId, storeId, customerLookup).find((entry) => entry.orderId === orderId);
         if (!transaction) {

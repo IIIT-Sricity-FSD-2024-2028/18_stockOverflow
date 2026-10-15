@@ -616,6 +616,15 @@
   margin-bottom: 14px;
 }
 
+@media (max-width: 1024px) {
+  .two-col,
+  .two-col-eq,
+  .three-col,
+  .three-col-last {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* PANEL */
 .panel {
   background: var(--card);
@@ -623,6 +632,7 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  min-width: 0;
 }
 .panel-header {
   display: flex;
@@ -1446,22 +1456,30 @@ tr:hover td {
   gap: 8px;
 }
 .pl-filter-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 8px;
+  padding: 6px 30px 6px 12px !important;
   border: 1px solid #e6eaed;
-  border-radius: 5px;
-  background: #fff;
+  border-radius: 6px;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%23646b72' stroke-width='1.8'%3E%3Cpolyline points='2.5 4.5 6 8 9.5 4.5'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
   cursor: pointer;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: #212b36;
-  transition: background .14s;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  transition: background-color .14s, border-color .14s;
+  box-sizing: border-box;
+  max-width: 260px;
 }
 .pl-filter-btn:hover {
-  background: #f5f6fa;
+  background-color: #f5f6fa !important;
+  border-color: #cbd5e1;
 }
 .pl-filter-btn svg {
   width: 14px;
@@ -2101,10 +2119,13 @@ table.pl-table .prod-cell .prod-name,
 }
 .select {
   height: 40px;
-  padding: 0 32px 0 12px;
-  appearance: none;
-  -webkit-appearance: none;
+  padding: 0 32px 0 12px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
   cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%23646b72' stroke-width='1.8'%3E%3Cpolyline points='2.5 4.5 6 8 9.5 4.5'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
 }
 .input:focus, .textarea:focus, .select:focus {
   border-color: var(--border-focus);

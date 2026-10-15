@@ -31,16 +31,6 @@ export default function LandingPage({ onEnterRetailer, onSwitchModule }) {
         </div>
 
         <div className="nav-actions">
-          {onSwitchModule && (
-            <button
-              type="button"
-              className="btn btn-outline-gray"
-              onClick={() => onSwitchModule('consumer')}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#0284c7', borderColor: '#bae6fd' }}
-            >
-              🛒 Consumer Store
-            </button>
-          )}
           <button className="btn btn-outline-gray" id="btnLoginNav" onClick={() => setIsLoginOpen(true)}>
             Login
           </button>
@@ -83,16 +73,6 @@ export default function LandingPage({ onEnterRetailer, onSwitchModule }) {
             >
               Enter Retailer Dashboard &rarr;
             </button>
-            {onSwitchModule && (
-              <button
-                type="button"
-                className="btn btn-outline-gray"
-                onClick={() => onSwitchModule('consumer')}
-                style={{ padding: '1rem 2rem' }}
-              >
-                🛒 Consumer Store
-              </button>
-            )}
             <button
               className="btn btn-outline-gray"
               onClick={() => setIsBillerOpen(true)}
