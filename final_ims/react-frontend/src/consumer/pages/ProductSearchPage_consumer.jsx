@@ -206,7 +206,7 @@ export default function ProductSearchPage_consumer({
               <div
                 key={p.sku || idx}
                 className="prod-card"
-                onClick={() => onViewProduct(p.sku)}
+                onClick={() => onViewProduct(p.sku || p.id || p.name)}
                 style={{ cursor: 'pointer' }}
               >
                 {/* Product Image & Stock Badge (in layman's terms: thumbnail showing photo and stock tag) */}
@@ -219,8 +219,8 @@ export default function ProductSearchPage_consumer({
                       loading="lazy"
                       onError={(e) => {
                         e.target.style.display = 'none';
-                        if (e.target.nextSibling) {
-                          e.target.nextSibling.style.display = 'flex';
+                        if (e.target.nextElementSibling) {
+                          e.target.nextElementSibling.style.display = 'flex';
                         }
                       }}
                     />
@@ -263,7 +263,7 @@ export default function ProductSearchPage_consumer({
                     className="view-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onViewProduct(p.sku);
+                      onViewProduct(p.sku || p.id || p.name);
                     }}
                   >
                     View Details →

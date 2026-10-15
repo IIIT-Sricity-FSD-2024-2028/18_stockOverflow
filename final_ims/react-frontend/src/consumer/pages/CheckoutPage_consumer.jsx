@@ -56,14 +56,26 @@ export default function CheckoutPage_consumer({
     try {
       // Checkout places pending pickup holds. The retailer creates the sale
       // when the customer arrives and the request is fulfilled at POS.
+      // ── CHECKOUT RESERVATION SUBMISSION (LAYMAN EXPLANATION) ──
+      // In layman's terms: When the customer clicks "Confirm Reservation", we create an in-store
+      // pickup hold for every item in their cart. We check which store branch was selected when
+      // adding the product to cart, or fall back to the product's primary stocking branch.
       const createdRequests = await Promise.all(cart.map(async (item) => {
-        const matchedStore =
-          stores.find((store) => String(store.id) === String(item.storeId)) ||
-          stores.find((store) => store.name === item.storeName || store.name === selectedStore) ||
-          { id: item.storeId || '', name: item.storeName || selectedStore };
+        let storeId = item.storeId;
+        let storeName = item.storeName;
 
-        if (!matchedStore.id) {
-          throw new Error(`Choose a pickup store for ${item.name}.`);
+        const matchedStore =
+          stores.find((store) => String(store.id) === String(storeId)) ||
+          stores.find((store) => store.name === storeName || store.name === selectedStore) ||
+          null;
+
+        if (matchedStore) {
+          storeId = matchedStore.id;
+          storeName = matchedStore.name;
+        } else if (!storeId || storeId === 's1' || storeId === 'undefined') {
+          const invStore = Array.isArray(item.storeInventory) && item.storeInventory[0]?.storeId;
+          storeId = invStore || 'default-store';
+          storeName = selectedStore || 'Central Fulfillment Store';
         }
 
         return createReservationRequest({
@@ -72,8 +84,8 @@ export default function CheckoutPage_consumer({
           customer: customerName.trim(),
           customerEmail,
           customerId: userSession?.id || undefined,
-          storeId: matchedStore.id,
-          store: matchedStore.name,
+          storeId,
+          store: storeName || selectedStore,
           paymentMethod,
         });
       }));

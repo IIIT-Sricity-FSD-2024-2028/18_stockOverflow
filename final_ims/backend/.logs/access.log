@@ -4597,3 +4597,288 @@
 [2026-10-15T11:03:40.554Z] [GET] /api/transactions/order-activity 304 - 1ms - IP: ::1
 [2026-10-15T11:03:40.556Z] [GET] /api/returns 304 - 1ms - IP: ::1
 [2026-10-15T11:03:40.558Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-15T09:24:02.916Z] [GET] /api/products 200 - 7ms - IP: ::1
+[2026-10-15T09:24:02.928Z] [GET] /api/stores 200 - 2ms - IP: ::1
+[2026-10-15T09:24:02.934Z] [GET] /api/reservations/requests 200 - 3ms - IP: ::1
+[2026-10-15T09:24:02.935Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T09:24:02.938Z] [GET] /api/transactions/purchased-products 200 - 3ms - IP: ::1
+[2026-10-15T09:24:02.942Z] [GET] /api/returns 200 - 2ms - IP: ::1
+[2026-10-15T09:24:22.655Z] [POST] /api/reservations/requests 400 - 5ms - IP: ::1
+[2026-10-15T09:27:14.422Z] [GET] /api/stores 200 - 3ms - IP: ::1
+[2026-10-15T09:30:28.747Z] [POST] /api/products/sku/PT001/feedback 201 - 15ms - IP: ::1
+[2026-10-15T09:30:40.813Z] [GET] /api/products/sku/PT001/feedback 200 - 1ms - IP: ::1
+[2026-10-15T09:30:47.279Z] [POST] /api/returns 201 - 10ms - IP: ::1
+[2026-10-15T09:30:56.153Z] [GET] /api/returns 200 - 1ms - IP: ::1
+[2026-10-15T09:31:12.751Z] [POST] /api/reservations/requests 201 - 12ms - IP: ::1
+[2026-10-15T09:31:20.008Z] [POST] /api/reservations/requests 400 - 2ms - IP: ::1
+[2026-10-15T09:33:18.209Z] [POST] /api/reservations/requests 201 - 13ms - IP: ::1
+[2026-10-15T09:33:25.462Z] [GET] /api/stores 200 - 1ms - IP: ::1
+[2026-10-15T09:34:58.994Z] [GET] /api/products 200 - 2ms - IP: ::1
+[2026-10-15T09:34:59.004Z] [GET] /api/stores 200 - 0ms - IP: ::1
+[2026-10-15T09:34:59.008Z] [GET] /api/products/sku/PT001 200 - 2ms - IP: ::1
+[2026-10-15T09:34:59.025Z] [POST] /api/products/sku/PT001/feedback 201 - 8ms - IP: ::1
+[2026-10-15T09:34:59.036Z] [POST] /api/reservations/requests 201 - 6ms - IP: ::1
+[2026-10-15T09:34:59.044Z] [POST] /api/reservations/requests 201 - 4ms - IP: ::1
+[2026-10-15T09:34:59.053Z] [POST] /api/returns 400 - 4ms - IP: ::1
+[2026-10-15T09:34:59.058Z] [GET] /api/returns 200 - 2ms - IP: ::1
+[2026-10-15T09:34:59.061Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T09:34:59.063Z] [GET] /api/transactions/purchased-products 200 - 2ms - IP: ::1
+[2026-10-15T09:35:07.325Z] [POST] /api/returns 400 - 2ms - IP: ::1
+[2026-10-15T09:35:24.926Z] [POST] /api/returns 201 - 4ms - IP: ::1
+[2026-10-15T09:38:10.346Z] [GET] /api/products 200 - 29ms - IP: ::1
+[2026-10-15T09:38:10.353Z] [GET] /api/stores 200 - 3ms - IP: ::1
+[2026-10-15T09:38:10.376Z] [GET] /api/products 304 - 12ms - IP: ::1
+[2026-10-15T09:38:10.360Z] [GET] /api/stores 304 - 5ms - IP: ::1
+[2026-10-15T09:38:23.206Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T09:38:23.209Z] [GET] /api/transactions/purchased-products 200 - 4ms - IP: ::1
+[2026-10-15T09:38:23.221Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T09:38:23.223Z] [GET] /api/transactions/purchased-products 304 - 2ms - IP: ::1
+[2026-10-15T09:38:23.227Z] [GET] /api/reservations/requests?status=pending 200 - 3ms - IP: ::1
+[2026-10-15T09:38:23.236Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-15T09:38:23.244Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T09:38:23.241Z] [GET] /api/reservations/requests?status=pending 304 - 3ms - IP: ::1
+[2026-10-15T09:38:28.052Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD546371
+[2026-10-15T09:38:28.054Z] [GET] /api/transactions/ORD546371 200 - 2ms - IP: ::1
+[2026-10-15T09:38:28.057Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD546371
+[2026-10-15T09:38:28.058Z] [GET] /api/transactions/ORD546371 304 - 1ms - IP: ::1
+[2026-10-15T09:38:38.311Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:38:38.314Z] [GET] /api/transactions/ORD-84920 404 - 3ms - IP: ::1
+[2026-10-15T09:38:38.316Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:38:38.318Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T09:38:38.339Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:38:38.341Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T09:38:38.349Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T09:38:38.351Z] [GET] /api/transactions 200 - 2ms - IP: ::1
+[2026-10-15T09:38:38.352Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:38:38.355Z] [GET] /api/transactions/ORD-84920 404 - 3ms - IP: ::1
+[2026-10-15T09:38:38.362Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T09:38:38.363Z] [GET] /api/transactions 304 - 1ms - IP: ::1
+[2026-10-15T09:38:41.322Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-15T09:38:41.328Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T09:38:41.337Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T09:49:58.781Z] [GET] /api/products 304 - 5ms - IP: ::1
+[2026-10-15T09:49:58.787Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T09:49:58.815Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-15T09:59:34.519Z] [GET] /api/stores 304 - 4ms - IP: ::1
+[2026-10-15T09:59:34.512Z] [GET] /api/products 304 - 9ms - IP: ::1
+[2026-10-15T09:59:34.526Z] [GET] /api/stores 304 - 4ms - IP: ::1
+[2026-10-15T09:59:34.534Z] [GET] /api/products 304 - 5ms - IP: ::1
+[2026-10-15T09:59:38.495Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T09:59:38.499Z] [GET] /api/reservations/requests?status=pending 304 - 2ms - IP: ::1
+[2026-10-15T09:59:38.501Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T09:59:38.504Z] [GET] /api/transactions/purchased-products 304 - 3ms - IP: ::1
+[2026-10-15T09:59:38.509Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T09:59:38.515Z] [GET] /api/reservations/requests?status=pending 304 - 1ms - IP: ::1
+[2026-10-15T09:59:38.516Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T09:59:38.519Z] [GET] /api/transactions/purchased-products 304 - 3ms - IP: ::1
+[2026-10-15T09:59:41.941Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:41.945Z] [GET] /api/transactions/ORD-84920 404 - 4ms - IP: ::1
+[2026-10-15T09:59:41.948Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:41.951Z] [GET] /api/transactions/ORD-84920 404 - 3ms - IP: ::1
+[2026-10-15T09:59:41.957Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:41.965Z] [GET] /api/transactions/ORD-84920 404 - 8ms - IP: ::1
+[2026-10-15T09:59:41.973Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T09:59:41.975Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-15T09:59:41.976Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:41.979Z] [GET] /api/transactions/ORD-84920 404 - 3ms - IP: ::1
+[2026-10-15T09:59:41.983Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T09:59:41.984Z] [GET] /api/transactions 304 - 1ms - IP: ::1
+[2026-10-15T09:59:42.858Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-15T09:59:42.863Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T09:59:42.879Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T09:59:45.782Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:45.784Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T09:59:45.788Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:45.790Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T09:59:45.799Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:45.801Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T09:59:45.808Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T09:59:45.809Z] [GET] /api/transactions 304 - 1ms - IP: ::1
+[2026-10-15T09:59:45.811Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:45.812Z] [GET] /api/transactions/ORD-84920 404 - 1ms - IP: ::1
+[2026-10-15T09:59:45.817Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T09:59:45.818Z] [GET] /api/transactions 304 - 1ms - IP: ::1
+[2026-10-15T09:59:49.701Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T09:59:49.706Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T09:59:49.716Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T09:59:56.735Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:56.737Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T09:59:56.740Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:56.746Z] [GET] /api/transactions/ORD-84920 404 - 6ms - IP: ::1
+[2026-10-15T09:59:56.751Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:56.753Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T09:59:56.758Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T09:59:56.759Z] [GET] /api/transactions 304 - 1ms - IP: ::1
+[2026-10-15T09:59:56.761Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T09:59:56.764Z] [GET] /api/transactions/ORD-84920 404 - 3ms - IP: ::1
+[2026-10-15T09:59:56.768Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T09:59:56.770Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-15T10:00:00.112Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T10:00:00.114Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T10:00:00.117Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T10:00:00.124Z] [GET] /api/transactions/ORD-84920 404 - 7ms - IP: ::1
+[2026-10-15T10:00:00.128Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T10:00:00.130Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T10:00:00.135Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T10:00:00.137Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-15T10:00:00.138Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T10:00:00.140Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T10:00:00.145Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T10:00:00.148Z] [GET] /api/transactions 304 - 3ms - IP: ::1
+[2026-10-15T10:00:05.832Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T10:00:05.835Z] [GET] /api/transactions/ORD-84920 404 - 4ms - IP: ::1
+[2026-10-15T10:00:05.841Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920
+[2026-10-15T10:00:05.843Z] [GET] /api/transactions/ORD-84920 404 - 2ms - IP: ::1
+[2026-10-15T10:00:05.847Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T10:00:05.849Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-15T10:00:06.846Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84919
+[2026-10-15T10:00:06.849Z] [GET] /api/transactions/ORD-84919 404 - 3ms - IP: ::1
+[2026-10-15T10:00:06.856Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84919
+[2026-10-15T10:00:06.858Z] [GET] /api/transactions/ORD-84919 404 - 2ms - IP: ::1
+[2026-10-15T10:00:06.867Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T10:00:06.869Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-15T10:00:07.714Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84918
+[2026-10-15T10:00:07.716Z] [GET] /api/transactions/ORD-84918 404 - 2ms - IP: ::1
+[2026-10-15T10:00:07.723Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84918
+[2026-10-15T10:00:07.725Z] [GET] /api/transactions/ORD-84918 404 - 2ms - IP: ::1
+[2026-10-15T10:00:07.728Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-15T10:00:07.730Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-15T10:00:12.210Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T10:00:12.211Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-15T10:00:12.221Z] [GET] /api/reservations/requests?status=pending 304 - 2ms - IP: ::1
+[2026-10-15T10:00:12.223Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-15T10:00:12.224Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T10:00:12.226Z] [GET] /api/transactions/purchased-products 304 - 2ms - IP: ::1
+[2026-10-15T10:00:12.228Z] [GET] /api/reservations/requests?status=pending 304 - 1ms - IP: ::1
+[2026-10-15T10:00:12.231Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T10:00:17.199Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T10:00:17.201Z] [GET] /api/transactions/purchased-products 304 - 2ms - IP: ::1
+[2026-10-15T10:00:17.204Z] [GET] /api/reservations/requests?status=pending 304 - 2ms - IP: ::1
+[2026-10-15T10:00:17.207Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T10:00:27.079Z] [GET] /api/products/sku/PT005 200 - 2ms - IP: ::1
+[2026-10-15T10:00:27.088Z] [GET] /api/products/sku/PT005 304 - 4ms - IP: ::1
+[2026-10-15T10:00:27.095Z] [GET] /api/products/sku/PT005/rating-summary 200 - 3ms - IP: ::1
+[2026-10-15T10:00:27.107Z] [GET] /api/products/sku/PT005/rating-summary 304 - 3ms - IP: ::1
+[2026-10-15T10:00:27.100Z] [GET] /api/products/sku/PT005/feedback 200 - 3ms - IP: ::1
+[2026-10-15T10:00:27.112Z] [GET] /api/products/sku/PT005/feedback 304 - 3ms - IP: ::1
+[2026-10-15T10:00:30.925Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T10:00:31.006Z] [GET] /api/stores 304 - 78ms - IP: ::1
+[2026-10-15T10:00:31.014Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-15T10:00:31.020Z] [GET] /api/products 304 - 5ms - IP: ::1
+[2026-10-15T10:00:34.642Z] [GET] /api/products/sku/PT005 304 - 2ms - IP: ::1
+[2026-10-15T10:00:34.648Z] [GET] /api/products/sku/PT005 304 - 4ms - IP: ::1
+[2026-10-15T10:00:34.655Z] [GET] /api/products/sku/PT005/rating-summary 304 - 2ms - IP: ::1
+[2026-10-15T10:00:34.661Z] [GET] /api/products/sku/PT005/feedback 304 - 5ms - IP: ::1
+[2026-10-15T10:00:34.663Z] [GET] /api/products/sku/PT005/rating-summary 304 - 2ms - IP: ::1
+[2026-10-15T10:00:34.664Z] [GET] /api/products/sku/PT005/feedback 304 - 1ms - IP: ::1
+[2026-10-15T10:00:53.667Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-15T10:00:53.671Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T10:00:53.676Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T10:00:53.685Z] [GET] /api/stores 304 - 8ms - IP: ::1
+[2026-10-15T10:05:42.223Z] [GET] /api/products/sku/PT001 200 - 3ms - IP: ::1
+[2026-10-15T10:06:25.406Z] [GET] /api/products/sku/PT001 200 - 2ms - IP: ::1
+[2026-10-15T10:06:25.424Z] [GET] /api/products/sku/PT002 200 - 2ms - IP: ::1
+[2026-10-15T10:06:25.428Z] [GET] /api/products/sku/PT003 200 - 1ms - IP: ::1
+[2026-10-15T10:06:25.436Z] [GET] /api/products/sku/PT004 200 - 2ms - IP: ::1
+[2026-10-15T10:06:25.440Z] [GET] /api/products/sku/PT005 200 - 2ms - IP: ::1
+[2026-10-15T10:06:37.793Z] [GET] /api/products/sku/PT001/rating-summary 200 - 1ms - IP: ::1
+[2026-10-15T10:06:37.810Z] [GET] /api/products/sku/PT002/rating-summary 200 - 2ms - IP: ::1
+[2026-10-15T10:06:37.819Z] [GET] /api/products/sku/PT003/rating-summary 200 - 3ms - IP: ::1
+[2026-10-15T10:06:37.824Z] [GET] /api/products/sku/PT004/rating-summary 200 - 2ms - IP: ::1
+[2026-10-15T10:06:37.830Z] [GET] /api/products/sku/PT005/rating-summary 200 - 2ms - IP: ::1
+[2026-10-15T10:06:55.679Z] [GET] /api/products/sku/PT001/feedback 200 - 1ms - IP: ::1
+[2026-10-15T10:06:55.695Z] [GET] /api/products/sku/PT002/feedback 200 - 1ms - IP: ::1
+[2026-10-15T10:06:55.701Z] [GET] /api/products/sku/PT003/feedback 200 - 3ms - IP: ::1
+[2026-10-15T10:06:55.707Z] [GET] /api/products/sku/PT004/feedback 200 - 1ms - IP: ::1
+[2026-10-15T10:06:55.712Z] [GET] /api/products/sku/PT005/feedback 200 - 2ms - IP: ::1
+[2026-10-15T10:13:15.584Z] [GET] /api/products 304 - 6ms - IP: ::1
+[2026-10-15T10:13:15.587Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-15T10:13:15.591Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T10:13:15.595Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T10:13:50.063Z] [GET] /api/products 304 - 5ms - IP: ::1
+[2026-10-15T10:13:50.066Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T10:13:56.025Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-15T10:13:56.028Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T10:16:52.047Z] [GET] /api/products 200 - 4ms - IP: ::1
+[2026-10-15T10:17:09.248Z] [GET] /api/products/sku/PT005 200 - 1ms - IP: ::1
+[2026-10-15T10:17:19.494Z] [GET] /api/products/sku/PT005/ratings 404 - 20ms - IP: ::1
+[2026-10-15T10:17:19.497Z] [GET] /api/products/sku/PT005/feedback 200 - 2ms - IP: ::1
+[2026-10-15T10:17:35.505Z] [GET] /api/products/sku/PT005/rating-summary 200 - 3ms - IP: ::1
+[2026-10-15T10:21:47.642Z] [GET] /api/products 200 - 5ms - IP: ::1
+[2026-10-15T10:22:17.736Z] [GET] /api/products/sku/PT001/rating-summary 200 - 3ms - IP: ::1
+[2026-10-15T10:22:17.740Z] [GET] /api/products/sku/PT001 200 - 2ms - IP: ::1
+[2026-10-15T10:22:17.742Z] [GET] /api/products/sku/PT001/feedback 200 - 1ms - IP: ::1
+[2026-10-15T10:22:35.219Z] [GET] /api/products/sku/PT004 200 - 2ms - IP: ::1
+[2026-10-15T10:22:35.221Z] [GET] /api/products/sku/PT004/rating-summary 200 - 1ms - IP: ::1
+[2026-10-15T10:22:35.223Z] [GET] /api/products/sku/PT004/feedback 200 - 1ms - IP: ::1
+[2026-10-15T10:23:00.789Z] [GET] /api/products/sku/PT004 200 - 2ms - IP: ::1
+[2026-10-15T10:23:19.448Z] [GET] /api/stores 200 - 1ms - IP: ::1
+[2026-10-15T10:44:17.090Z] [GET] /api/products 304 - 13ms - IP: ::1
+[2026-10-15T10:44:17.097Z] [GET] /api/stores 304 - 3ms - IP: ::1
+[2026-10-15T10:44:17.109Z] [GET] /api/products 304 - 7ms - IP: ::1
+[2026-10-15T10:44:17.113Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T11:50:27.864Z] [GET] /api/products 304 - 6ms - IP: ::1
+[2026-10-15T11:50:27.872Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-15T11:50:27.900Z] [GET] /api/products 304 - 7ms - IP: ::1
+[2026-10-15T11:50:27.904Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-15T12:45:18.369Z] [GET] /api/stores 304 - 3ms - IP: ::1
+[2026-10-15T12:45:18.312Z] [GET] /api/products 304 - 29ms - IP: ::1
+[2026-10-15T12:45:18.422Z] [GET] /api/products 304 - 5ms - IP: ::1
+[2026-10-15T12:45:18.429Z] [GET] /api/stores 304 - 3ms - IP: ::1
+[2026-10-15T13:12:56.686Z] [GET] /api/products 304 - 17ms - IP: ::1
+[2026-10-15T13:12:56.692Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T13:12:56.712Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-15T13:12:56.715Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T13:13:32.522Z] [GET] /api/products?storeId=JOHN-S-STORE 200 - 8ms - IP: ::1
+[2026-10-15T13:13:32.526Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-15T13:13:34.862Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T13:13:34.866Z] [GET] /api/transactions/purchased-products 304 - 4ms - IP: ::1
+[2026-10-15T13:13:34.870Z] [GET] /api/reservations/requests?status=pending 304 - 3ms - IP: ::1
+[2026-10-15T13:13:34.875Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T13:13:34.881Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T13:13:34.883Z] [GET] /api/transactions/purchased-products 304 - 3ms - IP: ::1
+[2026-10-15T13:13:34.888Z] [GET] /api/reservations/requests?status=pending 304 - 2ms - IP: ::1
+[2026-10-15T13:13:34.891Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T13:13:38.657Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T13:13:38.662Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T13:13:38.685Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T13:13:53.945Z] [GET] /api/products/sku/PT001 200 - 2ms - IP: ::1
+[2026-10-15T13:13:53.949Z] [GET] /api/products/sku/PT001 304 - 1ms - IP: ::1
+[2026-10-15T13:13:54.032Z] [GET] /api/products/sku/PT001/rating-summary 200 - 11ms - IP: ::1
+[2026-10-15T13:13:54.036Z] [GET] /api/products/sku/PT001/feedback 200 - 2ms - IP: ::1
+[2026-10-15T13:13:54.040Z] [GET] /api/products/sku/PT001/rating-summary 304 - 2ms - IP: ::1
+[2026-10-15T13:13:54.048Z] [GET] /api/products/sku/PT001/feedback 304 - 3ms - IP: ::1
+[2026-10-15T13:19:13.094Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T13:19:13.097Z] [GET] /api/transactions/purchased-products 304 - 3ms - IP: ::1
+[2026-10-15T13:19:13.099Z] [GET] /api/reservations/requests?status=pending 304 - 1ms - IP: ::1
+[2026-10-15T13:19:13.102Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-15T13:19:13.104Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-15T13:19:13.109Z] [GET] /api/transactions/purchased-products 304 - 5ms - IP: ::1
+[2026-10-15T13:19:13.111Z] [GET] /api/reservations/requests?status=pending 304 - 1ms - IP: ::1
+[2026-10-15T13:19:13.115Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-15T13:19:21.311Z] [GET] /api/products/sku/PT002 200 - 2ms - IP: ::1
+[2026-10-15T13:19:21.315Z] [GET] /api/products/sku/PT002 304 - 2ms - IP: ::1
+[2026-10-15T13:19:21.337Z] [GET] /api/products/sku/PT002/feedback 200 - 3ms - IP: ::1
+[2026-10-15T13:19:21.347Z] [GET] /api/products/sku/PT002/rating-summary 200 - 5ms - IP: ::1
+[2026-10-15T13:19:21.350Z] [GET] /api/products/sku/PT002/feedback 304 - 2ms - IP: ::1
+[2026-10-15T13:19:21.357Z] [GET] /api/products/sku/PT002/rating-summary 304 - 2ms - IP: ::1
+[2026-10-15T13:25:24.333Z] [GET] /api/products/sku/PT002 304 - 7ms - IP: ::1
+[2026-10-15T13:25:24.338Z] [GET] /api/products/sku/PT002 304 - 2ms - IP: ::1
+[2026-10-15T13:25:24.351Z] [GET] /api/products/sku/PT002/rating-summary 304 - 2ms - IP: ::1
+[2026-10-15T13:25:24.353Z] [GET] /api/products/sku/PT002/feedback 304 - 1ms - IP: ::1
+[2026-10-15T13:25:24.355Z] [GET] /api/products/sku/PT002/rating-summary 304 - 1ms - IP: ::1
+[2026-10-15T13:25:24.358Z] [GET] /api/products/sku/PT002/feedback 304 - 2ms - IP: ::1
+[2026-10-15T13:25:49.818Z] [GET] /api/products?storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-15T13:25:49.826Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T13:25:49.831Z] [GET] /api/products?storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-15T13:25:49.838Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-15T13:26:06.422Z] [GET] /api/products?storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-15T13:26:06.425Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-15T13:26:11.635Z] [GET] /api/products?storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-15T13:26:11.638Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-15T13:28:07.279Z] [GET] /api/products/sku/PT002 304 - 7ms - IP: ::1
+[2026-10-15T13:28:07.282Z] [GET] /api/products/sku/PT002 304 - 2ms - IP: ::1
+[2026-10-15T13:28:07.289Z] [GET] /api/products/sku/PT002/rating-summary 304 - 2ms - IP: ::1
+[2026-10-15T13:28:07.295Z] [GET] /api/products/sku/PT002/feedback 304 - 3ms - IP: ::1
+[2026-10-15T13:28:07.297Z] [GET] /api/products/sku/PT002/rating-summary 304 - 1ms - IP: ::1
+[2026-10-15T13:28:07.299Z] [GET] /api/products/sku/PT002/feedback 304 - 1ms - IP: ::1

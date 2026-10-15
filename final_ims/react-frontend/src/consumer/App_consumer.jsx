@@ -41,16 +41,42 @@ import {
   saveLocalCart,
   getLocalSession,
 } from './utils/api_consumer';
+import { MOCK_PRODUCTS, MOCK_STORES } from './data/mockProducts_consumer';
 
 export default function App_consumer({ onSwitchModule }) {
   // ─── 1. Navigation & View Routing State ─────────────────────────────────────
-  const [currentView, setCurrentView] = useState('home');
-  const [viewParams, setViewParams] = useState({});
+  const [currentView, setCurrentView] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlSku = params.get('sku');
+      if (urlSku) return 'detail';
+    } catch {}
+    return 'home';
+  });
+  const [viewParams, setViewParams] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlSku = params.get('sku');
+      if (urlSku) return { sku: urlSku };
+    } catch {}
+    return {};
+  });
 
   // ─── 2. Global Catalog & Stores State ───────────────────────────────────────
-  const [products, setProducts] = useState([]);
-  const [stores, setStores] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // In layman's terms: Initialize with pre-seeded products and stores immediately
+  // so all pages and product clicks render INSTANTLY without waiting for network!
+  const [products, setProducts] = useState(() => {
+    try {
+      const local = localStorage.getItem('so_inventory') || localStorage.getItem('imsRetailerProductsV1');
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return MOCK_PRODUCTS;
+  });
+  const [stores, setStores] = useState(() => MOCK_STORES);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // ─── 3. Global Store Location State ─────────────────────────────────────────
@@ -208,7 +234,14 @@ export default function App_consumer({ onSwitchModule }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleViewProduct = (sku) => {
+  const handleViewProduct = (skuOrProduct) => {
+    const sku =
+      typeof skuOrProduct === 'object' && skuOrProduct !== null
+        ? skuOrProduct.sku || skuOrProduct.id || skuOrProduct.name
+        : String(skuOrProduct || '');
+    try {
+      localStorage.setItem('imsSelectedSku', sku);
+    } catch {}
     navigateTo('detail', { sku });
   };
 
@@ -292,10 +325,16 @@ export default function App_consumer({ onSwitchModule }) {
           />
         );
 
-      case 'detail':
+      case 'detail': {
+        const targetSku =
+          viewParams?.sku ||
+          localStorage.getItem('imsSelectedSku') ||
+          (products[0] && products[0].sku) ||
+          'PT001';
         return (
           <ProductDetailPage_consumer
-            sku={viewParams.sku || 'PT001'}
+            key={targetSku}
+            sku={targetSku}
             products={products}
             stores={stores}
             selectedStore={selectedStore}
@@ -309,6 +348,7 @@ export default function App_consumer({ onSwitchModule }) {
             showToast={showToast}
           />
         );
+      }
 
       case 'cart':
         return (

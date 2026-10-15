@@ -4467,6 +4467,108 @@
         }
       }
     },
+    "/transactions/order-activity": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "operationId": "Transactions_getOrderActivity",
+        "summary": "Get Order Activity",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "retailerId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: retailerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: storeId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timeframe",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: timeframe",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "counts": {
+                      "items": {
+                        "items": {
+                          "type": "number"
+                        },
+                        "type": "array"
+                      },
+                      "type": "array"
+                    },
+                    "days": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "hasData": {
+                      "type": "boolean"
+                    },
+                    "heatLevels": {
+                      "items": {
+                        "items": {
+                          "type": "number"
+                        },
+                        "type": "array"
+                      },
+                      "type": "array"
+                    },
+                    "times": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "totalOrders": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "counts",
+                    "days",
+                    "hasData",
+                    "heatLevels",
+                    "times",
+                    "totalOrders"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/transactions/upload-receipt": {
       "post": {
         "tags": [

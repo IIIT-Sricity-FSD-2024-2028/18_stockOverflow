@@ -275,3 +275,34 @@
 [2026-10-15T11:02:06.673Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
 [2026-10-15T11:03:40.488Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
 [2026-10-15T11:03:40.551Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
+[2026-10-15T09:24:22.654Z] [ERROR] POST /api/reservations/requests 400 - Selected store is unavailable for this product
+[2026-10-15T09:31:20.007Z] [ERROR] POST /api/reservations/requests 400 - Selected store is unavailable for this product
+[2026-10-15T09:34:59.051Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this order.
+[2026-10-15T09:35:07.324Z] [ERROR] POST /api/returns 400 - A return request has already been submitted for this order.
+[2026-10-15T09:38:38.313Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:38:38.317Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:38:38.340Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:38:38.353Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:41.943Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:41.949Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:41.963Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:41.977Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:45.783Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:45.789Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:45.800Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:45.811Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:56.736Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:56.745Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:56.752Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T09:59:56.762Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T10:00:00.112Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T10:00:00.119Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T10:00:00.129Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T10:00:00.139Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T10:00:05.833Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T10:00:05.842Z] [ERROR] GET /api/transactions/ORD-84920 404 - Transaction not found
+[2026-10-15T10:00:06.847Z] [ERROR] GET /api/transactions/ORD-84919 404 - Transaction not found
+[2026-10-15T10:00:06.857Z] [ERROR] GET /api/transactions/ORD-84919 404 - Transaction not found
+[2026-10-15T10:00:07.715Z] [ERROR] GET /api/transactions/ORD-84918 404 - Transaction not found
+[2026-10-15T10:00:07.724Z] [ERROR] GET /api/transactions/ORD-84918 404 - Transaction not found
+[2026-10-15T10:17:19.493Z] [ERROR] GET /api/products/sku/PT005/ratings 404 - Cannot GET /api/products/sku/PT005/ratings
