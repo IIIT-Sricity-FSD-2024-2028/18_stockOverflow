@@ -20,7 +20,7 @@ export default function StockAdjustView() {
   const [successToast, setSuccessToast] = useState('');
 
   const warehouses = [
-    user?.store || "John's Retail Store",
+    user?.store || "Main Store",
     'Lavish Warehouse',
     'Quaint Warehouse',
     'Traditional Warehouse',
@@ -36,9 +36,11 @@ export default function StockAdjustView() {
   const loadData = async () => {
     try {
       setLoading(true);
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
       const [pList, adjList] = await Promise.all([
-        retailerApi.getProducts(user?.retailerId).catch(() => []),
-        retailerApi.getStockAdjustments().catch(() => []),
+        retailerApi.getProducts(retailerId, storeId).catch(() => []),
+        retailerApi.getStockAdjustments(retailerId, storeId).catch(() => []),
       ]);
 
       const prods = Array.isArray(pList) ? pList : [];
@@ -47,7 +49,7 @@ export default function StockAdjustView() {
         setSelectedProductId(prods[0].id);
       }
       if (!warehouse) {
-        setWarehouse(user?.store || "John's Retail Store");
+        setWarehouse(user?.store || "Main Store");
       }
 
       if (Array.isArray(adjList) && adjList.length > 0) {
@@ -57,7 +59,7 @@ export default function StockAdjustView() {
             date: a.date || (a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Today'),
             product: a.productName || a.product || a.productSku || 'Product Item',
             sku: a.productSku || a.sku || 'SKU',
-            warehouse: a.warehouse || a.store || user?.store || "John's Store",
+            warehouse: a.warehouse || a.store || user?.store || "Main Store",
             type: a.type || 'add',
             qty: a.qty || 0,
             reason: a.reason || 'Inventory Adjustment',
@@ -67,35 +69,7 @@ export default function StockAdjustView() {
           }))
         );
       } else {
-        // Fallback default adjustments
-        setAdjustments([
-          {
-            id: 101,
-            date: '18 Sep 2026',
-            product: 'Lenovo IdeaPad 3',
-            sku: 'PT001',
-            warehouse: 'Lavish Warehouse',
-            type: 'add',
-            qty: 15,
-            reason: 'Physical Recount',
-            person: user?.name || 'John Retailer',
-            status: 'completed',
-            notes: 'Reconciled during month-end audit',
-          },
-          {
-            id: 102,
-            date: '16 Sep 2026',
-            product: 'Beats Pro Headphone',
-            sku: 'PT002',
-            warehouse: 'Quaint Warehouse',
-            type: 'remove',
-            qty: 2,
-            reason: 'Damaged Goods',
-            person: user?.name || 'John Retailer',
-            status: 'completed',
-            notes: 'Packaging damaged during transfer',
-          },
-        ]);
+        setAdjustments([]);
       }
     } catch (err) {
       console.error('Error loading stock adjustment view:', err);
@@ -112,7 +86,7 @@ export default function StockAdjustView() {
 
   const handleReset = () => {
     if (products.length > 0) setSelectedProductId(products[0].id);
-    setWarehouse(user?.store || "John's Retail Store");
+    setWarehouse(user?.store || "Main Store");
     setAdjustType('add');
     setQuantity(1);
     setReason('Recount');
@@ -131,11 +105,11 @@ export default function StockAdjustView() {
     });
 
     const payload = {
-      retailerId: user?.retailerId,
-      storeId: user?.storeId || user?.currentStoreId,
+      retailerId: user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '',
+      storeId: user?.storeId || user?.currentStoreId || '',
       productSku: selProduct.sku || selProduct.id,
       productName: selProduct.name,
-      warehouse: warehouse || user?.store || "John's Retail Store",
+      warehouse: warehouse || user?.store || "Main Store",
       type: adjustType,
       qty: qtyNum,
       reason: reason,
@@ -165,7 +139,7 @@ export default function StockAdjustView() {
           date: today,
           product: selProduct.name,
           sku: selProduct.sku,
-          warehouse: warehouse || user?.store || "John's Retail Store",
+          warehouse: warehouse || user?.store || "Main Store",
           type: adjustType,
           qty: qtyNum,
           reason: reason,

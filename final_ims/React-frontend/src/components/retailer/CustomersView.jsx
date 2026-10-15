@@ -27,10 +27,17 @@ export default function CustomersView() {
   const loadCustomers = async () => {
     try {
       setLoading(true);
-      const data = await retailerApi.getCustomers().catch(() => []);
-      if (Array.isArray(data) && data.length > 0) {
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
+      const rawData = await retailerApi.getCustomers(retailerId, storeId).catch(() => []);
+      const purchasedOnly = (Array.isArray(rawData) ? rawData : []).filter(
+        (c) =>
+          (Number(c.totalOrders != null ? c.totalOrders : c.orders) || 0) > 0 ||
+          (Number(c.totalSpent != null ? c.totalSpent : c.spent) || 0) > 0,
+      );
+      if (purchasedOnly.length > 0) {
         setCustomers(
-          data.map((c) => ({
+          purchasedOnly.map((c) => ({
             id: c.id,
             name: c.name || `${c.fname || ''} ${c.lname || ''}`.trim() || 'Valued Customer',
             fname: c.fname || (c.name ? c.name.split(' ')[0] : 'Customer'),
@@ -40,61 +47,14 @@ export default function CustomersView() {
             city: c.city || c.location || 'Mumbai',
             country: c.country || 'India',
             status: (c.status || 'Active').toLowerCase(),
-            totalSpent: Number(c.totalSpent != null ? c.totalSpent : c.spent) || 12450,
-            totalOrders: Number(c.totalOrders != null ? c.totalOrders : c.orders) || 4,
+            totalSpent: Number(c.totalSpent != null ? c.totalSpent : c.spent) || 0,
+            totalOrders: Number(c.totalOrders != null ? c.totalOrders : c.orders) || 0,
             notes: c.notes || '',
             created: c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Jan 2025',
           }))
         );
       } else {
-        // Fallback default customers matching vanilla mock
-        setCustomers([
-          {
-            id: 'CUST-001',
-            name: 'Aarav Sharma',
-            fname: 'Aarav',
-            lname: 'Sharma',
-            email: 'aarav.sharma@example.com',
-            phone: '+91 98201 12345',
-            city: 'Mumbai',
-            country: 'India',
-            status: 'vip',
-            totalSpent: 48500,
-            totalOrders: 12,
-            notes: 'High value electronics buyer',
-            created: 'Oct 2024',
-          },
-          {
-            id: 'CUST-002',
-            name: 'Priya Patel',
-            fname: 'Priya',
-            lname: 'Patel',
-            email: 'priya.patel@example.com',
-            phone: '+91 98795 67890',
-            city: 'Ahmedabad',
-            country: 'India',
-            status: 'active',
-            totalSpent: 18200,
-            totalOrders: 6,
-            notes: 'Prefers apparel and footwear',
-            created: 'Dec 2024',
-          },
-          {
-            id: 'CUST-003',
-            name: 'Vikram Mehta',
-            fname: 'Vikram',
-            lname: 'Mehta',
-            email: 'vikram.m@example.com',
-            phone: '+91 99302 34567',
-            city: 'Delhi',
-            country: 'India',
-            status: 'new',
-            totalSpent: 4500,
-            totalOrders: 1,
-            notes: 'Joined this month',
-            created: 'Feb 2025',
-          },
-        ]);
+        setCustomers([]);
       }
     } catch (err) {
       console.error('Failed to load customers:', err);
@@ -148,8 +108,8 @@ export default function CustomersView() {
     const payload = {
       ...form,
       name: fullName,
-      retailerId: user?.retailerId,
-      storeId: user?.storeId || user?.currentStoreId,
+      retailerId: user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '',
+      storeId: user?.storeId || user?.currentStoreId || '',
       status: form.status.charAt(0).toUpperCase() + form.status.slice(1),
     };
 

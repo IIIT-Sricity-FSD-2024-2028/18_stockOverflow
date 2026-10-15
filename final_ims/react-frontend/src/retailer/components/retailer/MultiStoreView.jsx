@@ -38,8 +38,15 @@ export default function MultiStoreView() {
       try {
         setLoading(true);
 
+        // User session info
+        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+        const storeId = user?.currentStoreId || user?.storeId || '';
+        const scopedQuery = retailerId
+          ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
+          : '';
+
         // 1. Fetch live products from backend
-        const liveProducts = await request('/products').catch(() => []);
+        const liveProducts = await request(`/products${scopedQuery}`).catch(() => []);
         const prods = Array.isArray(liveProducts) ? liveProducts : [];
         const totalStockCount = prods.reduce(
           (sum, p) => sum + (Number(p.qty != null ? p.qty : p.initialQty) || 0),
@@ -48,47 +55,58 @@ export default function MultiStoreView() {
         const totalProductCount = prods.length;
 
         // 2. Fetch candidate stores from API
-        const apiStores = await request('/stores').catch(() => []);
+        const storesQuery = retailerId ? `?retailerId=${encodeURIComponent(retailerId)}` : '';
+        const apiStores = await request(`/stores${storesQuery}`).catch(() => []);
         let candidateStores = Array.isArray(apiStores) ? [...apiStores] : [];
 
-        // 3. User session info
-        const retailerId = user?.id || user?.profileId || user?.retailerId || 'cedc0064-0c9e-445e-9649-d344d6fe094d';
-        const retailerName = String(user?.name || 'John').trim();
-        const isJohnSession = retailerName.toLowerCase().includes('john');
+        const retailerName = String(user?.name || (user?.email ? user.email.split('@')[0] : 'Store Manager')).trim();
+        const profileStores = Array.isArray(user?.profile?.stores) ? user.profile.stores : [];
 
-        // STRICT FILTER: Match ONLY stores associated with John (or active logged in retailer)
+        // Match stores associated with active retailer
         let matchedStores = candidateStores.filter((store) => {
           const storeId = String(store.id || store.code || '').toUpperCase();
           const storeRetailerId = String(store.retailerId || '').trim();
+          const activeStoreId = String(user?.storeId || user?.currentStoreId || '').toUpperCase();
 
-          if (isJohnSession) {
-            // Strictly match John's store ID or retailer ID
-            return storeId === 'JOHN-S-STORE' || storeRetailerId === retailerId;
-          }
-
-          return storeRetailerId === retailerId;
+          if (retailerId && storeRetailerId === retailerId) return true;
+          if (activeStoreId && (storeId === activeStoreId || store.name === user?.store)) return true;
+          return false;
         });
 
-        // Fallback guarantee: if none matched and it's John, show John's Retail Store
-        if (!matchedStores.length && isJohnSession) {
-          matchedStores = [
-            {
-              id: 'JOHN-S-STORE',
-              code: 'JOHN-S-STORE',
+        // If none matched in API stores, use profile stores or session store
+        if (!matchedStores.length) {
+          if (profileStores.length > 0) {
+            matchedStores = profileStores.map((s, idx) => ({
+              id: s.code || s.storeId || s.id || `STORE-0${idx + 1}`,
+              code: s.code || `STORE-0${idx + 1}`,
               retailerId: retailerId,
-              name: "John's Retail Store",
-              location: 'Gujarat, India',
-              manager: 'John',
-              phone: '+91 98765 43210',
-              status: 'active',
+              name: s.name,
+              location: s.address || 'Main Street',
+              manager: s.contactPerson || retailerName,
+              phone: s.phone || '+91 98765 43210',
+              status: s.status || 'active',
               createdOn: '-',
-            },
-          ];
+            }));
+          } else {
+            matchedStores = [
+              {
+                id: user?.storeId || 'STORE-01',
+                code: user?.storeId || 'STORE-01',
+                retailerId: retailerId,
+                name: user?.store || (user?.profile?.businessName ? `${user.profile.businessName} (Main)` : `${retailerName}'s Store`),
+                location: user?.profile?.address || 'Main Commercial Market',
+                manager: retailerName,
+                phone: user?.profile?.businessPhone || '+91 98765 43210',
+                status: 'active',
+                createdOn: '-',
+              },
+            ];
+          }
         }
 
         const formatted = matchedStores.map((s, idx) => {
-          const storeId = s.id || s.code || `store-${idx + 1}`;
-          const storeName = s.name || "John's Retail Store";
+          const storeId = s.id || s.code || `STORE-0${idx + 1}`;
+          const storeName = s.name || user?.store || "Main Store";
           const contact = s.manager || s.contactPerson || s.contact || retailerName;
           const phone = s.phone || s.phoneNumber || '+91 98765 43210';
           const createdOn = s.createdOn || (s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-IN') : '-');

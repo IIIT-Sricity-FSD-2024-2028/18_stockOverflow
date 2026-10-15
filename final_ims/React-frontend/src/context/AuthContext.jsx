@@ -23,9 +23,14 @@ export function AuthProvider({ children }) {
       .join('')
       .toUpperCase() || 'SO';
 
+    const hasProfile = Boolean(
+      (userData.profile && (userData.profile.businessName || (Array.isArray(userData.profile.stores) && userData.profile.stores.length > 0))) ||
+      (userData.store && userData.profileId && userData.profileId !== userData.id)
+    );
+
     const sessionData = {
       id: userData.id,
-      name: userData.name || 'User',
+      name: userData.name || (userData.email ? userData.email.split('@')[0] : 'User'),
       email: userData.email || '',
       role: role === 'customer' ? 'consumer' : role,
       status: userData.status || 'Active',
@@ -33,9 +38,10 @@ export function AuthProvider({ children }) {
       storeId: userData.storeId || (userData.profile?.stores?.[0]?.code) || '',
       currentStoreId: userData.currentStoreId || userData.storeId || (userData.profile?.stores?.[0]?.code) || '',
       accessibleStoreIds: userData.accessibleStoreIds || [],
-      profileId: userData.profileId || userData.id,
+      profileId: userData.profileId || '',
       profile: userData.profile || null,
-      retailerId: userData.retailerId || userData.profileId || userData.id,
+      retailerId: userData.retailerId || (role === 'retailer' ? (userData.profileId || userData.id || '') : ''),
+      hasProfile: hasProfile,
       initials: initials,
       plan: userData.plan || 'growth',
     };
@@ -51,6 +57,16 @@ export function AuthProvider({ children }) {
       const loggedUser = await retailerApi.login(email, password);
       const session = saveSession(loggedUser);
       return session;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (userData) => {
+    setLoading(true);
+    try {
+      const createdUser = await retailerApi.register(userData);
+      return createdUser;
     } finally {
       setLoading(false);
     }
@@ -88,7 +104,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, switchStore }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, switchStore, saveSession }}>
       {children}
     </AuthContext.Provider>
   );

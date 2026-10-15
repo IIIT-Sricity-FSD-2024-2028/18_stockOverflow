@@ -15,7 +15,7 @@ export default function BillersView() {
 
   const [form, setForm] = useState({
     name: '',
-    company: user?.store || "John's Retail Store",
+    company: user?.store || "Main Store",
     email: '',
     phone: '',
     country: 'India',
@@ -25,8 +25,10 @@ export default function BillersView() {
   const loadData = async () => {
     try {
       setLoading(true);
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
       const [billersRes, requestsRes] = await Promise.all([
-        retailerApi.getBillers().catch(() => []),
+        retailerApi.getBillers(retailerId, storeId).catch(() => []),
         retailerApi.getBillerRequests().catch(() => []),
       ]);
 
@@ -36,7 +38,7 @@ export default function BillersView() {
             id: b.id || idx + 1,
             code: b.code || `BI00${idx + 1}`,
             name: b.name || 'Biller Staff',
-            company: b.company || b.companyName || user?.store || "John's Retail Store",
+            company: b.company || b.companyName || user?.store || "Main Store",
             email: b.email || 'biller@example.com',
             phone: b.phone || '+91 98200 11223',
             country: b.country || 'India',
@@ -45,46 +47,17 @@ export default function BillersView() {
           }))
         );
       } else {
-        // Mock default billers
-        setBillers([
-          {
-            id: 1,
-            code: 'BI001',
-            name: 'Shaun Farley',
-            company: user?.store || "John's Retail Store",
-            email: 'shaun@example.com',
-            phone: '+91 98765 43210',
-            country: 'India',
-            status: 'active',
-            color: '#4CAF50',
-          },
-          {
-            id: 2,
-            code: 'BI002',
-            name: 'Jenny Ellis',
-            company: user?.store || "John's Retail Store",
-            email: 'jenny@example.com',
-            phone: '+91 98234 56789',
-            country: 'India',
-            status: 'active',
-            color: '#2196F3',
-          },
-        ]);
+        setBillers([]);
       }
 
       if (Array.isArray(requestsRes) && requestsRes.length > 0) {
-        setPendingRequests(requestsRes);
+        const pendingOnly = requestsRes.filter((r) => r.status === 'pending');
+        setPendingRequests(pendingOnly);
+        if (pendingOnly.length > 0) {
+          setShowPending(true);
+        }
       } else {
-        setPendingRequests([
-          {
-            id: 'REQ-01',
-            name: 'Rohan Verma',
-            company: 'Verma Quick Billing',
-            email: 'rohan.biller@example.com',
-            phone: '+91 99887 76655',
-            experience: '3 Years POS Operations',
-          },
-        ]);
+        setPendingRequests([]);
       }
     } catch (err) {
       console.error('Failed to load billers data:', err);
@@ -95,6 +68,22 @@ export default function BillersView() {
 
   useEffect(() => {
     loadData();
+    // Refresh requests every 4 seconds
+    const interval = setInterval(() => {
+      retailerApi
+        .getBillerRequests()
+        .then((res) => {
+          if (Array.isArray(res)) {
+            const pendingOnly = res.filter((r) => r.status === 'pending');
+            setPendingRequests(pendingOnly);
+            if (pendingOnly.length > 0) {
+              setShowPending(true);
+            }
+          }
+        })
+        .catch(() => {});
+    }, 4000);
+    return () => clearInterval(interval);
   }, [user]);
 
   const showToast = (msg) => {
@@ -107,39 +96,27 @@ export default function BillersView() {
     if (!req) return;
 
     try {
-      await retailerApi
-        .approveBillerRequest(reqId, {
-          retailerId: user?.retailerId,
-          storeId: user?.storeId || user?.currentStoreId,
-        })
-        .catch(() => {});
+      await retailerApi.approveBillerRequest(reqId, {
+        retailerId: user?.retailerId || user?.profileId || user?.id,
+        storeId: user?.storeId || user?.currentStoreId || 'STORE-01',
+      });
 
-      const newBiller = {
-        id: Date.now(),
-        code: `BI00${billers.length + 1}`,
-        name: req.name,
-        company: req.company || user?.store || "John's Retail Store",
-        email: req.email,
-        phone: req.phone,
-        country: 'India',
-        status: 'active',
-        color: '#2e6bc5',
-      };
-      setBillers([newBiller, ...billers]);
-      setPendingRequests(pendingRequests.filter((r) => r.id !== reqId));
       showToast(`Approved ${req.name} as verified store biller.`);
+      await loadData();
     } catch (err) {
       console.error('Failed to approve biller:', err);
+      showToast(err.message || 'Failed to approve biller.', 'err');
     }
   };
 
   const handleReject = async (reqId) => {
     try {
-      await retailerApi.rejectBillerRequest(reqId).catch(() => {});
-      setPendingRequests(pendingRequests.filter((r) => r.id !== reqId));
+      await retailerApi.rejectBillerRequest(reqId);
       showToast('Biller request rejected.');
+      await loadData();
     } catch (err) {
       console.error('Failed to reject biller:', err);
+      showToast(err.message || 'Failed to reject biller.', 'err');
     }
   };
 
@@ -147,7 +124,7 @@ export default function BillersView() {
     setEditingId(null);
     setForm({
       name: '',
-      company: user?.store || "John's Retail Store",
+      company: user?.store || "Main Store",
       email: '',
       phone: '',
       country: 'India',
@@ -173,8 +150,8 @@ export default function BillersView() {
     e.preventDefault();
     const payload = {
       ...form,
-      retailerId: user?.retailerId,
-      storeId: user?.storeId || user?.currentStoreId,
+      retailerId: user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '',
+      storeId: user?.storeId || user?.currentStoreId || '',
     };
 
     try {

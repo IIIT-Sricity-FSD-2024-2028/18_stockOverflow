@@ -8,15 +8,15 @@ export default function ProfileView() {
   const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: user?.name || 'John',
-    businessName: user?.profile?.businessName || user?.store || "John's Retail Store",
-    email: user?.email || 'john@gmail.com',
-    phone: user?.profile?.businessPhone || '+91 98765 11111',
-    address: user?.profile?.address || 'Main Commercial Market, Gujarat, India',
-    city: 'Ahmedabad',
-    retailerCode: user?.profile?.retailerCode || 'RET-101',
-    gstin: '24AAACJ1234F1Z5',
-    tier: 'Growth (₹799/mo)',
+    name: user?.name || (user?.email ? user.email.split('@')[0] : 'Retailer'),
+    businessName: user?.profile?.businessName || user?.store || (user?.name ? `${user.name}'s Store` : 'My Retail Store'),
+    email: user?.email || '',
+    phone: user?.profile?.businessPhone || user?.profile?.phone || '',
+    address: user?.profile?.address || '',
+    city: user?.profile?.city || '',
+    retailerCode: user?.profile?.retailerCode || user?.retailerId || 'RET-01',
+    gstin: user?.profile?.taxId || user?.profile?.gstin || '',
+    tier: user?.profile?.tier || 'Growth (₹799/mo)',
   });
 
   const handleSubmit = async (e) => {

@@ -94,7 +94,12 @@ export default function AddProductView({ onNavigate }) {
     async function loadInitialData() {
       try {
         // 1. Fetch real products to derive next SKU and existing categories/brands
-        const prodData = await request('/products').catch(() => []);
+        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+        const storeId = user?.currentStoreId || user?.storeId || '';
+        const scopedQuery = retailerId
+          ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
+          : '';
+        const prodData = await request(`/products${scopedQuery}`).catch(() => []);
         if (Array.isArray(prodData)) {
           // Compute auto-SKU: PT + max + 1
           let maxSkuNum = 0;
@@ -402,10 +407,10 @@ export default function AddProductView({ onNavigate }) {
         customFields: formData.customFields.filter((cf) => cf.key || cf.val),
         status: statusOverride || formData.status || 'active',
         visibility: formData.visibility || 'published',
-        retailerId: user?.id || user?.userId || 'cedc0064-0c9e-445e-9649-d344d6fe094d',
-        storeId: user?.storeId || undefined,
-        creator: user?.name || 'John',
-        createdBy: user?.name || 'John',
+        retailerId: user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '',
+        storeId: user?.storeId || user?.currentStoreId || undefined,
+        creator: user?.name || 'Retailer',
+        createdBy: user?.name || 'Retailer',
       };
 
       await request('/products', {

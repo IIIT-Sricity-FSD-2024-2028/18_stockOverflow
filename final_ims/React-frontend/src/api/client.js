@@ -45,9 +45,13 @@ export async function request(path, options = {}) {
     scopedPath = queryString ? `${basePath}?${queryString}` : basePath;
   }
 
-  // Inject retailerId & storeId to JSON payload if missing
+  // Inject retailerId & storeId to JSON payload if missing for tenant collections
   let body = options.body;
   if (
+    isCollection &&
+    !path.includes('/requests') &&
+    !path.includes('/login') &&
+    !path.includes('/setup') &&
     options.method &&
     ['POST', 'PUT', 'PATCH'].includes(options.method.toUpperCase()) &&
     typeof body === 'string' &&

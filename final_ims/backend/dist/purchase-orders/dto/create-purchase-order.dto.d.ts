@@ -1,5 +1,6 @@
 import { PurchaseOrderItem } from '../../common/database.types';
-declare class PurchaseOrderItemDto implements PurchaseOrderItem {
+export declare const PURCHASE_ORDER_STATUSES: readonly ["Draft", "Pending", "Pending Approval", "Confirmed", "In Delivery", "Delivered", "Cancelled", "Received", "Approved", "draft", "pending", "pending approval", "confirmed", "in delivery", "indelivery", "delivered", "cancelled", "received", "approved"];
+export declare class PurchaseOrderItemDto implements PurchaseOrderItem {
     id: string;
     name: string;
     emoji: string;
@@ -12,6 +13,7 @@ declare class PurchaseOrderItemDto implements PurchaseOrderItem {
     profitMargin?: number;
 }
 export declare class CreatePurchaseOrderDto {
+    id?: string;
     supplierId: string;
     supplierName?: string;
     retailerId?: string;
@@ -22,6 +24,9 @@ export declare class CreatePurchaseOrderDto {
     paymentTerms?: string;
     notes?: string;
     shippingAddress?: string;
+    subtotal?: number;
+    tax?: number;
+    total?: number;
+    units?: number;
     status?: string;
 }
-export {};

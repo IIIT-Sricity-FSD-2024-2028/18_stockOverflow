@@ -66,6 +66,7 @@ export interface ProductRecord {
   min: number;
   max: number;
   creator: string;
+  createdBy?: string;
   creatorImg: string;
   productImg: string;
   galleryImages: string[];

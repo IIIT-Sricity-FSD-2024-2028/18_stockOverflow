@@ -54,21 +54,34 @@ export default function DashboardView({ setActiveView, onNavigate }) {
   const loadAllData = async () => {
     try {
       setLoading(true);
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
+      const scopedQuery = retailerId
+        ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
+        : '';
+
       const [productsRes, customersRes, transactionsRes, poRes, returnsRes, suppliersRes, subRes, orderActRes] =
         await Promise.all([
-          request('/products').catch(() => []),
-          request('/customers').catch(() => []),
-          request('/transactions').catch(() => []),
-          request('/purchase-orders').catch(() => []),
-          request('/returns').catch(() => []),
+          request(`/products${scopedQuery}`).catch(() => []),
+          request(`/customers${scopedQuery}`).catch(() => []),
+          request(`/transactions${scopedQuery}`).catch(() => []),
+          request(`/purchase-orders${scopedQuery}`).catch(() => []),
+          request(`/returns${scopedQuery}`).catch(() => []),
           request('/suppliers').catch(() => []),
           request(`/platform-revenue/subscriptions/active?userId=${encodeURIComponent(user?.id || user?.userId || 'u-retailer-1')}`).catch(() => null),
-          request('/transactions/order-activity').catch(() => null),
+          request(`/transactions/order-activity${scopedQuery}`).catch(() => null),
         ]);
+
+      // Only count/show customers who have purchased something
+      const purchasedCustomers = (Array.isArray(customersRes) ? customersRes : []).filter(
+        (c) =>
+          (Number(c.totalOrders != null ? c.totalOrders : c.orders) || 0) > 0 ||
+          (Number(c.totalSpent != null ? c.totalSpent : c.spent) || 0) > 0,
+      );
 
       setData({
         products: Array.isArray(productsRes) ? productsRes : [],
-        customers: Array.isArray(customersRes) ? customersRes : [],
+        customers: purchasedCustomers,
         transactions: Array.isArray(transactionsRes) ? transactionsRes : [],
         purchaseOrders: Array.isArray(poRes) ? poRes : [],
         returns: Array.isArray(returnsRes) ? returnsRes : [],
@@ -409,14 +422,15 @@ export default function DashboardView({ setActiveView, onNavigate }) {
       const totalCustCount = data.customers.length;
       const firstTimeCustomers = data.customers.filter((c) => (Number(c.totalOrders) || 0) <= 1).length;
       const returnCustomers = Math.max(0, totalCustCount - firstTimeCustomers);
+      const hasCustomers = totalCustCount > 0;
 
       custDonutInstance.current = new Chart(ctx, {
         type: 'doughnut',
         data: {
           datasets: [
             {
-              data: totalCustCount > 0 ? [firstTimeCustomers, returnCustomers] : [0, 1],
-              backgroundColor: ['#5b67ca', '#22c55e'],
+              data: hasCustomers ? [firstTimeCustomers, returnCustomers] : [1],
+              backgroundColor: hasCustomers ? ['#5b67ca', '#22c55e'] : ['#e2e8f0'],
               borderWidth: 0,
               hoverOffset: 4,
             },
@@ -430,7 +444,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: (c) => ` ${c.raw} customer(s)`,
+                label: (c) => (hasCustomers ? ` ${c.raw} customer(s)` : ' No customers yet'),
               },
             },
           },
@@ -510,15 +524,16 @@ export default function DashboardView({ setActiveView, onNavigate }) {
       const catLabels = categoryEntries.map((e) => e.label);
       const catValues = categoryEntries.map((e) => e.value);
       const catColors = categoryEntries.map((e) => e.color);
+      const hasCategories = catValues.length > 0 && categoryTotal > 0;
 
       catDonutInstance.current = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: catLabels.length ? catLabels : ['Electronics', 'Food & Beverage', 'General'],
+          labels: hasCategories ? catLabels : ['No Categories'],
           datasets: [
             {
-              data: catValues.length ? catValues : [65, 33, 2],
-              backgroundColor: catColors.length ? catColors : ['#5b67ca', '#22c55e', '#f59e0b'],
+              data: hasCategories ? catValues : [1],
+              backgroundColor: hasCategories ? catColors : ['#e2e8f0'],
               borderWidth: 0,
               hoverOffset: 4,
             },
@@ -532,7 +547,10 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: (c) => ` ${c.label}: ${categoryTotal ? Math.round((c.raw / categoryTotal) * 100) : 0}% (${c.raw} pcs)`,
+                label: (c) =>
+                  hasCategories
+                    ? ` ${c.label}: ${categoryTotal ? Math.round((c.raw / categoryTotal) * 100) : 0}% (${c.raw} pcs)`
+                    : ' No category sales yet',
               },
             },
           },
@@ -725,7 +743,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             </span>
           </div>
           <div className="page-subtitle">
-            Welcome back, {user?.name || 'John'}! You have {pendingOrdersCount} pending orders today.
+            Welcome back, {user?.name || 'Retailer'}! You have {pendingOrdersCount} pending orders today.
           </div>
         </div>
         <div>
@@ -757,7 +775,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
       </div>
 
       {/* NOTIFICATION BAR */}
-      {notifVisible && (
+      {notifVisible && lowStockProducts.length > 0 && (
         <div className="notification-bar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="10" />
@@ -765,12 +783,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
           <span>
-            ⚠️{' '}
-            {lowStockProducts.length > 0 ? (
-              <span>{lowStockProducts.length} product(s) are running low on stock.</span>
-            ) : (
-              <span>No products are running low on stock.</span>
-            )}{' '}
+            ⚠️ <span>{lowStockProducts.length} product(s) are running low on stock.</span>{' '}
             <a
               onClick={() => setActiveView('reorder')}
               style={{ color: '#92400e', fontWeight: 700, textDecoration: 'underline', cursor: 'pointer' }}
@@ -802,7 +815,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           <div className="metric-info">
             <div className="metric-label">Total Sales</div>
             <div className="metric-value-row">
-              <div className="metric-value">{formatCurrency(totalSales || 13780)}</div>
+              <div className="metric-value">{formatCurrency(totalSales)}</div>
               <span className="badge up">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="18,15 12,9 6,15" />
@@ -823,7 +836,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           <div className="metric-info">
             <div className="metric-label">Sales Return</div>
             <div className="metric-value-row">
-              <div className="metric-value">{formatCurrency(totalSalesReturn || 1943)}</div>
+              <div className="metric-value">{formatCurrency(totalSalesReturn)}</div>
               <span className="badge down">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="6,9 12,15 18,9" />
@@ -846,7 +859,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           <div className="metric-info">
             <div className="metric-label">Total Purchase</div>
             <div className="metric-value-row">
-              <div className="metric-value">{formatCurrency(totalPurchase || 2204)}</div>
+              <div className="metric-value">{formatCurrency(totalPurchase)}</div>
               <span className="badge up">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="18,15 12,9 6,15" />
@@ -886,7 +899,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           <div className="metric-info">
             <div className="metric-label">2% Commission</div>
             <div className="metric-value-row">
-              <div className="metric-value">{formatCurrency(commission || 276)}</div>
+              <div className="metric-value">{formatCurrency(commission)}</div>
               <span className="badge up" style={{ background: '#ede9fe', color: '#6d28d9' }}>
                 2.0%
               </span>
@@ -902,7 +915,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
         <div className="fin-card">
           <div className="fin-card-top">
             <div>
-              <div className="fin-card-val">{formatCurrency(netProfit || 9634)}</div>
+              <div className="fin-card-val">{formatCurrency(netProfit)}</div>
               <div className="fin-card-label">Net Profit</div>
             </div>
             <div className="fin-card-icon" style={{ background: '#dcfce7' }}>
@@ -946,7 +959,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
         <div className="fin-card">
           <div className="fin-card-top">
             <div>
-              <div className="fin-card-val">{formatCurrency(totalExpenses || 2204)}</div>
+              <div className="fin-card-val">{formatCurrency(totalExpenses)}</div>
               <div className="fin-card-label">Total Expenses</div>
             </div>
             <div className="fin-card-icon" style={{ background: '#fef3c7' }}>
@@ -1013,14 +1026,14 @@ export default function DashboardView({ setActiveView, onNavigate }) {
               <div className="legend-item">
                 <div className="legend-dot" style={{ background: '#5b67ca' }}></div>
                 <div>
-                  <div className="legend-val">{formatCurrency(totalPurchase || 2204)}</div>
+                  <div className="legend-val">{formatCurrency(totalPurchase)}</div>
                   <div className="legend-lbl">Total Purchase</div>
                 </div>
               </div>
               <div className="legend-item">
                 <div className="legend-dot" style={{ background: '#22c55e' }}></div>
                 <div>
-                  <div className="legend-val">{formatCurrency(totalSales || 13780)}</div>
+                  <div className="legend-val">{formatCurrency(totalSales)}</div>
                   <div className="legend-lbl">Total Sales</div>
                 </div>
               </div>
@@ -1050,7 +1063,11 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                   <path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" />
                 </svg>
               </div>
-              <div className="overall-stat-val">{data.suppliers.length || 13}</div>
+              <div className="overall-stat-val">
+                {Array.isArray(user?.profile?.suppliers) && user.profile.suppliers.length > 0
+                  ? user.profile.suppliers.length
+                  : data.suppliers.length}
+              </div>
               <div className="overall-stat-lbl">Suppliers</div>
             </div>
 
@@ -1061,7 +1078,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                   <circle cx="9" cy="7" r="4" />
                 </svg>
               </div>
-              <div className="overall-stat-val">{data.customers.length || 1}</div>
+              <div className="overall-stat-val">{data.customers.length}</div>
               <div className="overall-stat-lbl">Customers</div>
             </div>
 
@@ -1071,7 +1088,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                   <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              <div className="overall-stat-val">{data.transactions.length || 6}</div>
+              <div className="overall-stat-val">{data.transactions.length}</div>
               <div className="overall-stat-lbl">Orders</div>
             </div>
           </div>
@@ -1098,7 +1115,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             <div className="donut-wrap" style={{ width: '140px', height: '140px' }}>
               <canvas ref={custDonutRef}></canvas>
               <div className="donut-center">
-                <div className="donut-center-val">{data.customers.length || 1}</div>
+                <div className="donut-center-val">{data.customers.length}</div>
                 <div className="donut-center-lbl">Total</div>
               </div>
             </div>
@@ -1247,7 +1264,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                   <div className="sale-info">
                     <div className="sale-name">{sale.customer || 'Customer'}</div>
                     <div className="sale-sub">
-                      {sale.store || "John's Retail Store"}
+                      {sale.store || user?.store || "Main Store"}
                       <span className="meta-dot"></span>
                       {formatCurrency(sale.finalTotal)}
                     </div>
@@ -1302,14 +1319,14 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             <div className="rev-exp-stats">
               <div>
                 <div className="rev-stat-badge">
-                  <div className="rev-stat-val">{formatCurrency(totalSales || 13780)}</div>
+                  <div className="rev-stat-val">{formatCurrency(totalSales)}</div>
                   <span className="badge up">+0.0%</span>
                 </div>
                 <div className="rev-stat-lbl">Total Revenue</div>
               </div>
               <div>
                 <div className="rev-stat-badge">
-                  <div className="rev-stat-val">{formatCurrency(totalExpenses || 2204)}</div>
+                  <div className="rev-stat-val">{formatCurrency(totalExpenses)}</div>
                   <span className="badge down">-0.0%</span>
                 </div>
                 <div className="rev-stat-lbl">Total Expense</div>

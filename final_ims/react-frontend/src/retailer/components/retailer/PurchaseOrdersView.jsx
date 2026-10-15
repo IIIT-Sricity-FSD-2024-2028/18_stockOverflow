@@ -6,14 +6,14 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
   const { user } = useAuth();
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplierId, setSelectedSupplierId] = useState('');
-  const [targetStore, setTargetStore] = useState(user?.store || "John's Retail Store (Main)");
+  const [targetStore, setTargetStore] = useState(user?.store ? `${user.store} (Main)` : "Main Store (Main)");
   const [deliveryDate, setDeliveryDate] = useState(() => {
     const d = new Date();
     d.setDate(d.getDate() + 7);
     return d.toISOString().slice(0, 10);
   });
   const [paymentTerms, setPaymentTerms] = useState('Net 30');
-  const [shippingAddress, setShippingAddress] = useState("John's Retail Store, Main Hub, Mumbai");
+  const [shippingAddress, setShippingAddress] = useState(user?.profile?.address || (user?.store ? `${user.store}, Central Market` : "Central Market Hub"));
   const [priority, setPriority] = useState('Normal');
   const [notes, setNotes] = useState('');
 
@@ -38,9 +38,11 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
   const loadData = async () => {
     try {
       setLoading(true);
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
       const [supRes, poRes] = await Promise.all([
         retailerApi.getSuppliers().catch(() => []),
-        retailerApi.getPurchaseOrders().catch(() => []),
+        retailerApi.getPurchaseOrders(retailerId, storeId).catch(() => []),
       ]);
 
       const rawSuppliers = Array.isArray(supRes) ? supRes : [];
@@ -91,46 +93,11 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
             paymentTerms: po.paymentTerms || 'Net 30',
             status: po.status || 'Delivered',
             notes: po.notes || '',
-            storeId: po.storeId || user?.store || "John's Retail Store",
+            storeId: po.storeId || user?.store || "Main Store",
           }))
         );
       } else {
-        setOrdersList([
-          {
-            id: 'PO-2026-001',
-            supplier: 'Apex Footwear Co.',
-            supplierId: 'SUP-001',
-            date: '15 Sep 2026',
-            deliveryDate: '22 Sep 2026',
-            items: [
-              { name: 'Nike Air Max 270', sku: 'NIKE-AM-01', emoji: '👟', qty: 15, price: 4200 },
-              { name: 'Adidas Ultraboost Light', sku: 'ADID-UB-02', emoji: '👟', qty: 10, price: 5600 },
-            ],
-            itemsSummary: 'Nike Air Max 270 (+1 more)',
-            total: 124950,
-            paymentTerms: 'Net 30',
-            status: 'Delivered',
-            notes: 'Quarterly shoe catalogue replenishment',
-            storeId: "John's Retail Store",
-          },
-          {
-            id: 'PO-2026-002',
-            supplier: 'Acme Electronics Ltd',
-            supplierId: 'SUP-002',
-            date: '18 Sep 2026',
-            deliveryDate: '26 Sep 2026',
-            items: [
-              { name: 'Beats Studio Pro', sku: 'BEAT-SP-05', emoji: '🎧', qty: 5, price: 9200 },
-              { name: 'Apple Watch Series 9', sku: 'APPL-W9-04', emoji: '⌚', qty: 3, price: 28500 },
-            ],
-            itemsSummary: 'Beats Studio Pro (+1 more)',
-            total: 138075,
-            paymentTerms: 'Advance Payment',
-            status: 'In Delivery',
-            notes: 'Express air shipping requested',
-            storeId: "John's Retail Store",
-          },
-        ]);
+        setOrdersList([]);
       }
 
       // Check if products were returned from po-products
@@ -241,9 +208,9 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
       id: poNumber,
       supplierId: selectedSupplierId || sup?.id || 'SUP-001',
       supplierName: sup?.name || 'Selected Supplier',
-      retailerId: user?.retailerId,
+      retailerId: user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '',
       retailerName: user?.name || 'Retailer Store',
-      storeId: user?.storeId || user?.currentStoreId || targetStore,
+      storeId: user?.storeId || user?.currentStoreId || targetStore || '',
       deliveryDate: deliveryDate,
       paymentTerms: paymentTerms,
       shippingAddress: shippingAddress,
@@ -514,7 +481,7 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
                     onChange={(e) => setTargetStore(e.target.value)}
                     style={{ width: '100%', padding: '9px 12px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '13px', outline: 'none', background: '#fff', boxSizing: 'border-box' }}
                   >
-                    <option value={user?.store || "John's Retail Store"}>{user?.store || "John's Retail Store"} (Main)</option>
+                    <option value={user?.store || "Main Store"}>{user?.store || "Main Store"} (Main)</option>
                     <option value="Lavish Warehouse">Lavish Warehouse</option>
                     <option value="Quaint Warehouse">Quaint Warehouse</option>
                     <option value="North Zone Warehouse">North Zone Warehouse</option>
@@ -962,6 +929,8 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
                 filteredHistory.map((po) => {
                   const statusColors = {
                     delivered: { bg: '#dcfce7', text: '#15803d' },
+                    approved: { bg: '#dcfce7', text: '#15803d' },
+                    confirmed: { bg: '#dcfce7', text: '#15803d' },
                     'in delivery': { bg: '#e0e7ff', text: '#3730a3' },
                     pending: { bg: '#fef3c7', text: '#92400e' },
                     cancelled: { bg: '#fee2e2', text: '#b91c1c' },

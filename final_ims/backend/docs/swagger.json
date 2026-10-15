@@ -6649,6 +6649,9 @@
           "createdAt": {
             "type": "string"
           },
+          "createdBy": {
+            "type": "string"
+          },
           "creator": {
             "type": "string"
           },
@@ -8292,6 +8295,9 @@
           "cost": {
             "type": "number"
           },
+          "createdBy": {
+            "type": "string"
+          },
           "creator": {
             "type": "string"
           },
@@ -8561,6 +8567,9 @@
           "cost": {
             "type": "number"
           },
+          "createdBy": {
+            "type": "string"
+          },
           "creator": {
             "type": "string"
           },
@@ -8779,19 +8788,19 @@
             "minLength": 1,
             "type": "string"
           },
+          "id": {
+            "type": "string"
+          },
           "items": {
             "items": {
               "properties": {
                 "cat": {
-                  "minLength": 1,
                   "type": "string"
                 },
                 "emoji": {
-                  "minLength": 1,
                   "type": "string"
                 },
                 "id": {
-                  "minLength": 1,
                   "type": "string"
                 },
                 "name": {
@@ -8800,7 +8809,7 @@
                 },
                 "price": {
                   "minimum": 0,
-                  "type": "integer"
+                  "type": "number"
                 },
                 "profitMargin": {
                   "minimum": 0,
@@ -8811,7 +8820,6 @@
                   "type": "integer"
                 },
                 "sku": {
-                  "minLength": 1,
                   "type": "string"
                 },
                 "stock": {
@@ -8823,15 +8831,9 @@
                 }
               },
               "required": [
-                "cat",
-                "emoji",
-                "id",
                 "name",
                 "price",
-                "qty",
-                "sku",
-                "stock",
-                "stockStatus"
+                "qty"
               ],
               "type": "object"
             },
@@ -8858,12 +8860,24 @@
           "storeId": {
             "type": "string"
           },
+          "subtotal": {
+            "type": "number"
+          },
           "supplierId": {
             "minLength": 1,
             "type": "string"
           },
           "supplierName": {
             "type": "string"
+          },
+          "tax": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "units": {
+            "type": "integer"
           }
         },
         "required": [
@@ -8879,19 +8893,19 @@
             "minLength": 1,
             "type": "string"
           },
+          "id": {
+            "type": "string"
+          },
           "items": {
             "items": {
               "properties": {
                 "cat": {
-                  "minLength": 1,
                   "type": "string"
                 },
                 "emoji": {
-                  "minLength": 1,
                   "type": "string"
                 },
                 "id": {
-                  "minLength": 1,
                   "type": "string"
                 },
                 "name": {
@@ -8900,7 +8914,7 @@
                 },
                 "price": {
                   "minimum": 0,
-                  "type": "integer"
+                  "type": "number"
                 },
                 "profitMargin": {
                   "minimum": 0,
@@ -8911,7 +8925,6 @@
                   "type": "integer"
                 },
                 "sku": {
-                  "minLength": 1,
                   "type": "string"
                 },
                 "stock": {
@@ -8923,15 +8936,9 @@
                 }
               },
               "required": [
-                "cat",
-                "emoji",
-                "id",
                 "name",
                 "price",
-                "qty",
-                "sku",
-                "stock",
-                "stockStatus"
+                "qty"
               ],
               "type": "object"
             },
@@ -8958,12 +8965,24 @@
           "storeId": {
             "type": "string"
           },
+          "subtotal": {
+            "type": "number"
+          },
           "supplierId": {
             "minLength": 1,
             "type": "string"
           },
           "supplierName": {
             "type": "string"
+          },
+          "tax": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "units": {
+            "type": "integer"
           }
         },
         "type": "object"

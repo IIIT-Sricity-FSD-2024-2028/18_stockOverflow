@@ -51,8 +51,9 @@ export default function SuppliersView({ onViewPerformance }) {
   const filtered = suppliers.filter((s) => {
     const q = search.toLowerCase();
     const name = (s.name || s.companyName || s.business?.companyName || '').toLowerCase();
-    const email = (s.email || s.businessEmail || s.business?.businessEmail || '').toLowerCase();
-    return name.includes(q) || email.includes(q);
+    const email = (s.email || s.businessEmail || s.business?.businessEmail || s.primaryContact?.directEmail || '').toLowerCase();
+    const cat = (s.category || s.primaryCategory || s.business?.primaryCategory || s.products?.[0]?.category || '').toLowerCase();
+    return name.includes(q) || email.includes(q) || cat.includes(q);
   });
 
   return (
@@ -140,10 +141,12 @@ export default function SuppliersView({ onViewPerformance }) {
             <tbody>
               {filtered.map((s) => {
                 const name = s.name || s.companyName || s.business?.companyName || 'Supplier';
-                const email = s.email || s.businessEmail || s.business?.businessEmail || '-';
-                const phone = s.phone || s.phoneNumber || s.business?.phoneNumber || '-';
-                const cat = s.category || 'General';
-                const rating = s.rating || '4.8';
+                const email = s.email || s.businessEmail || s.business?.businessEmail || s.primaryContact?.directEmail || '-';
+                const phone = s.phone || s.phoneNumber || s.business?.phoneNumber || s.primaryContact?.mobileNumber || '-';
+                const cat = s.category || s.primaryCategory || s.business?.primaryCategory || s.products?.[0]?.category || s.business?.businessType || 'General';
+                const rating = s.rating || s.avgRating || '4.8';
+                const rawStatus = s.profileStatus || s.validationStatus || s.status || 'Active';
+                const status = String(rawStatus).charAt(0).toUpperCase() + String(rawStatus).slice(1).toLowerCase();
 
                 return (
                   <tr key={s.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
@@ -175,7 +178,7 @@ export default function SuppliersView({ onViewPerformance }) {
                     </td>
                     <td style={{ padding: '12px 15px', verticalAlign: 'middle' }}>
                       <span className="status-pill" style={{ display: 'inline-flex', padding: '2px 9px', borderRadius: '20px', fontSize: '11px', fontWeight: 600, background: '#dcfce7', color: '#15803d' }}>
-                        Active
+                        {status}
                       </span>
                     </td>
                     <td style={{ padding: '12px 15px', verticalAlign: 'middle', textAlign: 'center' }}>

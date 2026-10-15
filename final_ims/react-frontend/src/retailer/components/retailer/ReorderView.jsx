@@ -11,7 +11,9 @@ export default function ReorderView({ onNavigate }) {
     async function load() {
       try {
         setLoading(true);
-        const data = await retailerApi.getProducts(user?.retailerId);
+        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+        const storeId = user?.currentStoreId || user?.storeId || '';
+        const data = await retailerApi.getProducts(retailerId, storeId);
         if (Array.isArray(data)) {
           const mapped = data.map((p) => ({
             id: p.id,

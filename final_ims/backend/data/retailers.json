@@ -1,5 +1,180 @@
 [
   {
+    "business": {
+      "businessName": "kim2's Retail Store",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "kim2@gmail.com",
+      "retailerCode": "RET-783",
+      "currency": "INR",
+      "fiscalYear": "April",
+      "primaryIndustry": "Mixed / General"
+    },
+    "primaryContact": {
+      "fullName": "kim2",
+      "designation": "Store Owner",
+      "directEmail": "kim2@gmail.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "kim2's Main Store",
+        "code": "STORE-01",
+        "contactPerson": "kim2",
+        "phone": "+91 98765 43210",
+        "address": "Central Market, Main Street",
+        "type": "Retail Store",
+        "notes": "Primary flagship location",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "17fb78d6-9f47-4f04-9724-c41e65838c14",
+    "status": "completed",
+    "createdAt": "2026-10-15T17:49:30.790Z",
+    "updatedAt": "2026-10-15T17:49:30.790Z"
+  },
+  {
+    "business": {
+      "businessName": "kim2's Retail Store",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "kim2@gmail.com",
+      "retailerCode": "RET-143",
+      "currency": "INR",
+      "fiscalYear": "April",
+      "primaryIndustry": "Mixed / General"
+    },
+    "primaryContact": {
+      "fullName": "kim2",
+      "designation": "Store Owner",
+      "directEmail": "kim2@gmail.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "kim2's Main Store",
+        "code": "STORE-01",
+        "contactPerson": "kim2",
+        "phone": "+91 98765 43210",
+        "address": "Central Market, Main Street",
+        "type": "Retail Store",
+        "notes": "Primary flagship location",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "fea65540-5e73-4805-b5b8-e0b94f2c05e7",
+    "status": "completed",
+    "createdAt": "2026-10-15T17:31:52.152Z",
+    "updatedAt": "2026-10-15T17:31:52.152Z"
+  },
+  {
+    "business": {
+      "businessName": "Sara Martinez's Retail Store",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "sara@martinezstore.com",
+      "retailerCode": "RET-788",
+      "currency": "INR",
+      "fiscalYear": "April",
+      "primaryIndustry": "Mixed / General"
+    },
+    "primaryContact": {
+      "fullName": "Sara Martinez",
+      "designation": "Store Owner",
+      "directEmail": "sara@martinezstore.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "Sara Martinez's Main Store",
+        "code": "STORE-01",
+        "contactPerson": "Sara Martinez",
+        "phone": "+91 98765 43210",
+        "address": "Central Market, Main Street",
+        "type": "Retail Store",
+        "notes": "Primary flagship location",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "4574b989-5988-4db2-9061-8bfcc48647cf",
+    "status": "completed",
+    "createdAt": "2026-10-15T16:32:21.796Z",
+    "updatedAt": "2026-10-15T16:32:21.796Z"
+  },
+  {
+    "business": {
+      "businessName": "Kim's Retail Store",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "kim@gmail.com",
+      "retailerCode": "RET-677",
+      "currency": "INR",
+      "fiscalYear": "April",
+      "primaryIndustry": "Mixed / General"
+    },
+    "primaryContact": {
+      "fullName": "Kim",
+      "designation": "Store Owner",
+      "directEmail": "kim@gmail.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "Kim's Main Store",
+        "code": "STORE-01",
+        "contactPerson": "Kim",
+        "phone": "+91 98765 43210",
+        "address": "Central Market, Main Street",
+        "type": "Retail Store",
+        "notes": "Primary flagship location",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "a232cc7b-d101-4b87-9c1b-9e724690c299",
+    "status": "completed",
+    "createdAt": "2026-10-15T16:30:45.682Z",
+    "updatedAt": "2026-10-15T16:30:45.682Z"
+  },
+  {
+    "business": {
+      "businessName": "kim1's Retail Store",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "kim1@gmail.com",
+      "retailerCode": "RET-551",
+      "currency": "INR",
+      "fiscalYear": "April",
+      "primaryIndustry": "Mixed / General"
+    },
+    "primaryContact": {
+      "fullName": "kim1",
+      "designation": "Store Owner",
+      "directEmail": "kim1@gmail.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "kim1's Main Store",
+        "code": "STORE-01",
+        "contactPerson": "kim1",
+        "phone": "+91 98765 43210",
+        "address": "Central Market, Main Street",
+        "type": "Retail Store",
+        "notes": "Primary flagship location",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
+    "status": "completed",
+    "createdAt": "2026-10-15T16:30:22.560Z",
+    "updatedAt": "2026-10-15T16:30:22.560Z"
+  },
+  {
     "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
     "profileStatus": "active",
     "business": {

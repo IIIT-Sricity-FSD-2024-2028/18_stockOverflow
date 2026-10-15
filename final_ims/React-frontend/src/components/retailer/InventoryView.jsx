@@ -18,7 +18,9 @@ export default function InventoryView() {
     async function load() {
       try {
         setLoading(true);
-        const data = await retailerApi.getProducts(user?.retailerId);
+        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+        const storeId = user?.currentStoreId || user?.storeId || '';
+        const data = await retailerApi.getProducts(retailerId, storeId);
         setProducts(Array.isArray(data) ? data : []);
       } catch (e) {
         console.error('Failed to load products for inventory overview:', e);
@@ -48,28 +50,25 @@ export default function InventoryView() {
   const lowStockUnits = lowStockProducts.reduce((acc, p) => acc + (Number(p.qty || p.quantity) || 0), 0);
   const outStockUnits = outStockProducts.reduce((acc, p) => acc + (Number(p.qty || p.quantity) || 0), 0);
 
-  const inStockPct = totalUnits > 0 ? Math.round((inStockUnits / totalUnits) * 100) : 100;
+  const inStockPct = totalUnits > 0 ? Math.round((inStockUnits / totalUnits) * 100) : 0;
   const lowStockPct = totalUnits > 0 ? Math.round((lowStockUnits / totalUnits) * 100) : 0;
   const outStockPct = totalUnits > 0 ? Math.max(0, 100 - inStockPct - lowStockPct) : 0;
 
-  const inStockRate = totalSKUs > 0 ? Math.round(((totalSKUs - outStockProducts.length) / totalSKUs) * 100) : 100;
+  const inStockRate = totalSKUs > 0 ? Math.round(((totalSKUs - outStockProducts.length) / totalSKUs) * 100) : 0;
 
   useEffect(() => {
     if (donutChartRef.current) {
       if (donutChartInstance.current) donutChartInstance.current.destroy();
       const ctx = donutChartRef.current.getContext('2d');
+      const hasUnits = totalUnits > 0;
       donutChartInstance.current = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['In Stock', 'Low Stock', 'Out of Stock'],
+          labels: hasUnits ? ['In Stock', 'Low Stock', 'Out of Stock'] : ['No Stock'],
           datasets: [
             {
-              data: [
-                inStockUnits || (totalUnits === 0 ? 1 : 0),
-                lowStockUnits,
-                outStockUnits,
-              ],
-              backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
+              data: hasUnits ? [inStockUnits, lowStockUnits, outStockUnits] : [1],
+              backgroundColor: hasUnits ? ['#22c55e', '#f59e0b', '#ef4444'] : ['#e2e8f0'],
               borderWidth: 0,
             },
           ],

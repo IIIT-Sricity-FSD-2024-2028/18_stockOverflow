@@ -28,34 +28,40 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
     returns: 'Purchase Return',
     'subscription-plan': 'Subscription Plans & Billing',
     profile: 'Retailer Profile',
+    'retailer-wizard': 'Retailer Setup Wizard',
   };
 
   const stores = Array.isArray(user?.profile?.stores) && user.profile.stores.length > 0
     ? user.profile.stores.map((s, idx) => ({
-        id: s.code || s.storeId || s.id || `store-${idx + 1}`,
+        id: s.code || s.storeId || s.id || `STORE-0${idx + 1}`,
         name: s.name || `Store ${idx + 1}`,
       }))
-    : [{ id: user?.storeId || 'JOHN-S-STORE', name: user?.store || "John's Retail Store" }];
+    : user?.store
+      ? [{ id: user.storeId || 'STORE-01', name: user.store }]
+      : [{ id: 'MAIN-STORE', name: user?.profile?.businessName ? `${user.profile.businessName} (Main)` : 'Main Store' }];
 
   const currentStoreId = user?.currentStoreId || user?.storeId || stores[0]?.id;
-  const storeName = stores.find((s) => s.id === currentStoreId)?.name || user?.store || "John's Retail Store";
+  const storeName = stores.find((s) => s.id === currentStoreId)?.name || user?.store || stores[0]?.name || 'My Store';
 
   const initials = user?.name
     ? user.name
         .split(' ')
+        .filter(Boolean)
         .map((n) => n[0])
         .join('')
         .slice(0, 2)
         .toUpperCase()
-    : 'JO';
+    : 'SO';
 
   // Load real notifications from backend products & returns
   useEffect(() => {
     async function loadNotifications() {
       try {
+        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+        const storeId = user?.currentStoreId || user?.storeId || '';
         const [returnsRes, productsRes] = await Promise.all([
-          retailerApi.getReturns().catch(() => []),
-          retailerApi.getProducts().catch(() => []),
+          retailerApi.getReturns(retailerId, storeId).catch(() => []),
+          retailerApi.getProducts(retailerId, storeId).catch(() => []),
         ]);
 
         const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
@@ -455,6 +461,20 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                   </svg>
                 </span>
                 <span className="sb-item-label">Retailer Profile</span>
+              </button>
+
+              <button
+                className={`sb-item ${activeView === 'retailer-wizard' ? 'active' : ''}`}
+                onClick={() => setActiveView('retailer-wizard')}
+              >
+                <span className="sb-icon">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+                    <rect x="2" y="2" width="12" height="12" rx="2" />
+                    <line x1="2" y1="6" x2="14" y2="6" />
+                    <line x1="6" y1="10" x2="10" y2="10" />
+                  </svg>
+                </span>
+                <span className="sb-item-label">Setup Wizard</span>
               </button>
 
               <button className="sb-item" onClick={logout}>

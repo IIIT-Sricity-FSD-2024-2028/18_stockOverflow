@@ -8,6 +8,12 @@ export const retailerApi = {
       body: JSON.stringify({ email, password }),
     }),
 
+  register: (userData) =>
+    request('/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    }),
+
   getCurrentUser: (id) => request(`/users/${id}`),
 
   updateUser: (id, data) =>
@@ -110,10 +116,19 @@ export const retailerApi = {
     }),
 
   // Stores
-  getStores: () => request('/stores'),
+  getStores: (retailerId) => {
+    const qs = retailerId ? `?retailerId=${encodeURIComponent(retailerId)}` : '';
+    return request(`/stores${qs}`);
+  },
 
   // Billers
-  getBillers: () => request('/billers'),
+  getBillers: (retailerId, storeId) => {
+    const params = new URLSearchParams();
+    if (retailerId) params.set('retailerId', retailerId);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString();
+    return request(`/billers${qs ? `?${qs}` : ''}`);
+  },
   createBiller: (data) =>
     request('/billers', {
       method: 'POST',
@@ -130,7 +145,13 @@ export const retailerApi = {
     }),
 
   // Customers
-  getCustomers: () => request('/customers'),
+  getCustomers: (retailerId, storeId) => {
+    const params = new URLSearchParams();
+    if (retailerId) params.set('retailerId', retailerId);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString();
+    return request(`/customers${qs ? `?${qs}` : ''}`);
+  },
   createCustomer: (data) =>
     request('/customers', {
       method: 'POST',
@@ -147,7 +168,13 @@ export const retailerApi = {
     }),
 
   // Purchase Orders
-  getPurchaseOrders: () => request('/purchase-orders'),
+  getPurchaseOrders: (retailerId, storeId) => {
+    const params = new URLSearchParams();
+    if (retailerId) params.set('retailerId', retailerId);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString();
+    return request(`/purchase-orders${qs ? `?${qs}` : ''}`);
+  },
   createPurchaseOrder: (data) =>
     request('/purchase-orders', {
       method: 'POST',
@@ -155,7 +182,13 @@ export const retailerApi = {
     }),
 
   // Returns
-  getReturns: () => request('/returns'),
+  getReturns: (retailerId, storeId) => {
+    const params = new URLSearchParams();
+    if (retailerId) params.set('retailerId', retailerId);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString();
+    return request(`/returns${qs ? `?${qs}` : ''}`);
+  },
   createReturn: (data) =>
     request('/returns', {
       method: 'POST',
@@ -168,7 +201,13 @@ export const retailerApi = {
     }),
 
   // Stock Adjustments
-  getStockAdjustments: () => request('/stock-adjustments'),
+  getStockAdjustments: (retailerId, storeId) => {
+    const params = new URLSearchParams();
+    if (retailerId) params.set('retailerId', retailerId);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString();
+    return request(`/stock-adjustments${qs ? `?${qs}` : ''}`);
+  },
   createStockAdjustment: (data) =>
     request('/stock-adjustments', {
       method: 'POST',
@@ -180,14 +219,49 @@ export const retailerApi = {
     }),
 
   // Transactions
-  getTransactions: () => request('/transactions'),
-  getPurchasedProducts: () => request('/transactions/purchased-products'),
+  getTransactions: (retailerId, storeId) => {
+    const params = new URLSearchParams();
+    if (retailerId) params.set('retailerId', retailerId);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString();
+    return request(`/transactions${qs ? `?${qs}` : ''}`);
+  },
+  getPurchasedProducts: (retailerId, storeId) => {
+    const params = new URLSearchParams();
+    if (retailerId) params.set('retailerId', retailerId);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString();
+    return request(`/transactions/purchased-products${qs ? `?${qs}` : ''}`);
+  },
 
-  // Biller Request (from Landing Page)
+  // Biller Request (from Landing Page / Biller Portal)
   createBillerRequest: (data) =>
     request('/billers/requests', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  getBillerRequests: () => request('/billers/requests'),
+  approveBillerRequest: (id, scope) =>
+    request(`/billers/requests/${id}/approve`, {
+      method: 'PUT',
+      body: JSON.stringify(scope || {}),
+    }),
+  rejectBillerRequest: (id) =>
+    request(`/billers/requests/${id}/reject`, {
+      method: 'PUT',
+    }),
+
+  // Retailer Setup Wizard & Profile
+  setupRetailer: (data) =>
+    request('/retailers/setup', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateRetailer: (id, data) =>
+    request(`/retailers/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  getRetailerById: (id) => request(`/retailers/${id}`),
 };
 

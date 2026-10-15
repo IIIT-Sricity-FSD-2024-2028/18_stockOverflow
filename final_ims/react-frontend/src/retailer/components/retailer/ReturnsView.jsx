@@ -28,7 +28,9 @@ export default function ReturnsView() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const data = await retailerApi.getReturns().catch(() => []);
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
+      const data = await retailerApi.getReturns(retailerId, storeId).catch(() => []);
       if (Array.isArray(data) && data.length > 0) {
         const mapped = data.map((r) => ({
           id: r.id,
@@ -47,52 +49,8 @@ export default function ReturnsView() {
         setReturns(mapped);
         if (!selectedReturn && mapped.length > 0) setSelectedReturn(mapped[0]);
       } else {
-        const defaultReturns = [
-          {
-            id: 'RET-001',
-            orderId: 'ORD-8921',
-            party: 'Rajesh Sharma',
-            email: 'rajesh.s@example.com',
-            productName: 'Beats Studio Pro Headphones',
-            sku: 'PT002',
-            qty: 1,
-            amount: 8999,
-            reason: 'Defective audio channel',
-            method: 'Original Payment',
-            status: 'Pending',
-            date: '19 Sep 2026',
-          },
-          {
-            id: 'RET-002',
-            orderId: 'ORD-8714',
-            party: 'Sneha Patel',
-            email: 'sneha.p@example.com',
-            productName: 'Nike Air Jordan 1 Low',
-            sku: 'PT003',
-            qty: 1,
-            amount: 7499,
-            reason: 'Incorrect size delivered',
-            method: 'Store Credit',
-            status: 'Approved',
-            date: '17 Sep 2026',
-          },
-          {
-            id: 'RET-003',
-            orderId: 'PO-2026-012',
-            party: 'Acme Electronics Ltd',
-            email: 'returns@acme.com',
-            productName: 'Echo Dot 5th Gen (Bulk)',
-            sku: 'PT005',
-            qty: 5,
-            amount: 14500,
-            reason: 'Vendor transit damage',
-            method: 'Bank Transfer',
-            status: 'Completed',
-            date: '14 Sep 2026',
-          },
-        ];
-        setReturns(defaultReturns);
-        setSelectedReturn(defaultReturns[0]);
+        setReturns([]);
+        setSelectedReturn(null);
       }
     } catch (err) {
       console.error('Failed to load returns:', err);
@@ -113,8 +71,8 @@ export default function ReturnsView() {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     const payload = {
-      retailerId: user?.retailerId,
-      storeId: user?.storeId || user?.currentStoreId,
+      retailerId: user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '',
+      storeId: user?.storeId || user?.currentStoreId || '',
       orderId: form.orderId,
       customer: form.party,
       email: form.email,
@@ -332,7 +290,14 @@ export default function ReturnsView() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((r) => {
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" style={{ textAlign: 'center', padding: '30px', color: '#9ca3af' }}>
+                      No return claims found.
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((r) => {
                   const isSel = selectedReturn?.id === r.id;
                   const statusColors = {
                     pending: { bg: '#fef3c7', text: '#92400e' },
@@ -393,7 +358,8 @@ export default function ReturnsView() {
                       </td>
                     </tr>
                   );
-                })}
+                })
+              )}
               </tbody>
             </table>
           </div>

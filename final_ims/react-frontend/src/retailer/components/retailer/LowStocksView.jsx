@@ -11,7 +11,12 @@ export default function LowStocksView({ onNavigate }) {
   const loadData = async () => {
     try {
       setLoading(true);
-      const data = await request('/products');
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
+      const scopedQuery = retailerId
+        ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
+        : '';
+      const data = await request(`/products${scopedQuery}`);
       setProducts(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error('Failed to load low stocks:', e);

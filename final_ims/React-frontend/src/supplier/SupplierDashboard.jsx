@@ -5,7 +5,7 @@ import {
   getSupplier, getSupplierByEmail, updateSupplier,
   fetchRetailers, fetchPurchaseOrders, updatePurchaseOrder,
   fetchSupplierDocuments, deleteSupplierDocument, uploadSupplierDocument,
-  getApiBase
+  getApiBase, supplierRequest
 } from '../api/supplierApi';
 
 // ── COLOR & STATUS CONSTANTS ──
@@ -13,6 +13,7 @@ const COLORS = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#db2777'
 
 const STATUS_MAP = {
   pending: { label: 'Pending', badgeClass: 'badge-pending', dotColor: '#f59e0b' },
+  approved: { label: 'Approved', badgeClass: 'badge-delivered', dotColor: '#10b981' },
   confirmed: { label: 'Confirmed', badgeClass: 'badge-confirmed', dotColor: '#3b82f6' },
   indelivery: { label: 'In Delivery', badgeClass: 'badge-shipped', dotColor: '#8b5cf6' },
   delivered: { label: 'Delivered', badgeClass: 'badge-delivered', dotColor: '#22c55e' },
@@ -69,22 +70,46 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule })
 
   // ── CORE DATA STATE ──
   const [supplierId, setSupplierId] = useState(() => readSupplierId() || '');
-  const [profile, setProfile] = useState({
-    supplierName: 'Hans',
-    supplierCode: 'SUP-HANS-001',
-    email: 'hans@gmail.com',
-    phone: '+91 98765 43210',
-    category: 'Electronics',
-    state: 'Gujarat',
-    paymentTerms: 'Net 30',
-    address: '123 Tech Park, Ahmedabad',
-    website: 'https://hans.supplier.local',
-    gstNumber: '24AAAAA0000A1Z5',
-    taxId: '24AAAAA0000A1Z5',
-    leadTime: '3',
-    description: 'Primary Electronics Supplier Hans',
-    planTier: 'Bharat Enterprise',
-    planPrice: 3499
+  const [profile, setProfile] = useState(() => {
+    try {
+      const sess = JSON.parse(localStorage.getItem('so_session') || '{}');
+      if (sess && (sess.role === 'supplier' || sess.role === 'wholesale')) {
+        return {
+          supplierName: sess.name || (sess.email ? sess.email.split('@')[0] : 'Hans'),
+          supplierCode: sess.profileId || `SUP-${String(sess.name || 'SUP').toUpperCase().slice(0, 4)}-001`,
+          email: sess.email || 'supplier@example.com',
+          phone: sess.phone || '+91 98765 43210',
+          category: sess.category || 'General Wholesale',
+          state: sess.state || 'Gujarat',
+          paymentTerms: 'Net 30',
+          address: sess.address || 'Tech Park, Ahmedabad',
+          website: sess.website || '',
+          gstNumber: '24AAAAA0000A1Z5',
+          taxId: '24AAAAA0000A1Z5',
+          leadTime: '3',
+          description: `${sess.name || 'Supplier'} Wholesale Portal`,
+          planTier: sess.plan === 'enterprise' ? 'Bharat Enterprise' : 'Bharat Growth',
+          planPrice: 3499,
+        };
+      }
+    } catch {}
+    return {
+      supplierName: 'Hans',
+      supplierCode: 'SUP-HANS-001',
+      email: 'hans@gmail.com',
+      phone: '+91 98765 43210',
+      category: 'Electronics',
+      state: 'Gujarat',
+      paymentTerms: 'Net 30',
+      address: '123 Tech Park, Ahmedabad',
+      website: 'https://hans.supplier.local',
+      gstNumber: '24AAAAA0000A1Z5',
+      taxId: '24AAAAA0000A1Z5',
+      leadTime: '3',
+      description: 'Primary Electronics Supplier Hans',
+      planTier: 'Bharat Enterprise',
+      planPrice: 3499,
+    };
   });
 
   const [products, setProducts] = useState(DEFAULT_DEMO_PRODUCTS);
@@ -136,63 +161,141 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule })
 
   // ── INITIAL DATA LOAD ──
   useEffect(() => {
-    let sid = readSupplierId();
-    if (!sid) {
-      try {
-        const p = new URLSearchParams(window.location.search).get('supplierId');
-        if (p) {
-          sid = p;
-          writeSupplierId(p);
-        }
-      } catch {}
-    }
-    if (sid) {
-      setSupplierId(sid);
-      getSupplier(sid).then(s => {
-        if (s) {
-          setProfile(prev => ({
-            ...prev,
-            supplierName: s.supplierName || s.name || prev.supplierName,
-            supplierCode: s.supplierCode || s.code || prev.supplierCode,
-            email: s.email || prev.email,
-            phone: s.phone || prev.phone,
-            category: s.category || prev.category,
-            state: s.state || prev.state,
-            paymentTerms: s.paymentTerms || prev.paymentTerms,
-            address: s.address || prev.address,
-            website: s.website || prev.website,
-            gstNumber: s.gstNumber || s.taxId || prev.gstNumber,
-            description: s.description || prev.description
-          }));
-          if (Array.isArray(s.products) && s.products.length > 0) {
-            setProducts(s.products);
+    async function initSupplierPortal() {
+      let sid = readSupplierId();
+      if (!sid) {
+        try {
+          const p = new URLSearchParams(window.location.search).get('supplierId');
+          if (p) {
+            sid = p;
+            writeSupplierId(p);
           }
-          if (Array.isArray(s.retailers) && s.retailers.length > 0) {
-            setRetailers(s.retailers);
+        } catch {}
+      }
+
+      // If still no sid, fetch from backend and default to Hans or the first supplier
+      if (!sid) {
+        try {
+          const sups = await supplierRequest('/suppliers').catch(() => []);
+          if (Array.isArray(sups) && sups.length > 0) {
+            const hans = sups.find(
+              (s) =>
+                s.business?.businessEmail === 'hans@gmail.com' ||
+                s.business?.companyName?.toLowerCase() === 'hans',
+            );
+            const target = hans || sups[0];
+            sid = target.id;
+            writeSupplierId(sid);
           }
+        } catch (e) {
+          console.error('Error auto-resolving supplier:', e);
         }
-      }).catch(console.error);
+      }
 
-      fetchPurchaseOrders().then(pos => {
-        if (Array.isArray(pos) && pos.length > 0) {
-          const mapped = pos.map(po => ({
-            id: po.orderNumber || po.id || 'PO-2026-0001',
-            retailer: po.retailerName || "John's Retail Store",
-            product: po.items?.[0]?.productName || po.productName || 'op3',
-            qty: po.items?.[0]?.quantity || po.quantity || 1,
-            amount: po.totalAmount || 525,
-            date: po.createdAt ? new Date(po.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '30 Aug 2026',
-            delivery: po.expectedDeliveryDate ? new Date(po.expectedDeliveryDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '02 Sept 2026',
-            status: po.status ? String(po.status).toLowerCase() : 'delivered'
-          }));
-          setOrders(mapped);
-        }
-      }).catch(console.error);
+      if (sid) {
+        setSupplierId(sid);
+        getSupplier(sid)
+          .then((s) => {
+            if (s) {
+              setProfile((prev) => ({
+                ...prev,
+                supplierName:
+                  s.business?.companyName || s.supplierName || s.name || prev.supplierName,
+                supplierCode:
+                  s.business?.supplierCode || s.supplierCode || s.code || prev.supplierCode,
+                email: s.business?.businessEmail || s.email || prev.email,
+                phone:
+                  s.business?.phoneNumber ||
+                  s.primaryContact?.mobileNumber ||
+                  s.phone ||
+                  prev.phone,
+                category:
+                  s.business?.primaryCategory || s.category || prev.category,
+                state: s.business?.state || s.state || prev.state,
+                paymentTerms:
+                  s.business?.paymentTerms || s.paymentTerms || prev.paymentTerms,
+                address:
+                  s.business?.businessAddress || s.address || prev.address,
+                website: s.business?.website || s.website || prev.website,
+                gstNumber:
+                  s.business?.gstNumber || s.gstNumber || s.taxId || prev.gstNumber,
+                description:
+                  s.business?.description || s.description || prev.description,
+              }));
+              if (Array.isArray(s.products) && s.products.length > 0) {
+                setProducts(s.products);
+              }
+              if (Array.isArray(s.retailers) && s.retailers.length > 0) {
+                setRetailers(s.retailers);
+              }
+            }
+          })
+          .catch(console.error);
 
-      fetchSupplierDocuments(sid).then(docs => {
-        if (Array.isArray(docs)) setDocuments(docs);
-      }).catch(console.error);
+        fetchPurchaseOrders()
+          .then((pos) => {
+            if (Array.isArray(pos) && pos.length > 0) {
+              const mapped = pos.map((po) => {
+                const statusClean = String(po.status || 'pending')
+                  .toLowerCase()
+                  .replace(/\s+/g, '');
+                return {
+                  id: po.orderNumber || po.id || 'PO-2026-0001',
+                  retailer: po.retailerName || 'Retail Store',
+                  product:
+                    po.items?.[0]?.name ||
+                    po.items?.[0]?.productName ||
+                    po.productName ||
+                    'op3',
+                  qty:
+                    po.items?.[0]?.qty ||
+                    po.items?.[0]?.quantity ||
+                    po.quantity ||
+                    1,
+                  amount:
+                    po.total ||
+                    po.totalAmount ||
+                    (po.items?.[0]?.price
+                      ? po.items[0].price * (po.items[0].qty || 1)
+                      : 525),
+                  date: po.createdAt
+                    ? new Date(po.createdAt).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })
+                    : '30 Aug 2026',
+                  delivery:
+                    po.deliveryDate ||
+                    (po.expectedDeliveryDate
+                      ? new Date(po.expectedDeliveryDate).toLocaleDateString(
+                          'en-GB',
+                          {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          },
+                        )
+                      : '02 Sept 2026'),
+                  status: statusClean,
+                  rawStatus: po.status || 'Pending',
+                  supplierId: po.supplierId,
+                  rawOrder: po,
+                };
+              });
+              setOrders(mapped);
+            }
+          })
+          .catch(console.error);
+
+        fetchSupplierDocuments(sid)
+          .then((docs) => {
+            if (Array.isArray(docs)) setDocuments(docs);
+          })
+          .catch(console.error);
+      }
     }
+    initSupplierPortal();
   }, []);
 
   // ── DERIVED METRICS ──
@@ -363,12 +466,32 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule })
   };
 
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
-    const updated = orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
+    let backendStatus = 'Pending';
+    const s = String(newStatus).toLowerCase();
+    if (s === 'approved') backendStatus = 'Approved';
+    else if (s === 'confirmed') backendStatus = 'Confirmed';
+    else if (s === 'indelivery' || s === 'in delivery') backendStatus = 'In Delivery';
+    else if (s === 'delivered') backendStatus = 'Delivered';
+    else if (s === 'cancelled') backendStatus = 'Cancelled';
+
+    try {
+      await updatePurchaseOrder(orderId, { status: backendStatus });
+    } catch (err) {
+      console.error('Failed to update PO status on backend:', err);
+    }
+    const cleanStatus = s.replace(/\s+/g, '');
+    const updated = orders.map((o) =>
+      o.id === orderId ? { ...o, status: cleanStatus, rawStatus: backendStatus } : o,
+    );
     setOrders(updated);
     if (selectedOrder && selectedOrder.id === orderId) {
-      setSelectedOrder(prev => ({ ...prev, status: newStatus }));
+      setSelectedOrder((prev) => ({
+        ...prev,
+        status: cleanStatus,
+        rawStatus: backendStatus,
+      }));
     }
-    showToast(`Order ${orderId} updated to ${newStatus.toUpperCase()}`);
+    showToast(`Order ${orderId} updated to ${backendStatus.toUpperCase()}`);
   };
 
   // ── EXPORT CSV ──
@@ -1291,14 +1414,26 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule })
                                 </span>
                               </td>
                               <td>
-                                <button
-                                  className="btn btn-outline btn-sm"
-                                  onClick={() => handleOpenOrderModal(o)}
-                                  title="View Order Details"
-                                  style={{ padding: '4px 8px' }}
-                                >
-                                  <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/></svg>
-                                </button>
+                                <div style={{ display: 'flex', gap: '6px' }}>
+                                  {(o.status === 'pending' || o.status === 'draft') && (
+                                    <button
+                                      className="btn btn-sm"
+                                      style={{ background: '#dcfce7', color: '#15803d', border: '1px solid #86efac', padding: '4px 8px', fontSize: '11px', fontWeight: 700 }}
+                                      onClick={() => handleUpdateOrderStatus(o.id, 'approved')}
+                                      title="Approve Purchase Order"
+                                    >
+                                      ✓ Approve
+                                    </button>
+                                  )}
+                                  <button
+                                    className="btn btn-outline btn-sm"
+                                    onClick={() => handleOpenOrderModal(o)}
+                                    title="View Order Details"
+                                    style={{ padding: '4px 8px' }}
+                                  >
+                                    <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/></svg>
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))
@@ -2031,8 +2166,13 @@ export default function SupplierDashboard({ onNavigateToSetup, onSwitchModule })
             <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '8px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
               <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-2)' }}>Update Workflow:</span>
               <div style={{ display: 'flex', gap: '6px' }}>
+                {selectedOrder.status !== 'approved' && (
+                  <button className="btn btn-sm" style={{ background: '#dcfce7', color: '#15803d', border: '1px solid #86efac', fontWeight: 700 }} onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'approved')}>
+                    ✓ Approve Order
+                  </button>
+                )}
                 {selectedOrder.status !== 'confirmed' && (
-                  <button className="btn btn-sm" style={{ background: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }} onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'confirmed')}>
+                  <button className="btn btn-sm" style={{ background: '#e0f2fe', color: '#0369a1', border: '1px solid #bae6fd' }} onClick={() => handleUpdateOrderStatus(selectedOrder.id, 'confirmed')}>
                     Confirm
                   </button>
                 )}

@@ -7,8 +7,15 @@ export default function EditProductView({ product: initialProduct, onNavigate })
 
   // Selected product to edit
   const [currentProduct, setCurrentProduct] = useState(initialProduct || null);
-  const [productList, setProductList] = useState([]);
   const [loading, setLoading] = useState(!initialProduct);
+
+  useEffect(() => {
+    if (!initialProduct) {
+      if (onNavigate) {
+        onNavigate('products');
+      }
+    }
+  }, [initialProduct, onNavigate]);
 
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1);
@@ -26,50 +33,59 @@ export default function EditProductView({ product: initialProduct, onNavigate })
   const [warehouses, setWarehouses] = useState([]);
 
   // Form Data
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    subCategory: '',
-    brand: '',
-    unit: 'Pc',
-    description: '',
-    tags: [],
-    price: '',
-    cost: '',
-    discountType: 'none',
-    discountValue: '',
-    finalPrice: '',
-    taxRate: '',
-    taxType: 'Inclusive',
-    supplier: '',
-    supplierSku: '',
-    sku: '',
-    barcode: '',
-    qty: '',
-    min: 10,
-    max: 500,
-    warehouse: '',
-    bin: '',
-    reorderPoint: '',
-    reorderQty: '',
-    restockDate: new Date().toISOString().split('T')[0],
-    hasVariants: false,
-    variants: [],
-    hasExpiry: false,
-    expiryDate: '',
-    batchNumber: '',
-    weightKg: '',
-    lengthCm: '',
-    widthCm: '',
-    heightCm: '',
-    shippingClass: 'Standard',
-    customFields: [],
-    status: 'active',
-    visibility: 'published',
-  });
+  const [formData, setFormData] = useState(() => ({
+    name: initialProduct?.name || '',
+    category: initialProduct?.category || '',
+    subCategory: initialProduct?.subCategory || initialProduct?.subcategory || '',
+    brand: initialProduct?.brand || '',
+    unit: initialProduct?.unit || 'Pc',
+    description: initialProduct?.description || '',
+    tags: Array.isArray(initialProduct?.tags) ? initialProduct.tags : [],
+    price: initialProduct?.price != null ? String(initialProduct.price) : '',
+    cost: initialProduct?.cost != null ? String(initialProduct.cost) : '',
+    discountType: initialProduct?.discountType || 'none',
+    discountValue: initialProduct?.discountValue != null ? String(initialProduct.discountValue) : '',
+    finalPrice: initialProduct?.finalPrice != null ? String(initialProduct.finalPrice) : '',
+    taxRate: initialProduct?.taxRate != null ? String(initialProduct.taxRate) : '',
+    taxType: initialProduct?.taxType || 'Inclusive',
+    supplier: initialProduct?.supplier || '',
+    supplierSku: initialProduct?.supplierSku || '',
+    sku: initialProduct?.sku || '',
+    barcode: initialProduct?.barcode || '',
+    qty: initialProduct?.qty != null ? String(initialProduct.qty) : '0',
+    min: initialProduct?.min != null ? initialProduct.min : 10,
+    max: initialProduct?.max != null ? initialProduct.max : 500,
+    warehouse: initialProduct?.warehouse || '',
+    bin: initialProduct?.bin || '',
+    reorderPoint: initialProduct?.reorderPoint != null ? String(initialProduct.reorderPoint) : '',
+    reorderQty: initialProduct?.reorderQty != null ? String(initialProduct.reorderQty) : '',
+    restockDate: initialProduct?.restockedAt ? initialProduct.restockedAt.split('T')[0] : new Date().toISOString().split('T')[0],
+    hasVariants: !!initialProduct?.hasVariants,
+    variants: Array.isArray(initialProduct?.variants) ? initialProduct.variants : [],
+    hasExpiry: !!initialProduct?.hasExpiry,
+    expiryDate: initialProduct?.expiryDate ? initialProduct.expiryDate.split('T')[0] : '',
+    batchNumber: initialProduct?.batchNumber || '',
+    weightKg: initialProduct?.weightKg != null ? String(initialProduct.weightKg) : '',
+    lengthCm: initialProduct?.lengthCm != null ? String(initialProduct.lengthCm) : '',
+    widthCm: initialProduct?.widthCm != null ? String(initialProduct.widthCm) : '',
+    heightCm: initialProduct?.heightCm != null ? String(initialProduct.heightCm) : '',
+    shippingClass: initialProduct?.shippingClass || 'Standard',
+    customFields: Array.isArray(initialProduct?.customFields) ? initialProduct.customFields : [],
+    status: initialProduct?.status || 'active',
+    visibility: initialProduct?.visibility || 'published',
+  }));
 
   // Images state
-  const [images, setImages] = useState([]); // Array of { src, name }
+  const [images, setImages] = useState(() => {
+    if (!initialProduct) return [];
+    const rawImages = Array.isArray(initialProduct.images) ? initialProduct.images : [];
+    const mainImg = initialProduct.productImg || initialProduct.image || '';
+    const allImgs = Array.from(new Set([mainImg, ...rawImages])).filter(Boolean);
+    return allImgs.map((src, i) => ({
+      src,
+      name: `Image ${i + 1}`,
+    }));
+  });
   const [mainImgIdx, setMainImgIdx] = useState(0);
 
   // Variant modal state
@@ -154,11 +170,22 @@ export default function EditProductView({ product: initialProduct, onNavigate })
     });
   };
 
+  useEffect(() => {
+    if (initialProduct) {
+      populateFormWithProduct(initialProduct);
+    }
+  }, [initialProduct]);
+
   // Fetch real data on mount
   useEffect(() => {
     async function loadData() {
       try {
-        const prodData = await request('/products').catch(() => []);
+        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+        const storeId = user?.currentStoreId || user?.storeId || '';
+        const scopedQuery = retailerId
+          ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
+          : '';
+        const prodData = await request(`/products${scopedQuery}`).catch(() => []);
         if (Array.isArray(prodData)) {
           setProductList(prodData);
 
@@ -178,10 +205,8 @@ export default function EditProductView({ product: initialProduct, onNavigate })
           ];
           setBrands(Array.from(new Set([...dbBrands, ...defaultBrands])));
 
-          // If no initial product passed, use the first product in the database
-          if (!initialProduct && prodData.length > 0) {
-            populateFormWithProduct(prodData[0]);
-          } else if (initialProduct) {
+          // Only populate if an initial product was explicitly passed
+          if (initialProduct) {
             populateFormWithProduct(initialProduct);
           }
         }
