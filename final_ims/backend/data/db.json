@@ -16,7 +16,7 @@
       "finalPrice": 89900,
       "taxType": "Inclusive",
       "unit": "Pc",
-      "qty": 25,
+      "qty": 0,
       "initialQty": 25,
       "min": 5,
       "max": 60,
@@ -34,7 +34,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%E2%8C%9A%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3EApple%20Watch%20Ultra%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EWearables%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "⌚",
-      "soldThisMonth": 0,
+      "soldThisMonth": 25,
       "trend": "up",
       "description": "",
       "descriptionHtml": "",
@@ -59,7 +59,7 @@
       "storeInventory": [
         {
           "storeId": "HELLO",
-          "qty": 25
+          "qty": 0
         }
       ],
       "initialStoreInventory": [
@@ -78,11 +78,11 @@
       },
       "ratingCount": 0,
       "ratingAvg": 0,
-      "revenue": 0,
+      "revenue": 2247500,
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-10-16T04:47:09.913Z",
-      "updatedAt": "2026-10-16T04:47:09.913Z",
+      "updatedAt": "2026-10-16T10:37:01.482Z",
       "restockedAt": "2026-10-16T04:47:09.913Z",
       "lastStockChangeAt": "2026-10-16T04:47:09.913Z"
     },
@@ -168,7 +168,7 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-10-16T04:47:09.900Z",
-      "updatedAt": "2026-10-16T06:57:16.058Z",
+      "updatedAt": "2026-10-16T10:37:01.482Z",
       "restockedAt": "2026-10-16T04:47:09.900Z",
       "lastStockChangeAt": "2026-10-16T04:47:09.900Z"
     },
@@ -887,7 +887,7 @@
       "taxRate": 0,
       "taxType": "Inclusive",
       "unit": "Pc",
-      "qty": 28,
+      "qty": 27,
       "initialQty": 30,
       "min": 10,
       "max": 100,
@@ -905,7 +905,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Enike%20shoes%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "📦",
-      "soldThisMonth": 0,
+      "soldThisMonth": 1,
       "trend": "up",
       "description": "",
       "descriptionHtml": "<p></p>",
@@ -934,7 +934,7 @@
       "storeInventory": [
         {
           "storeId": "JOHN-S-STORE",
-          "qty": 28
+          "qty": 27
         }
       ],
       "initialStoreInventory": [
@@ -976,11 +976,11 @@
       },
       "ratingCount": 2,
       "ratingAvg": 5,
-      "revenue": 10000,
+      "revenue": 44567,
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T06:56:40.524Z",
-      "updatedAt": "2026-10-16T06:57:16.058Z",
+      "updatedAt": "2026-10-16T10:37:01.482Z",
       "restockedAt": "2026-08-28T00:00:00.000Z",
       "lastStockChangeAt": "2026-08-28T06:56:40.524Z"
     },
@@ -1072,7 +1072,7 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T05:05:37.997Z",
-      "updatedAt": "2026-10-16T06:57:16.058Z",
+      "updatedAt": "2026-10-16T10:37:01.482Z",
       "restockedAt": "2026-08-31T13:30:50.080Z",
       "lastStockChangeAt": "2026-08-31T13:30:50.080Z"
     }
@@ -1088,6 +1088,48 @@
     }
   ],
   "customers": [
+    {
+      "id": "cust-e7666b6a-d4b8-4024-9d9c-8b6a73b94831",
+      "retailerId": "4be7ecb5-c37b-42a9-8db2-209901e86ba9",
+      "storeId": "HELLO",
+      "name": "James",
+      "fname": "James",
+      "lname": "",
+      "email": "james@stockoverflow.local",
+      "phone": "",
+      "city": "",
+      "country": "India",
+      "store": "Downtown Store",
+      "status": "Active",
+      "totalOrders": 1,
+      "totalSpent": 2247500,
+      "orders": 1,
+      "spent": 2247500,
+      "created": "Oct 16, 2026",
+      "rating": 3,
+      "notes": ""
+    },
+    {
+      "id": "cust-4385b2c1-1319-49a2-894d-0f8cb7b9290f",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "storeId": "JOHN-S-STORE",
+      "name": "Test User",
+      "fname": "Test",
+      "lname": "User",
+      "email": "test.user@stockoverflow.local",
+      "phone": "",
+      "city": "",
+      "country": "India",
+      "store": "Downtown Store",
+      "status": "Active",
+      "totalOrders": 1,
+      "totalSpent": 34567,
+      "orders": 1,
+      "spent": 34567,
+      "created": "Oct 16, 2026",
+      "rating": 3,
+      "notes": ""
+    },
     {
       "id": "cust-305745d5-065e-4973-a0a5-3ef111e6b00f",
       "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
@@ -1154,6 +1196,19 @@
   ],
   "billers": [
     {
+      "id": 3,
+      "retailerId": "4be7ecb5-c37b-42a9-8db2-209901e86ba9",
+      "storeId": "HELLO",
+      "code": "BI003",
+      "name": "biller1",
+      "company": "biller1 Biller Request",
+      "email": "biller1@gmail.com",
+      "phone": "Not provided",
+      "country": "India",
+      "status": "active",
+      "avatar": "#FF9800"
+    },
+    {
       "id": 2,
       "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
       "storeId": "STORE-01",
@@ -1201,10 +1256,11 @@
       "phone": "Not provided",
       "company": "biller1 Biller Request",
       "country": "India",
-      "retailerId": "",
-      "storeId": "",
-      "status": "pending",
-      "createdAt": "2026-10-16T06:35:01.826Z"
+      "retailerId": "4be7ecb5-c37b-42a9-8db2-209901e86ba9",
+      "storeId": "HELLO",
+      "status": "approved",
+      "createdAt": "2026-10-16T06:35:01.826Z",
+      "approvedAt": "2026-10-16T10:36:41.221Z"
     },
     {
       "id": "1792132563613",
@@ -1469,24 +1525,6 @@
       "reservedAt": "2026-10-15T09:33:18.204Z"
     },
     {
-      "requestId": "req-1792056672742-78990",
-      "sku": "PT001",
-      "name": "nike shoes",
-      "qty": 1,
-      "customer": "Test User",
-      "customerEmail": "test@example.com",
-      "customerId": "",
-      "priceUSD": 34567,
-      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Enike%20shoes%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
-      "emoji": "📦",
-      "maxAvailable": 28,
-      "storeId": "JOHN-S-STORE",
-      "store": "Downtown Store",
-      "paymentMethod": "UPI",
-      "status": "Pending POS Approval",
-      "reservedAt": "2026-10-15T09:31:12.742Z"
-    },
-    {
       "requestId": "req-1788189262709-6944",
       "sku": "PT002",
       "name": "op3",
@@ -1506,6 +1544,23 @@
     }
   ],
   "reservationRequests": [
+    {
+      "requestId": "req-1792146825109-76470",
+      "sku": "PT010",
+      "productName": "Apple Watch Ultra 2",
+      "qty": 25,
+      "customer": "James",
+      "customerEmail": "james@gmail.com",
+      "customerId": "d240c107-b88c-4d79-af91-64e7bb505a4d",
+      "storeId": "HELLO",
+      "store": "hello",
+      "paymentMethod": "UPI",
+      "status": "completed",
+      "createdAt": "2026-10-16T10:33:45.109Z",
+      "orderId": "ORD301010",
+      "completedAt": "2026-10-16T10:37:01.474Z",
+      "completedBy": "biller"
+    },
     {
       "requestId": "req-1792133820745-98247",
       "sku": "PT009",
@@ -1576,8 +1631,11 @@
       "storeId": "JOHN-S-STORE",
       "store": "Downtown Store",
       "paymentMethod": "UPI",
-      "status": "pending",
-      "createdAt": "2026-10-15T09:31:12.742Z"
+      "status": "completed",
+      "createdAt": "2026-10-15T09:31:12.742Z",
+      "orderId": "ORD653528",
+      "completedAt": "2026-10-16T10:31:25.356Z",
+      "completedBy": "biller"
     },
     {
       "requestId": "req-1788189262709-6944",
@@ -1680,6 +1738,76 @@
     }
   ],
   "transactions": [
+    {
+      "orderId": "ORD301010",
+      "retailerId": "4be7ecb5-c37b-42a9-8db2-209901e86ba9",
+      "timestamp": "2026-10-16T10:37:01.462Z",
+      "customer": "James",
+      "customerEmail": "",
+      "customerId": "",
+      "store": "hello",
+      "storeId": "HELLO",
+      "paymentMethod": "UPI",
+      "items": [
+        {
+          "sku": "PT010",
+          "name": "Apple Watch Ultra 2",
+          "quantity": 25,
+          "price": 89900,
+          "total": 2247500,
+          "isReserved": true,
+          "requestIds": [
+            "req-1792146825109-76470"
+          ]
+        }
+      ],
+      "subtotal": 2247500,
+      "shipping": 0,
+      "tax": 0,
+      "coupon": 0,
+      "discount": 0,
+      "roundoff": 0,
+      "finalTotal": 2247500,
+      "platformFee": 44950,
+      "netRetailerAmount": 2202550,
+      "status": "Delivered",
+      "receiptUrl": ""
+    },
+    {
+      "orderId": "ORD653528",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "timestamp": "2026-10-16T10:31:25.339Z",
+      "customer": "Test User",
+      "customerEmail": "",
+      "customerId": "",
+      "store": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "paymentMethod": "UPI",
+      "items": [
+        {
+          "sku": "PT001",
+          "name": "nike shoes",
+          "quantity": 1,
+          "price": 34567,
+          "total": 34567,
+          "isReserved": true,
+          "requestIds": [
+            "req-1792056672742-78990"
+          ]
+        }
+      ],
+      "subtotal": 34567,
+      "shipping": 0,
+      "tax": 0,
+      "coupon": 0,
+      "discount": 0,
+      "roundoff": 0,
+      "finalTotal": 34567,
+      "platformFee": 691.34,
+      "netRetailerAmount": 33875.66,
+      "status": "Delivered",
+      "receiptUrl": ""
+    },
     {
       "orderId": "ORD946742",
       "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
@@ -2088,6 +2216,40 @@
   "employeeAssignments": [],
   "userQueries": [],
   "platformCommissions": [
+    {
+      "id": "comm-136624e4-885a-42d8-aa76-780c336fbca6",
+      "transactionId": "ORD301010",
+      "orderId": "ORD301010",
+      "retailerId": "4be7ecb5-c37b-42a9-8db2-209901e86ba9",
+      "retailerName": "hello",
+      "storeId": "HELLO",
+      "storeName": "hello",
+      "customerName": "James",
+      "orderTotal": 2247500,
+      "commissionRate": 0.02,
+      "commissionAmount": 44950,
+      "netRetailerAmount": 2202550,
+      "currency": "INR",
+      "timestamp": "2026-10-16T10:37:01.462Z",
+      "status": "settled"
+    },
+    {
+      "id": "comm-e3d66be5-de59-42b6-875f-80551cdb93ba",
+      "transactionId": "ORD653528",
+      "orderId": "ORD653528",
+      "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+      "retailerName": "John's Retail Store",
+      "storeId": "JOHN-S-STORE",
+      "storeName": "John's Retail Store",
+      "customerName": "Test User",
+      "orderTotal": 34567,
+      "commissionRate": 0.02,
+      "commissionAmount": 691.34,
+      "netRetailerAmount": 33875.66,
+      "currency": "INR",
+      "timestamp": "2026-10-16T10:31:25.339Z",
+      "status": "settled"
+    },
     {
       "id": "comm-697e86f2-cb28-4c3b-903e-00a61a9612d6",
       "transactionId": "ORD946742",

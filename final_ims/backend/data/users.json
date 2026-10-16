@@ -1,5 +1,27 @@
 [
   {
+    "id": "89a178f8-9628-473b-81a7-430a65f4241e",
+    "name": "biller1",
+    "email": "biller1@gmail.com",
+    "password": "pass1234",
+    "role": "biller",
+    "status": "Active",
+    "store": "",
+    "storeId": "HELLO",
+    "currentStoreId": "HELLO",
+    "accessibleStoreIds": [
+      "HELLO"
+    ],
+    "profileId": "3",
+    "profile": {
+      "name": "biller1",
+      "email": "biller1@gmail.com",
+      "retailerId": "4be7ecb5-c37b-42a9-8db2-209901e86ba9"
+    },
+    "createdAt": "2026-10-16T06:35:01.815Z",
+    "updatedAt": "2026-10-16T10:36:53.780Z"
+  },
+  {
     "id": "c5deaecc-ecd4-4d17-8847-8eaeed640ec0",
     "name": "biller",
     "email": "him@gmail.com",
@@ -20,21 +42,6 @@
     },
     "createdAt": "2026-10-16T06:36:03.602Z",
     "updatedAt": "2026-10-16T06:36:46.716Z"
-  },
-  {
-    "id": "89a178f8-9628-473b-81a7-430a65f4241e",
-    "name": "biller1",
-    "email": "biller1@gmail.com",
-    "password": "pass1234",
-    "role": "biller",
-    "status": "Active",
-    "store": "",
-    "storeId": "",
-    "currentStoreId": "",
-    "accessibleStoreIds": [],
-    "profileId": "",
-    "createdAt": "2026-10-16T06:35:01.815Z",
-    "updatedAt": "2026-10-16T06:35:01.815Z"
   },
   {
     "id": "db1339d4-36ef-4f89-8e7a-93661ddc4a46",
