@@ -555,3 +555,8 @@
 [2026-10-16T10:35:42.865Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
 [2026-10-16T10:36:36.098Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
 [2026-10-16T10:36:36.259Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=u-retailer-1
+[2026-10-16T15:05:11.877Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8
+[2026-10-16T15:05:12.297Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8
+[2026-10-16T15:07:55.979Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8
+[2026-10-16T15:07:56.147Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8
+[2026-10-16T15:08:07.217Z] [ERROR] POST /api/users/login 400 - email must be an email

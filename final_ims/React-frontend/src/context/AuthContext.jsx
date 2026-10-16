@@ -6,24 +6,56 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
-      const saved = localStorage.getItem('so_session');
-      const token = localStorage.getItem('so_token');
+      // Determine if this is an explicit in-tab reload (F5 / browser refresh)
+      const navEntries = typeof performance !== 'undefined' && performance.getEntriesByType ? performance.getEntriesByType('navigation') : [];
+      const isReload = (navEntries.length > 0 && navEntries[0].type === 'reload') || (typeof performance !== 'undefined' && performance.navigation && performance.navigation.type === 1);
+
+      // If pasting the URL of localhost, opening a fresh tab/window, or navigating directly,
+      // always present a fresh, unauthenticated landing page.
+      if (!isReload) {
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.removeItem('so_session');
+          sessionStorage.removeItem('so_token');
+        }
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('so_session');
+          localStorage.removeItem('so_token');
+        }
+        return null;
+      }
+
+      // If it's an explicit reload in the current active tab, preserve the in-progress session
+      const saved = (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_session') : null) || (typeof localStorage !== 'undefined' ? localStorage.getItem('so_session') : null);
+      const token = (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_token') : null) || (typeof localStorage !== 'undefined' ? localStorage.getItem('so_token') : null);
       if (!saved) return null;
       const parsed = JSON.parse(saved);
       if (!parsed || !parsed.id || !parsed.role) {
-        localStorage.removeItem('so_session');
-        localStorage.removeItem('so_token');
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.removeItem('so_session');
+          sessionStorage.removeItem('so_token');
+        }
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('so_session');
+          localStorage.removeItem('so_token');
+        }
         return null;
       }
       const effectiveToken = parsed.token || token;
       if (!effectiveToken) {
-        localStorage.removeItem('so_session');
-        localStorage.removeItem('so_token');
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.removeItem('so_session');
+          sessionStorage.removeItem('so_token');
+        }
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('so_session');
+          localStorage.removeItem('so_token');
+        }
         return null;
       }
       parsed.token = effectiveToken;
-      if (!token) {
-        localStorage.setItem('so_token', effectiveToken);
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem('so_session', JSON.stringify(parsed));
+        sessionStorage.setItem('so_token', effectiveToken);
       }
       return parsed;
     } catch {
@@ -90,8 +122,15 @@ export function AuthProvider({ children }) {
       token: token,
     };
 
-    localStorage.setItem('so_session', JSON.stringify(sessionData));
-    localStorage.setItem('so_token', token);
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem('so_session', JSON.stringify(sessionData));
+      sessionStorage.setItem('so_token', token);
+    }
+    // Remove persistent localStorage tokens to ensure new dev sessions / new tabs start completely fresh
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('so_session');
+      localStorage.removeItem('so_token');
+    }
     setUser(sessionData);
     return sessionData;
   };
@@ -118,12 +157,20 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('so_session');
-    localStorage.removeItem('so_token');
-    localStorage.removeItem('so_active_module');
-    localStorage.removeItem('supplier-module-current-supplier-id');
-    localStorage.removeItem('imsAppStateV1');
-    localStorage.removeItem('biller_pending_email');
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem('so_session');
+      sessionStorage.removeItem('so_token');
+      sessionStorage.removeItem('so_active_module');
+      sessionStorage.removeItem('biller_pending_email');
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('so_session');
+      localStorage.removeItem('so_token');
+      localStorage.removeItem('so_active_module');
+      localStorage.removeItem('supplier-module-current-supplier-id');
+      localStorage.removeItem('imsAppStateV1');
+      localStorage.removeItem('biller_pending_email');
+    }
     setUser(null);
   };
 
@@ -149,7 +196,9 @@ export function AuthProvider({ children }) {
       storeId: storeId,
       store: storeName,
     };
-    localStorage.setItem('so_session', JSON.stringify(updated));
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem('so_session', JSON.stringify(updated));
+    }
     setUser(updated);
   };
 

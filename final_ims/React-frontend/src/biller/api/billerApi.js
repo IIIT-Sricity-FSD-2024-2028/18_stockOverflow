@@ -7,7 +7,9 @@ const API_BASE = 'http://localhost:3001/api';
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
   try {
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('so_token') : null;
+    const token =
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_token') : null) ||
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('so_token') : null);
     const headers = {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -38,7 +40,9 @@ async function request(endpoint, options = {}) {
     // Vite dev server proxy fallback
     if (url.startsWith('http://localhost:3001')) {
       try {
-        const token = typeof localStorage !== 'undefined' ? localStorage.getItem('so_token') : null;
+        const token =
+          (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_token') : null) ||
+          (typeof localStorage !== 'undefined' ? localStorage.getItem('so_token') : null);
         const proxyRes = await fetch(`/api${endpoint}`, {
           ...options,
           headers: {

@@ -35,7 +35,7 @@ export default function App() {
   const [authScreen, setAuthScreen] = useState('landing');
 
   // Validate that user has a genuine authenticated session and token
-  const token = user?.token || (typeof localStorage !== 'undefined' ? localStorage.getItem('so_token') : null);
+  const token = user?.token || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_token') : null);
   const isAuthenticated = Boolean(user && user.id && user.role && token);
 
   // ── Unauthenticated State: Instant Landing Page & Auth Flow ──
