@@ -5,95 +5,23 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    login(loginData: LoginUserDto): {
-        store?: string;
-        storeId?: string;
-        status: string;
-        id: string;
-        name: string;
-        createdAt?: string;
-        updatedAt?: string;
-        email: string;
-        role: string;
-        currentStoreId?: string;
-        accessibleStoreIds?: string[];
-        profileId?: string;
-        profile?: Record<string, unknown>;
+    login(loginData: LoginUserDto): Omit<import("./user.entity").User, "password"> & {
+        token?: string;
     };
-    create(createUserDto: CreateUserDto): {
-        store?: string;
-        storeId?: string;
-        status: string;
-        id: string;
-        name: string;
-        createdAt?: string;
-        updatedAt?: string;
-        email: string;
-        role: string;
-        currentStoreId?: string;
-        accessibleStoreIds?: string[];
-        profileId?: string;
-        profile?: Record<string, unknown>;
+    create(createUserDto: CreateUserDto): Omit<import("./user.entity").User, "password"> & {
+        token?: string;
     };
-    findAll(role?: string, email?: string): {
-        store?: string;
-        storeId?: string;
-        status: string;
-        id: string;
-        name: string;
-        createdAt?: string;
-        updatedAt?: string;
-        email: string;
-        role: string;
-        currentStoreId?: string;
-        accessibleStoreIds?: string[];
-        profileId?: string;
-        profile?: Record<string, unknown>;
-    }[];
-    findOne(id: string): {
-        store?: string;
-        storeId?: string;
-        status: string;
-        id: string;
-        name: string;
-        createdAt?: string;
-        updatedAt?: string;
-        email: string;
-        role: string;
-        currentStoreId?: string;
-        accessibleStoreIds?: string[];
-        profileId?: string;
-        profile?: Record<string, unknown>;
+    findAll(role?: string, email?: string): (Omit<import("./user.entity").User, "password"> & {
+        token?: string;
+    })[];
+    findOne(id: string): Omit<import("./user.entity").User, "password"> & {
+        token?: string;
     };
-    update(id: string, updateUserDto: UpdateUserDto): {
-        store?: string;
-        storeId?: string;
-        status: string;
-        id: string;
-        name: string;
-        createdAt?: string;
-        updatedAt?: string;
-        email: string;
-        role: string;
-        currentStoreId?: string;
-        accessibleStoreIds?: string[];
-        profileId?: string;
-        profile?: Record<string, unknown>;
+    update(id: string, updateUserDto: UpdateUserDto): Omit<import("./user.entity").User, "password"> & {
+        token?: string;
     };
-    updateProfile(id: string, profile: Record<string, unknown>): {
-        store?: string;
-        storeId?: string;
-        status: string;
-        id: string;
-        name: string;
-        createdAt?: string;
-        updatedAt?: string;
-        email: string;
-        role: string;
-        currentStoreId?: string;
-        accessibleStoreIds?: string[];
-        profileId?: string;
-        profile?: Record<string, unknown>;
+    updateProfile(id: string, profile: Record<string, unknown>): Omit<import("./user.entity").User, "password"> & {
+        token?: string;
     };
     remove(id: string): boolean;
 }

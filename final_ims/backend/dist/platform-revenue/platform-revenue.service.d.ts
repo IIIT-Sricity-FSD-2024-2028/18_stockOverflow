@@ -13,7 +13,7 @@ export declare class PlatformRevenueService {
         maxProducts: number;
         weeklyOrderLimit: string | number;
         features: string[];
-        role: "retailer" | "supplier";
+        role: "supplier" | "retailer";
         currency: string;
         currencySymbol: string;
     }[];
@@ -93,7 +93,7 @@ export declare class PlatformRevenueService {
     cancelSubscription(dto: CancelSubscriptionDto): SubscriptionRecord;
     getWeeklyOrderUsage(userId: string, role?: 'retailer' | 'supplier'): {
         userId: string;
-        role: "retailer" | "supplier";
+        role: "supplier" | "retailer";
         tier: SubscriptionTier;
         tierName: string;
         weeklyLimit: string | number;

@@ -10,14 +10,14 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
-import { createTransaction, createReservationRequest } from '../utils/api_consumer';
+import { createReservationRequest } from '../utils/api_consumer';
 
 export default function CheckoutPage_consumer({
   cart = [],
   selectedStore = 'Downtown Store',
   stores = [],
   userSession,
-  onOrderPlaced,
+  onReservationsSubmitted,
   onNavigate,
   onLogout,
   showToast,
@@ -54,53 +54,45 @@ export default function CheckoutPage_consumer({
 
     setIsSubmitting(true);
     try {
-      const matchedStore = stores.find((s) => s.name === selectedStore) || { id: 's1', name: selectedStore };
-      const orderId = `ORD-${Date.now()}`;
+      // Checkout places pending pickup holds. The retailer creates the sale
+      // when the customer arrives and the request is fulfilled at POS.
+      // ── CHECKOUT RESERVATION SUBMISSION (LAYMAN EXPLANATION) ──
+      // In layman's terms: When the customer clicks "Confirm Reservation", we create an in-store
+      // pickup hold for every item in their cart. We check which store branch was selected when
+      // adding the product to cart, or fall back to the product's primary stocking branch.
+      const createdRequests = await Promise.all(cart.map(async (item) => {
+        let storeId = item.storeId;
+        let storeName = item.storeName;
 
-      const orderItems = cart.map((item) => ({
-        sku: item.sku,
-        name: item.name,
-        quantity: Number(item.qty || 1),
-        price: Number(item.priceUSD || item.price || 0),
-        total: Number(item.priceUSD || item.price || 0) * Number(item.qty || 1),
+        const matchedStore =
+          stores.find((store) => String(store.id) === String(storeId)) ||
+          stores.find((store) => store.name === storeName || store.name === selectedStore) ||
+          null;
+
+        if (matchedStore) {
+          storeId = matchedStore.id;
+          storeName = matchedStore.name;
+        } else if (!storeId || storeId === 's1' || storeId === 'undefined') {
+          const invStore = Array.isArray(item.storeInventory) && item.storeInventory[0]?.storeId;
+          storeId = invStore || 'default-store';
+          storeName = selectedStore || 'Central Fulfillment Store';
+        }
+
+        return createReservationRequest({
+          sku: item.sku,
+          qty: Number(item.qty || 1),
+          customer: customerName.trim(),
+          customerEmail,
+          customerId: userSession?.id || undefined,
+          storeId,
+          store: storeName || selectedStore,
+          paymentMethod,
+        });
       }));
 
-      // Create transaction record
-      await createTransaction({
-        orderId,
-        storeId: matchedStore.id,
-        store: selectedStore,
-        customer: customerName || 'Valued Customer',
-        customerEmail,
-        items: orderItems,
-        subtotal,
-        tax: Math.round(subtotal * 0.05),
-        discount: 0,
-        finalTotal: subtotal + Math.round(subtotal * 0.05),
-        paymentMethod,
-        fulfillmentType: 'pickup',
-        status: 'Delivered',
-        timestamp: new Date().toISOString(),
-      });
-
-      // Create reservation hold requests
-      for (const item of cart) {
-        await createReservationRequest({
-          sku: item.sku,
-          productName: item.name,
-          qty: Number(item.qty || 1),
-          customer: customerName,
-          customerEmail,
-          storeId: matchedStore.id,
-          store: selectedStore,
-          paymentMethod,
-          orderId,
-        });
-      }
-
       showToast('🎉 Reservation confirmed!');
-      if (onOrderPlaced) {
-        onOrderPlaced(orderId);
+      if (onReservationsSubmitted) {
+        onReservationsSubmitted(createdRequests);
       }
     } catch (err) {
       showToast(err.message || 'Failed to place reservation.');
@@ -174,7 +166,7 @@ export default function CheckoutPage_consumer({
               className="submit-btn"
               disabled={isSubmitting || cart.length === 0}
             >
-              {isSubmitting ? 'Confirming Reservation...' : 'Confirm Reservation'}
+              {isSubmitting ? 'Processing Reservation...' : 'Confirm Reservation'}
             </button>
           </form>
 

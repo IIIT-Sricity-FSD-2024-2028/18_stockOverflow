@@ -13,7 +13,7 @@ import {
 import { PurchaseOrderItem } from '../../common/database.types';
 import { trimString } from '../../common/dto.transforms';
 
-const PURCHASE_ORDER_STATUSES = [
+export const PURCHASE_ORDER_STATUSES = [
   'Draft',
   'Pending',
   'Pending Approval',
@@ -22,14 +22,23 @@ const PURCHASE_ORDER_STATUSES = [
   'Delivered',
   'Cancelled',
   'Received',
+  'Approved',
+  'draft',
+  'pending',
+  'pending approval',
+  'confirmed',
+  'in delivery',
+  'indelivery',
+  'delivered',
+  'cancelled',
+  'received',
+  'approved',
 ] as const;
 
-const STOCK_STATUSES = ['ok', 'low', 'out'] as const;
-
-class PurchaseOrderItemDto implements PurchaseOrderItem {
+export class PurchaseOrderItemDto implements PurchaseOrderItem {
+  @IsOptional()
   @Transform(trimString)
   @IsString()
-  @MinLength(1)
   id!: string;
 
   @Transform(trimString)
@@ -37,23 +46,23 @@ class PurchaseOrderItemDto implements PurchaseOrderItem {
   @MinLength(1)
   name!: string;
 
+  @IsOptional()
   @Transform(trimString)
   @IsString()
-  @MinLength(1)
   emoji!: string;
 
+  @IsOptional()
   @Transform(trimString)
   @IsString()
-  @MinLength(1)
   sku!: string;
 
+  @IsOptional()
   @Transform(trimString)
   @IsString()
-  @MinLength(1)
   cat!: string;
 
   @Type(() => Number)
-  @IsInt()
+  @IsNumber()
   @Min(0)
   price!: number;
 
@@ -62,12 +71,14 @@ class PurchaseOrderItemDto implements PurchaseOrderItem {
   @Min(1)
   qty!: number;
 
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
   stock!: number;
 
-  @IsIn(STOCK_STATUSES)
+  @IsOptional()
+  @IsString()
   stockStatus!: string;
 
   @IsOptional()
@@ -78,6 +89,11 @@ class PurchaseOrderItemDto implements PurchaseOrderItem {
 }
 
 export class CreatePurchaseOrderDto {
+  @IsOptional()
+  @Transform(trimString)
+  @IsString()
+  id?: string;
+
   @Transform(trimString)
   @IsString()
   @MinLength(1)
@@ -127,6 +143,26 @@ export class CreatePurchaseOrderDto {
   @Transform(trimString)
   @IsString()
   shippingAddress?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  subtotal?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  tax?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  total?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  units?: number;
 
   @IsOptional()
   @IsIn(PURCHASE_ORDER_STATUSES)

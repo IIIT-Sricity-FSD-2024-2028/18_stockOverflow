@@ -42,6 +42,50 @@ let RetailersController = class RetailersController {
     update(id, updateRetailerSetupDto) {
         return this.retailersService.update(id, updateRetailerSetupDto);
     }
+    addStore(id, storeDto, userPlan) {
+        const plan = (userPlan || 'free').toLowerCase();
+        const retailer = this.retailersService.findOne(id);
+        const currentStores = retailer.stores || [];
+        const planLimits = {
+            free: 1,
+            pro: 5,
+            enterprise: Infinity,
+        };
+        const limit = planLimits[plan] ?? 1;
+        if (currentStores.length >= limit) {
+            const planNames = {
+                free: 'Starter Kirana (Free)',
+                pro: 'Vyapar Pro',
+                enterprise: 'Bharat Enterprise',
+            };
+            throw new common_1.BadRequestException(`PLAN_LIMIT_REACHED:${plan}:${limit}:${planNames[plan] || 'your current plan'}`);
+        }
+        const name = String(storeDto['name'] || '').trim();
+        if (!name)
+            throw new common_1.BadRequestException('Store name is required');
+        const code = String(storeDto['code'] || '')
+            .trim()
+            .toUpperCase()
+            || name.toUpperCase().replace(/[^A-Z0-9]/g, '-').replace(/-+/g, '-').substring(0, 16);
+        const newStore = {
+            name,
+            code,
+            contactPerson: String(storeDto['contactPerson'] || '').trim(),
+            phone: String(storeDto['phone'] || '').trim(),
+            address: String(storeDto['address'] || '').trim(),
+            type: String(storeDto['type'] || 'Retail Store').trim(),
+            status: String(storeDto['status'] || 'active').trim(),
+            notes: String(storeDto['notes'] || '').trim(),
+        };
+        return this.retailersService.update(id, {
+            stores: [...currentStores, newStore],
+        });
+    }
+    removeStore(id, storeCode) {
+        const retailer = this.retailersService.findOne(id);
+        const stores = (retailer.stores || []).filter((s) => s.code !== storeCode);
+        this.retailersService.update(id, { stores });
+    }
     remove(id) {
         return this.retailersService.remove(id);
     }
@@ -94,6 +138,24 @@ __decorate([
     __metadata("design:paramtypes", [String, update_retailer_setup_dto_1.UpdateRetailerSetupDto]),
     __metadata("design:returntype", Object)
 ], RetailersController.prototype, "update", null);
+__decorate([
+    (0, common_1.Post)(':id/stores'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Query)('userPlan')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, String]),
+    __metadata("design:returntype", Object)
+], RetailersController.prototype, "addStore", null);
+__decorate([
+    (0, common_1.Delete)(':id/stores/:storeCode'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('storeCode')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], RetailersController.prototype, "removeStore", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),

@@ -13,5 +13,7 @@ export declare class RetailersController {
     findByBusinessEmail(email: string): RetailerRecord | null;
     findOne(id: string): RetailerRecord;
     update(id: string, updateRetailerSetupDto: UpdateRetailerSetupDto): RetailerRecord;
+    addStore(id: string, storeDto: Record<string, unknown>, userPlan?: string): RetailerRecord;
+    removeStore(id: string, storeCode: string): void;
     remove(id: string): void;
 }

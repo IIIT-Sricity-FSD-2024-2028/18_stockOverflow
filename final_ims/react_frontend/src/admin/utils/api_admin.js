@@ -1,22 +1,15 @@
 /**
- * api_admin.js - Centralized API Service for React Admin Frontend
+ * api_admin.js - Real Backend API Service for React Admin Frontend
  * 
- * Provides communication with backend administrative endpoints at http://localhost:3001/api.
- * Falls back to local storage and mockData_admin.js when backend is unreachable.
+ * Directly connects to the NestJS administrative endpoints via Vite proxy (/api)
+ * or window.IMS_API_BASE_URL (http://localhost:3001/api).
+ * Zero mock fallbacks - all operations reflect live backend state.
  */
-
-import {
-  ADMIN_DASHBOARD_STATS,
-  INITIAL_ADMIN_USERS,
-  INITIAL_ROLES_PERMISSIONS,
-  REVENUE_LEDGER,
-  STORES_DATA
-} from '../data/mockData_admin';
 
 const API_BASE_URL =
   typeof window !== 'undefined' && window.IMS_API_BASE_URL
     ? window.IMS_API_BASE_URL
-    : 'http://localhost:3001/api';
+    : '/api';
 
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
@@ -46,42 +39,138 @@ async function apiRequest(endpoint, options = {}) {
   return data;
 }
 
+// ─── 1. Dashboard & Reports ──────────────────────────────────────────────────
 export async function fetchAdminDashboardStats() {
-  try {
-    return await apiRequest('/admin/stats');
-  } catch (_err) {
-    return ADMIN_DASHBOARD_STATS;
-  }
+  return await apiRequest('/admin/dashboard/stats');
 }
 
+export async function fetchReportsSummary() {
+  return await apiRequest('/admin/reports/summary');
+}
+
+// ─── 2. User Management (CRUD) ───────────────────────────────────────────────
 export async function fetchAdminUsers() {
-  try {
-    return await apiRequest('/admin/users');
-  } catch (_err) {
-    return INITIAL_ADMIN_USERS;
-  }
+  return await apiRequest('/admin/users');
 }
 
+export async function fetchAdminUserById(id) {
+  return await apiRequest(`/admin/users/${id}`);
+}
+
+export async function createAdminUser(userData) {
+  return await apiRequest('/admin/users', {
+    method: 'POST',
+    body: JSON.stringify(userData),
+  });
+}
+
+export async function updateAdminUser(id, userData) {
+  return await apiRequest(`/admin/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(userData),
+  });
+}
+
+export async function deleteAdminUser(id) {
+  return await apiRequest(`/admin/users/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+// ─── 3. Role & Permission Management (CRUD) ──────────────────────────────────
 export async function fetchAdminRoles() {
-  try {
-    return await apiRequest('/admin/roles');
-  } catch (_err) {
-    return INITIAL_ROLES_PERMISSIONS;
-  }
+  return await apiRequest('/admin/roles');
 }
 
+export async function fetchAdminRoleById(id) {
+  return await apiRequest(`/admin/roles/${id}`);
+}
+
+export async function createAdminRole(roleData) {
+  return await apiRequest('/admin/roles', {
+    method: 'POST',
+    body: JSON.stringify(roleData),
+  });
+}
+
+export async function updateAdminRole(id, roleData) {
+  return await apiRequest(`/admin/roles/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(roleData),
+  });
+}
+
+export async function deleteAdminRole(id) {
+  return await apiRequest(`/admin/roles/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+// ─── 4. Store Branch Management (CRUD) ───────────────────────────────────────
 export async function fetchAdminStores() {
-  try {
-    return await apiRequest('/stores');
-  } catch (_err) {
-    return STORES_DATA;
-  }
+  return await apiRequest('/admin/stores');
+}
+
+export async function fetchAdminStoreById(id) {
+  return await apiRequest(`/admin/stores/${id}`);
+}
+
+export async function createAdminStore(storeData) {
+  return await apiRequest('/admin/stores', {
+    method: 'POST',
+    body: JSON.stringify(storeData),
+  });
+}
+
+export async function updateAdminStore(id, storeData) {
+  return await apiRequest(`/admin/stores/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(storeData),
+  });
+}
+
+export async function deleteAdminStore(id) {
+  return await apiRequest(`/admin/stores/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+// ─── 5. Platform Revenue & Monetization ───────────────────────────────────────
+export async function fetchPlatformRevenueSummary(retailerId) {
+  const qs = retailerId ? `?retailerId=${encodeURIComponent(retailerId)}` : '';
+  return await apiRequest(`/platform-revenue/summary${qs}`);
+}
+
+export async function fetchPlatformCommissions(retailerId, limit = 50) {
+  const params = new URLSearchParams();
+  if (retailerId) params.set('retailerId', retailerId);
+  if (limit) params.set('limit', String(limit));
+  const qs = params.toString();
+  return await apiRequest(`/platform-revenue/commissions${qs ? `?${qs}` : ''}`);
+}
+
+export async function fetchPlatformSubscriptions(userId) {
+  const qs = userId ? `?userId=${encodeURIComponent(userId)}` : '';
+  return await apiRequest(`/platform-revenue/subscriptions${qs}`);
+}
+
+export async function fetchPricingTiers(role) {
+  const qs = role ? `?role=${encodeURIComponent(role)}` : '';
+  return await apiRequest(`/platform-revenue/tiers${qs}`);
 }
 
 export async function fetchRevenueLedger() {
-  try {
-    return await apiRequest('/admin/revenue/ledger');
-  } catch (_err) {
-    return REVENUE_LEDGER;
-  }
+  return await fetchPlatformCommissions();
+}
+
+// ─── 6. System Settings ──────────────────────────────────────────────────────
+export async function fetchAdminSettings() {
+  return await apiRequest('/admin/settings');
+}
+
+export async function updateAdminSettings(settingsData) {
+  return await apiRequest('/admin/settings', {
+    method: 'PUT',
+    body: JSON.stringify(settingsData),
+  });
 }

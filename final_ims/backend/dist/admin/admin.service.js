@@ -83,7 +83,9 @@ let AdminService = class AdminService {
     getAllRoles() {
         const defaultRoles = this.getDefaultRoles();
         const customRoles = this.db.getCollection('roles');
-        return [...defaultRoles, ...customRoles];
+        const customIds = new Set(customRoles.map((r) => r.id));
+        const filteredDefaults = defaultRoles.filter((r) => !customIds.has(r.id));
+        return [...filteredDefaults, ...customRoles];
     }
     getRoleById(id) {
         const roles = this.getAllRoles();
@@ -112,9 +114,17 @@ let AdminService = class AdminService {
     }
     updateRole(id, updateRoleDto) {
         const customRoles = this.db.getCollection('roles');
-        const index = customRoles.findIndex((r) => r.id === id);
-        if (index === -1)
-            throw new common_1.NotFoundException('Role not found');
+        let index = customRoles.findIndex((r) => r.id === id);
+        if (index === -1) {
+            const defaultRole = this.getDefaultRoles().find((r) => r.id === id);
+            if (defaultRole) {
+                customRoles.push({ ...defaultRole });
+                index = customRoles.length - 1;
+            }
+            else {
+                throw new common_1.NotFoundException('Role not found');
+            }
+        }
         if (updateRoleDto.name && updateRoleDto.name !== customRoles[index].name) {
             const allRoles = this.getAllRoles();
             const nameExists = allRoles.find((r) => r.name.toLowerCase() === updateRoleDto.name.toLowerCase() && r.id !== id);

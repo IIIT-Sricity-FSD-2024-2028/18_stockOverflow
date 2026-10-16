@@ -7,7 +7,8 @@
  * used across all the internal customer pages (Products, Detail, Cart, Checkout, Orders, Returns, Feedback, Restock).
  */
 
-import React from 'react';
+import React, { useState } from 'react';
+import ContactSupportModal from '../../../components/common/ContactSupportModal';
 
 export default function CustomerLayout_consumer({
   activeMenu = 'products',
@@ -19,6 +20,8 @@ export default function CustomerLayout_consumer({
   onLogout,
   children,
 }) {
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
+
   return (
     <div className="portal-app-wrapper">
       {/* ── Fixed Left Sidebar ── */}
@@ -89,6 +92,16 @@ export default function CustomerLayout_consumer({
           >
             <span className="nav-icon">🔔</span>
             <span>Restock Alerts</span>
+          </div>
+
+          {/* Contact Support */}
+          <div
+            className="nav-item"
+            onClick={() => setSupportModalOpen(true)}
+            style={{ cursor: 'pointer', marginTop: '8px', color: '#0284c7' }}
+          >
+            <span className="nav-icon">💬</span>
+            <span>Contact Support</span>
           </div>
         </nav>
 
@@ -195,6 +208,13 @@ export default function CustomerLayout_consumer({
         {/* Page Body Content */}
         <div className="page-content">{children}</div>
       </div>
+
+      <ContactSupportModal
+        isOpen={supportModalOpen}
+        onClose={() => setSupportModalOpen(false)}
+        userRole="consumer"
+        defaultUser={userSession}
+      />
     </div>
   );
 }

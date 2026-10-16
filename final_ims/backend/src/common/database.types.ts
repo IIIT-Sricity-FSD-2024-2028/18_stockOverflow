@@ -66,6 +66,7 @@ export interface ProductRecord {
   min: number;
   max: number;
   creator: string;
+  createdBy?: string;
   creatorImg: string;
   productImg: string;
   galleryImages: string[];
@@ -433,6 +434,7 @@ export interface UserRecord {
   retailerId?: string;
   storeId?: string;
   profileId?: string;
+  plan?: string;
   createdAt: string;
   updatedAt: string;
 }

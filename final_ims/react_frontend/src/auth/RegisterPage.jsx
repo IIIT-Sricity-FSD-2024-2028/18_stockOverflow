@@ -86,36 +86,30 @@ export default function RegisterPage({ onNavigate, initialRole = 'retailer', ini
 
       let createdUser = null;
 
-      // 1. Try real backend
-      try {
-        const res = await fetch('http://localhost:3001/api/users', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+      const API_BASE = typeof window !== 'undefined' && window.IMS_API_BASE_URL
+        ? window.IMS_API_BASE_URL
+        : '/api';
 
-        if (res.ok) {
-          createdUser = await res.json();
-        }
-      } catch (_backendErr) {
-        console.warn('Real backend user registration fallback triggered');
+      const res = await fetch(`${API_BASE}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...payload,
+          plan: selectedPlan || 'free',
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Unable to register account.');
       }
 
-      // If backend offline or failed, create local record
-      if (!createdUser) {
-        createdUser = {
-          id: 'usr-' + Date.now(),
-          name: payload.name,
-          email: payload.email,
-          role: payload.role,
-          status: 'Active',
-        };
-      }
+      createdUser = await res.json();
 
       // 2. Activate Subscription on backend if retailer or supplier
       if (payload.role === 'retailer' || payload.role === 'supplier') {
         try {
-          await fetch('http://localhost:3001/api/platform-revenue/subscriptions', {
+          await fetch(`${API_BASE}/platform-revenue/subscriptions`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -130,51 +124,42 @@ export default function RegisterPage({ onNavigate, initialRole = 'retailer', ini
             }),
           });
         } catch (_subErr) {
-          // Handled gracefully
+          console.warn('Subscription activation note:', _subErr);
         }
 
-        // Cross-Module: Push new business into Employee Verification Queue
+        // Trigger employee assignment distribution for immediate review
         try {
-          const storedValidations = JSON.parse(localStorage.getItem('so_validations_data') || '[]');
-          const newApplicant = {
-            id: 'VLD-' + Math.floor(1000 + Math.random() * 9000),
-            businessName: payload.name + (payload.role === 'retailer' ? ' Retail Mart' : ' Supply Depot'),
-            type: payload.role === 'retailer' ? 'Retailer' : 'Supplier',
-            owner: payload.name,
-            email: payload.email,
-            phone: '+91 98' + Math.floor(10000000 + Math.random() * 90000000),
-            city: 'Bangalore, KA',
-            tier: selectedPlan === 'enterprise' ? 'Enterprise' : selectedPlan === 'pro' ? 'Growth' : 'Starter',
-            submittedAt: new Date().toISOString().split('T')[0],
-            status: 'Pending',
-            documents: ['Business Registration Certificate', 'GSTIN Proof Certificate', 'FSSAI License Document'],
-            auditLog: [{
-              date: new Date().toISOString().replace('T', ' ').slice(0, 19),
-              action: 'Application Submitted',
-              actor: payload.name,
-              note: `Self-onboarding registration (${selectedPlan} tier). Awaiting employee credential verification.`
-            }]
-          };
-          localStorage.setItem('so_validations_data', JSON.stringify([newApplicant, ...storedValidations]));
-        } catch (_vldErr) {
-          console.warn('Queue sync note:', _vldErr);
+          await fetch(`${API_BASE}/employees/assignments/distribute`, { method: 'POST' });
+        } catch (_distErr) {
+          console.warn('Assignment distribution trigger note:', _distErr);
         }
       }
 
       // Save user session
-      localStorage.setItem('so_session', JSON.stringify({
+      const token = createdUser.token || `sotk_${createdUser.id}_${Date.now()}`;
+      const session = {
         ...createdUser,
+        role: payload.role,
+        status: (payload.role === 'retailer' || payload.role === 'supplier') ? 'Pending' : 'Active',
+        profile: createdUser.profile || { profileStatus: 'pending' },
         subscriptionPlan: selectedPlan,
         paymentId: dummyPaymentId,
-      }));
+        token: token,
+      };
+
+      localStorage.setItem('so_session', JSON.stringify(session));
+      localStorage.setItem('so_token', token);
 
       setPaymentModalOpen(false);
 
-      // Route to destination
-      if (payload.role === 'retailer') onNavigate('retailer');
-      else if (payload.role === 'supplier') onNavigate('supplier');
-      else if (payload.role === 'consumer') onNavigate('consumer');
-      else onNavigate('retailer');
+      // Route to destination: Pending review page for Retailer & Supplier
+      if (payload.role === 'retailer' || payload.role === 'supplier') {
+        onNavigate('verification-pending');
+      } else if (payload.role === 'consumer') {
+        onNavigate('consumer');
+      } else {
+        onNavigate('landing');
+      }
 
     } catch (err) {
       setErrorMessage(err.message || 'Unable to create account');

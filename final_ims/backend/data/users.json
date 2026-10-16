@@ -58,6 +58,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-09-01T08:57:04.651Z",
     "updatedAt": "2026-09-01T08:57:28.539Z"
   },
@@ -105,6 +106,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-09-01T08:43:42.842Z",
     "updatedAt": "2026-09-01T08:44:23.240Z"
   },
@@ -152,6 +154,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-09-01T08:09:20.135Z",
     "updatedAt": "2026-09-01T08:10:31.787Z"
   },
@@ -189,6 +192,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-09-01T07:32:22.973Z",
     "updatedAt": "2026-09-01T07:33:39.500Z"
   },
@@ -236,6 +240,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-31T18:27:23.454Z",
     "updatedAt": "2026-08-31T20:11:14.709Z"
   },
@@ -283,6 +288,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-31T20:09:03.192Z",
     "updatedAt": "2026-08-31T20:10:35.936Z"
   },
@@ -329,6 +335,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-31T20:01:44.990Z",
     "updatedAt": "2026-08-31T20:03:19.103Z"
   },
@@ -363,6 +370,7 @@
       "stores": [],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-31T19:43:56.146Z",
     "updatedAt": "2026-08-31T19:55:55.163Z"
   },
@@ -409,6 +417,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-31T19:52:46.275Z",
     "updatedAt": "2026-08-31T19:54:02.897Z"
   },
@@ -455,6 +464,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-31T19:15:02.779Z",
     "updatedAt": "2026-08-31T19:21:06.748Z"
   },
@@ -501,6 +511,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-31T19:04:38.434Z",
     "updatedAt": "2026-08-31T19:10:24.696Z"
   },
@@ -516,6 +527,7 @@
     "currentStoreId": "",
     "accessibleStoreIds": [],
     "profileId": "",
+    "plan": "free",
     "createdAt": "2026-08-30T09:47:29.757Z",
     "updatedAt": "2026-08-30T09:47:29.757Z"
   },
@@ -591,6 +603,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-08-28T05:05:15.935Z",
     "updatedAt": "2026-08-28T05:05:15.937Z"
   },
@@ -637,6 +650,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-08-28T04:31:20.182Z"
   },
@@ -720,6 +734,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-08-25T16:19:13.113Z",
     "updatedAt": "2026-08-25T16:19:29.996Z"
   },
@@ -806,6 +821,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-04T03:35:10.457Z",
     "updatedAt": "2026-05-04T03:36:36.791Z"
   },
@@ -864,6 +880,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-05-04T00:48:49.423Z",
     "updatedAt": "2026-05-04T00:49:59.366Z"
   },
@@ -920,6 +937,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-04T00:45:50.169Z",
     "updatedAt": "2026-05-04T00:47:03.029Z"
   },
@@ -978,6 +996,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-05-04T00:11:50.835Z",
     "updatedAt": "2026-05-04T00:13:09.788Z"
   },
@@ -1034,6 +1053,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-04T00:08:05.816Z",
     "updatedAt": "2026-05-04T00:09:32.701Z"
   },
@@ -1107,6 +1127,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-05-03T23:06:32.604Z",
     "updatedAt": "2026-05-03T23:07:35.531Z"
   },
@@ -1163,6 +1184,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-03T23:03:05.736Z",
     "updatedAt": "2026-05-03T23:04:33.594Z"
   },
@@ -1178,6 +1200,7 @@
     "currentStoreId": "",
     "accessibleStoreIds": [],
     "profileId": "",
+    "plan": "free",
     "createdAt": "2026-05-03T23:02:24.300Z",
     "updatedAt": "2026-05-03T23:02:24.300Z"
   },
@@ -1249,6 +1272,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-03T22:13:26.608Z",
     "updatedAt": "2026-05-03T22:15:17.949Z"
   },
@@ -1285,6 +1309,7 @@
       "retailers": [],
       "productCount": 1
     },
+    "plan": "free",
     "createdAt": "2026-05-03T21:42:49.398Z",
     "updatedAt": "2026-05-03T21:43:46.073Z"
   },
@@ -1376,6 +1401,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-03T21:22:20.215Z",
     "updatedAt": "2026-05-03T21:23:56.152Z"
   },
@@ -1432,6 +1458,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-05-03T14:52:56.699Z",
     "updatedAt": "2026-05-03T14:53:30.486Z"
   },
@@ -1523,6 +1550,7 @@
       ],
       "suppliers": []
     },
+    "plan": "free",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-05-03T14:24:53.052Z"
   },
@@ -1553,6 +1581,7 @@
     "currentStoreId": "",
     "accessibleStoreIds": [],
     "profileId": "",
+    "plan": "free",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-01-01T00:00:00.000Z"
   },

@@ -25,24 +25,34 @@ export default function OrdersPage_consumer({
   onNavigate,
   onLogout,
 }) {
+  // In layman's terms: This stores the real orders retrieved from the database.
   const [purchasedProducts, setPurchasedProducts] = useState([]);
+  
+  // In layman's terms: This stores pending in-store pickup reservations awaiting store confirmation.
   const [pendingReservations, setPendingReservations] = useState([]);
+  
+  // In layman's terms: What the user is typing into the search bar.
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // In layman's terms: Shows a smooth loading indicator while the data is loading.
   const [loading, setLoading] = useState(true);
 
+  // In layman's terms: Calculates total number of items currently in the cart badge.
   const cartCount = useMemo(() => {
     return cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
   }, [cart]);
 
-  // Load orders data
+  // ── LOAD ORDERS FROM BACKEND / LOCAL STORAGE ──
+  // In layman's terms: As soon as the page opens, fetch all orders from the server.
   useEffect(() => {
     let isMounted = true;
     async function loadOrders() {
       setLoading(true);
       try {
+        const customerLookup = userSession?.name || userSession?.email || userSession?.id || '';
         const [purchased, pending, allCatalog] = await Promise.all([
-          fetchPurchasedProducts(),
-          fetchReservationRequests('pending'),
+          fetchPurchasedProducts(customerLookup),
+          fetchReservationRequests('pending', customerLookup),
           fetchProducts(),
         ]);
 
@@ -52,8 +62,9 @@ export default function OrdersPage_consumer({
               const matched = allCatalog.find((c) => c.sku === p.sku);
               return {
                 ...p,
-                productImg: matched?.productImg || '',
-                emoji: matched?.emoji || '📦',
+                orderId: p.orderId || p.lastOrderId || '',
+                productImg: p.productImg || matched?.productImg || '',
+                emoji: p.emoji || matched?.emoji || '📦',
                 isPending: false,
               };
             })
@@ -78,20 +89,28 @@ export default function OrdersPage_consumer({
           );
         }
       } catch (err) {
-        console.error('Failed to load orders:', err);
+        console.error('Failed to load orders from backend:', err);
       } finally {
         if (isMounted) setLoading(false);
       }
     }
 
     loadOrders();
+
+    // Auto-refresh orders every 5 seconds to sync with backend updates (e.g. POS sales or holds)
+    const interval = setInterval(() => {
+      loadOrders();
+    }, 5000);
+
     return () => {
       isMounted = false;
+      clearInterval(interval);
     };
   }, []);
 
+  // ── COMBINE ORDERS ──
   const allOrders = useMemo(() => {
-    const combined = [...pendingReservations, ...purchasedProducts];
+    let combined = [...pendingReservations, ...purchasedProducts];
     if (!searchQuery.trim()) return combined;
     const q = searchQuery.toLowerCase().trim();
     return combined.filter(
@@ -191,16 +210,13 @@ export default function OrdersPage_consumer({
                   </div>
                   <div className="order-name">{order.name}</div>
                   <div className="order-price">
-                    ₹{Number(order.totalSpent || 0).toLocaleString('en-IN')}
-                    <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: 'normal', marginLeft: '8px' }}>
-                      (Qty: {order.totalQty || 1} · SKU: {order.sku})
-                    </span>
+                    ₹{Number(order.totalSpent || 0).toLocaleString('en-IN')} · Qty {order.totalQty || 1} · {order.sku}
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons: Exact match to vanilla orders.html */}
                 <div className="order-actions">
-                  {order.orderId && (
+                  {order.orderId && !order.isPending && (
                     <button
                       type="button"
                       className="order-btn btn-review"
@@ -216,7 +232,7 @@ export default function OrdersPage_consumer({
                     disabled={order.isPending}
                     onClick={() => onWriteReview && onWriteReview(order.sku)}
                   >
-                    ⭐ Write a Review
+                    Write a Review
                   </button>
 
                   <button
@@ -225,12 +241,12 @@ export default function OrdersPage_consumer({
                     disabled={order.isPending}
                     onClick={() => onInitiateReturn && onInitiateReturn(order.sku, order.orderId)}
                   >
-                    🔄 Return
+                    Return
                   </button>
 
                   {order.isPending && (
                     <div className="order-hint">
-                      Actions unlock after store confirmation
+                      Actions unlock after order confirmation.
                     </div>
                   )}
                 </div>

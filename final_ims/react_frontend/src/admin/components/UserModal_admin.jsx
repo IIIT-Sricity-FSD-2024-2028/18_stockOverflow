@@ -180,8 +180,12 @@ export default function UserModal_admin({
             >
               Cancel
             </button>
-            <button type="submit" className="admin-btn admin-btn-primary">
-              {editingUser ? 'Save Changes' : 'Create User'}
+            <button
+              type="submit"
+              className="admin-btn admin-btn-primary"
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : editingUser ? 'Save Changes' : 'Create User'}
             </button>
           </div>
         </form>

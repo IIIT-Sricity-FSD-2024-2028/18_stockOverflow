@@ -85,13 +85,13 @@ export declare class PlatformRevenueController {
         maxProducts: number;
         weeklyOrderLimit: string | number;
         features: string[];
-        role: "retailer" | "supplier";
+        role: "supplier" | "retailer";
         currency: string;
         currencySymbol: string;
     }[];
     getWeeklyOrderUsage(userId: string, role?: 'retailer' | 'supplier'): {
         userId: string;
-        role: "retailer" | "supplier";
+        role: "supplier" | "retailer";
         tier: import("../common/database.types").SubscriptionTier;
         tierName: string;
         weeklyLimit: string | number;

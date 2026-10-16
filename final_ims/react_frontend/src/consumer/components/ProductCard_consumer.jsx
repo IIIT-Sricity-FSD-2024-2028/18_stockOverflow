@@ -49,12 +49,12 @@ export default function ProductCard_consumer({ product, onViewProduct, onAddToCa
     <article
       className="product-card"
       data-sku={product.sku}
-      onClick={() => onViewProduct(product.sku)}
+      onClick={() => onViewProduct(product.sku || product.id || product.name)}
       tabIndex={0}
       role="button"
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          onViewProduct(product.sku);
+          onViewProduct(product.sku || product.id || product.name);
         }
       }}
     >
@@ -111,7 +111,7 @@ export default function ProductCard_consumer({ product, onViewProduct, onAddToCa
             className="card-btn card-btn-view"
             onClick={(e) => {
               e.stopPropagation();
-              onViewProduct(product.sku);
+              onViewProduct(product.sku || product.id || product.name);
             }}
           >
             View Details

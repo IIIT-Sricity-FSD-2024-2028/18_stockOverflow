@@ -26,6 +26,7 @@ export declare class CreateProductDto {
     reorderPoint?: number;
     reorderQty?: number;
     creator?: string;
+    createdBy?: string;
     creatorImg?: string;
     productImg?: string;
     galleryImages?: string[];

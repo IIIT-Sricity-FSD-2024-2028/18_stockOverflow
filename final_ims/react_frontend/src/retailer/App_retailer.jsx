@@ -1,81 +1,316 @@
 /**
  * App_retailer.jsx - Main Application Controller for Retailer Module
  * 
- * IN LAYMAN'S TERMS:
- * This will be the main entry point for the Retailer & In-Store Cashier portal.
- * Retailers can:
- * 1. View and update physical store branch stock levels.
- * 2. Process in-store customer sales, cashier billing (POS), and reservation pick-ups.
- * 3. Place restock replenishment orders to suppliers.
+ * StockOverflow Retailer & Store Management Portal:
+ * - Public/Retailer Landing Page & Quick Sign-in
+ * - Dedicated Sign In & Sign Up Auth Page (matching vanilla frontend)
+ * - Biller Application & Real-time Pending Approval Waiting Page
+ * - Retailer Initial Setup Wizard (matching vanilla frontend wizard)
+ * - Retailer Dashboard, Products, Inventory, Stores, Billers, Suppliers, etc.
  */
 
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import RetailerLayout from './components/retailer/RetailerLayout';
+import DashboardView from './components/retailer/DashboardView';
+import ProductListView from './components/retailer/ProductListView';
+import AddProductView from './components/retailer/AddProductView';
+import EditProductView from './components/retailer/EditProductView';
+import InventoryView from './components/retailer/InventoryView';
+import LowStocksView from './components/retailer/LowStocksView';
+import StockAdjustView from './components/retailer/StockAdjustView';
+import MultiStoreView from './components/retailer/MultiStoreView';
+import CustomersView from './components/retailer/CustomersView';
+import BillersView from './components/retailer/BillersView';
+import SuppliersView from './components/retailer/SuppliersView';
+import ReorderView from './components/retailer/ReorderView';
+import PurchaseOrdersView from './components/retailer/PurchaseOrdersView';
+import ReturnsView from './components/retailer/ReturnsView';
+import ProfileView from './components/retailer/ProfileView';
+import SubscriptionPlanView from './components/retailer/SubscriptionPlanView';
+import SupplierPerformanceView from './components/retailer/SupplierPerformanceView';
+import POProductsView from './components/retailer/POProductsView';
 
-export default function App_retailer({ onSwitchModule }) {
-  const [activeTab, setActiveTab] = useState('pos');
+export default function App_retailer({ onSwitchModule, onLogout }) {
+  const { user } = useAuth();
+  const [activeView, setActiveView] = useState('dashboard');
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [selectProductModalOpen, setSelectProductModalOpen] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [selectedSupplierForPO, setSelectedSupplierForPO] = useState(null);
 
+  const handleNavigate = (view) => {
+    if (view === 'edit-product' && !editingProduct) {
+      setActiveView('products');
+      setSelectProductModalOpen(true);
+      return;
+    }
+    if (view !== 'edit-product') {
+      setEditingProduct(null);
+    }
+    setActiveView(view);
+  };
+
+  // If unauthenticated, App.jsx handles the landing page
+  if (!user) {
+    return null;
+  }
+
+
+  // Render Full Retailer Module
   return (
-    <div className="retailer-portal-wrapper" style={{ minHeight: '100vh', background: '#f8fafc', padding: '24px' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        {/* Header */}
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', background: '#fff', padding: '20px 24px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '24px' }}>🏬</span>
-              <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                Retailer Store & Cashier POS Portal
-              </h1>
-            </div>
-            <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0' }}>
-              In-store branch inventory management, cashier checkout, customer hold approvals, and supplier restocks.
-            </p>
-          </div>
-          {onSwitchModule && (
+    <>
+      <RetailerLayout
+        activeView={activeView}
+        setActiveView={handleNavigate}
+        onSwitchModule={onSwitchModule}
+      >
+        {activeView === 'dashboard' && (
+          <DashboardView onNavigate={handleNavigate} />
+        )}
+
+        {activeView === 'products' && (
+          <ProductListView
+            onNavigate={handleNavigate}
+            onEditProduct={(product) => {
+              setEditingProduct(product);
+              setActiveView('edit-product');
+            }}
+          />
+        )}
+
+        {activeView === 'add-product' && (
+          <AddProductView onNavigate={handleNavigate} />
+        )}
+
+        {activeView === 'edit-product' && (
+          <EditProductView
+            product={editingProduct}
+            onNavigate={handleNavigate}
+          />
+        )}
+
+        {activeView === 'inventory-overview' && (
+          <InventoryView />
+        )}
+
+        {activeView === 'low-stocks' && (
+          <LowStocksView onNavigate={handleNavigate} />
+        )}
+
+        {activeView === 'stock-adjustment' && (
+          <StockAdjustView />
+        )}
+
+        {activeView === 'stores' && (
+          <MultiStoreView />
+        )}
+
+        {activeView === 'customers' && (
+          <CustomersView />
+        )}
+
+        {activeView === 'billers' && (
+          <BillersView />
+        )}
+
+        {activeView === 'suppliers' && (
+          <SuppliersView
+            onViewPerformance={(supplier) => {
+              setSelectedSupplier(supplier);
+              handleNavigate('supplier-performance');
+            }}
+          />
+        )}
+
+        {activeView === 'supplier-performance' && (
+          <SupplierPerformanceView
+            supplier={selectedSupplier}
+            onBack={() => handleNavigate('suppliers')}
+          />
+        )}
+
+        {activeView === 'reorder' && (
+          <ReorderView onNavigate={handleNavigate} />
+        )}
+
+        {activeView === 'purchase-orders' && (
+          <PurchaseOrdersView
+            onBrowseCatalogue={(sup) => {
+              setSelectedSupplierForPO(sup);
+              handleNavigate('po-products');
+            }}
+          />
+        )}
+
+        {activeView === 'po-products' && (
+          <POProductsView
+            supplier={selectedSupplierForPO}
+            onBack={() => handleNavigate('purchase-orders')}
+            onAddProducts={() => handleNavigate('purchase-orders')}
+          />
+        )}
+
+        {activeView === 'returns' && (
+          <ReturnsView />
+        )}
+
+        {activeView === 'profile' && (
+          <ProfileView />
+        )}
+
+        {activeView === 'subscription-plan' && (
+          <SubscriptionPlanView onNavigate={handleNavigate} />
+        )}
+      </RetailerLayout>
+
+      {/* Select Product Dialog Modal */}
+      {selectProductModalOpen && (
+        <div
+          id="select-product-modal"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            background: 'rgba(15, 23, 42, 0.45)',
+            backdropFilter: 'blur(5px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            animation: 'fadeIn 0.2s ease-out',
+          }}
+          onClick={() => setSelectProductModalOpen(false)}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              maxWidth: '430px',
+              width: '100%',
+              boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
+              padding: '28px 24px',
+              textAlign: 'center',
+              position: 'relative',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
             <button
-              type="button"
-              onClick={() => onSwitchModule('consumer')}
+              onClick={() => setSelectProductModalOpen(false)}
               style={{
-                padding: '8px 16px',
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                border: 'none',
                 background: '#f1f5f9',
-                border: '1px solid #cbd5e1',
-                borderRadius: '8px',
-                fontWeight: 600,
+                color: '#64748b',
+                width: '30px',
+                height: '30px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 cursor: 'pointer',
-                fontSize: '13px',
+                fontSize: '14px',
+                transition: 'background 0.15s',
+              }}
+              title="Close"
+            >
+              ✕
+            </button>
+
+            {/* Badge Icon */}
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: '#eff6ff',
+                border: '6px solid #f8fafc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 16px auto',
+                color: '#2563eb',
               }}
             >
-              ← Back to Consumer
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            </div>
+
+            {/* Modal Title */}
+            <h3
+              style={{
+                fontSize: '19px',
+                fontWeight: 800,
+                color: '#0f172a',
+                margin: '0 0 8px 0',
+                fontFamily: "'Nunito Sans', sans-serif",
+                letterSpacing: '-0.3px',
+              }}
+            >
+              Select a Product to Edit
+            </h3>
+
+            {/* Subtitle / Explanation */}
+            <p
+              style={{
+                fontSize: '13.5px',
+                color: '#64748b',
+                lineHeight: 1.55,
+                margin: '0 0 20px 0',
+              }}
+            >
+              To edit a product, please choose an item from the product list and click its <strong>edit icon (✏️)</strong> in the actions column.
+            </p>
+
+            {/* Instruction Tip */}
+            <div
+              style={{
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: '10px',
+                padding: '12px 14px',
+                fontSize: '12.5px',
+                color: '#475569',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                marginBottom: '22px',
+                lineHeight: 1.45,
+              }}
+            >
+              <span style={{ fontSize: '17px', flexShrink: 0 }}>💡</span>
+              <span>Find your product in the catalog table below and click the edit pencil icon to modify its price, stock, or details.</span>
+            </div>
+
+            {/* Primary Action Button */}
+            <button
+              id="select-product-confirm-btn"
+              onClick={() => setSelectProductModalOpen(false)}
+              style={{
+                width: '100%',
+                padding: '12px 18px',
+                borderRadius: '10px',
+                background: '#2563eb',
+                color: '#ffffff',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: '14px',
+                cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+                transition: 'transform 0.1s, background 0.15s',
+              }}
+            >
+              Got it, Select Product
             </button>
-          )}
-        </header>
-
-        {/* Metric Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
-          <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Today's Counter Sales</div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#10b981', marginTop: '6px' }}>₹48,920</div>
-            <div style={{ fontSize: '12px', color: '#10b981', marginTop: '4px' }}>32 transactions processed</div>
-          </div>
-          <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Pending Store Holds</div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#f59e0b', marginTop: '6px' }}>8</div>
-            <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>Customers picking up today</div>
-          </div>
-          <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Low Stock Warnings</div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: '#ef4444', marginTop: '6px' }}>4</div>
-            <div style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px' }}>Needs supplier reorder</div>
           </div>
         </div>
-
-        <div style={{ background: '#fff', padding: '32px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-          <div style={{ fontSize: '42px', marginBottom: '12px' }}>🛒</div>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Retailer Module Components Ready for Migration</h2>
-          <p style={{ fontSize: '13.5px', color: '#64748b', maxWidth: '600px', margin: '0 auto 20px', lineHeight: '1.6' }}>
-            The dedicated folder <code>src/retailer/</code> has been created. POS cashier, inventory adjustment tables, and barcode checkout components can be organized here.
-          </p>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

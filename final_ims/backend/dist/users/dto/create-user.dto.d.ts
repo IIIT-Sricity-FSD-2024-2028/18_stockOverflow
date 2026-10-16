@@ -10,4 +10,5 @@ export declare class CreateUserDto {
     accessibleStoreIds?: string[];
     profileId?: string;
     profile?: Record<string, unknown>;
+    plan?: string;
 }

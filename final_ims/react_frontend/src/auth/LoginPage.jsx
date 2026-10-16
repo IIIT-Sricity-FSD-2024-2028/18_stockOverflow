@@ -25,8 +25,11 @@ export default function LoginPage({ onNavigate }) {
     setIsLoading(true);
 
     try {
-      // 1. Call real backend
-      const res = await fetch('http://localhost:3001/api/users/login', {
+      const API_BASE = typeof window !== 'undefined' && window.IMS_API_BASE_URL
+        ? window.IMS_API_BASE_URL
+        : '/api';
+
+      const res = await fetch(`${API_BASE}/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), password }),
@@ -34,74 +37,50 @@ export default function LoginPage({ onNavigate }) {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Invalid credentials');
+        throw new Error(errorData.message || 'Invalid email or password.');
       }
 
       const user = await res.json();
       const role = String(user.role || 'consumer').toLowerCase();
-      
+      const status = String(user.profile?.profileStatus || user.status || 'Active').toLowerCase();
+
+      // Store canonical session and auth token
       const session = {
+        ...user,
         id: user.id || 'usr-' + Date.now(),
         name: user.name || 'User',
         email: user.email || email,
-        role: role,
+        role: role === 'customer' ? 'consumer' : role,
         status: user.status || 'Active',
-        storeId: user.storeId || '',
-        currentStoreId: user.currentStoreId || user.storeId || '',
+        profile: user.profile || null,
+        token: user.token || `sotk_${user.id}_${Date.now()}`,
       };
 
       localStorage.setItem('so_session', JSON.stringify(session));
-
-      // Route to destination
-      if (role === 'admin') onNavigate('admin');
-      else if (role === 'employee') onNavigate('employee');
-      else if (role === 'retailer') onNavigate('retailer');
-      else if (role === 'supplier') onNavigate('supplier');
-      else if (role === 'consumer') onNavigate('consumer');
-      else onNavigate('retailer');
-    } catch (err) {
-      // Fallback for evaluation / offline backend
-      const normalizedEmail = email.toLowerCase().trim();
-      let matchedRole = null;
-      let matchedName = 'User';
-
-      if (normalizedEmail.includes('admin')) {
-        matchedRole = 'admin';
-        matchedName = 'Admin Officer';
-      } else if (normalizedEmail.includes('employee')) {
-        matchedRole = 'employee';
-        matchedName = 'Verification Staff';
-      } else if (normalizedEmail.includes('retailer')) {
-        matchedRole = 'retailer';
-        matchedName = 'Store Manager';
-      } else if (normalizedEmail.includes('supplier')) {
-        matchedRole = 'supplier';
-        matchedName = 'Apex Logistics';
-      } else if (normalizedEmail.includes('consumer') || normalizedEmail.includes('customer')) {
-        matchedRole = 'consumer';
-        matchedName = 'End Buyer';
+      if (session.token) {
+        localStorage.setItem('so_token', session.token);
       }
 
-      if (matchedRole) {
-        const fallbackSession = {
-          id: 'demo-' + matchedRole,
-          name: matchedName,
-          email: email,
-          role: matchedRole,
-          status: 'Active',
-          storeId: 'str-main-01',
-          currentStoreId: 'str-main-01',
-        };
-        localStorage.setItem('so_session', JSON.stringify(fallbackSession));
-
-        if (matchedRole === 'admin') onNavigate('admin');
-        else if (matchedRole === 'employee') onNavigate('employee');
-        else if (matchedRole === 'retailer') onNavigate('retailer');
-        else if (matchedRole === 'supplier') onNavigate('supplier');
-        else onNavigate('consumer');
+      // Role and Verification Gate Routing
+      if (role === 'admin') {
+        onNavigate('admin');
+      } else if (role === 'employee') {
+        onNavigate('employee');
+      } else if (role === 'retailer' || role === 'supplier') {
+        if (status === 'pending' || status === 'rejected') {
+          onNavigate('verification-pending');
+        } else {
+          onNavigate(role);
+        }
+      } else if (role === 'consumer') {
+        onNavigate('consumer');
+      } else if (role === 'biller') {
+        onNavigate('biller');
       } else {
-        setErrorMessage(err.message || 'Unable to log in. Please check your credentials.');
+        onNavigate('landing');
       }
+    } catch (err) {
+      setErrorMessage(err.message || 'Unable to log in. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }

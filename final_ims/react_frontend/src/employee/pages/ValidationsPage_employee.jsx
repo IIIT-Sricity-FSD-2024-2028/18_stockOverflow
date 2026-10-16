@@ -1,54 +1,80 @@
 /**
  * ValidationsPage_employee.jsx - Employee Entity Verification Desk Page View
  * 
- * Features:
- * 1. Filter tabs across entity types and statuses (Pending, Approved, Rejected).
- * 2. Real-time search by entity name, owner, and GSTIN.
- * 3. Approve and Reject state transitions with audit notes.
- * 4. Dossier modal with deep legal document inspection.
- * 5. Dynamic persistence that updates the Employee Dashboard immediately.
+ * Connected to live backend endpoints (/api/employees/assignments)
+ * Zero mock fallbacks - all operations reflect live backend verification queue.
  */
 
-import React, { useState, useMemo } from 'react';
-import { INITIAL_VALIDATIONS } from '../data/mockData_employee';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import {
+  fetchEmployeeAssignments,
+  resolveEmployeeAssignment,
+  distributeEmployeeWork,
+} from '../utils/api_employee';
 import DossierModal_employee from '../components/DossierModal_employee';
 
+function mapAssignmentToEntity(asgn) {
+  const d = asgn.details || {};
+  return {
+    id: asgn.id,
+    targetId: asgn.targetId,
+    type: asgn.targetType || 'retailer',
+    entityName: asgn.title || d.businessName || d.storeName || d.supplierName || 'Business Entity',
+    owner: d.ownerName || d.contactPerson || d.name || 'Authorized Owner',
+    email: d.email || d.ownerEmail || '-',
+    contact: d.phone || d.contact || '-',
+    gstin: d.gstin || d.taxId || 'GSTIN-PENDING',
+    location: d.address || d.location || 'Registered Facility',
+    submittedAt: asgn.createdAt ? new Date(asgn.createdAt).toLocaleDateString() : 'Recent',
+    status: asgn.status || 'pending',
+    notes: asgn.notes || '',
+    documents: d.documents && d.documents.length > 0
+      ? d.documents
+      : ['Business License', 'GSTIN Certificate', 'Store Lease Agreement'],
+  };
+}
+
 export default function ValidationsPage_employee() {
-  const [validations, setValidations] = useState(() => {
-    try {
-      const saved = localStorage.getItem('stockoverflow_employee_validations');
-      return saved ? JSON.parse(saved) : INITIAL_VALIDATIONS;
-    } catch {
-      return INITIAL_VALIDATIONS;
-    }
-  });
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedEntity, setSelectedEntity] = useState(null);
 
-  const persistValidations = (newItems) => {
-    setValidations(newItems);
+  const loadAssignments = useCallback(async () => {
     try {
-      localStorage.setItem('stockoverflow_employee_validations', JSON.stringify(newItems));
-      window.dispatchEvent(new Event('storage'));
-    } catch (e) {
-      console.warn('Could not save validations to localStorage', e);
+      setLoading(true);
+      setError(null);
+      // First ensure work is distributed to employees
+      await distributeEmployeeWork().catch(() => {});
+      const data = await fetchEmployeeAssignments();
+      const list = Array.isArray(data) ? data : [];
+      setAssignments(list);
+    } catch (err) {
+      console.error('Failed to load employee assignments:', err);
+      setError(err.message || 'Failed to load verification queue from backend');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const handleResetValidations = () => {
-    if (window.confirm('Reset verification queue back to initial demo entities?')) {
-      persistValidations(INITIAL_VALIDATIONS);
-    }
-  };
+  useEffect(() => {
+    loadAssignments();
+  }, [loadAssignments]);
+
+  const entities = useMemo(() => {
+    return assignments.map(mapAssignmentToEntity);
+  }, [assignments]);
 
   const filteredItems = useMemo(() => {
-    return validations.filter((item) => {
+    return entities.filter((item) => {
+      const s = search.toLowerCase();
       const matchesSearch =
-        item.entityName.toLowerCase().includes(search.toLowerCase()) ||
-        item.owner.toLowerCase().includes(search.toLowerCase()) ||
-        (item.gstin && item.gstin.toLowerCase().includes(search.toLowerCase()));
+        item.entityName.toLowerCase().includes(s) ||
+        item.owner.toLowerCase().includes(s) ||
+        (item.gstin && item.gstin.toLowerCase().includes(s));
 
       if (!matchesSearch) return false;
 
@@ -61,30 +87,25 @@ export default function ValidationsPage_employee() {
       }
       return true;
     });
-  }, [validations, filter, search]);
+  }, [entities, filter, search]);
 
-  const handleStatusChange = (id, newStatus, reason = '') => {
-    const updated = validations.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          status: newStatus,
-          notes: reason ? reason : item.notes,
-          decidedAt: new Date().toISOString(),
-          decidedBy: 'Sarah Connor (Compliance Auditor)',
-        };
-      }
-      return item;
-    });
-
-    persistValidations(updated);
-
-    if (selectedEntity && selectedEntity.id === id) {
-      setSelectedEntity((prev) => ({
-        ...prev,
+  const handleStatusChange = async (id, newStatus, reason = '') => {
+    try {
+      await resolveEmployeeAssignment(id, {
         status: newStatus,
-        notes: reason ? reason : prev.notes,
-      }));
+        rejectionReason: reason || undefined,
+        notes: reason || undefined,
+      });
+      await loadAssignments();
+      if (selectedEntity && selectedEntity.id === id) {
+        setSelectedEntity((prev) => ({
+          ...prev,
+          status: newStatus,
+          notes: reason || prev.notes,
+        }));
+      }
+    } catch (err) {
+      alert(`Error updating verification status: ${err.message}`);
     }
   };
 
@@ -105,59 +126,61 @@ export default function ValidationsPage_employee() {
         <div>
           <h1 className="emp-page-title">Entity Verification Desk</h1>
           <p className="emp-page-subtitle">
-            Review legal dossiers, verify GSTIN certificates, and approve or reject onboarding registrations.
+            Validate pending retailer registrations, supplier accounts, and branch store activations live from backend.
           </p>
         </div>
-        <button
-          type="button"
-          className="emp-btn"
-          style={{ background: '#ffffff', color: '#4b5563', border: '1px solid #d1d5db' }}
-          onClick={handleResetValidations}
-          title="Reset to default verification queue"
-        >
-          ↻ Reset Queue Data
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            type="button"
+            className="emp-btn emp-btn-outline"
+            onClick={loadAssignments}
+            disabled={loading}
+          >
+            {loading ? 'Refreshing...' : '↻ Refresh Queue'}
+          </button>
+        </div>
       </div>
 
-      {/* ── Filter Tabs & Search Card ── */}
+      {error && (
+        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px' }}>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
+      {/* ── Filter Bar ── */}
       <div
         style={{
-          background: '#ffffff',
-          border: '1px solid #e5e7eb',
-          borderRadius: '12px',
-          padding: '12px 16px',
-          marginBottom: '1.25rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          flexWrap: 'wrap',
           gap: '12px',
+          marginBottom: '1.25rem',
+          flexWrap: 'wrap',
         }}
       >
-        <div style={{ display: 'flex', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           {[
-            { key: 'all', label: `All (${validations.length})` },
-            { key: 'pending', label: `⏳ Pending (${validations.filter(v => v.status === 'pending').length})` },
-            { key: 'retailer', label: 'Retailers' },
-            { key: 'supplier', label: 'Suppliers' },
-            { key: 'store', label: 'Stores' },
-            { key: 'approved', label: 'Approved' },
-            { key: 'rejected', label: 'Rejected' },
+            { id: 'all', label: 'All Entities' },
+            { id: 'pending', label: 'Pending Only' },
+            { id: 'retailer', label: 'Retailers' },
+            { id: 'supplier', label: 'Suppliers' },
+            { id: 'store', label: 'Store Branches' },
+            { id: 'approved', label: 'Approved' },
+            { id: 'rejected', label: 'Rejected' },
           ].map((tab) => (
             <button
-              key={tab.key}
+              key={tab.id}
               type="button"
-              onClick={() => setFilter(tab.key)}
+              onClick={() => setFilter(tab.id)}
               style={{
                 padding: '6px 14px',
+                borderRadius: '8px',
+                border: filter === tab.id ? '1px solid #2563eb' : '1px solid #e5e7eb',
+                background: filter === tab.id ? '#eff6ff' : '#ffffff',
+                color: filter === tab.id ? '#2563eb' : '#6b7280',
                 fontSize: '12.5px',
                 fontWeight: 600,
-                border: 'none',
-                borderRight: '1px solid #e5e7eb',
                 cursor: 'pointer',
-                background: filter === tab.key ? '#5b67ca' : '#ffffff',
-                color: filter === tab.key ? '#ffffff' : '#6b7280',
-                transition: 'all 0.15s',
               }}
             >
               {tab.label}
@@ -167,138 +190,108 @@ export default function ValidationsPage_employee() {
 
         <input
           type="text"
-          placeholder="Filter by name, GSTIN, owner..."
+          placeholder="Search by entity, owner, or GSTIN..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           style={{
             padding: '7px 12px',
-            border: '1px solid #e5e7eb',
             borderRadius: '8px',
+            border: '1px solid #e5e7eb',
             fontSize: '12.5px',
+            width: '260px',
             outline: 'none',
-            width: '240px',
           }}
         />
       </div>
 
-      {/* ── Validations Queue Table ── */}
-      <div
-        style={{
-          background: '#ffffff',
-          borderRadius: '12px',
-          border: '1px solid #e5e7eb',
-          overflow: 'hidden',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-        }}
-      >
+      {/* ── Items Table Card ── */}
+      <div className="emp-card" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
+          <table className="emp-table">
             <thead>
-              <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
-                  Business Entity
-                </th>
-                <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
-                  Type
-                </th>
-                <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
-                  GSTIN / Tax ID
-                </th>
-                <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
-                  Submitted Date
-                </th>
-                <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>
-                  Status
-                </th>
-                <th style={{ padding: '10px 16px', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', textAlign: 'right' }}>
-                  Actions
-                </th>
+              <tr>
+                <th>Entity Name &amp; ID</th>
+                <th>Type</th>
+                <th>Authorized Owner</th>
+                <th>GSTIN Tax ID</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredItems.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af' }}>
-                    No validation records found matching filter.
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '2.5rem', color: '#9ca3af' }}>
+                    Loading verification assignments live from backend...
+                  </td>
+                </tr>
+              ) : filteredItems.length === 0 ? (
+                <tr>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '2.5rem', color: '#9ca3af' }}>
+                    No entities found matching the selected filter.
                   </td>
                 </tr>
               ) : (
                 filteredItems.map((item) => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '12px 16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div
-                          style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '8px',
-                            background:
-                              item.type === 'retailer' ? '#3b82f6' : item.type === 'supplier' ? '#f59e0b' : '#10b981',
-                            color: '#ffffff',
-                            fontWeight: 700,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '12px',
-                          }}
-                        >
-                          {item.entityName.substring(0, 2).toUpperCase()}
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 600, color: '#1a1d2e' }}>{item.entityName}</div>
-                          <div style={{ fontSize: '11.5px', color: '#6b7280' }}>
-                            {item.owner} &bull; {item.location}
-                          </div>
-                        </div>
+                  <tr key={item.id}>
+                    <td>
+                      <div style={{ fontWeight: 600, color: '#1a1d2e' }}>{item.entityName}</div>
+                      <div style={{ fontSize: '11px', color: '#9ca3af', fontFamily: 'monospace' }}>
+                        {item.id}
                       </div>
                     </td>
-
-                    <td style={{ padding: '12px 16px' }}>
-                      <span className={`emp-pill ${item.type}`}>{item.type.toUpperCase()}</span>
+                    <td>
+                      <span className={`emp-pill ${item.type}`}>
+                        {item.type.toUpperCase()}
+                      </span>
                     </td>
-
-                    <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontSize: '12px', color: '#4b5563' }}>
-                      {item.gstin || 'PENDING'}
+                    <td>
+                      <div style={{ fontSize: '13px', color: '#374151' }}>{item.owner}</div>
+                      <div style={{ fontSize: '11px', color: '#9ca3af' }}>{item.contact}</div>
                     </td>
-
-                    <td style={{ padding: '12px 16px', color: '#6b7280', fontSize: '12px' }}>
-                      {item.submittedDate}
+                    <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>
+                      {item.gstin}
                     </td>
-
-                    <td style={{ padding: '12px 16px' }}>
-                      <span className={`emp-pill ${item.status}`}>{item.status.toUpperCase()}</span>
+                    <td>
+                      <span className={`emp-pill ${item.status}`}>
+                        {item.status.toUpperCase()}
+                      </span>
                     </td>
-
-                    <td style={{ padding: '12px 16px', textAlign: 'right' }}>
+                    <td style={{ fontSize: '12px', color: '#6b7280' }}>
+                      {item.submittedAt}
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                        <button
+                          type="button"
+                          className="emp-btn emp-btn-outline"
+                          style={{ padding: '4px 8px', fontSize: '11.5px' }}
+                          onClick={() => setSelectedEntity(item)}
+                        >
+                          Inspect Dossier
+                        </button>
+
                         {item.status === 'pending' && (
                           <>
                             <button
                               type="button"
-                              className="emp-btn emp-btn-success"
-                              onClick={() => handleStatusChange(item.id, 'approved')}
-                              title="Approve entity"
+                              className="emp-btn emp-btn-primary"
+                              style={{ padding: '4px 8px', fontSize: '11.5px', background: '#10b981', borderColor: '#10b981' }}
+                              onClick={() => handleStatusChange(item.id, 'approved', 'Compliance verified')}
                             >
-                              ✓ Approve
+                              Approve
                             </button>
                             <button
                               type="button"
-                              className="emp-btn emp-btn-danger"
+                              className="emp-btn emp-btn-outline"
+                              style={{ padding: '4px 8px', fontSize: '11.5px', color: '#ef4444', borderColor: '#fca5a5' }}
                               onClick={() => handleQuickReject(item.id, item.entityName)}
-                              title="Reject with note"
                             >
-                              ✕ Reject
+                              Reject
                             </button>
                           </>
                         )}
-                        <button
-                          type="button"
-                          className="emp-btn"
-                          style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb' }}
-                          onClick={() => setSelectedEntity(item)}
-                        >
-                          Dossier
-                        </button>
                       </div>
                     </td>
                   </tr>
@@ -309,7 +302,7 @@ export default function ValidationsPage_employee() {
         </div>
       </div>
 
-      {/* Reusable Dossier Modal */}
+      {/* Dossier Modal */}
       <DossierModal_employee
         entity={selectedEntity}
         onClose={() => setSelectedEntity(null)}

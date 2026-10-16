@@ -120,6 +120,10 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsString()
+  createdBy?: string;
+
+  @IsOptional()
+  @IsString()
   creatorImg?: string;
 
   @IsOptional()

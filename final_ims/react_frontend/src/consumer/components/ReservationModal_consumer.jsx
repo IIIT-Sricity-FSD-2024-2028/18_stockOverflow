@@ -12,11 +12,13 @@ export default function ReservationModal_consumer({
   isOpen = false,
   product = null,
   selectedStore = 'Downtown Store',
+  selectedStoreId = '',
   stores = [],
+  userSession,
   onClose,
   onConfirmReservation,
 }) {
-  const [storeId, setStoreId] = useState('s1');
+  const [storeId, setStoreId] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -28,20 +30,65 @@ export default function ReservationModal_consumer({
   // Auto-populate customer details from active session if logged in
   useEffect(() => {
     try {
-      const session = JSON.parse(localStorage.getItem('so_session') || '{}');
+      const session = userSession || JSON.parse(localStorage.getItem('so_session') || '{}');
       if (session.name) setCustomerName(session.name);
       if (session.email) setCustomerEmail(session.email);
     } catch (_e) {}
-  }, [isOpen]);
+  }, [isOpen, userSession]);
+
+  // ── IN-STORE AVAILABILITY CALCULATION (LAYMAN EXPLANATION) ──
+  // In layman's terms: Calculate all available physical stores that currently have
+  // units on hand for this specific product, including any central distribution hub.
+  const availableStores = React.useMemo(() => {
+    if (!product) return [];
+    const list = [];
+    const seenStoreIds = new Set();
+    const inventory = Array.isArray(product.storeInventory) ? product.storeInventory : [];
+    const totalStock = product.qty || 0;
+
+    // 1. Check retailer stores
+    stores.forEach((store) => {
+      const entry = inventory.find((inv) => String(inv.storeId) === String(store.id));
+      const count = entry ? Number(entry.qty) || 0 : (inventory.length > 0 ? 0 : totalStock);
+      if (count > 0) {
+        list.push({ ...store, availableQty: count });
+        seenStoreIds.add(String(store.id));
+      }
+    });
+
+    // 2. Check store inventory entries (e.g. central default-store)
+    inventory.forEach((inv) => {
+      const sId = String(inv.storeId);
+      if (!seenStoreIds.has(sId) && Number(inv.qty) > 0) {
+        list.push({
+          id: sId,
+          name: sId === 'default-store' ? 'Central Fulfillment Store' : `Store #${sId}`,
+          location: 'Main Distribution Center, India',
+          availableQty: Number(inv.qty),
+        });
+        seenStoreIds.add(sId);
+      }
+    });
+
+    return list;
+  }, [stores, product]);
+
+  useEffect(() => {
+    if (!isOpen || !product) return;
+    const defaultStore =
+      availableStores.find((store) => String(store.id) === String(selectedStoreId)) ||
+      availableStores.find((store) => store.name === selectedStore) ||
+      availableStores[0];
+    setStoreId(defaultStore?.id || '');
+    setQty(1);
+    setErrorMsg('');
+  }, [isOpen, product, availableStores, selectedStore, selectedStoreId]);
 
   if (!isOpen || !product) return null;
 
   // Find local stock for the selected store
-  const storeInventory = Array.isArray(product.storeInventory) ? product.storeInventory : [];
-  const currentStoreEntry = storeInventory.find((s) => s.storeId === storeId) || {
-    qty: product.qty || 0,
-  };
-  const maxAvailable = currentStoreEntry.qty || 0;
+  const selectedStoreItem = availableStores.find((s) => String(s.id) === String(storeId));
+  const maxAvailable = selectedStoreItem ? selectedStoreItem.availableQty : (product.qty || 0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,6 +111,7 @@ export default function ReservationModal_consumer({
         customer: customerName || 'Valued Customer',
         customerEmail,
         customerPhone,
+        customerId: userSession?.id || undefined,
         paymentMethod,
         status: 'pending',
       };
@@ -122,15 +170,14 @@ export default function ReservationModal_consumer({
               onChange={(e) => setStoreId(e.target.value)}
               required
             >
-              {stores.map((s) => {
-                const sEntry = storeInventory.find((entry) => entry.storeId === s.id);
-                const count = sEntry ? sEntry.qty : 0;
-                return (
-                  <option key={s.id} value={s.id} disabled={count <= 0}>
-                    {s.name} ({s.location || 'Local Hub'}) — {count > 0 ? `${count} in stock` : 'Out of Stock'}
-                  </option>
-                );
-              })}
+              {availableStores.length === 0 && (
+                <option value="">No stores currently stock this product</option>
+              )}
+              {availableStores.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} ({s.location || 'Local Hub'}) — {s.availableQty} units available
+                </option>
+              ))}
             </select>
           </div>
 

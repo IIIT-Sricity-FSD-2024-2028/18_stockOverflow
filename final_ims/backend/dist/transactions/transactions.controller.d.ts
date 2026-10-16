@@ -16,6 +16,14 @@ export declare class TransactionsController {
         productImg: string;
         emoji: string;
     }[];
+    getOrderActivity(retailerId?: string, storeId?: string, timeframe?: string): {
+        days: string[];
+        times: string[];
+        counts: number[][];
+        heatLevels: number[][];
+        totalOrders: number;
+        hasData: boolean;
+    };
     uploadReceiptFile(file: any): {
         message: string;
         url: string;

@@ -1,45 +1,32 @@
 /**
  * UsersPage_admin.jsx - Admin User & Staff Management Page View
  * 
- * Converted from final_ims/frontend/admin/users.html
+ * Connected to live backend endpoints (/api/admin/users)
+ * Zero mock fallbacks - all operations reflect live backend state.
  */
 
-import React, { useState, useMemo } from 'react';
-import { INITIAL_ADMIN_USERS } from '../data/mockData_admin';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import {
+  fetchAdminUsers,
+  createAdminUser,
+  updateAdminUser,
+  deleteAdminUser,
+} from '../utils/api_admin';
 import UserModal_admin from '../components/UserModal_admin';
 
 export default function UsersPage_admin() {
-  const [users, setUsers] = useState(() => {
-    try {
-      const saved = localStorage.getItem('stockoverflow_admin_users');
-      return saved ? JSON.parse(saved) : INITIAL_ADMIN_USERS;
-    } catch {
-      return INITIAL_ADMIN_USERS;
-    }
-  });
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  // Persist users to localStorage
-  const persistUsers = (newUsers) => {
-    setUsers(newUsers);
-    try {
-      localStorage.setItem('stockoverflow_admin_users', JSON.stringify(newUsers));
-    } catch (e) {
-      console.warn('Could not save users to localStorage', e);
-    }
-  };
-
-  const handleResetUsers = () => {
-    if (window.confirm('Reset users back to default demo seed data?')) {
-      persistUsers(INITIAL_ADMIN_USERS);
-    }
-  };
-
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -49,13 +36,32 @@ export default function UsersPage_admin() {
     phone: '',
   });
 
+  const loadUsers = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchAdminUsers();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Failed to load admin users:', err);
+      setError(err.message || 'Failed to load users from backend');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
+
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
-      const matchesSearch =
-        u.name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase());
-      const matchesRole = !roleFilter || u.role.toLowerCase() === roleFilter.toLowerCase();
-      const matchesStatus = !statusFilter || u.status.toLowerCase() === statusFilter.toLowerCase();
+      const name = String(u.name || '').toLowerCase();
+      const email = String(u.email || '').toLowerCase();
+      const s = search.toLowerCase();
+      const matchesSearch = name.includes(s) || email.includes(s);
+      const matchesRole = !roleFilter || String(u.role || '').toLowerCase() === roleFilter.toLowerCase();
+      const matchesStatus = !statusFilter || String(u.status || '').toLowerCase() === statusFilter.toLowerCase();
       return matchesSearch && matchesRole && matchesStatus;
     });
   }, [users, search, roleFilter, statusFilter]);
@@ -76,9 +82,9 @@ export default function UsersPage_admin() {
   const handleOpenEdit = (user) => {
     setEditingUser(user);
     setFormData({
-      name: user.name,
-      email: user.email,
-      role: user.role,
+      name: user.name || '',
+      email: user.email || '',
+      role: user.role || 'employee',
       store: user.store || 'Global Hub',
       status: user.status || 'Active',
       phone: user.phone || '',
@@ -90,26 +96,50 @@ export default function UsersPage_admin() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSaveUser = (e) => {
+  const handleSaveUser = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.email.trim()) {
       alert('Please fill out all required fields.');
       return;
     }
 
-    if (editingUser) {
-      const updated = users.map((u) => (u.id === editingUser.id ? { ...u, ...formData } : u));
-      persistUsers(updated);
-    } else {
-      const newId = `u-${formData.role.slice(0, 3)}-${Date.now().toString().slice(-4)}`;
-      persistUsers([{ id: newId, ...formData }, ...users]);
+    try {
+      setSaving(true);
+      if (editingUser) {
+        await updateAdminUser(editingUser.id, {
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          store: formData.store,
+          status: formData.status,
+        });
+      } else {
+        await createAdminUser({
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          store: formData.store,
+          status: formData.status,
+          password: 'Password123!',
+        });
+      }
+      setIsModalOpen(false);
+      await loadUsers();
+    } catch (err) {
+      alert(`Error saving user: ${err.message}`);
+    } finally {
+      setSaving(false);
     }
-    setIsModalOpen(false);
   };
 
-  const handleDeleteUser = (id, name) => {
+  const handleDeleteUser = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}?`)) {
-      persistUsers(users.filter((u) => u.id !== id));
+      try {
+        await deleteAdminUser(id);
+        await loadUsers();
+      } catch (err) {
+        alert(`Error deleting user: ${err.message}`);
+      }
     }
   };
 
@@ -130,11 +160,12 @@ export default function UsersPage_admin() {
   };
 
   const getStatusBadge = (status) => {
+    const s = String(status || '').toLowerCase();
     let badgeClass = 'success';
-    if (status === 'Warning') badgeClass = 'warning';
-    if (status === 'Inactive') badgeClass = 'danger';
+    if (s === 'warning' || s === 'pending') badgeClass = 'warning';
+    if (s === 'inactive' || s === 'rejected') badgeClass = 'danger';
 
-    return <span className={`admin-badge ${badgeClass}`}>{status}</span>;
+    return <span className={`admin-badge ${badgeClass}`}>{status || 'Active'}</span>;
   };
 
   return (
@@ -142,16 +173,17 @@ export default function UsersPage_admin() {
       <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">Manage Users</h1>
-          <p className="admin-page-subtitle">View, edit, and manage all users in your system</p>
+          <p className="admin-page-subtitle">View, edit, and manage all users live from backend</p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             type="button"
             className="admin-btn admin-btn-outline"
-            onClick={handleResetUsers}
-            title="Reset to initial seed users"
+            onClick={loadUsers}
+            disabled={loading}
+            title="Refresh from backend"
           >
-            ↻ Reset Demo Data
+            {loading ? 'Refreshing...' : '↻ Refresh Users'}
           </button>
           <button
             type="button"
@@ -165,6 +197,12 @@ export default function UsersPage_admin() {
           </button>
         </div>
       </div>
+
+      {error && (
+        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px' }}>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
 
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
         {/* Filters Area */}
@@ -251,7 +289,13 @@ export default function UsersPage_admin() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                    Loading users from backend...
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
                     No users found matching the criteria.
@@ -259,7 +303,8 @@ export default function UsersPage_admin() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => {
-                  const initials = user.name
+                  const nameStr = user.name || user.email || 'User';
+                  const initials = nameStr
                     .split(' ')
                     .map((n) => n[0])
                     .join('')
@@ -352,6 +397,7 @@ export default function UsersPage_admin() {
         onChange={handleFormChange}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveUser}
+        saving={saving}
       />
     </div>
   );

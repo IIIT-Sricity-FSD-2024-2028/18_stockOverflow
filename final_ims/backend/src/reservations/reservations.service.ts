@@ -60,8 +60,18 @@ export class ReservationsService {
 
   createRequest(createReservationRequestDto: CreateReservationRequestDto) {
     const product = this.productsService.findBySku(createReservationRequestDto.sku);
-    const storeId = this.normalizeText(createReservationRequestDto.storeId);
-    const storeEntry = product.storeInventory.find((entry) => entry.storeId === storeId);
+    let storeId = this.normalizeText(createReservationRequestDto.storeId);
+    let storeEntry = product.storeInventory.find((entry) => entry.storeId === storeId);
+
+    // Fallback gracefully to the central fulfillment store or the first branch with inventory
+    if (!storeEntry) {
+      storeEntry =
+        product.storeInventory.find((entry) => entry.storeId === 'default-store') ||
+        product.storeInventory[0];
+      if (storeEntry) {
+        storeId = storeEntry.storeId;
+      }
+    }
 
     if (!storeEntry) {
       throw new BadRequestException('Selected store is unavailable for this product');

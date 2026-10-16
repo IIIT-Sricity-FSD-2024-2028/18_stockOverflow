@@ -13,6 +13,14 @@ export declare class TransactionsService {
     constructor(db: JsonDbService, productsService: ProductsService, customersService: CustomersService, reservationsService: ReservationsService);
     findAll(retailerId?: string, storeId?: string, customerLookup?: string): TransactionRecord[];
     findLatest(retailerId?: string, storeId?: string, customerLookup?: string): TransactionRecord;
+    getOrderActivity(retailerId?: string, storeId?: string, timeframe?: string): {
+        days: string[];
+        times: string[];
+        counts: number[][];
+        heatLevels: number[][];
+        totalOrders: number;
+        hasData: boolean;
+    };
     findOne(orderId: string, retailerId?: string, storeId?: string, customerLookup?: string): TransactionRecord;
     create(createTransactionDto: CreateTransactionDto): TransactionRecord;
     update(orderId: string, updateTransactionDto: UpdateTransactionDto): TransactionRecord;

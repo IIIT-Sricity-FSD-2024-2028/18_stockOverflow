@@ -9,11 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreatePurchaseOrderDto = void 0;
+exports.CreatePurchaseOrderDto = exports.PurchaseOrderItemDto = exports.PURCHASE_ORDER_STATUSES = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const dto_transforms_1 = require("../../common/dto.transforms");
-const PURCHASE_ORDER_STATUSES = [
+exports.PURCHASE_ORDER_STATUSES = [
     'Draft',
     'Pending',
     'Pending Approval',
@@ -22,14 +22,25 @@ const PURCHASE_ORDER_STATUSES = [
     'Delivered',
     'Cancelled',
     'Received',
+    'Approved',
+    'draft',
+    'pending',
+    'pending approval',
+    'confirmed',
+    'in delivery',
+    'indelivery',
+    'delivered',
+    'cancelled',
+    'received',
+    'approved',
 ];
-const STOCK_STATUSES = ['ok', 'low', 'out'];
 class PurchaseOrderItemDto {
 }
+exports.PurchaseOrderItemDto = PurchaseOrderItemDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Transform)(dto_transforms_1.trimString),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
     __metadata("design:type", String)
 ], PurchaseOrderItemDto.prototype, "id", void 0);
 __decorate([
@@ -39,26 +50,26 @@ __decorate([
     __metadata("design:type", String)
 ], PurchaseOrderItemDto.prototype, "name", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Transform)(dto_transforms_1.trimString),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
     __metadata("design:type", String)
 ], PurchaseOrderItemDto.prototype, "emoji", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Transform)(dto_transforms_1.trimString),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
     __metadata("design:type", String)
 ], PurchaseOrderItemDto.prototype, "sku", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Transform)(dto_transforms_1.trimString),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
     __metadata("design:type", String)
 ], PurchaseOrderItemDto.prototype, "cat", void 0);
 __decorate([
     (0, class_transformer_1.Type)(() => Number),
-    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], PurchaseOrderItemDto.prototype, "price", void 0);
@@ -69,13 +80,15 @@ __decorate([
     __metadata("design:type", Number)
 ], PurchaseOrderItemDto.prototype, "qty", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], PurchaseOrderItemDto.prototype, "stock", void 0);
 __decorate([
-    (0, class_validator_1.IsIn)(STOCK_STATUSES),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], PurchaseOrderItemDto.prototype, "stockStatus", void 0);
 __decorate([
@@ -88,6 +101,12 @@ __decorate([
 class CreatePurchaseOrderDto {
 }
 exports.CreatePurchaseOrderDto = CreatePurchaseOrderDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(dto_transforms_1.trimString),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreatePurchaseOrderDto.prototype, "id", void 0);
 __decorate([
     (0, class_transformer_1.Transform)(dto_transforms_1.trimString),
     (0, class_validator_1.IsString)(),
@@ -150,7 +169,31 @@ __decorate([
 ], CreatePurchaseOrderDto.prototype, "shippingAddress", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(PURCHASE_ORDER_STATUSES),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreatePurchaseOrderDto.prototype, "subtotal", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreatePurchaseOrderDto.prototype, "tax", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreatePurchaseOrderDto.prototype, "total", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], CreatePurchaseOrderDto.prototype, "units", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(exports.PURCHASE_ORDER_STATUSES),
     __metadata("design:type", String)
 ], CreatePurchaseOrderDto.prototype, "status", void 0);
 //# sourceMappingURL=create-purchase-order.dto.js.map

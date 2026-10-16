@@ -145,6 +145,7 @@ let UsersService = class UsersService {
             accessibleStoreIds: this.normalizeStringList(createUserDto.accessibleStoreIds),
             profileId: this.normalizeText(createUserDto.profileId),
             profile: this.normalizeProfile(createUserDto.profile),
+            plan: (role === 'retailer' || role === 'supplier') ? this.normalizeText(createUserDto.plan, 'free') : undefined,
             createdAt: now,
             updatedAt: now,
         };
@@ -261,6 +262,9 @@ let UsersService = class UsersService {
             profile: updateUserDto.profile !== undefined
                 ? this.normalizeProfile(updateUserDto.profile)
                 : this.normalizeProfile(existing.profile),
+            plan: (targetRole === 'retailer' || targetRole === 'supplier')
+                ? (updateUserDto.plan !== undefined ? this.normalizeText(updateUserDto.plan, 'free') : (existing.plan || 'free'))
+                : undefined,
             updatedAt: new Date().toISOString(),
         };
         const hydrated = this.hydrateLinkedProfile(updated);
@@ -300,7 +304,12 @@ let UsersService = class UsersService {
         if (status !== 'Active' && !isRejectedBusinessUser) {
             throw new common_1.UnauthorizedException('Account is inactive');
         }
-        return this.toPublicUser(this.syncLinkedProfileForUserId(user.id));
+        const publicUser = this.toPublicUser(this.syncLinkedProfileForUserId(user.id));
+        const token = `sotk_${user.id}_${Buffer.from(user.email).toString('base64').replace(/=/g, '')}_${Date.now()}`;
+        return {
+            ...publicUser,
+            token,
+        };
     }
     syncLinkedProfileForUserId(id) {
         const users = this.readAll();
@@ -626,6 +635,9 @@ let UsersService = class UsersService {
             accessibleStoreIds: this.normalizeStringList(user.accessibleStoreIds),
             profileId: this.normalizeText(user.profileId),
             profile: this.normalizeProfile(user.profile),
+            plan: (this.normalizeRole(user.role || 'consumer') === 'retailer' || this.normalizeRole(user.role || 'consumer') === 'supplier')
+                ? this.normalizeText(user.plan, 'free')
+                : undefined,
             createdAt: this.normalizeText(user.createdAt, now),
             updatedAt: this.normalizeText(user.updatedAt, user.createdAt, now),
         };

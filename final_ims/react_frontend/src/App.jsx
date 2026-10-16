@@ -4,19 +4,23 @@
  * Supports:
  * 1. 🏠 Landing Page (`landing`)
  * 2. 🔐 Authentication (`login` & `register`)
- * 3. 🛡️ Admin Portal (`admin`)
- * 4. 👔 Employee Desk (`employee`)
- * 5. 🛒 Consumer Storefront (`consumer`)
- * 6. 🏬 Retailer POS (`retailer`)
- * 7. 🚚 Supplier Logistics (`supplier`)
+ * 3. ⏳ Verification Gate (`verification-pending`)
+ * 4. 🛡️ Admin Portal (`admin`)
+ * 5. 👔 Employee Desk (`employee`)
+ * 6. 🛒 Consumer Storefront (`consumer`)
+ * 7. 🏬 Retailer POS (`retailer`)
+ * 8. 🚚 Supplier Logistics (`supplier`)
+ * 9. 🧾 Cashier Biller POS (`biller`)
  */
 
 import React, { useState } from 'react';
+import { useAuth } from './context/AuthContext';
 
 // Landing & Auth
 import LandingPage from './landing/LandingPage';
 import LoginPage from './auth/LoginPage';
 import RegisterPage from './auth/RegisterPage';
+import VerificationPendingPage from './auth/VerificationPendingPage';
 
 // Business Modules
 import App_admin from './admin/App_admin';
@@ -24,9 +28,12 @@ import App_employee from './employee/App_employee';
 import App_consumer from './consumer/App_consumer';
 import App_retailer from './retailer/App_retailer';
 import App_supplier from './supplier/App_supplier';
+import App_biller from './biller/App_biller';
 
 export default function App() {
-  // Current active view: 'landing' | 'login' | 'register' | 'admin' | 'employee' | 'consumer' | 'retailer' | 'supplier'
+  const { user, logout, refreshUser } = useAuth();
+
+  // Current active view: 'landing' | 'login' | 'register' | 'verification-pending' | 'admin' | 'employee' | 'consumer' | 'retailer' | 'supplier' | 'biller'
   const [currentView, setCurrentView] = useState('landing');
   const [navParams, setNavParams] = useState({});
   const [showHubBar, setShowHubBar] = useState(true);
@@ -49,6 +56,11 @@ export default function App() {
     setCurrentView(role);
   };
 
+  const handleLogout = () => {
+    logout();
+    setCurrentView('landing');
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'landing':
@@ -64,16 +76,59 @@ export default function App() {
             initialPlan={navParams.plan || 'free'}
           />
         );
+      case 'verification-pending':
+        return (
+          <VerificationPendingPage
+            user={user}
+            onRefreshUser={refreshUser}
+            onLogout={handleLogout}
+            onNavigate={handleNavigate}
+          />
+        );
       case 'admin':
         return <App_admin onSwitchModule={handleSwitchModule} />;
       case 'employee':
         return <App_employee onSwitchModule={handleSwitchModule} />;
       case 'consumer':
-        return <App_consumer onSwitchModule={handleSwitchModule} />;
-      case 'retailer':
-        return <App_retailer onSwitchModule={handleSwitchModule} />;
-      case 'supplier':
-        return <App_supplier onSwitchModule={handleSwitchModule} />;
+        return <App_consumer onSwitchModule={handleSwitchModule} onLogout={handleLogout} />;
+      case 'retailer': {
+        const isPending = user && (
+          String(user.profile?.profileStatus || '').toLowerCase() === 'pending' ||
+          String(user.profile?.profileStatus || '').toLowerCase() === 'rejected' ||
+          String(user.status || '').toLowerCase() === 'pending'
+        );
+        if (isPending) {
+          return (
+            <VerificationPendingPage
+              user={user}
+              onRefreshUser={refreshUser}
+              onLogout={handleLogout}
+              onNavigate={handleNavigate}
+            />
+          );
+        }
+        return <App_retailer onSwitchModule={handleSwitchModule} onLogout={handleLogout} />;
+      }
+      case 'supplier': {
+        const isPending = user && (
+          String(user.profile?.profileStatus || '').toLowerCase() === 'pending' ||
+          String(user.profile?.profileStatus || '').toLowerCase() === 'rejected' ||
+          String(user.status || '').toLowerCase() === 'pending'
+        );
+        if (isPending) {
+          return (
+            <VerificationPendingPage
+              user={user}
+              onRefreshUser={refreshUser}
+              onLogout={handleLogout}
+              onNavigate={handleNavigate}
+            />
+          );
+        }
+        return <App_supplier onSwitchModule={handleSwitchModule} onLogout={handleLogout} />;
+      }
+      case 'biller':
+        return <App_biller onLogout={handleLogout} />;
       default:
         return <LandingPage onNavigate={handleNavigate} onSwitchModule={handleSwitchModule} />;
     }
@@ -117,8 +172,13 @@ export default function App() {
                 fontWeight: 600,
               }}
             >
-              FDFED Project
+              Unified Platform
             </span>
+            {user && (
+              <span style={{ fontSize: '11px', color: '#cbd5e1' }}>
+                Signed in: <strong>{user.name}</strong> ({user.role})
+              </span>
+            )}
           </div>
 
           {/* Module Switcher Buttons */}
@@ -142,7 +202,7 @@ export default function App() {
             </button>
 
             <span style={{ fontSize: '11px', color: '#94a3b8', marginLeft: '4px' }}>
-              My Modules:
+              Modules:
             </span>
 
             {/* Admin Module Button */}
@@ -191,7 +251,7 @@ export default function App() {
 
             <span style={{ color: '#475569', margin: '0 4px' }}>|</span>
 
-            {/* Other System Portals */}
+            {/* Consumer */}
             <button
               type="button"
               onClick={() => setCurrentView('consumer')}
@@ -208,6 +268,7 @@ export default function App() {
               🛒 Consumer
             </button>
 
+            {/* Retailer */}
             <button
               type="button"
               onClick={() => setCurrentView('retailer')}
@@ -221,9 +282,10 @@ export default function App() {
                 cursor: 'pointer',
               }}
             >
-              🏬 Retailer POS
+              🏬 Retailer
             </button>
 
+            {/* Supplier */}
             <button
               type="button"
               onClick={() => setCurrentView('supplier')}
@@ -240,15 +302,13 @@ export default function App() {
               🚚 Supplier
             </button>
 
-            <span style={{ color: '#475569', margin: '0 4px' }}>|</span>
-
-            {/* Auth shortcuts */}
+            {/* Biller POS */}
             <button
               type="button"
-              onClick={() => setCurrentView('login')}
+              onClick={() => setCurrentView('biller')}
               style={{
-                background: currentView === 'login' ? '#334155' : 'transparent',
-                color: currentView === 'login' ? '#ffffff' : '#94a3b8',
+                background: currentView === 'biller' ? '#6366f1' : 'transparent',
+                color: currentView === 'biller' ? '#ffffff' : '#94a3b8',
                 border: 'none',
                 padding: '4px 8px',
                 borderRadius: '6px',
@@ -256,8 +316,45 @@ export default function App() {
                 cursor: 'pointer',
               }}
             >
-              Sign In
+              🧾 Biller POS
             </button>
+
+            <span style={{ color: '#475569', margin: '0 4px' }}>|</span>
+
+            {/* Auth shortcuts */}
+            {user ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  color: '#fca5a5',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  fontSize: '11.5px',
+                  cursor: 'pointer',
+                }}
+              >
+                Sign Out
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setCurrentView('login')}
+                style={{
+                  background: currentView === 'login' ? '#334155' : 'transparent',
+                  color: currentView === 'login' ? '#ffffff' : '#94a3b8',
+                  border: 'none',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  fontSize: '11.5px',
+                  cursor: 'pointer',
+                }}
+              >
+                Sign In
+              </button>
+            )}
           </div>
 
           {/* Hide Switcher Button */}

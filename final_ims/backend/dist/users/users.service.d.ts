@@ -2,7 +2,9 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { EmployeesService } from '../employees/employees.service';
-type PublicUser = Omit<User, 'password'>;
+type PublicUser = Omit<User, 'password'> & {
+    token?: string;
+};
 export declare class UsersService {
     private readonly employeesService;
     private readonly users;

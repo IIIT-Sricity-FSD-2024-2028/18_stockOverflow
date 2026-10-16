@@ -1,15 +1,38 @@
 /**
  * DashboardPage_employee.jsx - Dynamic Employee Command Center
  * 
- * Satisfies the user's requirements:
- * 1. Removed confusing daily checklist.
- * 2. All KPI values update dynamically in real-time as tasks are completed.
- * 3. Priority Action Queue showing pending registrations & open tickets ready for action.
- * 4. Interactive shift attendance clock-in/clock-out tracker.
+ * Connected to live backend endpoints (/api/employees/stats, assignments, queries)
+ * Zero mock fallbacks - all operations reflect live backend state.
  */
 
-import React, { useState, useEffect } from 'react';
-import { INITIAL_VALIDATIONS, INITIAL_EMPLOYEE_QUERIES } from '../data/mockData_employee';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  fetchEmployeeStats,
+  fetchEmployeeAssignments,
+  fetchEmployeeQueries,
+} from '../utils/api_employee';
+
+function mapBackendAssignment(asgn) {
+  const d = asgn.details || {};
+  return {
+    id: asgn.id,
+    type: asgn.targetType || 'retailer',
+    entityName: asgn.title || d.businessName || d.storeName || d.supplierName || 'Business Entity',
+    owner: d.ownerName || d.contactPerson || d.name || 'Authorized Owner',
+    gstin: d.gstin || d.taxId || 'GSTIN-PENDING',
+    status: asgn.status || 'pending',
+  };
+}
+
+function mapBackendQuery(q) {
+  return {
+    id: q.id,
+    subject: q.subject || 'Support Request',
+    requester: q.userName || q.userEmail || 'Client',
+    status: q.status === 'resolved' ? 'Resolved' : q.status === 'in_progress' ? 'In Progress' : 'Open',
+    priority: q.priority || 'medium',
+  };
+}
 
 export default function DashboardPage_employee({ onNavigate }) {
   const [isOnDuty, setIsOnDuty] = useState(() => {
@@ -21,39 +44,42 @@ export default function DashboardPage_employee({ onNavigate }) {
     }
   });
 
-  const [validations, setValidations] = useState(() => {
-    try {
-      const saved = localStorage.getItem('stockoverflow_employee_validations');
-      return saved ? JSON.parse(saved) : INITIAL_VALIDATIONS;
-    } catch {
-      return INITIAL_VALIDATIONS;
-    }
-  });
+  const [stats, setStats] = useState(null);
+  const [assignments, setAssignments] = useState([]);
+  const [queries, setQueries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [queries, setQueries] = useState(() => {
+  const loadDashboardData = useCallback(async () => {
     try {
-      const saved = localStorage.getItem('stockoverflow_employee_queries');
-      return saved ? JSON.parse(saved) : INITIAL_EMPLOYEE_QUERIES;
-    } catch {
-      return INITIAL_EMPLOYEE_QUERIES;
-    }
-  });
+      setLoading(true);
+      setError(null);
+      const [statsData, asgnsData, queriesData] = await Promise.allSettled([
+        fetchEmployeeStats(),
+        fetchEmployeeAssignments(),
+        fetchEmployeeQueries(),
+      ]);
 
-  // Listen to cross-page updates via storage events
-  useEffect(() => {
-    const handleStorageChange = () => {
-      try {
-        const v = localStorage.getItem('stockoverflow_employee_validations');
-        if (v) setValidations(JSON.parse(v));
-        const q = localStorage.getItem('stockoverflow_employee_queries');
-        if (q) setQueries(JSON.parse(q));
-      } catch (err) {
-        console.warn(err);
+      if (statsData.status === 'fulfilled') {
+        setStats(statsData.value);
       }
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+      if (asgnsData.status === 'fulfilled' && Array.isArray(asgnsData.value)) {
+        setAssignments(asgnsData.value.map(mapBackendAssignment));
+      }
+      if (queriesData.status === 'fulfilled' && Array.isArray(queriesData.value)) {
+        setQueries(queriesData.value.map(mapBackendQuery));
+      }
+    } catch (err) {
+      console.error('Failed to load employee dashboard:', err);
+      setError(err.message || 'Failed to load employee dashboard data');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   const handleToggleDuty = () => {
     const next = !isOnDuty;
@@ -65,14 +91,18 @@ export default function DashboardPage_employee({ onNavigate }) {
     }
   };
 
-  // Dynamic calculated counts
-  const pendingValidations = validations.filter((v) => v.status === 'pending');
-  const approvedCount = validations.filter((v) => v.status === 'approved').length;
-  const rejectedCount = validations.filter((v) => v.status === 'rejected').length;
+  // Dynamic calculated counts from live records or stats endpoint
+  const pendingValidations = assignments.filter((v) => v.status === 'pending');
+  const approvedCount = assignments.filter((v) => v.status === 'approved').length;
+  const rejectedCount = assignments.filter((v) => v.status === 'rejected').length;
 
   const openQueries = queries.filter((q) => q.status === 'Open');
   const inProgressQueries = queries.filter((q) => q.status === 'In Progress');
   const resolvedQueriesCount = queries.filter((q) => q.status === 'Resolved').length;
+
+  const pendingValidationsCount = stats?.pendingValidations !== undefined ? stats.pendingValidations : pendingValidations.length;
+  const openQueriesCount = stats?.openQueries !== undefined ? stats.openQueries : openQueries.length;
+  const resolvedQueriesStat = stats?.resolvedQueries !== undefined ? stats.resolvedQueries : resolvedQueriesCount;
 
   return (
     <div>
@@ -81,54 +111,71 @@ export default function DashboardPage_employee({ onNavigate }) {
         <div>
           <h1 className="emp-page-title">Employee Command Center</h1>
           <p className="emp-page-subtitle">
-            Dynamic operational queue: review onboarding dossiers, audit physical branches, and resolve user support tickets.
+            Dynamic operational queue: review onboarding dossiers, audit physical branches, and resolve user support tickets live from backend.
           </p>
         </div>
 
-        {/* Shift Attendance Toggle */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            background: '#ffffff',
-            padding: '8px 16px',
-            borderRadius: '10px',
-            border: '1px solid #e5e7eb',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-          }}
-        >
-          <div
-            style={{
-              width: '10px',
-              height: '10px',
-              borderRadius: '50%',
-              backgroundColor: isOnDuty ? '#10b981' : '#94a3b8',
-            }}
-          />
-          <div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>
-              {isOnDuty ? 'Shift Status: On Duty' : 'Shift Status: Off Duty'}
-            </div>
-            <div style={{ fontSize: '11px', color: '#6b7280' }}>
-              {isOnDuty ? 'Receiving active compliance queue' : 'Desk paused'}
-            </div>
-          </div>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
             type="button"
-            className="emp-btn"
-            style={{
-              backgroundColor: isOnDuty ? '#fee2e2' : '#dcfce7',
-              color: isOnDuty ? '#b91c1c' : '#15803d',
-              border: `1px solid ${isOnDuty ? '#fecaca' : '#bbf7d0'}`,
-              marginLeft: '6px',
-            }}
-            onClick={handleToggleDuty}
+            className="emp-btn emp-btn-outline"
+            onClick={loadDashboardData}
+            disabled={loading}
           >
-            {isOnDuty ? 'Clock Out' : 'Clock In'}
+            {loading ? 'Refreshing...' : '↻ Refresh Dashboard'}
           </button>
+
+          {/* Shift Attendance Toggle */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              background: '#ffffff',
+              padding: '8px 16px',
+              borderRadius: '10px',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                backgroundColor: isOnDuty ? '#10b981' : '#94a3b8',
+              }}
+            />
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>
+                {isOnDuty ? 'Shift Status: On Duty' : 'Shift Status: Off Duty'}
+              </div>
+              <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                {isOnDuty ? 'Receiving active compliance queue' : 'Desk paused'}
+              </div>
+            </div>
+            <button
+              type="button"
+              className="emp-btn"
+              style={{
+                backgroundColor: isOnDuty ? '#fee2e2' : '#dcfce7',
+                color: isOnDuty ? '#b91c1c' : '#15803d',
+                border: `1px solid ${isOnDuty ? '#fecaca' : '#bbf7d0'}`,
+                marginLeft: '6px',
+              }}
+              onClick={handleToggleDuty}
+            >
+              {isOnDuty ? 'Clock Out' : 'Clock In'}
+            </button>
+          </div>
         </div>
       </div>
+
+      {error && (
+        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px' }}>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
 
       {/* ── Dynamic KPI Metrics (Update live as employee works) ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -142,10 +189,10 @@ export default function DashboardPage_employee({ onNavigate }) {
             Pending Validations
           </span>
           <div style={{ fontSize: '28px', fontWeight: 800, color: '#f59e0b', margin: '4px 0 2px' }}>
-            {pendingValidations.length}
+            {pendingValidationsCount}
           </div>
           <span style={{ fontSize: '11.5px', color: '#b45309' }}>
-            {pendingValidations.length > 0 ? '⚠️ Awaiting your approval' : '✓ All caught up!'}
+            {pendingValidationsCount > 0 ? '⚠️ Awaiting employee verification' : '✓ All caught up!'}
           </span>
         </div>
 
@@ -159,7 +206,7 @@ export default function DashboardPage_employee({ onNavigate }) {
             Open Support Queries
           </span>
           <div style={{ fontSize: '28px', fontWeight: 800, color: '#3b82f6', margin: '4px 0 2px' }}>
-            {openQueries.length}
+            {openQueriesCount}
           </div>
           <span style={{ fontSize: '11.5px', color: '#2563eb' }}>
             {inProgressQueries.length} in progress
@@ -172,7 +219,7 @@ export default function DashboardPage_employee({ onNavigate }) {
             Resolved Tickets
           </span>
           <div style={{ fontSize: '28px', fontWeight: 800, color: '#10b981', margin: '4px 0 2px' }}>
-            {resolvedQueriesCount}
+            {resolvedQueriesStat}
           </div>
           <span style={{ fontSize: '11.5px', color: '#16a34a' }}>
             Closed &amp; answered
@@ -193,7 +240,7 @@ export default function DashboardPage_employee({ onNavigate }) {
         </div>
       </div>
 
-      {/* ── Priority Action Queue (Actionable Right from Dashboard) ── */}
+      {/* ── Priority Action Queue ── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
         {/* Urgent Validations to Review */}
         <div className="emp-card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -208,12 +255,16 @@ export default function DashboardPage_employee({ onNavigate }) {
               style={{ background: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb', fontSize: '11.5px' }}
               onClick={() => onNavigate('validations')}
             >
-              Open Full Desk ({validations.length})
+              Open Full Desk ({assignments.length})
             </button>
           </div>
 
           <div style={{ padding: '8px' }}>
-            {pendingValidations.length === 0 ? (
+            {loading && assignments.length === 0 ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af', fontSize: '13px' }}>
+                Loading pending onboarding dossiers...
+              </div>
+            ) : pendingValidations.length === 0 ? (
               <div style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af', fontSize: '13px' }}>
                 🎉 No pending validations! All submitted entities have been processed.
               </div>
@@ -275,7 +326,11 @@ export default function DashboardPage_employee({ onNavigate }) {
           </div>
 
           <div style={{ padding: '8px' }}>
-            {openQueries.length === 0 ? (
+            {loading && queries.length === 0 ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af', fontSize: '13px' }}>
+                Loading support tickets...
+              </div>
+            ) : openQueries.length === 0 ? (
               <div style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af', fontSize: '13px' }}>
                 ✓ No open support tickets. Support desk is clear!
               </div>
