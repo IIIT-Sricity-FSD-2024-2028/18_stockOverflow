@@ -5,6 +5,7 @@ import ReceiptModal from './ReceiptModal';
 
 export default function PosScreen({ onSwitchView, onLogout }) {
   const { user } = useAuth();
+  const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
 
   // Currency Formatter
   const currencyFormatter = new Intl.NumberFormat('en-IN', {
@@ -102,9 +103,8 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     async function initData() {
       setLoading(true);
       try {
-        const [storesData, productsData, customersData] = await Promise.all([
+        const [storesData, customersData] = await Promise.all([
           billerApi.getStores().catch(() => []),
-          billerApi.getProducts().catch(() => []),
           billerApi.getCustomers().catch(() => []),
         ]);
 
@@ -116,24 +116,30 @@ export default function PosScreen({ onSwitchView, onLogout }) {
 
         // Determine biller's assigned store
         const billerStoreId = user?.currentStoreId || user?.storeId || '';
+        let resolvedStoreId = billerStoreId;
         const matchedStore = storeList.find(
           (s) => (s.id || s.code) === billerStoreId
         );
 
         if (matchedStore) {
-          setCurrentStoreId(matchedStore.id || matchedStore.code);
+          resolvedStoreId = matchedStore.id || matchedStore.code;
+          setCurrentStoreId(resolvedStoreId);
           setCurrentStoreName(matchedStore.name);
         } else if (billerStoreId) {
+          resolvedStoreId = billerStoreId;
           setCurrentStoreId(billerStoreId);
           setCurrentStoreName(user?.store || 'Assigned Store');
         } else if (storeList.length > 0) {
-          setCurrentStoreId(storeList[0].id || storeList[0].code);
+          resolvedStoreId = storeList[0].id || storeList[0].code;
+          setCurrentStoreId(resolvedStoreId);
           setCurrentStoreName(storeList[0].name);
         }
 
-        // Products
-        const prodList = Array.isArray(productsData) ? productsData : [];
-        setProducts(prodList);
+        // Fetch products specifically for this resolved store and retailer
+        const productsData = await billerApi.getProducts(resolvedStoreId, retailerId).catch(() => []);
+        if (isMounted) {
+          setProducts(Array.isArray(productsData) ? productsData : []);
+        }
 
         // Customers
         const custList = Array.isArray(customersData) ? customersData : [];
@@ -155,7 +161,23 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     return () => {
       isMounted = false;
     };
-  }, [user]);
+  }, [user, retailerId]);
+
+  // 1b. Reload Products whenever the active store changes
+  useEffect(() => {
+    if (!currentStoreId) return;
+    let isMounted = true;
+    billerApi.getProducts(currentStoreId, retailerId)
+      .then((data) => {
+        if (isMounted && Array.isArray(data)) {
+          setProducts(data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [currentStoreId, retailerId]);
 
   // 2. Real-time Incoming Orders Polling (Every 3.5 seconds)
   useEffect(() => {
@@ -201,6 +223,27 @@ export default function PosScreen({ onSwitchView, onLogout }) {
   const filteredProducts = useMemo(() => {
     let list = [...products];
 
+    // Retailer Scope: Must belong to biller's retailer
+    if (retailerId) {
+      list = list.filter(
+        (p) => !p.retailerId || String(p.retailerId).trim() === String(retailerId).trim()
+      );
+    }
+
+    // Store Scope: Must be present in the active store with inventory > 0
+    if (currentStoreId) {
+      const normStoreId = String(currentStoreId).toLowerCase().trim();
+      list = list.filter((p) => {
+        if (Array.isArray(p.storeInventory) && p.storeInventory.length > 0) {
+          const storeEntry = p.storeInventory.find(
+            (entry) => String(entry.storeId || '').toLowerCase().trim() === normStoreId
+          );
+          return Boolean(storeEntry && Number(storeEntry.qty) > 0);
+        }
+        return Number(p.qty || 0) > 0;
+      });
+    }
+
     // Category filter
     if (activeCategory !== 'all') {
       list = list.filter((p) => mapCategory(p.category) === activeCategory);
@@ -225,7 +268,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     }
 
     return list;
-  }, [products, activeCategory, searchQuery, sortOrder]);
+  }, [products, currentStoreId, retailerId, activeCategory, searchQuery, sortOrder]);
 
   // Cart Totals
   const subtotal = useMemo(() => {
@@ -478,7 +521,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
       setSelectedCustomer('Walk-in Customer');
 
       // Refresh catalog and reservations from backend
-      billerApi.getProducts().then((p) => Array.isArray(p) && setProducts(p)).catch(() => {});
+      billerApi.getProducts(currentStoreId, retailerId).then((p) => Array.isArray(p) && setProducts(p)).catch(() => {});
       billerApi.getReservations(currentStoreId).then((r) => Array.isArray(r) && setReservedOrders(r)).catch(() => {});
 
       showToast(`Sale completed successfully! Total: ${formatInr(finalTotal)}`);
@@ -682,28 +725,58 @@ export default function PosScreen({ onSwitchView, onLogout }) {
 
             {/* Store Badge & Switcher */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div
-                style={{
-                  backgroundColor: '#f1f5f9',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
-                  padding: '6px 12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  color: '#1e293b',
-                }}
-              >
-                <span>🏪</span>
-                <span>{currentStoreName}</span>
-                {currentStoreId && (
-                  <span style={{ fontSize: '10px', color: '#64748b', background: '#e2e8f0', padding: '1px 5px', borderRadius: '4px' }}>
-                    {currentStoreId}
-                  </span>
-                )}
-              </div>
+              {stores.length > 1 ? (
+                <select
+                  value={currentStoreId}
+                  onChange={(e) => {
+                    const selected = stores.find((s) => (s.id || s.code) === e.target.value);
+                    if (selected) {
+                      setCurrentStoreId(selected.id || selected.code);
+                      setCurrentStoreName(selected.name);
+                    }
+                  }}
+                  style={{
+                    backgroundColor: '#f1f5f9',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '8px',
+                    padding: '6px 10px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: '#1e293b',
+                    cursor: 'pointer',
+                    outline: 'none',
+                  }}
+                >
+                  {stores.map((s) => (
+                    <option key={s.id || s.code} value={s.id || s.code}>
+                      🏪 {s.name} ({s.id || s.code})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div
+                  style={{
+                    backgroundColor: '#f1f5f9',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: '#1e293b',
+                  }}
+                >
+                  <span>🏪</span>
+                  <span>{currentStoreName}</span>
+                  {currentStoreId && (
+                    <span style={{ fontSize: '10px', color: '#64748b', background: '#e2e8f0', padding: '1px 5px', borderRadius: '4px' }}>
+                      {currentStoreId}
+                    </span>
+                  )}
+                </div>
+              )}
 
               {/* Incoming Orders Button with Live Pulse */}
               <button

@@ -21,7 +21,10 @@
 
   function readSession() {
     try {
-      return JSON.parse(localStorage.getItem('so_session') || 'null');
+      var str =
+        (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_session') : null) ||
+        (typeof localStorage !== 'undefined' ? localStorage.getItem('so_session') : null);
+      return JSON.parse(str || 'null');
     } catch (_error) {
       return null;
     }

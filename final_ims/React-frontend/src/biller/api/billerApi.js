@@ -63,8 +63,12 @@ async function request(endpoint, options = {}) {
 
 export const billerApi = {
   // Products
-  getProducts: async () => {
-    return await request('/products');
+  getProducts: async (storeId = '', retailerId = '') => {
+    const params = new URLSearchParams();
+    if (storeId) params.set('storeId', storeId);
+    if (retailerId) params.set('retailerId', retailerId);
+    const qs = params.toString();
+    return await request(`/products${qs ? `?${qs}` : ''}`);
   },
 
   createProduct: async (product) => {

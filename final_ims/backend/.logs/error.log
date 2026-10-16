@@ -560,3 +560,5 @@
 [2026-10-16T15:07:55.979Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8
 [2026-10-16T15:07:56.147Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8
 [2026-10-16T15:08:07.217Z] [ERROR] POST /api/users/login 400 - email must be an email
+[2026-10-16T15:54:13.139Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8
+[2026-10-16T15:54:13.215Z] [ERROR] GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - Cannot GET /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8

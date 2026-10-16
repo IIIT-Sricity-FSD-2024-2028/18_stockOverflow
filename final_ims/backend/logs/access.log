@@ -8552,3 +8552,85 @@
 [2026-10-16T15:25:01.315Z] [GET] /api/reservations?storeId=STORE-01 304 - 2ms - IP: ::1
 [2026-10-16T15:25:05.316Z] [GET] /api/reservations?storeId=STORE-01 304 - 0ms - IP: ::1
 [2026-10-16T15:25:05.318Z] [GET] /api/reservations?storeId=STORE-01 304 - 0ms - IP: ::1
+[2026-10-16T15:25:08.343Z] [GET] /api/reservations?storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:25:08.345Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:25:12.314Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:25:12.315Z] [GET] /api/reservations?storeId=STORE-01 304 - 0ms - IP: ::1
+[2026-10-16T15:25:15.306Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:25:15.309Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:25:19.327Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:25:19.329Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:12.982Z] [POST] /api/users/login 201 - 55ms - IP: ::1
+[2026-10-16T15:54:13.082Z] [GET] /api/products?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 200 - 14ms - IP: ::1
+[2026-10-16T15:54:13.090Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:13.100Z] [GET] /api/transactions?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 200 - 11ms - IP: ::1
+[2026-10-16T15:54:13.108Z] [GET] /api/purchase-orders?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 200 - 4ms - IP: ::1
+[2026-10-16T15:54:13.124Z] [GET] /api/customers?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 200 - 2ms - IP: ::1
+[2026-10-16T15:54:13.128Z] [GET] /api/returns?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 200 - 3ms - IP: ::1
+[2026-10-16T15:54:13.131Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T15:54:13.135Z] [GET] /api/suppliers 200 - 5ms - IP: ::1
+[2026-10-16T15:54:13.145Z] [GET] /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - 8ms - IP: ::1
+[2026-10-16T15:54:13.149Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:13.155Z] [GET] /api/transactions/order-activity?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 200 - 6ms - IP: ::1
+[2026-10-16T15:54:13.161Z] [GET] /api/returns?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 3ms - IP: ::1
+[2026-10-16T15:54:13.171Z] [GET] /api/products?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 7ms - IP: ::1
+[2026-10-16T15:54:13.175Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:13.176Z] [GET] /api/transactions?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:13.184Z] [GET] /api/customers?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 3ms - IP: ::1
+[2026-10-16T15:54:13.194Z] [GET] /api/purchase-orders?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 3ms - IP: ::1
+[2026-10-16T15:54:13.200Z] [GET] /api/returns?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:13.203Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T15:54:13.205Z] [GET] /api/suppliers 304 - 3ms - IP: ::1
+[2026-10-16T15:54:13.224Z] [GET] /api/platform-revenue/subscriptions/active?userId=06bd3e80-10da-435c-a62b-d23d5ab7d8d8 404 - 10ms - IP: ::1
+[2026-10-16T15:54:13.227Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:13.229Z] [GET] /api/transactions/order-activity?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:54:13.256Z] [GET] /api/products?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 9ms - IP: ::1
+[2026-10-16T15:54:13.257Z] [GET] /api/returns?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 0ms - IP: ::1
+[2026-10-16T15:54:13.263Z] [GET] /api/products?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:54:14.828Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:14.831Z] [GET] /api/billers?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 200 - 3ms - IP: ::1
+[2026-10-16T15:54:14.841Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:14.842Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 200 - 1ms - IP: ::1
+[2026-10-16T15:54:14.844Z] [GET] /api/returns?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:14.850Z] [GET] /api/products?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 5ms - IP: ::1
+[2026-10-16T15:54:14.853Z] [AUDIT] Action invoked on route: [GET] /api/billers?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:14.855Z] [GET] /api/billers?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:54:14.856Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:14.856Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:19.312Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:19.314Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:54:23.319Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:23.321Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:54:24.266Z] [POST] /api/users/login 201 - 14ms - IP: ::1
+[2026-10-16T15:54:24.277Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:24.278Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:24.448Z] [GET] /api/stores 304 - 23ms - IP: ::1
+[2026-10-16T15:54:24.450Z] [GET] /api/customers 304 - 1ms - IP: ::1
+[2026-10-16T15:54:24.452Z] [GET] /api/products?storeId=STORE-01&retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9 200 - 2ms - IP: ::1
+[2026-10-16T15:54:24.455Z] [GET] /api/reservations?storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:54:24.457Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T15:54:24.459Z] [GET] /api/customers 304 - 1ms - IP: ::1
+[2026-10-16T15:54:24.461Z] [GET] /api/products?storeId=STORE-01&retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9 304 - 1ms - IP: ::1
+[2026-10-16T15:54:24.463Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:24.484Z] [GET] /api/products?storeId=STORE-01&retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9 304 - 2ms - IP: ::1
+[2026-10-16T15:54:27.317Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:27.318Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:27.924Z] [GET] /api/reservations?storeId=STORE-01 304 - 7ms - IP: ::1
+[2026-10-16T15:54:31.313Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:31.315Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:54:31.425Z] [GET] /api/reservations?storeId=STORE-01 304 - 4ms - IP: ::1
+[2026-10-16T15:54:35.319Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:35.320Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:35.321Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:39.323Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:39.325Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:39.327Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 2ms - IP: ::1
+[2026-10-16T15:54:42.319Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:43.323Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:43.324Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:46.315Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:47.320Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:47.321Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:49.313Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-16T15:54:51.322Z] [AUDIT] Action invoked on route: [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01
+[2026-10-16T15:54:51.323Z] [GET] /api/billers/requests?retailerId=64122fd7-5cea-4f41-acb4-3590cbad62e9&storeId=STORE-01 304 - 1ms - IP: ::1
