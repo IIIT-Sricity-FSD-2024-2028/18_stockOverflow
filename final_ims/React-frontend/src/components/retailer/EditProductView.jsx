@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { request } from '../../api/client';
+import { request } from '../../retailer/api/client';
 import { useAuth } from '../../context/AuthContext';
 
 export default function EditProductView({ product: initialProduct, onNavigate }) {

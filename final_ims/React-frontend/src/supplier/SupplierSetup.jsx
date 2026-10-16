@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   writeSupplierId, writeSession,
   createSupplierSetup, updateSupplier, updateUser
-} from '../api/supplierApi';
+} from './api/supplierApi';
 
 const STEPS = [
   { id: 1, label: 'Profile' },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { retailerApi } from '../../api/retailerApi';
+import { retailerApi } from '../../retailer/api/retailerApi';
 
 export default function AuthPage({
   initialMode = 'login',

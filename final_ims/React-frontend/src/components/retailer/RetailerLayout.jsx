@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { retailerApi } from '../../api/retailerApi';
+import { retailerApi } from '../../retailer/api/retailerApi';
 
 export default function RetailerLayout({ activeView, setActiveView, onSwitchModule, children }) {
   const { user, logout, switchStore } = useAuth();

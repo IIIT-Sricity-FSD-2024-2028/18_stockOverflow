@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { retailerApi } from '../../api/retailerApi';
+import { retailerApi } from '../../retailer/api/retailerApi';
 
 const STEP_META = [
   { label: 'Business', sub: 'Profile' },

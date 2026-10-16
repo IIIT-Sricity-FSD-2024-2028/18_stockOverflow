@@ -6,7 +6,7 @@ import {
   fetchRetailers, fetchPurchaseOrders, updatePurchaseOrder,
   fetchSupplierDocuments, deleteSupplierDocument, uploadSupplierDocument,
   getApiBase, supplierRequest
-} from '../api/supplierApi';
+} from './api/supplierApi';
 
 // ── COLOR & STATUS CONSTANTS ──
 const COLORS = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#db2777', '#0891b2', '#4f46e5'];

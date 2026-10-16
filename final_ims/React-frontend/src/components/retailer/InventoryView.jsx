@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { retailerApi } from '../../api/retailerApi';
+import { retailerApi } from '../../retailer/api/retailerApi';
 import { useAuth } from '../../context/AuthContext';
 import Chart from 'chart.js/auto';
 

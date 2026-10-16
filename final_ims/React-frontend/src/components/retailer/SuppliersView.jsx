@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { retailerApi } from '../../api/retailerApi';
+import { retailerApi } from '../../retailer/api/retailerApi';
 
 export default function SuppliersView({ onViewPerformance }) {
   const [suppliers, setSuppliers] = useState([]);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { request } from '../../api/client';
+import { request } from '../../retailer/api/client';
 
 export default function MultiStoreView() {
   const { user } = useAuth();

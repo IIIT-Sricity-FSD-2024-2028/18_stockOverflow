@@ -11,25 +11,25 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import RetailerLayout from '../components/retailer/RetailerLayout';
-import DashboardView from '../components/retailer/DashboardView';
-import ProductListView from '../components/retailer/ProductListView';
-import AddProductView from '../components/retailer/AddProductView';
-import EditProductView from '../components/retailer/EditProductView';
-import InventoryView from '../components/retailer/InventoryView';
-import LowStocksView from '../components/retailer/LowStocksView';
-import StockAdjustView from '../components/retailer/StockAdjustView';
-import MultiStoreView from '../components/retailer/MultiStoreView';
-import CustomersView from '../components/retailer/CustomersView';
-import BillersView from '../components/retailer/BillersView';
-import SuppliersView from '../components/retailer/SuppliersView';
-import ReorderView from '../components/retailer/ReorderView';
-import PurchaseOrdersView from '../components/retailer/PurchaseOrdersView';
-import ReturnsView from '../components/retailer/ReturnsView';
-import ProfileView from '../components/retailer/ProfileView';
-import SubscriptionPlanView from '../components/retailer/SubscriptionPlanView';
-import SupplierPerformanceView from '../components/retailer/SupplierPerformanceView';
-import POProductsView from '../components/retailer/POProductsView';
+import RetailerLayout from './components/retailer/RetailerLayout';
+import DashboardView from './components/retailer/DashboardView';
+import ProductListView from './components/retailer/ProductListView';
+import AddProductView from './components/retailer/AddProductView';
+import EditProductView from './components/retailer/EditProductView';
+import InventoryView from './components/retailer/InventoryView';
+import LowStocksView from './components/retailer/LowStocksView';
+import StockAdjustView from './components/retailer/StockAdjustView';
+import MultiStoreView from './components/retailer/MultiStoreView';
+import CustomersView from './components/retailer/CustomersView';
+import BillersView from './components/retailer/BillersView';
+import SuppliersView from './components/retailer/SuppliersView';
+import ReorderView from './components/retailer/ReorderView';
+import PurchaseOrdersView from './components/retailer/PurchaseOrdersView';
+import ReturnsView from './components/retailer/ReturnsView';
+import ProfileView from './components/retailer/ProfileView';
+import SubscriptionPlanView from './components/retailer/SubscriptionPlanView';
+import SupplierPerformanceView from './components/retailer/SupplierPerformanceView';
+import POProductsView from './components/retailer/POProductsView';
 
 export default function App_retailer({ onSwitchModule, onLogout }) {
   const { user } = useAuth();

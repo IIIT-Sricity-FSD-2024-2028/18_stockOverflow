@@ -280,6 +280,7 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
         await retailerApi
           .updateUser(user.id, {
             profileId: retailerRecord.id || user.id,
+            retailerId: retailerRecord.id || user.id,
             profile: profileSummary,
             store: primaryStore ? primaryStore.name : bName.trim(),
             storeId: primaryStore ? primaryStore.code : 'STORE-01',
@@ -294,7 +295,8 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
         ...(user || {}),
         name: oName.trim() || user?.name || bName.trim(),
         role: 'retailer',
-        profileId: retailerRecord.id || 'RET-01',
+        profileId: retailerRecord.id || user?.id || 'RET-01',
+        retailerId: retailerRecord.id || user?.id || 'RET-01',
         profile: profileSummary,
         store: primaryStore ? primaryStore.name : bName.trim(),
         storeId: primaryStore ? primaryStore.code : 'STORE-01',

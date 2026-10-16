@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { request } from '../../api/client';
+import { request } from '../../retailer/api/client';
 import Chart from 'chart.js/auto';
 
 export default function DashboardView({ setActiveView, onNavigate }) {

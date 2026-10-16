@@ -15,10 +15,10 @@ import React, { useState } from 'react';
 import { useAuth } from './context/AuthContext';
 
 // ── Public Auth & Setup Components ──
-import LandingPage from './components/landing/LandingPage';
-import AuthPage from './components/auth/AuthPage';
-import BillerPendingPage from './components/auth/BillerPendingPage';
-import RetailerInitialWizard from './components/retailer/RetailerInitialWizard';
+import LandingPage from './retailer/components/landing/LandingPage';
+import AuthPage from './retailer/components/auth/AuthPage';
+import BillerPendingPage from './retailer/components/auth/BillerPendingPage';
+import RetailerInitialWizard from './retailer/components/retailer/RetailerInitialWizard';
 import SupplierSetup from './supplier/SupplierSetup';
 
 // ── Secure Module Entry Points ──
