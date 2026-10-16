@@ -1,0 +1,305 @@
+================================================================================
+           STOCKOVERFLOW - INVENTORY LIFECYCLE MANAGEMENT SYSTEM
+        INDIVIDUAL CONTRIBUTION REPORT - ADMIN, EMPLOYEE & MONETIZATION
+================================================================================
+
+CONTRIBUTOR:        Yogeswar Stalin (syogeswar2007@gmail.com)
+MODULES:            Admin Command Center, Employee Verification Desk, 
+                    Platform Revenue & Monetization Engine, Landing & Auth
+TECH STACK:         React 18 (Vite), JavaScript (ES6+), NestJS (TypeScript), 
+                    Vanilla CSS, Chart.js, Lucide Icons, REST APIs, OpenAPI/Swagger
+
+================================================================================
+RUBRIC MAPPING & EVALUATION CRITERIA (10 MARKS TOTAL)
+================================================================================
+[2M] React Components, Props & Communication
+[1M] State Management & Event Handling
+[1M] Controlled Forms & Validation
+[1M] useEffect & Side Effects (Lifecycles & Cleanups)
+[5M] Individual Code Explanation, Viva Defense & Live Modifications
+
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+Designed, developed, and delivered the administrative, operational, and financial 
+backbone of the StockOverflow platform. My primary responsibilities encompassed:
+1. Platform Administration & Monetization: Building the dual-revenue engine 
+   (2.0% store-level POS commission + tiered SaaS subscriptions in INR), 
+   commission auditing, and dedicated branch-level store operational analytics.
+2. Employee Verification Desk: Designing the end-to-end KYC and business 
+   verification pipeline where staff audit retailer and supplier trade licenses, 
+   GSTIN certificates, and physical premises before unlocking access.
+3. Public Landing & Auth Gateway: Crafting the responsive public storefront, 
+   sticky scroll-progress navigation, multi-field cashier biller application modal, 
+   and role-based session gatekeeping.
+4. Cross-Module Data Synchronization: Implementing the DataSyncContext engine to 
+   guarantee instantaneous cross-tab state consistency between cashier POS terminals, 
+   store owners, and administrative audit ledgers.
+
+--------------------------------------------------------------------------------
+2. KEY FEATURES & FUNCTIONALITY DELIVERED
+--------------------------------------------------------------------------------
+- Dual-View Monetization & Revenue Engine:
+  * Platform-wide MRR (Monthly Recurring Revenue) aggregation from tiered plans:
+    Starter / Free (₹0), Vyapar Pro / Growth (₹799/mo), Enterprise Hub (₹3,499/mo).
+  * Real-time 2.0% platform transaction commission calculations across POS sales.
+  * Filterable revenue audit ledger by stakeholder role, date, and transaction ID.
+
+- Dedicated Store Command & Audit Dashboard (StoreDashboardPage_admin):
+  * Scoped analytics per physical store branch (gross sales, commissions, products).
+  * Multi-branch switcher and branch operational status toggle (Active/Suspended).
+  * Deep-dive tabs: Overview KPIs, Store Catalog, POS Receipts, and Assigned Staff.
+
+- Employee Verification & Compliance Desk (ValidationsPage_employee):
+  * Real-time dossier queue displaying unverified Retailers and Suppliers.
+  * Interactive VerificationActionModal supporting one-click approval or detailed 
+    structured rejection with 6 compliance reason presets and custom remarks.
+  * Immediate status reflection preventing unverified accounts from entering portals.
+
+- Public Landing Experience & Biller Gateway (LandingPage):
+  * High-fidelity hero section with animated KPI counters and scroll progress bar.
+  * Integrated Biller Modal: Dual-mode popup allowing cashiers to register for a 
+    specific retail store or log into their existing POS counter terminal.
+
+- Backend REST Services & Persistence:
+  * PlatformRevenueService & Controller: Dynamic fee summary, subscription lifecycle.
+  * EmployeesService & Controller: Auto-assignment distribution, audit resolution.
+  * UsersService: RBAC authentication, multi-tenant store scoping, and KYC flags.
+
+--------------------------------------------------------------------------------
+3. REACT CONCEPTS & TECHNICAL IMPLEMENTATION (RUBRIC BREAKDOWN)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+[2M] A. REACT COMPONENTS, PROPS & COMMUNICATION
+--------------------------------------------------------------------------------
+- Component Hierarchy & Modularity:
+  * Engineered a tree of reusable, single-responsibility components:
+    App.jsx -> AdminLayout_admin.jsx -> (DashboardPage | RevenuePage | StoresPage | StoreDashboardPage)
+    App.jsx -> EmployeeLayout_employee.jsx -> ValidationsPage -> VerificationActionModal
+    App.jsx -> LandingPage -> BillerModal
+
+- Parent-to-Child Props:
+  * Downward data passing using typed/structured props:
+    <StoreDashboardPage_admin 
+       storeId={selectedBranchId} 
+       onNavigate={handleNavigate} 
+       onBack={() => setActiveTab('stores')} 
+    />
+    <VerificationActionModal 
+       isOpen={isModalOpen} 
+       mode="reject" 
+       entity={selectedDossier} 
+       onClose={() => setIsModalOpen(false)} 
+       onConfirm={handleVerificationResolution} 
+    />
+
+- Child-to-Parent Communication (Callbacks):
+  * Child components emit actions and updated data back to parents via callback props:
+    * In VerificationActionModal: Invokes onConfirm({ approved, remarks, reasonCode }) 
+      which triggers parent API PATCH call and refreshes the verification queue.
+    * In LandingPage: Invokes onLoginSuccess(roleOrUser) to trigger view routing.
+
+- Global Cross-Component Communication (Context API):
+  * Created DataSyncContext (src/context/DataSyncContext.jsx) using React.createContext:
+    Provides broadcastSync(channel, payload) and useDataSync() hook so that when 
+    a cashier bills an order or an employee validates a retailer, all open browser 
+    tabs immediately refetch live data without page reloads.
+
+--------------------------------------------------------------------------------
+[1M] B. STATE MANAGEMENT & EVENT HANDLING
+--------------------------------------------------------------------------------
+- useState Variations:
+  * Primitive states: const [activeTab, setActiveTab] = useState('overview');
+  * Boolean flags: const [loading, setLoading] = useState(true);
+  * Complex object states: const [summaryData, setSummaryData] = useState(null);
+  * Array collections: const [stakeholders, setStakeholders] = useState([]);
+
+- Memoized Derived State (useMemo):
+  * Computed performance metrics without redundant re-renders:
+    const filteredUsers = useMemo(() => {
+      return users.filter(u => 
+        (roleFilter === 'all' || u.role === roleFilter) &&
+        (u.name.toLowerCase().includes(search.toLowerCase()) || 
+         u.email.toLowerCase().includes(search.toLowerCase()))
+      );
+    }, [users, roleFilter, search]);
+
+- Event Handling & Delegation:
+  * Click Events: Tab switching, modal triggers, pagination controls.
+  * Form Submissions: e.preventDefault() attached to onSubmit handlers.
+  * Keyboard Events: Enter key triggers search filtering; Escape closes modals.
+  * Window Scroll Events: Dynamic navbar elevation and scroll percentage bar.
+
+--------------------------------------------------------------------------------
+[1M] C. CONTROLLED FORMS & VALIDATION
+--------------------------------------------------------------------------------
+- Two-Way Data Binding:
+  * Every input element is strictly bound to React state:
+    <input 
+      type="text" 
+      value={searchQuery} 
+      onChange={(e) => setSearchQuery(e.target.value)} 
+      placeholder="Search branches..." 
+    />
+
+- Multi-Field Form State:
+  * In LandingPage (Biller Registration):
+    const [billerForm, setBillerForm] = useState({
+      name: '', email: '', password: '', confirmPassword: '', 
+      phone: '', company: '', retailerId: ''
+    });
+    const handleFieldChange = (field, value) => {
+      setBillerForm(prev => ({ ...prev, [field]: value }));
+    };
+
+- Validation & Defensive Guardrails:
+  * VerificationActionModal enforces that a rejection cannot be submitted if 
+    remarks are empty:
+    if (mode === 'reject' && !remarks.trim()) {
+      setErrorText('Please provide a specific justification for rejection.');
+      return;
+    }
+  * Password matching validation in registration before network dispatch.
+
+--------------------------------------------------------------------------------
+[1M] D. USEEFFECT & SIDE EFFECTS (LIFECYCLES & CLEANUPS)
+--------------------------------------------------------------------------------
+- Mount & Data Hydration:
+  * Runs once on component mount to load live REST endpoints in parallel:
+    useEffect(() => {
+      loadRevenueData();
+    }, [loadRevenueData]);
+
+- Parameter & Prop Synchronization:
+  * Listens to prop changes and resynchronizes internal state:
+    useEffect(() => {
+      if (storeId && storeId !== selectedStoreId) {
+        setSelectedStoreId(storeId);
+      }
+    }, [storeId]);
+
+- Event Listener Subscriptions with Cleanups:
+  * Attaches window scroll listener in LandingPage and cleans up on unmount:
+    useEffect(() => {
+      const handleScroll = () => {
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        setScrollProgress((window.scrollY / total) * 100);
+      };
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+- Polling & Animated Timers:
+  * Clean interval timers in LandingPage stats counter with clearInterval on unmount.
+
+--------------------------------------------------------------------------------
+4. KEY SOURCE FILES DEVELOPED / MAINTAINED
+--------------------------------------------------------------------------------
+A. Admin Portal (final_ims/react_frontend/src/admin/):
+   - App_admin.jsx: Master view controller & tab orchestrator for Admin portal.
+   - components/layout/AdminLayout_admin.jsx: Glassmorphism shell & navigation.
+   - pages/RevenuePage_admin.jsx (816 lines): Complete dual-monetization engine.
+   - pages/StoreDashboardPage_admin.jsx (889 lines): Scoped branch command center.
+   - pages/StoresPage_admin.jsx: Multi-store registry, search, and branch creation.
+   - pages/UsersPage_admin.jsx: Global user audit table and RBAC management.
+   - utils/api_admin.js: Centralized Admin API client communicating with backend.
+
+B. Employee Module (final_ims/react_frontend/src/employee/):
+   - App_employee.jsx: Employee portal entry and routing controller.
+   - pages/ValidationsPage_employee.jsx: Retailer & supplier dossier review queue.
+   - components/VerificationActionModal.jsx: Reusable approval/rejection modal.
+   - components/DossierModal_employee.jsx: Full business identity audit viewer.
+   - utils/api_employee.js: Staff assignment distribution and verification client.
+
+C. Landing, Auth & Synchronization (final_ims/react_frontend/src/):
+   - landing/LandingPage.jsx (912 lines): Public showcase, scroll bars, biller modal.
+   - auth/LoginPage.jsx & RegisterPage.jsx: Two-way bound auth with plan selection.
+   - auth/VerificationPendingPage.jsx: Waiting gate for unverified stakeholders.
+   - context/DataSyncContext.jsx: Reactive multi-tab broadcast mechanism.
+
+D. Backend Subsystems (final_ims/backend/src/):
+   - platform-revenue/platform-revenue.service.ts & controller.ts: Fee calculation.
+   - employees/employees.service.ts & controller.ts: Verification audit resolution.
+   - users/users.service.ts: Multi-tenant JSON storage, authentication, and RBAC.
+
+--------------------------------------------------------------------------------
+5. GIT COMMIT HISTORY (CONTRIBUTIONS LOG)
+--------------------------------------------------------------------------------
+Commit Hash | Author          | Description
+--------------------------------------------------------------------------------
+e496e126    | yogeswar stalin | docs: update root and workspace READMEs with system architecture, demo accounts, and E2E evaluation guides
+2d023703    | yogeswar stalin | feat(integration): unify cross-module data synchronization, POS billing, and storefront flows
+4fe60a78    | yogeswar stalin | feat(portals): enhance Admin command center and Employee verification workflows
+0728251f    | yogeswar stalin | feat(backend): harmonize employee verification, biller requests, and multi-tenant revenue services
+7ad3cab1    | yogeswar stalin | docs(submission): update unified react_frontend README with setup and cross-module test flows
+1898d74e    | yogeswar stalin | Merge remote-tracking branch 'origin/Abhiraj-React' into yogesh-react
+df710de4    | yogeswar stalin | feat(integration): consolidate all React modules into final_ims/react_frontend and harmonize backend
+c307375a    | yogeswar stalin | feat(auth-landing): restore 1:1 original HTML/CSS design for landing, login, and register with real backend integration
+1ab59bd2    | yogeswar stalin | feat(react): complete landing, auth, admin dual-revenue, multi-store scope and dynamic employee modules
+af3d241f    | yogeswar stalin | chore: untrack node_modules and dist, add .gitignore
+326d18f0    | yogeswar stalin | converted my part to react
+6d9a7e8f    | yogeswar stalin | made the revenue model implemented
+
+--------------------------------------------------------------------------------
+[5M] 6. INDIVIDUAL CODE EXPLANATION & VIVA DEFENSE GUIDE
+--------------------------------------------------------------------------------
+Be prepared to answer these core questions during viva evaluation:
+
+Q1: "Explain how your Revenue Model works in code."
+A1: "The platform generates revenue through two distinct streams implemented in 
+    RevenuePage_admin.jsx and PlatformRevenueService:
+    1. SaaS Tier Subscriptions: Retailers subscribe to Free (₹0), Vyapar Pro 
+       (₹799/mo), or Enterprise Hub (₹3,499/mo). We aggregate these into Monthly 
+       Recurring Revenue (MRR).
+    2. Platform POS Commissions: Every physical transaction processed through 
+       the cashier POS incurs a 2.0% platform fee. In RevenuePage_admin, we fetch 
+       transactions via fetchPlatformCommissions() and compute gross revenue vs 
+       net commission retained by the platform."
+
+Q2: "Walk me through the verification lifecycle of a new Retailer."
+A2: "1. A store owner registers via RegisterPage.jsx. Their profile is saved with 
+       status 'pending_verification'.
+     2. When they attempt to sign in, App.jsx intercepts their session and renders 
+        VerificationPendingPage.jsx, barring them from accessing inventory.
+     3. The retailer's dossier appears in ValidationsPage_employee.jsx.
+     4. An employee clicks 'Review' and inspects the trade license/GSTIN.
+     5. The employee opens VerificationActionModal.jsx to approve or reject with 
+        audit remarks.
+     6. A PATCH request is dispatched to /api/employees/assignments/:id/resolve.
+     7. Upon approval, status transitions to 'Active', and DataSyncContext broadcasts 
+        an update unlocking the full Retailer Dashboard."
+
+Q3: "How does StoreDashboardPage_admin isolate data for a specific store?"
+A3: "It accepts a storeId prop (defaulting to the active store). In loadScopedData, 
+     we execute Promise.allSettled fetching all stores, products, transactions, and 
+     users. We then filter products and transactions strictly by 
+     item.storeId === selectedStoreId. This guarantees that stock levels, sales, 
+     and cashier receipts shown belong exclusively to that physical branch."
+
+Q4: "Why use DataSyncContext instead of Redux or raw localStorage?"
+A4: "Redux introduces excessive boilerplate for this scale. DataSyncContext leverages 
+     React's native Context API combined with the browser's window storage event. 
+     When an entity changes, broadcastSync() increments a sync counter. Subscribed 
+     views observe this change via useEffect and trigger background data refetches, 
+     giving us real-time multi-tab synchronization with minimal overhead."
+
+--------------------------------------------------------------------------------
+7. LIVE MODIFICATION DEFENSE PREPARATION
+--------------------------------------------------------------------------------
+Common live coding tasks examiners may request:
+
+1. "Change the Platform Commission rate from 2.0% to 2.5%":
+   - Location: RevenuePage_admin.jsx (Line 230) & backend platform-revenue.service.ts
+   - Change: Update const commissionRate = 0.025; and recalculate totalCommission.
+
+2. "Add an extra rejection reason in the Employee Verification Modal":
+   - Location: VerificationActionModal.jsx (Line 10, COMMON_REJECTION_REASONS array)
+   - Change: Append a new object:
+     { label: 'Expired Trade License', text: 'Submitted trade license has expired.' }
+
+3. "Add a status filter (Active vs Inactive) to StoresPage_admin":
+   - Location: StoresPage_admin.jsx
+   - Change: Declare const [statusFilter, setStatusFilter] = useState('all'), add a 
+     select dropdown, and filter stores array with store.status === statusFilter.
+================================================================================
