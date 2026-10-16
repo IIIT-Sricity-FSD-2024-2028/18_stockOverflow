@@ -26,6 +26,7 @@ import App_consumer from './consumer/App_consumer';
 import App_retailer from './retailer/App_retailer';
 import App_supplier from './supplier/App_supplier';
 import App_admin from './admin/App_admin';
+import App_biller from './biller/App_biller';
 
 export default function App() {
   const { user, logout, refreshUser } = useAuth();
@@ -44,6 +45,7 @@ export default function App() {
         <AuthPage
           initialMode="login"
           onClose={() => setAuthScreen('landing')}
+          onLoginSuccess={() => refreshUser()}
           onOpenBillerPending={() => setAuthScreen('biller-pending')}
           onOpenRetailerSetup={() => setAuthScreen('retailer-wizard')}
         />
@@ -55,6 +57,7 @@ export default function App() {
         <AuthPage
           initialMode="register"
           onClose={() => setAuthScreen('landing')}
+          onLoginSuccess={() => refreshUser()}
           onOpenBillerPending={() => setAuthScreen('biller-pending')}
           onOpenRetailerSetup={() => setAuthScreen('retailer-wizard')}
         />
@@ -144,9 +147,13 @@ export default function App() {
     return <App_admin onLogout={logout} />;
   }
 
-  // 5. Biller Module
+  // 5. Biller Module (POS Terminal)
   if (role === 'biller') {
-    const isApproved = Boolean(user.profileId && (user.currentStoreId || user.storeId));
+    const isApproved = Boolean(
+      (user.profileId || user.profile?.retailerId) &&
+      (user.currentStoreId || user.storeId)
+    );
+
     if (!isApproved) {
       return (
         <BillerPendingPage
@@ -155,7 +162,8 @@ export default function App() {
         />
       );
     }
-    return <App_retailer onLogout={logout} />;
+
+    return <App_biller onLogout={logout} />;
   }
 
   // Fallback for unrecognized role

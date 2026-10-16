@@ -253,69 +253,182 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     let purchaseData = [];
     let salesData = [];
 
-    const salesByMonth = Array(12).fill(0);
-    const purchaseByMonth = Array(12).fill(0);
-
-    data.transactions.forEach((tx) => {
-      const d = tx.timestamp ? new Date(tx.timestamp) : null;
-      if (d && !isNaN(d.getTime())) {
-        const m = d.getMonth();
-        salesByMonth[m] = Number(((salesByMonth[m] || 0) + (Number(tx.finalTotal) || 0) / 1000).toFixed(1));
-      }
-    });
-
-    deliveredPOs.forEach((po) => {
-      const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
-      if (d && !isNaN(d.getTime())) {
-        const m = d.getMonth();
-        purchaseByMonth[m] = Number(((purchaseByMonth[m] || 0) + (Number(po.total) || 0) / 1000).toFixed(1));
-      }
-    });
-
-    const totSalesK = Number((totalSales / 1000).toFixed(1));
-    const totPurK = Number((totalPurchase / 1000).toFixed(1));
+    const now = new Date();
 
     if (range === '1D') {
       labels = ['12 AM', '4 AM', '8 AM', '12 PM', '4 PM', '8 PM'];
-      purchaseData = [
-        0,
-        0,
-        Number((totPurK * 0.3).toFixed(1)),
-        Number((totPurK * 0.4).toFixed(1)),
-        Number((totPurK * 0.2).toFixed(1)),
-        Number((totPurK * 0.1).toFixed(1)),
-      ];
-      salesData = [
-        0,
-        0,
-        Number((totSalesK * 0.2).toFixed(1)),
-        Number((totSalesK * 0.4).toFixed(1)),
-        Number((totSalesK * 0.3).toFixed(1)),
-        Number((totSalesK * 0.1).toFixed(1)),
-      ];
+      salesData = [0, 0, 0, 0, 0, 0];
+      purchaseData = [0, 0, 0, 0, 0, 0];
+
+      // Check if transactions are from today or within last 24h
+      const hasTodayTx = data.transactions.some((tx) => {
+        const d = tx.timestamp ? new Date(tx.timestamp) : null;
+        return d && !isNaN(d.getTime()) && (d.toDateString() === now.toDateString() || Math.abs(now.getTime() - d.getTime()) <= 24 * 3600 * 1000);
+      });
+
+      data.transactions.forEach((tx) => {
+        const d = tx.timestamp ? new Date(tx.timestamp) : null;
+        if (d && !isNaN(d.getTime())) {
+          const isRelevant = hasTodayTx
+            ? (d.toDateString() === now.toDateString() || Math.abs(now.getTime() - d.getTime()) <= 24 * 3600 * 1000)
+            : true;
+
+          if (isRelevant) {
+            const hour = d.getHours();
+            const bucketIdx = Math.min(5, Math.floor(hour / 4));
+            salesData[bucketIdx] = Number((salesData[bucketIdx] + (Number(tx.finalTotal) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
+
+      const hasTodayPO = deliveredPOs.some((po) => {
+        const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+        return d && !isNaN(d.getTime()) && (d.toDateString() === now.toDateString() || Math.abs(now.getTime() - d.getTime()) <= 24 * 3600 * 1000);
+      });
+
+      deliveredPOs.forEach((po) => {
+        const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+        if (d && !isNaN(d.getTime())) {
+          const isRelevant = hasTodayPO
+            ? (d.toDateString() === now.toDateString() || Math.abs(now.getTime() - d.getTime()) <= 24 * 3600 * 1000)
+            : true;
+
+          if (isRelevant) {
+            const hour = d.getHours();
+            const bucketIdx = Math.min(5, Math.floor(hour / 4));
+            purchaseData[bucketIdx] = Number((purchaseData[bucketIdx] + (Number(po.total) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
     } else if (range === '1W') {
       labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      purchaseData = [0, 0, 0, 0, Number((totPurK * 0.5).toFixed(1)), Number((totPurK * 0.5).toFixed(1)), 0];
-      salesData = [0, 0, 0, 0, Number((totSalesK * 0.4).toFixed(1)), Number((totSalesK * 0.6).toFixed(1)), 0];
+      salesData = [0, 0, 0, 0, 0, 0, 0];
+      purchaseData = [0, 0, 0, 0, 0, 0, 0];
+
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
+
+      data.transactions.forEach((tx) => {
+        const d = tx.timestamp ? new Date(tx.timestamp) : null;
+        if (d && !isNaN(d.getTime())) {
+          if (d >= sevenDaysAgo || data.transactions.length <= 7) {
+            const dayIdx = (d.getDay() + 6) % 7; // Mon=0, Sun=6
+            salesData[dayIdx] = Number((salesData[dayIdx] + (Number(tx.finalTotal) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
+
+      deliveredPOs.forEach((po) => {
+        const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+        if (d && !isNaN(d.getTime())) {
+          if (d >= sevenDaysAgo || deliveredPOs.length <= 7) {
+            const dayIdx = (d.getDay() + 6) % 7;
+            purchaseData[dayIdx] = Number((purchaseData[dayIdx] + (Number(po.total) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
     } else if (range === '1M') {
       labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-      purchaseData = [0, 0, 0, totPurK];
-      salesData = [0, 0, 0, totSalesK];
+      salesData = [0, 0, 0, 0];
+      purchaseData = [0, 0, 0, 0];
+
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 3600 * 1000);
+
+      data.transactions.forEach((tx) => {
+        const d = tx.timestamp ? new Date(tx.timestamp) : null;
+        if (d && !isNaN(d.getTime())) {
+          if (d >= thirtyDaysAgo || d.getMonth() === now.getMonth() || data.transactions.length <= 10) {
+            const day = d.getDate();
+            const weekIdx = Math.min(3, Math.floor((day - 1) / 7));
+            salesData[weekIdx] = Number((salesData[weekIdx] + (Number(tx.finalTotal) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
+
+      deliveredPOs.forEach((po) => {
+        const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+        if (d && !isNaN(d.getTime())) {
+          if (d >= thirtyDaysAgo || d.getMonth() === now.getMonth() || deliveredPOs.length <= 10) {
+            const day = d.getDate();
+            const weekIdx = Math.min(3, Math.floor((day - 1) / 7));
+            purchaseData[weekIdx] = Number((purchaseData[weekIdx] + (Number(po.total) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
     } else if (range === '3M') {
-      labels = ['Jun', 'Jul', 'Aug'];
-      purchaseData = [0, 0, purchaseByMonth[7] || totPurK];
-      salesData = [0, 0, salesByMonth[7] || totSalesK];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const curMonth = now.getMonth();
+      const monthIndices = [(curMonth - 2 + 12) % 12, (curMonth - 1 + 12) % 12, curMonth];
+      labels = monthIndices.map((m) => monthNames[m]);
+      salesData = [0, 0, 0];
+      purchaseData = [0, 0, 0];
+
+      data.transactions.forEach((tx) => {
+        const d = tx.timestamp ? new Date(tx.timestamp) : null;
+        if (d && !isNaN(d.getTime())) {
+          const idx = monthIndices.indexOf(d.getMonth());
+          if (idx >= 0) {
+            salesData[idx] = Number((salesData[idx] + (Number(tx.finalTotal) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
+
+      deliveredPOs.forEach((po) => {
+        const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+        if (d && !isNaN(d.getTime())) {
+          const idx = monthIndices.indexOf(d.getMonth());
+          if (idx >= 0) {
+            purchaseData[idx] = Number((purchaseData[idx] + (Number(po.total) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
     } else if (range === '6M') {
-      labels = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
-      purchaseData = [0, 0, 0, 0, 0, purchaseByMonth[7] || totPurK];
-      salesData = [0, 0, 0, 0, 0, salesByMonth[7] || totSalesK];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const curMonth = now.getMonth();
+      const monthIndices = Array.from({ length: 6 }, (_, i) => (curMonth - 5 + i + 12) % 12);
+      labels = monthIndices.map((m) => monthNames[m]);
+      salesData = Array(6).fill(0);
+      purchaseData = Array(6).fill(0);
+
+      data.transactions.forEach((tx) => {
+        const d = tx.timestamp ? new Date(tx.timestamp) : null;
+        if (d && !isNaN(d.getTime())) {
+          const idx = monthIndices.indexOf(d.getMonth());
+          if (idx >= 0) {
+            salesData[idx] = Number((salesData[idx] + (Number(tx.finalTotal) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
+
+      deliveredPOs.forEach((po) => {
+        const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+        if (d && !isNaN(d.getTime())) {
+          const idx = monthIndices.indexOf(d.getMonth());
+          if (idx >= 0) {
+            purchaseData[idx] = Number((purchaseData[idx] + (Number(po.total) || 0) / 1000).toFixed(3));
+          }
+        }
+      });
     } else {
       // 1Y
       labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      purchaseData = [...purchaseByMonth];
-      salesData = [...salesByMonth];
-      if (!purchaseData.some((v) => v > 0)) purchaseData[7] = totPurK;
-      if (!salesData.some((v) => v > 0)) salesData[7] = totSalesK;
+      salesData = Array(12).fill(0);
+      purchaseData = Array(12).fill(0);
+
+      data.transactions.forEach((tx) => {
+        const d = tx.timestamp ? new Date(tx.timestamp) : null;
+        if (d && !isNaN(d.getTime())) {
+          const m = d.getMonth();
+          salesData[m] = Number((salesData[m] + (Number(tx.finalTotal) || 0) / 1000).toFixed(3));
+        }
+      });
+
+      deliveredPOs.forEach((po) => {
+        const d = po.createdAt || po.deliveryDate ? new Date(po.createdAt || po.deliveryDate) : null;
+        if (d && !isNaN(d.getTime())) {
+          const m = d.getMonth();
+          purchaseData[m] = Number((purchaseData[m] + (Number(po.total) || 0) / 1000).toFixed(3));
+        }
+      });
     }
 
     return { labels, purchaseData, salesData };

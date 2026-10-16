@@ -43,13 +43,31 @@ export function AuthProvider({ children }) {
 
     const hasProfile = Boolean(
       (userData.profile && (userData.profile.businessName || (Array.isArray(userData.profile.stores) && userData.profile.stores.length > 0))) ||
-      (userData.store && userData.profileId && userData.profileId !== userData.id)
+      (userData.store && userData.profileId && userData.profileId !== userData.id) ||
+      (role === 'biller' && (userData.profileId || userData.profile?.retailerId))
     );
 
     const token =
       userData.token ||
       localStorage.getItem('so_token') ||
       `sotk_${(userData.id || 'usr').replace(/[^a-zA-Z0-9]/g, '')}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+
+    const storeId =
+      userData.storeId ||
+      userData.currentStoreId ||
+      (userData.profile?.stores?.[0]?.code) ||
+      '';
+
+    const currentStoreId =
+      userData.currentStoreId ||
+      userData.storeId ||
+      (userData.profile?.stores?.[0]?.code) ||
+      '';
+
+    const effectiveRetailerId =
+      userData.retailerId ||
+      userData.profile?.retailerId ||
+      (role === 'retailer' ? (userData.profileId || userData.id || '') : '');
 
     const sessionData = {
       id: userData.id,
@@ -58,12 +76,14 @@ export function AuthProvider({ children }) {
       role: role === 'customer' ? 'consumer' : role,
       status: userData.status || 'Active',
       store: userData.store || (userData.profile?.stores?.[0]?.name) || '',
-      storeId: userData.storeId || (userData.profile?.stores?.[0]?.code) || '',
-      currentStoreId: userData.currentStoreId || userData.storeId || (userData.profile?.stores?.[0]?.code) || '',
-      accessibleStoreIds: userData.accessibleStoreIds || [],
+      storeId: storeId,
+      currentStoreId: currentStoreId,
+      accessibleStoreIds: Array.isArray(userData.accessibleStoreIds) && userData.accessibleStoreIds.length
+        ? userData.accessibleStoreIds
+        : [storeId].filter(Boolean),
       profileId: userData.profileId || '',
       profile: userData.profile || null,
-      retailerId: userData.retailerId || (role === 'retailer' ? (userData.profileId || userData.id || '') : ''),
+      retailerId: effectiveRetailerId,
       hasProfile: hasProfile,
       initials: initials,
       plan: userData.plan || 'growth',

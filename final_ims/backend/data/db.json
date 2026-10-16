@@ -102,7 +102,7 @@
       "finalPrice": 13995,
       "taxType": "Inclusive",
       "unit": "Pair",
-      "qty": 35,
+      "qty": 34,
       "initialQty": 35,
       "min": 10,
       "max": 80,
@@ -120,7 +120,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%91%9F%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3ENike%20Air%20Max%20270%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EFootwear%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "👟",
-      "soldThisMonth": 0,
+      "soldThisMonth": 1,
       "trend": "up",
       "description": "",
       "descriptionHtml": "",
@@ -145,7 +145,7 @@
       "storeInventory": [
         {
           "storeId": "STORE-01",
-          "qty": 35
+          "qty": 34
         }
       ],
       "initialStoreInventory": [
@@ -164,11 +164,11 @@
       },
       "ratingCount": 0,
       "ratingAvg": 0,
-      "revenue": 0,
+      "revenue": 13995,
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-10-16T04:47:09.900Z",
-      "updatedAt": "2026-10-16T04:47:09.900Z",
+      "updatedAt": "2026-10-16T06:57:16.058Z",
       "restockedAt": "2026-10-16T04:47:09.900Z",
       "lastStockChangeAt": "2026-10-16T04:47:09.900Z"
     },
@@ -905,7 +905,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Enike%20shoes%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "📦",
-      "soldThisMonth": 2,
+      "soldThisMonth": 0,
       "trend": "up",
       "description": "",
       "descriptionHtml": "<p></p>",
@@ -980,7 +980,7 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T06:56:40.524Z",
-      "updatedAt": "2026-10-15T09:34:59.020Z",
+      "updatedAt": "2026-10-16T06:57:16.058Z",
       "restockedAt": "2026-08-28T00:00:00.000Z",
       "lastStockChangeAt": "2026-08-28T06:56:40.524Z"
     },
@@ -1020,7 +1020,7 @@
         "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Eop3%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
       ],
       "emoji": "📦",
-      "soldThisMonth": 3,
+      "soldThisMonth": 0,
       "trend": "up",
       "description": "",
       "descriptionHtml": "",
@@ -1072,7 +1072,7 @@
       "status": "active",
       "visibility": "published",
       "createdAt": "2026-08-28T05:05:37.997Z",
-      "updatedAt": "2026-08-31T13:30:50.084Z",
+      "updatedAt": "2026-10-16T06:57:16.058Z",
       "restockedAt": "2026-08-31T13:30:50.080Z",
       "lastStockChangeAt": "2026-08-31T13:30:50.080Z"
     }
@@ -1088,6 +1088,27 @@
     }
   ],
   "customers": [
+    {
+      "id": "cust-305745d5-065e-4973-a0a5-3ef111e6b00f",
+      "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
+      "storeId": "STORE-01",
+      "name": "consumer",
+      "fname": "consumer",
+      "lname": "",
+      "email": "consumer@stockoverflow.local",
+      "phone": "",
+      "city": "",
+      "country": "India",
+      "store": "Downtown Store",
+      "status": "Active",
+      "totalOrders": 1,
+      "totalSpent": 13995,
+      "orders": 1,
+      "spent": 13995,
+      "created": "Oct 16, 2026",
+      "rating": 3,
+      "notes": ""
+    },
     {
       "id": "cust-702c68b8-7a68-45d2-b01a-e7e18bf4861e",
       "retailerId": "4574b989-5988-4db2-9061-8bfcc48647cf",
@@ -1133,6 +1154,19 @@
   ],
   "billers": [
     {
+      "id": 2,
+      "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
+      "storeId": "STORE-01",
+      "code": "BI002",
+      "name": "biller",
+      "company": "Metro Express",
+      "email": "him@gmail.com",
+      "phone": "6363632645",
+      "country": "India",
+      "status": "active",
+      "avatar": "#2196F3"
+    },
+    {
       "id": 1,
       "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
       "storeId": "JOHN-S-STORE",
@@ -1159,6 +1193,31 @@
       "status": "approved",
       "createdAt": "2026-08-28T05:09:19.601Z",
       "approvedAt": "2026-08-28T05:09:32.722Z"
+    },
+    {
+      "id": "1792132501826",
+      "name": "biller1",
+      "email": "biller1@gmail.com",
+      "phone": "Not provided",
+      "company": "biller1 Biller Request",
+      "country": "India",
+      "retailerId": "",
+      "storeId": "",
+      "status": "pending",
+      "createdAt": "2026-10-16T06:35:01.826Z"
+    },
+    {
+      "id": "1792132563613",
+      "name": "biller",
+      "email": "him@gmail.com",
+      "phone": "6363632645",
+      "company": "Metro Express",
+      "country": "India",
+      "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
+      "storeId": "STORE-01",
+      "status": "approved",
+      "createdAt": "2026-10-16T06:36:03.613Z",
+      "approvedAt": "2026-10-16T06:36:29.611Z"
     }
   ],
   "suppliers": [],
@@ -1448,6 +1507,23 @@
   ],
   "reservationRequests": [
     {
+      "requestId": "req-1792133820745-98247",
+      "sku": "PT009",
+      "productName": "Nike Air Max 270",
+      "qty": 1,
+      "customer": "consumer",
+      "customerEmail": "consumer@gmail.com",
+      "customerId": "ba3b42ab-3529-41b6-98e6-9815a1a6097e",
+      "storeId": "STORE-01",
+      "store": "kim1's Main Store",
+      "paymentMethod": "UPI",
+      "status": "completed",
+      "createdAt": "2026-10-16T06:57:00.745Z",
+      "orderId": "ORD946742",
+      "completedAt": "2026-10-16T06:57:16.052Z",
+      "completedBy": "biller"
+    },
+    {
       "requestId": "req-1792056899041-6641",
       "sku": "PT005",
       "productName": "Premium Basmati Rice",
@@ -1604,6 +1680,41 @@
     }
   ],
   "transactions": [
+    {
+      "orderId": "ORD946742",
+      "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
+      "timestamp": "2026-10-16T06:57:16.046Z",
+      "customer": "consumer",
+      "customerEmail": "",
+      "customerId": "",
+      "store": "kim1's Main Store",
+      "storeId": "STORE-01",
+      "paymentMethod": "UPI",
+      "items": [
+        {
+          "sku": "PT009",
+          "name": "Nike Air Max 270",
+          "quantity": 1,
+          "price": 13995,
+          "total": 13995,
+          "isReserved": true,
+          "requestIds": [
+            "req-1792133820745-98247"
+          ]
+        }
+      ],
+      "subtotal": 13995,
+      "shipping": 0,
+      "tax": 0,
+      "coupon": 0,
+      "discount": 0,
+      "roundoff": 0,
+      "finalTotal": 13995,
+      "platformFee": 279.9,
+      "netRetailerAmount": 13715.1,
+      "status": "Delivered",
+      "receiptUrl": ""
+    },
     {
       "orderId": "ORD615353",
       "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
@@ -1977,6 +2088,23 @@
   "employeeAssignments": [],
   "userQueries": [],
   "platformCommissions": [
+    {
+      "id": "comm-697e86f2-cb28-4c3b-903e-00a61a9612d6",
+      "transactionId": "ORD946742",
+      "orderId": "ORD946742",
+      "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9",
+      "retailerName": "kim1's Main Store",
+      "storeId": "STORE-01",
+      "storeName": "kim1's Main Store",
+      "customerName": "consumer",
+      "orderTotal": 13995,
+      "commissionRate": 0.02,
+      "commissionAmount": 279.9,
+      "netRetailerAmount": 13715.1,
+      "currency": "INR",
+      "timestamp": "2026-10-16T06:57:16.046Z",
+      "status": "settled"
+    },
     {
       "id": "comm-98f26a35-50f6-4e79-b824-74455ec96ce7",
       "transactionId": "ORD615353",

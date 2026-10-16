@@ -142,7 +142,10 @@ export default function BillerModal({ isOpen, onClose, onRedirectPending, onBill
         return;
       }
 
-      const hasStoreAccess = Boolean(user.profileId && (user.currentStoreId || user.storeId));
+      const hasStoreAccess = Boolean(
+        (user.profileId || user.profile?.retailerId) &&
+        (user.currentStoreId || user.storeId)
+      );
 
       if (userRequest?.status === 'pending' || !hasStoreAccess) {
         localStorage.setItem('biller_pending_email', user.email);
@@ -401,6 +404,48 @@ export default function BillerModal({ isOpen, onClose, onRedirectPending, onBill
           ) : (
             /* Login Form */
             <form onSubmit={handleLoginSubmit}>
+              <div
+                style={{
+                  background: '#f0fdf4',
+                  border: '1px solid #bbf7d0',
+                  borderRadius: '8px',
+                  padding: '10px 14px',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#166534', textTransform: 'uppercase' }}>
+                    Demo Cashier Account
+                  </div>
+                  <div style={{ fontSize: '12.5px', color: '#14532d', fontWeight: 600 }}>
+                    jones@gmail.com / pass1234
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginEmail('jones@gmail.com');
+                    setLoginPassword('pass1234');
+                    setError('');
+                  }}
+                  style={{
+                    background: '#16a34a',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '5px 10px',
+                    fontSize: '11.5px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Auto-fill
+                </button>
+              </div>
+
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
                   Biller Email

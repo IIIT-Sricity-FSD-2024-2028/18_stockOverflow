@@ -1,5 +1,42 @@
 [
   {
+    "id": "c5deaecc-ecd4-4d17-8847-8eaeed640ec0",
+    "name": "biller",
+    "email": "him@gmail.com",
+    "password": "pass1234",
+    "role": "biller",
+    "status": "Active",
+    "store": "",
+    "storeId": "STORE-01",
+    "currentStoreId": "STORE-01",
+    "accessibleStoreIds": [
+      "STORE-01"
+    ],
+    "profileId": "2",
+    "profile": {
+      "name": "biller",
+      "email": "him@gmail.com",
+      "retailerId": "64122fd7-5cea-4f41-acb4-3590cbad62e9"
+    },
+    "createdAt": "2026-10-16T06:36:03.602Z",
+    "updatedAt": "2026-10-16T06:36:46.716Z"
+  },
+  {
+    "id": "89a178f8-9628-473b-81a7-430a65f4241e",
+    "name": "biller1",
+    "email": "biller1@gmail.com",
+    "password": "pass1234",
+    "role": "biller",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "profileId": "",
+    "createdAt": "2026-10-16T06:35:01.815Z",
+    "updatedAt": "2026-10-16T06:35:01.815Z"
+  },
+  {
     "id": "db1339d4-36ef-4f89-8e7a-93661ddc4a46",
     "name": "joe",
     "email": "joe2@gmail.com",

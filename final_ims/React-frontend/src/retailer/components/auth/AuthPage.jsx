@@ -35,6 +35,12 @@ export default function AuthPage({
     setError('');
   };
 
+  const handleFillDemoBiller = () => {
+    setLoginEmail('jones@gmail.com');
+    setLoginPassword('pass1234');
+    setError('');
+  };
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -61,7 +67,10 @@ export default function AuthPage({
             return;
           }
 
-          const hasStoreAccess = Boolean(user.profileId && (user.currentStoreId || user.storeId));
+          const hasStoreAccess = Boolean(
+            (user.profileId || user.profile?.retailerId) &&
+            (user.currentStoreId || user.storeId)
+          );
           if (!hasStoreAccess || (userRequest && userRequest.status === 'pending')) {
             localStorage.setItem('biller_pending_email', user.email);
             if (onOpenBillerPending) {
@@ -266,34 +275,56 @@ export default function AuthPage({
               padding: '12px 16px',
               marginBottom: '1.5rem',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              flexDirection: 'column',
+              gap: '8px',
             }}
           >
-            <div>
-              <div style={{ fontSize: '11px', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Quick Demo Account
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Quick Demo Accounts
+                </div>
+                <div style={{ fontSize: '12px', color: '#1e3a8a', fontWeight: 600, marginTop: '2px' }}>
+                  Retailer: john@gmail.com | Cashier: jones@gmail.com
+                </div>
               </div>
-              <div style={{ fontSize: '13px', color: '#1e3a8a', fontWeight: 600, marginTop: '2px' }}>
-                john@gmail.com <span style={{ color: '#64748b', fontWeight: 400 }}>/ pass1234</span>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={handleFillDemoRetailer}
+                  style={{
+                    background: '#2563eb',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '5px 10px',
+                    fontSize: '11.5px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                  title="Auto-fill Retailer Store Owner"
+                >
+                  Retailer
+                </button>
+                <button
+                  type="button"
+                  onClick={handleFillDemoBiller}
+                  style={{
+                    background: '#059669',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '5px 10px',
+                    fontSize: '11.5px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                  title="Auto-fill Biller / POS Cashier"
+                >
+                  Biller (POS)
+                </button>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={handleFillDemoRetailer}
-              style={{
-                background: '#2563eb',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '6px 12px',
-                fontSize: '12px',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              Auto-fill
-            </button>
           </div>
         )}
 
@@ -641,10 +672,12 @@ export default function AuthPage({
                 style={{ height: '42px', width: '100%', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', outline: 'none', paddingLeft: '14px' }}
               >
                 <option value="retailer">Retailer (Store Owner)</option>
-                <option value="biller">Biller (Store Cashier)</option>
                 <option value="supplier">Supplier</option>
                 <option value="consumer">Customer</option>
               </select>
+              <div style={{ fontSize: '12px', color: '#64748b', marginTop: '6px' }}>
+                Want to become a cashier? Apply via the <strong>Become a Biller</strong> button on the home page.
+              </div>
             </div>
 
             <button
