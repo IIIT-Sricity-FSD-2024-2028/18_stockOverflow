@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import './landing.css';
 
-export default function LandingPage({ onNavigate }) {
+export default function LandingPage({ onNavigate, onLoginSuccess }) {
+  const { saveSession } = useAuth();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [billerModalOpen, setBillerModalOpen] = useState(false);
   const [billerTab, setBillerTab] = useState('apply');
@@ -37,7 +39,11 @@ export default function LandingPage({ onNavigate }) {
     costReduction: 0,
   });
 
-  // Track scroll for progress bar
+  // State for navbar sticky & active scroll section
+  const [activeSection, setActiveSection] = useState('features');
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Track scroll for progress bar, navbar elevation, and active section
   useEffect(() => {
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -45,10 +51,45 @@ export default function LandingPage({ onNavigate }) {
         const currentProgress = (window.scrollY / totalScroll) * 100;
         setScrollProgress(currentProgress);
       }
+      setIsScrolled(window.scrollY > 20);
+
+      // Highlight corresponding link when scrolling through sections
+      const sectionIds = ['features', 'dashboard', 'how-it-works', 'pricing', 'contact'];
+      const scrollPos = window.scrollY + 160;
+
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sectionIds[i]);
+        if (el && el.offsetTop <= scrollPos) {
+          setActiveSection(sectionIds[i]);
+          break;
+        }
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Smooth scroll handler with offset for the floating navbar
+  const scrollToSection = (e, targetId) => {
+    if (e) e.preventDefault();
+    const element = document.getElementById(targetId);
+    if (element) {
+      const navOffset = 95; // fixed navbar offset
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navOffset;
+
+      window.scrollTo({
+        top: Math.max(0, offsetPosition),
+        behavior: 'smooth',
+      });
+
+      if (window.history?.pushState) {
+        window.history.pushState(null, '', `#${targetId}`);
+      }
+      setActiveSection(targetId);
+    }
+  };
 
   // Animate stats counter
   useEffect(() => {
@@ -94,12 +135,17 @@ export default function LandingPage({ onNavigate }) {
     setBillerApplyStatus('Submitting application to backend...');
 
     try {
-      const res = await fetch('http://localhost:3001/api/billers/requests', {
+      const API_BASE = typeof window !== 'undefined' && window.IMS_API_BASE_URL
+        ? window.IMS_API_BASE_URL
+        : '/api';
+
+      const res = await fetch(`${API_BASE}/billers/requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: billerForm.name,
           email: billerForm.email,
+          password: billerForm.password,
           phone: billerForm.phone,
           company: billerForm.company,
           country: billerForm.country,
@@ -107,19 +153,18 @@ export default function LandingPage({ onNavigate }) {
         }),
       });
 
-      if (!res.ok) throw new Error('Application submission failed');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || 'Application submission failed');
+      }
+
       setBillerApplyStatus('Application submitted successfully! Your retailer will review it.');
       setTimeout(() => {
         setBillerModalOpen(false);
         setBillerApplyStatus('');
       }, 2000);
-    } catch (_err) {
-      // Simulate successful local submission if backend is offline
-      setBillerApplyStatus('Application queued successfully for administrator review!');
-      setTimeout(() => {
-        setBillerModalOpen(false);
-        setBillerApplyStatus('');
-      }, 2000);
+    } catch (err) {
+      setBillerApplyStatus(err.message || 'Application error. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -131,11 +176,15 @@ export default function LandingPage({ onNavigate }) {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('http://localhost:3001/api/users/login', {
+      const API_BASE = typeof window !== 'undefined' && window.IMS_API_BASE_URL
+        ? window.IMS_API_BASE_URL
+        : '/api';
+
+      const res = await fetch(`${API_BASE}/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: billerLoginEmail,
+          email: billerLoginEmail.trim(),
           password: billerLoginPassword,
         }),
       });
@@ -146,21 +195,33 @@ export default function LandingPage({ onNavigate }) {
       }
 
       const user = await res.json();
-      localStorage.setItem('so_session', JSON.stringify(user));
-      setBillerModalOpen(false);
-      onNavigate('retailer');
-    } catch (err) {
-      // Fallback
-      if (billerLoginEmail && billerLoginPassword) {
-        localStorage.setItem(
-          'so_session',
-          JSON.stringify({ email: billerLoginEmail, role: 'biller', name: 'Store Biller' })
-        );
-        setBillerModalOpen(false);
-        onNavigate('retailer');
-      } else {
-        setBillerLoginError(err.message || 'Please check your email and password');
+      if (user.role !== 'biller') {
+        throw new Error('This portal is only for store billers. Please use standard login.');
       }
+
+      const session = {
+        ...user,
+        role: 'biller',
+        token: user.token || `sotk_${user.id}_${Date.now()}`,
+      };
+
+      if (saveSession) {
+        saveSession(session);
+      } else {
+        localStorage.setItem('so_session', JSON.stringify(session));
+        if (session.token) {
+          localStorage.setItem('so_token', session.token);
+        }
+      }
+
+      setBillerModalOpen(false);
+      if (onLoginSuccess) {
+        onLoginSuccess('biller');
+      } else {
+        onNavigate('biller');
+      }
+    } catch (err) {
+      setBillerLoginError(err.message || 'Please check your email and password');
     } finally {
       setIsSubmitting(false);
     }
@@ -171,36 +232,68 @@ export default function LandingPage({ onNavigate }) {
       {/* Scroll Progress Bar */}
       <div id="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
 
-      {/* Navigation */}
-      <nav className="navbar container">
-        <div className="brand" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <div className="brand-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-            </svg>
+      {/* Navigation Header - Fixed at Top */}
+      <header className={`landing-navbar-wrapper ${isScrolled ? 'scrolled' : ''}`}>
+        <nav className="navbar container">
+          <div className="brand" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <div className="brand-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+              </svg>
+            </div>
+            <span className="brand-text">Stock Overflow</span>
           </div>
-          Stock Overflow
-        </div>
-        
-        <div className="nav-links">
-          <a href="#features">Features</a>
-          <a href="#dashboard">Dashboard</a>
-          <a href="#how-it-works">How It Works</a>
-          <a href="#pricing">Pricing (₹)</a>
-          <a href="#contact">Contact</a>
-        </div>
+          
+          <div className="nav-links">
+            <a 
+              href="#features" 
+              onClick={(e) => scrollToSection(e, 'features')} 
+              className={activeSection === 'features' ? 'active' : ''}
+            >
+              Features
+            </a>
+            <a 
+              href="#dashboard" 
+              onClick={(e) => scrollToSection(e, 'dashboard')} 
+              className={activeSection === 'dashboard' ? 'active' : ''}
+            >
+              Dashboard
+            </a>
+            <a 
+              href="#how-it-works" 
+              onClick={(e) => scrollToSection(e, 'how-it-works')} 
+              className={activeSection === 'how-it-works' ? 'active' : ''}
+            >
+              How It Works
+            </a>
+            <a 
+              href="#pricing" 
+              onClick={(e) => scrollToSection(e, 'pricing')} 
+              className={activeSection === 'pricing' ? 'active' : ''}
+            >
+              Pricing (₹)
+            </a>
+            <a 
+              href="#contact" 
+              onClick={(e) => scrollToSection(e, 'contact')} 
+              className={activeSection === 'contact' ? 'active' : ''}
+            >
+              Contact
+            </a>
+          </div>
 
-        <div className="nav-actions">
-          <button onClick={() => onNavigate('login')} className="btn btn-outline-gray">Login</button>
-          <button onClick={() => onNavigate('register')} className="btn btn-primary">Get Started</button>
-        </div>
-      </nav>
+          <div className="nav-actions">
+            <button onClick={() => onNavigate('login')} className="btn btn-outline-gray">Login</button>
+            <button onClick={() => onNavigate('register')} className="btn btn-primary">Get Started</button>
+          </div>
+        </nav>
+      </header>
 
       {/* Hero Section */}
       <header className="hero">
         <div className="hero-content">
           <div className="hero-badge">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             AI-Powered Inventory Management
           </div>
           <h1>Inventory That<br/>Manages Itself</h1>
@@ -217,11 +310,11 @@ export default function LandingPage({ onNavigate }) {
             </div>
             <div className="hero-perks mt-2">
               <span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 ₹0 Starter Plan (Free Forever)
               </span>
               <span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 Transparent 2% Commission
               </span>
             </div>
@@ -232,7 +325,7 @@ export default function LandingPage({ onNavigate }) {
           {/* 1. Monthly Growth */}
           <div className="floating-metric fm-1">
             <div style={{ backgroundColor: '#e8f5e9', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#16A34A' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
             </div>
             <div>
               <div style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Monthly Growth</div>
@@ -243,7 +336,7 @@ export default function LandingPage({ onNavigate }) {
           {/* 2. Active Orders */}
           <div className="floating-metric fm-2">
             <div style={{ backgroundColor: '#eff6ff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3B82F6' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             </div>
             <div>
               <div style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Active Orders</div>
@@ -257,7 +350,7 @@ export default function LandingPage({ onNavigate }) {
           {/* 3. Low Stock Items */}
           <div className="floating-metric fm-3">
             <div style={{ backgroundColor: '#fffbeb', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d97706' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
             </div>
             <div>
               <div style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Low Stock Items</div>
@@ -294,7 +387,7 @@ export default function LandingPage({ onNavigate }) {
         <div className="feature-grid">
           <div className="feature-card feat-span-2x2">
             <div className="feature-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
             </div>
             <h3>Real-Time Inventory Tracking</h3>
             <p>Monitor stock levels across all locations instantly. Get automated alerts before you run out.</p>
@@ -303,7 +396,7 @@ export default function LandingPage({ onNavigate }) {
 
           <div className="feature-card feat-span-1x1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="feature-icon" style={{ backgroundColor: '#EFF6FF', color: '#3B82F6' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
             </div>
             <h3>POS Integration</h3>
             <p>Connect with top POS systems to sync stock data instantly.</p>
@@ -311,7 +404,7 @@ export default function LandingPage({ onNavigate }) {
 
           <div className="feature-card feat-span-1x1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="feature-icon" style={{ backgroundColor: '#FEF3C7', color: '#D97706' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             </div>
             <h3>Smart Alerts</h3>
             <p>Get AI-powered notifications before items go out of stock.</p>
@@ -319,7 +412,7 @@ export default function LandingPage({ onNavigate }) {
 
           <div className="feature-card feat-span-1x1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="feature-icon" style={{ backgroundColor: '#F3E8FF', color: '#9333EA' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             </div>
             <h3>Supplier Management</h3>
             <p>Track orders, compare suppliers, and optimize supply-chain performance.</p>
@@ -327,7 +420,7 @@ export default function LandingPage({ onNavigate }) {
 
           <div className="feature-card feat-span-2x2">
             <div className="feature-icon" style={{ backgroundColor: '#FCE7F3', color: '#DB2777' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
             </div>
             <h3>Advanced Analytics</h3>
             <p>Track key metrics and discover insights regarding your stock levels and user flow requirements to drive intelligent business decisions and predict market demands efficiently.</p>
@@ -336,7 +429,7 @@ export default function LandingPage({ onNavigate }) {
 
           <div className="feature-card feat-span-1x1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="feature-icon" style={{ backgroundColor: '#DCFCE7', color: '#16A34A' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             </div>
             <h3>Multi-Store Support</h3>
             <p>Manage multiple locations seamlessly from a unified control deck.</p>
@@ -355,7 +448,7 @@ export default function LandingPage({ onNavigate }) {
           {/* Top Left: Revenue Growth */}
           <div className="cmd-float-badge badge-1">
             <div style={{ backgroundColor: '#e8f5e9', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#16A34A' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
               <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Revenue Growth</span>
@@ -366,7 +459,7 @@ export default function LandingPage({ onNavigate }) {
           {/* Middle Right: Live Updates */}
           <div className="cmd-float-badge badge-2">
             <div style={{ backgroundColor: '#f3e8ff', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9333EA' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
               <span style={{ fontSize: '1rem', color: '#1e293b', fontWeight: 600 }}>Live Updates</span>
@@ -378,7 +471,7 @@ export default function LandingPage({ onNavigate }) {
           {/* Bottom Right: Products Tracked */}
           <div className="cmd-float-badge badge-3">
             <div style={{ backgroundColor: '#eff6ff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3B82F6' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
               <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Products Tracked</span>
@@ -401,7 +494,7 @@ export default function LandingPage({ onNavigate }) {
             <span className="step-badge">Step 1</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ background: '#2563EB', color: 'white', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
               </div>
               <div>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.2rem' }}>Retailer</h3>
@@ -429,7 +522,7 @@ export default function LandingPage({ onNavigate }) {
           <div className="flow-node flow-hub">
             <div style={{ background: '#2563EB', color: 'white', padding: '0.25rem 1rem', borderRadius: '999px', fontWeight: 600, fontSize: '0.75rem', position: 'absolute', top: '-12px' }}>CENTRAL HUB</div>
             <div style={{ background: '#2563EB', color: 'white', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
             </div>
             <h3 style={{ fontSize: '1.5rem', color: '#2563EB', marginBottom: '0.25rem' }}>Stock Overflow Platform</h3>
             <p style={{ color: '#64748b', fontSize: '0.875rem' }}>Real-time sync • AI forecasting • Unified analytics</p>
@@ -452,7 +545,7 @@ export default function LandingPage({ onNavigate }) {
                 <span className="step-badge" style={{ backgroundColor: '#F59E0B' }}>Step 2</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <div style={{ background: '#F59E0B', color: 'white', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
                   </div>
                   <div>
                     <h3 style={{ fontSize: '1.25rem', marginBottom: '0.2rem' }}>Supplier</h3>
@@ -482,7 +575,7 @@ export default function LandingPage({ onNavigate }) {
                 <span className="step-badge" style={{ backgroundColor: '#10B981' }}>Step 3</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <div style={{ background: '#10B981', color: 'white', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                   </div>
                   <div>
                     <h3 style={{ fontSize: '1.25rem', marginBottom: '0.2rem' }}>Consumer</h3>
@@ -579,8 +672,8 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* CTA Footer Section */}
-      <footer className="cta-footer">
+      {/* CTA Footer Section / Contact */}
+      <footer id="contact" className="cta-footer">
         <h2>Ready to Transform Your Inventory Management?</h2>
         <p>Join 2,000+ retailers optimizing their operations with Stock Overflow</p>
         

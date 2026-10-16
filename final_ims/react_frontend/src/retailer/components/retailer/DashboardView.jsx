@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useDataSync } from '../../../context/DataSyncContext';
 import { request } from '../../api/client';
 import Chart from 'chart.js/auto';
 
@@ -99,6 +100,11 @@ export default function DashboardView({ setActiveView, onNavigate }) {
   useEffect(() => {
     loadAllData();
   }, [user]);
+
+  // Real-time synchronization with all transactions, POs, and product adjustments
+  useDataSync(['transactions', 'inventory', 'revenue', 'products', 'orders'], () => {
+    loadAllData();
+  });
 
   // Calculations
   const formatCurrency = (val) => {

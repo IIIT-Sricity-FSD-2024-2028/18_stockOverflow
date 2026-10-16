@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import './auth.css';
 
-export default function RegisterPage({ onNavigate, initialRole = 'retailer', initialPlan = 'free' }) {
+export default function RegisterPage({ onNavigate, onRegisterSuccess, initialRole = 'retailer', initialPlan = 'free' }) {
+  const { saveSession } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -147,16 +149,25 @@ export default function RegisterPage({ onNavigate, initialRole = 'retailer', ini
         token: token,
       };
 
-      localStorage.setItem('so_session', JSON.stringify(session));
-      localStorage.setItem('so_token', token);
+      if (saveSession) {
+        saveSession(session);
+      } else {
+        localStorage.setItem('so_session', JSON.stringify(session));
+        localStorage.setItem('so_token', token);
+      }
 
       setPaymentModalOpen(false);
 
-      // Route to destination: Pending review page for Retailer & Supplier
-      if (payload.role === 'retailer' || payload.role === 'supplier') {
-        onNavigate('verification-pending');
+      // Route to destination:
+      // Retailer & Supplier go to wizard to fill additional information
+      if (payload.role === 'retailer') {
+        onNavigate('retailer-wizard');
+      } else if (payload.role === 'supplier') {
+        onNavigate('supplier-wizard');
       } else if (payload.role === 'consumer') {
         onNavigate('consumer');
+      } else if (payload.role === 'biller') {
+        onNavigate('biller');
       } else {
         onNavigate('landing');
       }

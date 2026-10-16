@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { retailerApi } from '../../api/retailerApi';
 import ContactSupportModal from '../../../components/common/ContactSupportModal';
 
-export default function RetailerLayout({ activeView, setActiveView, onSwitchModule, children }) {
+export default function RetailerLayout({ activeView, setActiveView, onSwitchModule, onLogout, children }) {
   const { user, logout, switchStore } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -465,7 +465,7 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                 <span className="sb-item-label">Retailer Profile</span>
               </button>
 
-              <button className="sb-item" onClick={logout}>
+              <button className="sb-item" onClick={() => (onLogout ? onLogout() : logout())}>
                 <span className="sb-icon">
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
                     <path d="M10.5 8H2.5M5,5 2,8 5,11" />
@@ -965,7 +965,7 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                   >
                     Edit Profile
                   </button>
-                  <button className="btn-primary" onClick={logout} type="button">
+                  <button className="btn-primary" onClick={() => (onLogout ? onLogout() : logout())} type="button">
                     Logout
                   </button>
                 </div>

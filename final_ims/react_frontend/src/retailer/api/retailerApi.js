@@ -1,4 +1,5 @@
 import { request } from './client';
+import { emitDataSync } from '../../context/DataSyncContext';
 
 export const retailerApi = {
   // Authentication
@@ -16,11 +17,14 @@ export const retailerApi = {
 
   getCurrentUser: (id) => request(`/users/${id}`),
 
-  updateUser: (id, data) =>
-    request(`/users/${id}`, {
+  updateUser: async (id, data) => {
+    const res = await request(`/users/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
-    }),
+    });
+    emitDataSync('users', { id, data });
+    return res;
+  },
 
   // Products
   getProducts: (retailerId, storeId) => {
@@ -33,22 +37,34 @@ export const retailerApi = {
 
   getProductById: (id) => request(`/products/${id}`),
 
-  createProduct: (productData) =>
-    request('/products', {
+  createProduct: async (productData) => {
+    const res = await request('/products', {
       method: 'POST',
       body: JSON.stringify(productData),
-    }),
+    });
+    emitDataSync('products', res);
+    emitDataSync('inventory', res);
+    return res;
+  },
 
-  updateProduct: (id, productData) =>
-    request(`/products/${id}`, {
+  updateProduct: async (id, productData) => {
+    const res = await request(`/products/${id}`, {
       method: 'PUT',
       body: JSON.stringify(productData),
-    }),
+    });
+    emitDataSync('products', res);
+    emitDataSync('inventory', res);
+    return res;
+  },
 
-  deleteProduct: (id) =>
-    request(`/products/${id}`, {
+  deleteProduct: async (id) => {
+    const res = await request(`/products/${id}`, {
       method: 'DELETE',
-    }),
+    });
+    emitDataSync('products', { id });
+    emitDataSync('inventory', { id });
+    return res;
+  },
 
   // Suppliers
   getSuppliers: async () => {
@@ -175,11 +191,14 @@ export const retailerApi = {
     const qs = params.toString();
     return request(`/purchase-orders${qs ? `?${qs}` : ''}`);
   },
-  createPurchaseOrder: (data) =>
-    request('/purchase-orders', {
+  createPurchaseOrder: async (data) => {
+    const res = await request('/purchase-orders', {
       method: 'POST',
       body: JSON.stringify(data),
-    }),
+    });
+    emitDataSync('orders', res);
+    return res;
+  },
 
   // Returns
   getReturns: (retailerId, storeId) => {
@@ -189,16 +208,24 @@ export const retailerApi = {
     const qs = params.toString();
     return request(`/returns${qs ? `?${qs}` : ''}`);
   },
-  createReturn: (data) =>
-    request('/returns', {
+  createReturn: async (data) => {
+    const res = await request('/returns', {
       method: 'POST',
       body: JSON.stringify(data),
-    }),
-  updateReturn: (id, data) =>
-    request(`/returns/${id}`, {
+    });
+    emitDataSync('orders', res);
+    emitDataSync('inventory', res);
+    return res;
+  },
+  updateReturn: async (id, data) => {
+    const res = await request(`/returns/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
-    }),
+    });
+    emitDataSync('orders', res);
+    emitDataSync('inventory', res);
+    return res;
+  },
 
   // Stock Adjustments
   getStockAdjustments: (retailerId, storeId) => {
@@ -208,15 +235,23 @@ export const retailerApi = {
     const qs = params.toString();
     return request(`/stock-adjustments${qs ? `?${qs}` : ''}`);
   },
-  createStockAdjustment: (data) =>
-    request('/stock-adjustments', {
+  createStockAdjustment: async (data) => {
+    const res = await request('/stock-adjustments', {
       method: 'POST',
       body: JSON.stringify(data),
-    }),
-  deleteStockAdjustment: (id) =>
-    request(`/stock-adjustments/${id}`, {
+    });
+    emitDataSync('inventory', res);
+    emitDataSync('products', res);
+    return res;
+  },
+  deleteStockAdjustment: async (id) => {
+    const res = await request(`/stock-adjustments/${id}`, {
       method: 'DELETE',
-    }),
+    });
+    emitDataSync('inventory', { id });
+    emitDataSync('products', { id });
+    return res;
+  },
 
   // Transactions
   getTransactions: (retailerId, storeId) => {
@@ -235,21 +270,30 @@ export const retailerApi = {
   },
 
   // Biller Request (from Landing Page / Biller Portal)
-  createBillerRequest: (data) =>
-    request('/billers/requests', {
+  createBillerRequest: async (data) => {
+    const res = await request('/billers/requests', {
       method: 'POST',
       body: JSON.stringify(data),
-    }),
+    });
+    emitDataSync('users', res);
+    return res;
+  },
   getBillerRequests: () => request('/billers/requests'),
-  approveBillerRequest: (id, scope) =>
-    request(`/billers/requests/${id}/approve`, {
+  approveBillerRequest: async (id, scope) => {
+    const res = await request(`/billers/requests/${id}/approve`, {
       method: 'PUT',
       body: JSON.stringify(scope || {}),
-    }),
-  rejectBillerRequest: (id) =>
-    request(`/billers/requests/${id}/reject`, {
+    });
+    emitDataSync('users', res);
+    return res;
+  },
+  rejectBillerRequest: async (id) => {
+    const res = await request(`/billers/requests/${id}/reject`, {
       method: 'PUT',
-    }),
+    });
+    emitDataSync('users', { id });
+    return res;
+  },
 
   // Retailer Setup Wizard & Profile
   setupRetailer: (data) =>

@@ -20,6 +20,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useDataSync } from '../context/DataSyncContext';
 
 // Page Views
 import ConsumerLandingPage_consumer from './components/ConsumerLandingPage_consumer';
@@ -104,10 +105,23 @@ export default function App_consumer({ onSwitchModule, onLogout }) {
   };
 
   // ─── 7. Fetch Products & Stores on Mount & Store Change ─────────────────────
+  const loadData = async () => {
+    try {
+      const [fetchedProducts, fetchedStores] = await Promise.all([
+        fetchProducts(selectedStoreId),
+        fetchStores(),
+      ]);
+      setProducts(fetchedProducts);
+      setStores(fetchedStores);
+    } catch (err) {
+      console.warn('Backend offline or failed to fetch. Falling back to local data.', err);
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
-    async function loadData() {
+    async function initialLoad() {
       setLoading(true);
       setError(null);
       try {
@@ -130,12 +144,17 @@ export default function App_consumer({ onSwitchModule, onLogout }) {
       }
     }
 
-    loadData();
+    initialLoad();
 
     return () => {
       isMounted = false;
     };
   }, [selectedStoreId]);
+
+  // Real-time synchronization for consumer catalog
+  useDataSync(['products', 'inventory'], () => {
+    loadData();
+  });
 
   const selectedStore = useMemo(() => {
     const matched = stores.find((store) => String(store.id) === String(selectedStoreId));

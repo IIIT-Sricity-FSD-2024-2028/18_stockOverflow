@@ -242,7 +242,7 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
           designation: oTitle.trim() || 'Store Owner',
           directEmail: oEmail.trim() || bEmail.trim(),
         },
-        profileStatus: 'active',
+        profileStatus: 'pending',
         stores: normalizedStores,
         suppliers: [],
         products: [],
@@ -272,6 +272,7 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
         ownerName: oName.trim(),
         ownerTitle: oTitle.trim(),
         ownerEmail: oEmail.trim(),
+        profileStatus: 'pending',
         stores: normalizedStores,
       };
 
@@ -281,6 +282,7 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
           .updateUser(user.id, {
             profileId: retailerRecord.id || user.id,
             retailerId: retailerRecord.id || user.id,
+            status: 'Pending',
             profile: profileSummary,
             store: primaryStore ? primaryStore.name : bName.trim(),
             storeId: primaryStore ? primaryStore.code : 'STORE-01',
@@ -290,11 +292,19 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
           .catch(() => {});
       }
 
+      // Trigger employee task distribution in round-robin
+      try {
+        await fetch('/api/employees/assignments/distribute', { method: 'POST' });
+      } catch (_distErr) {
+        console.warn('Distribution trigger note:', _distErr);
+      }
+
       // Update active session in AuthContext
       const updatedSession = saveSession({
         ...(user || {}),
         name: oName.trim() || user?.name || bName.trim(),
         role: 'retailer',
+        status: 'Pending',
         profileId: retailerRecord.id || user?.id || 'RET-01',
         retailerId: retailerRecord.id || user?.id || 'RET-01',
         profile: profileSummary,
@@ -305,7 +315,7 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
       });
 
       setIsFinished(true);
-      showToast("Setup complete! Welcome to StockOverflow.");
+      showToast("Setup submitted! Awaiting employee verification.");
     } catch (err) {
       console.error('Setup error:', err);
       showToast('Error saving profile: ' + (err.message || 'Please try again.'), 'err');
@@ -518,10 +528,10 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
               ✓
             </div>
             <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-              You're All Set! 🎉
+              Application Submitted for Verification! ⏳
             </h2>
             <p style={{ color: '#64748b', fontSize: '15px', maxWidth: '440px', margin: '0 auto 28px' }}>
-              Your retailer profile for <strong>{bName}</strong> has been configured successfully. You can now manage stores, products, inventory, and approve billers.
+              Your retailer profile for <strong>{bName}</strong> has been configured and submitted. Our compliance team will review your business credentials and approve your account shortly.
             </p>
             <button
               type="button"
@@ -537,7 +547,7 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
                 cursor: 'pointer',
               }}
             >
-              Enter Retailer Dashboard &rarr;
+              Check Verification Status &rarr;
             </button>
           </div>
         ) : (

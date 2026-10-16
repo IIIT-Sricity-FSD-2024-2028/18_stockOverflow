@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import './supplier.css';
 import ContactSupportModal from '../components/common/ContactSupportModal';
+import { useDataSync } from '../context/DataSyncContext';
 import {
   readSupplierId, writeSupplierId, readSession, writeSession,
   getSupplier, getSupplierByEmail, updateSupplier,
@@ -140,8 +141,7 @@ export default function SupplierDashboard({ onSwitchModule, onLogout }) {
   };
 
   // ── INITIAL DATA LOAD ──
-  useEffect(() => {
-    async function initSupplierPortal() {
+  const initSupplierPortal = useCallback(async () => {
       const sess = readSession() || {};
       let sid = readSupplierId() || sess.profileId || sess.supplierId || '';
       if (!sid) {
@@ -305,9 +305,15 @@ export default function SupplierDashboard({ onSwitchModule, onLogout }) {
         setRetailers([]);
         setOrders([]);
       }
-    }
-    initSupplierPortal();
   }, []);
+
+  useEffect(() => {
+    initSupplierPortal();
+  }, [initSupplierPortal]);
+
+  useDataSync(['orders', 'products'], () => {
+    initSupplierPortal();
+  });
 
   // ── DERIVED METRICS ──
   const stats = useMemo(() => {

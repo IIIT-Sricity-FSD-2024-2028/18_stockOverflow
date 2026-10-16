@@ -1,4 +1,6 @@
 // Supplier API client – mirrors the vanilla frontend's LANDING_API_BASE & dashboard logic
+import { emitDataSync } from '../../context/DataSyncContext';
+
 const API_BASE = '/api';
 
 function getSession() {
@@ -86,10 +88,12 @@ export async function createSupplierSetup(payload) {
 }
 
 export async function updateSupplier(id, payload) {
-  return supplierRequest(`/suppliers/${encodeURIComponent(id)}`, {
+  const res = await supplierRequest(`/suppliers/${encodeURIComponent(id)}`, {
     method: 'PATCH',
     body: JSON.stringify(payload),
   });
+  emitDataSync('users', res);
+  return res;
 }
 
 export async function getSupplier(id) {
@@ -109,10 +113,13 @@ export async function fetchPurchaseOrders() {
 }
 
 export async function updatePurchaseOrder(orderId, payload) {
-  return supplierRequest(`/purchase-orders/${encodeURIComponent(orderId)}`, {
+  const res = await supplierRequest(`/purchase-orders/${encodeURIComponent(orderId)}`, {
     method: 'PUT',
     body: JSON.stringify(payload),
   });
+  emitDataSync('orders', res);
+  emitDataSync('inventory', res);
+  return res;
 }
 
 export async function fetchSupplierDocuments(supplierId) {

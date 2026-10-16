@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import './auth.css';
 
-export default function LoginPage({ onNavigate }) {
+export default function LoginPage({ onNavigate, onLoginSuccess }) {
+  const { saveSession } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -56,21 +58,49 @@ export default function LoginPage({ onNavigate }) {
         token: user.token || `sotk_${user.id}_${Date.now()}`,
       };
 
-      localStorage.setItem('so_session', JSON.stringify(session));
-      if (session.token) {
-        localStorage.setItem('so_token', session.token);
+      if (saveSession) {
+        saveSession(session);
+      } else {
+        localStorage.setItem('so_session', JSON.stringify(session));
+        if (session.token) {
+          localStorage.setItem('so_token', session.token);
+        }
       }
+
+      if (onLoginSuccess) {
+        onLoginSuccess(session);
+      }
+
+      // Check whether profile is configured
+      const hasRetailerProfile = Boolean(
+        user.profileId ||
+        (user.profile && (user.profile.businessName || (Array.isArray(user.profile.stores) && user.profile.stores.length > 0)))
+      );
+      const hasSupplierProfile = Boolean(
+        user.profileId ||
+        (user.profile && (user.profile.businessName || user.profile.companyName))
+      );
 
       // Role and Verification Gate Routing
       if (role === 'admin') {
         onNavigate('admin');
       } else if (role === 'employee') {
         onNavigate('employee');
-      } else if (role === 'retailer' || role === 'supplier') {
-        if (status === 'pending' || status === 'rejected') {
+      } else if (role === 'retailer') {
+        if (!hasRetailerProfile) {
+          onNavigate('retailer-wizard');
+        } else if (status === 'pending' || status === 'rejected') {
           onNavigate('verification-pending');
         } else {
-          onNavigate(role);
+          onNavigate('retailer');
+        }
+      } else if (role === 'supplier') {
+        if (!hasSupplierProfile) {
+          onNavigate('supplier-wizard');
+        } else if (status === 'pending' || status === 'rejected') {
+          onNavigate('verification-pending');
+        } else {
+          onNavigate('supplier');
         }
       } else if (role === 'consumer') {
         onNavigate('consumer');
@@ -202,38 +232,45 @@ export default function LoginPage({ onNavigate }) {
               <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <button 
                   type="button" 
-                  onClick={() => quickFill('admin@stockoverflow.com', 'admin123')}
+                  onClick={() => quickFill('admin@stockoverflow.com', 'pass1234')}
                   style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
                 >
                   🛡️ Admin
                 </button>
                 <button 
                   type="button" 
-                  onClick={() => quickFill('employee@stockoverflow.com', 'employee123')}
+                  onClick={() => quickFill('employee@stockoverflow.com', 'pass1234')}
                   style={{ background: '#f5f3ff', color: '#6d28d9', border: '1px solid #ddd6fe', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
                 >
                   👔 Employee
                 </button>
                 <button 
                   type="button" 
-                  onClick={() => quickFill('retailer@stockoverflow.com', 'retailer123')}
+                  onClick={() => quickFill('retailer@stockoverflow.com', 'pass1234')}
                   style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
                 >
                   🏪 Retailer
                 </button>
                 <button 
                   type="button" 
-                  onClick={() => quickFill('supplier@stockoverflow.com', 'supplier123')}
+                  onClick={() => quickFill('supplier@stockoverflow.com', 'pass1234')}
                   style={{ background: '#fffbeb', color: '#b45309', border: '1px solid #fde68a', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
                 >
                   🏭 Supplier
                 </button>
                 <button 
                   type="button" 
-                  onClick={() => quickFill('consumer@stockoverflow.com', 'consumer123')}
+                  onClick={() => quickFill('consumer@stockoverflow.com', 'pass1234')}
                   style={{ background: '#f8fafc', color: '#475569', border: '1px solid #cbd5e1', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
                 >
                   🛒 Consumer
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => quickFill('bil1@gmail.com', 'pass1234')}
+                  style={{ background: '#fdf2f8', color: '#be185d', border: '1px solid #fbcfe8', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  🧾 Biller
                 </button>
               </div>
             </div>

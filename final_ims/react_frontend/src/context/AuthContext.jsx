@@ -118,22 +118,37 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('so_session');
-    localStorage.removeItem('so_token');
-    localStorage.removeItem('so_active_module');
-    localStorage.removeItem('supplier-module-current-supplier-id');
-    localStorage.removeItem('imsAppStateV1');
-    localStorage.removeItem('biller_pending_email');
+    try {
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (
+          k &&
+          (k.startsWith('so_') ||
+            k.startsWith('ims') ||
+            k.startsWith('po_') ||
+            k.startsWith('biller_') ||
+            k.startsWith('stockoverflow_') ||
+            k === 'supplier-module-current-supplier-id')
+        ) {
+          keysToRemove.push(k);
+        }
+      }
+      keysToRemove.forEach((k) => localStorage.removeItem(k));
+      localStorage.removeItem('so_session');
+      localStorage.removeItem('so_token');
+    } catch (_e) {}
     setUser(null);
   };
 
   const refreshUser = async () => {
-    if (!user?.id) return;
+    if (!user?.id) return null;
     try {
       const updated = await retailerApi.getCurrentUser(user.id);
-      saveSession(updated);
+      return saveSession(updated);
     } catch (e) {
       console.warn('Failed to refresh user:', e);
+      return null;
     }
   };
 

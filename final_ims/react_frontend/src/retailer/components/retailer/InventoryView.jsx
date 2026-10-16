@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { retailerApi } from '../../api/retailerApi';
 import { useAuth } from '../../context/AuthContext';
+import { useDataSync } from '../../../context/DataSyncContext';
 import Chart from 'chart.js/auto';
 
 export default function InventoryView() {
@@ -14,22 +15,27 @@ export default function InventoryView() {
   const barChartRef = useRef(null);
   const barChartInstance = useRef(null);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        setLoading(true);
-        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-        const storeId = user?.currentStoreId || user?.storeId || '';
-        const data = await retailerApi.getProducts(retailerId, storeId);
-        setProducts(Array.isArray(data) ? data : []);
-      } catch (e) {
-        console.error('Failed to load products for inventory overview:', e);
-      } finally {
-        setLoading(false);
-      }
+  const load = async () => {
+    try {
+      setLoading(true);
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
+      const data = await retailerApi.getProducts(retailerId, storeId);
+      setProducts(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error('Failed to load products for inventory overview:', e);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
     load();
   }, [user]);
+
+  useDataSync(['inventory', 'products'], () => {
+    load();
+  });
 
   const totalSKUs = products.length;
   const totalUnits = products.reduce((acc, p) => acc + (Number(p.qty || p.quantity) || 0), 0);

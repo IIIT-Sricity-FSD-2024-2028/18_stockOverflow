@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useDataSync } from '../../context/DataSyncContext';
 import { billerApi } from '../api/billerApi';
 import ReceiptModal from './ReceiptModal';
 
@@ -184,6 +185,20 @@ export default function PosScreen({ onSwitchView, onLogout }) {
       clearInterval(interval);
     };
   }, [currentStoreId, user, stagedReservationIds]);
+
+  // Real-time synchronization across modules
+  useDataSync(['products', 'inventory', 'transactions'], async () => {
+    try {
+      const prods = await billerApi.getProducts().catch(() => []);
+      if (Array.isArray(prods)) setProducts(prods);
+      const targetStoreId = currentStoreId || user?.storeId || '';
+      const reservations = await billerApi.getReservations(targetStoreId).catch(() => []);
+      if (Array.isArray(reservations)) {
+        const unstaged = reservations.filter((r) => !stagedReservationIds[r.requestId]);
+        setReservedOrders(unstaged);
+      }
+    } catch (_e) {}
+  });
 
   // Map category strings to normalized IDs
   const mapCategory = (cat) => {
@@ -927,7 +942,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   gap: '12px',
                 }}
               >
-                {filteredProducts.map((product) => {
+                {filteredProducts.map((product, idx) => {
                   const cartItem = cart.find((it) => it.sku === product.sku);
                   const inCartQty = cartItem ? cartItem.quantity : 0;
                   const price = Number(product.priceUSD || product.price || 0);
@@ -935,7 +950,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
 
                   return (
                     <div
-                      key={product.sku || product.id}
+                      key={`${product.sku || product.id || 'prod'}-${idx}`}
                       onClick={() => handleAddToCart(product)}
                       style={{
                         backgroundColor: inCartQty > 0 ? '#f0f9ff' : '#ffffff',
@@ -1191,9 +1206,9 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                 </div>
               </div>
             ) : (
-              cart.map((item) => (
+              cart.map((item, idx) => (
                 <div
-                  key={item.sku}
+                  key={`${item.sku || item.id || 'cart'}-${idx}`}
                   style={{
                     display: 'flex',
                     alignItems: 'center',

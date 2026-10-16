@@ -8,8 +8,9 @@
  * and direct action buttons for "Write Review", "Return", and "View Invoice".
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
+import { useDataSync } from '../../context/DataSyncContext';
 import {
   fetchPurchasedProducts,
   fetchReservationRequests,
@@ -43,70 +44,59 @@ export default function OrdersPage_consumer({
   }, [cart]);
 
   // ── LOAD ORDERS FROM BACKEND / LOCAL STORAGE ──
-  // In layman's terms: As soon as the page opens, fetch all orders from the server.
-  useEffect(() => {
-    let isMounted = true;
-    async function loadOrders() {
-      setLoading(true);
-      try {
-        const customerLookup = userSession?.name || userSession?.email || userSession?.id || '';
-        const [purchased, pending, allCatalog] = await Promise.all([
-          fetchPurchasedProducts(customerLookup),
-          fetchReservationRequests('pending', customerLookup),
-          fetchProducts(),
-        ]);
+  const loadOrders = useCallback(async () => {
+    try {
+      const customerLookup = userSession?.name || userSession?.email || userSession?.id || '';
+      const [purchased, pending, allCatalog] = await Promise.all([
+        fetchPurchasedProducts(customerLookup),
+        fetchReservationRequests('pending', customerLookup),
+        fetchProducts(),
+      ]);
 
-        if (isMounted) {
-          setPurchasedProducts(
-            purchased.map((p) => {
-              const matched = allCatalog.find((c) => c.sku === p.sku);
-              return {
-                ...p,
-                orderId: p.orderId || p.lastOrderId || '',
-                productImg: p.productImg || matched?.productImg || '',
-                emoji: p.emoji || matched?.emoji || '📦',
-                isPending: false,
-              };
-            })
-          );
+      setPurchasedProducts(
+        purchased.map((p) => {
+          const matched = allCatalog.find((c) => c.sku === p.sku);
+          return {
+            ...p,
+            orderId: p.orderId || p.lastOrderId || '',
+            productImg: p.productImg || matched?.productImg || '',
+            emoji: p.emoji || matched?.emoji || '📦',
+            isPending: false,
+          };
+        })
+      );
 
-          setPendingReservations(
-            pending.map((r) => {
-              const matched = allCatalog.find((c) => c.sku === r.sku);
-              return {
-                sku: r.sku,
-                name: r.productName || matched?.name || 'Reserved Product',
-                totalQty: r.qty || 1,
-                totalSpent: (Number(matched?.priceUSD || matched?.price || 0)) * (r.qty || 1),
-                lastOrderedAt: r.createdAt || new Date().toISOString(),
-                orderId: r.orderId || r.requestId,
-                store: r.store || 'Downtown Store',
-                productImg: matched?.productImg || '',
-                emoji: matched?.emoji || '⏳',
-                isPending: true,
-              };
-            })
-          );
-        }
-      } catch (err) {
-        console.error('Failed to load orders from backend:', err);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
+      setPendingReservations(
+        pending.map((r) => {
+          const matched = allCatalog.find((c) => c.sku === r.sku);
+          return {
+            sku: r.sku,
+            name: r.productName || matched?.name || 'Reserved Product',
+            totalQty: r.qty || 1,
+            totalSpent: (Number(matched?.priceUSD || matched?.price || 0)) * (r.qty || 1),
+            lastOrderedAt: r.createdAt || new Date().toISOString(),
+            orderId: r.orderId || r.requestId,
+            store: r.store || 'Downtown Store',
+            productImg: matched?.productImg || '',
+            emoji: matched?.emoji || '⏳',
+            isPending: true,
+          };
+        })
+      );
+    } catch (err) {
+      console.error('Failed to load orders from backend:', err);
+    } finally {
+      setLoading(false);
     }
+  }, [userSession]);
 
+  useEffect(() => {
     loadOrders();
+  }, [loadOrders]);
 
-    // Auto-refresh orders every 5 seconds to sync with backend updates (e.g. POS sales or holds)
-    const interval = setInterval(() => {
-      loadOrders();
-    }, 5000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, []);
+  useDataSync(['transactions', 'inventory'], () => {
+    loadOrders();
+  });
 
   // ── COMBINE ORDERS ──
   const allOrders = useMemo(() => {

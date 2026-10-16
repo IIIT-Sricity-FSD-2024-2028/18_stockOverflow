@@ -2,12 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
+import { DataSyncProvider } from './context/DataSyncContext';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <DataSyncProvider>
+        <App />
+      </DataSyncProvider>
     </AuthProvider>
   </React.StrictMode>
 );
+

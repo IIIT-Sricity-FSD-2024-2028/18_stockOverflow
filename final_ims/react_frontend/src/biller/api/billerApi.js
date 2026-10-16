@@ -2,6 +2,8 @@
  * billerApi.js - Comprehensive API Service for POS & Biller Operations
  */
 
+import { emitDataSync } from '../../context/DataSyncContext';
+
 const API_BASE = 'http://localhost:3001/api';
 
 async function request(endpoint, options = {}) {
@@ -64,10 +66,13 @@ export const billerApi = {
   },
 
   createProduct: async (product) => {
-    return await request('/products', {
+    const res = await request('/products', {
       method: 'POST',
       body: JSON.stringify(product),
     });
+    emitDataSync('products', res);
+    emitDataSync('inventory', res);
+    return res;
   },
 
   // Stores
@@ -100,10 +105,14 @@ export const billerApi = {
 
   // Transactions & POS Checkout
   createTransaction: async (txData) => {
-    return await request('/transactions', {
+    const res = await request('/transactions', {
       method: 'POST',
       body: JSON.stringify(txData),
     });
+    emitDataSync('transactions', res);
+    emitDataSync('inventory', res);
+    emitDataSync('revenue', res);
+    return res;
   },
 
   getTransactions: async (storeId = '', retailerId = '') => {
@@ -115,8 +124,12 @@ export const billerApi = {
   },
 
   deleteTransaction: async (orderId) => {
-    return await request(`/transactions/${encodeURIComponent(orderId)}`, {
+    const res = await request(`/transactions/${encodeURIComponent(orderId)}`, {
       method: 'DELETE',
     });
+    emitDataSync('transactions', { orderId });
+    emitDataSync('inventory', { orderId });
+    emitDataSync('revenue', { orderId });
+    return res;
   },
 };

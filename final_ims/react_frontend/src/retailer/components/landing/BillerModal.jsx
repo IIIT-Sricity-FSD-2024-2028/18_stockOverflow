@@ -94,6 +94,7 @@ export default function BillerModal({ isOpen, onClose, onRedirectPending, onBill
       await retailerApi.createBillerRequest({
         name: name.trim(),
         email: email.trim().toLowerCase(),
+        password: password,
         phone: phone.trim(),
         company: company.trim(),
         country: country.trim(),
@@ -142,12 +143,7 @@ export default function BillerModal({ isOpen, onClose, onRedirectPending, onBill
         return;
       }
 
-      const hasStoreAccess = Boolean(
-        (user.profileId || user.profile?.retailerId) &&
-        (user.currentStoreId || user.storeId)
-      );
-
-      if (userRequest?.status === 'pending' || !hasStoreAccess) {
+      if (userRequest?.status === 'pending') {
         localStorage.setItem('biller_pending_email', user.email);
         onClose();
         if (onRedirectPending) {

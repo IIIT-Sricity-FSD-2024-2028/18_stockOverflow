@@ -20,6 +20,8 @@
  *     it seamlessly falls back to cached data without crashing!
  */
 
+import { emitDataSync } from '../../context/DataSyncContext';
+
 // Resolve backend API URL (defaults to port 3001 or Vite proxy)
 const API_BASE_URL =
   typeof window !== 'undefined' && window.IMS_API_BASE_URL
@@ -137,15 +139,14 @@ export async function fetchProductBySku(sku) {
  * Fetches verified customer star ratings and average breakdown for a product from the backend.
  */
 export async function fetchRatingSummary(sku) {
-  if (!sku) {
-    return { avg: 4.8, total: 3, breakdown: { 1: 0, 2: 0, 3: 0, 4: 1, 5: 2 } };
-  }
+  const emptySummary = { avg: 0, total: 0, breakdown: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } };
+  if (!sku) return emptySummary;
   try {
     const data = await apiRequest(`/products/sku/${encodeURIComponent(sku)}/rating-summary`);
-    if (data) return data;
+    if (data && typeof data.avg === 'number') return data;
   } catch (_err) {}
 
-  return { avg: 4.8, total: 3, breakdown: { 1: 0, 2: 0, 3: 0, 4: 1, 5: 2 } };
+  return emptySummary;
 }
 
 /**
@@ -183,22 +184,26 @@ export async function submitProductFeedback(sku, feedbackData) {
   };
 
   try {
-    return await apiRequest(`/products/sku/${encodeURIComponent(sku)}/feedback`, {
+    const res = await apiRequest(`/products/sku/${encodeURIComponent(sku)}/feedback`, {
       method: 'POST',
       body: JSON.stringify(dto),
     });
+    emitDataSync('products', { sku, dto });
+    return res;
   } catch (err) {
     console.warn('Backend feedback offline, saving locally:', err.message);
     const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
     if (!Array.isArray(state.feedback)) state.feedback = [];
-    state.feedback.unshift({
+    const item = {
       id: `fb-${Date.now()}`,
       sku,
       ...dto,
       date: new Date().toISOString(),
-    });
+    };
+    state.feedback.unshift(item);
     localStorage.setItem('imsAppStateV1', JSON.stringify(state));
-    return { success: true, message: 'Feedback saved locally' };
+    emitDataSync('products', { sku, dto });
+    return item;
   }
 }
 
@@ -238,10 +243,13 @@ export async function createReservationRequest(payload) {
   };
 
   try {
-    return await apiRequest('/reservations/requests', {
+    const res = await apiRequest('/reservations/requests', {
       method: 'POST',
       body: JSON.stringify(dto),
     });
+    emitDataSync('transactions', res);
+    emitDataSync('inventory', res);
+    return res;
   } catch (err) {
     console.warn('Backend /reservations/requests offline, saving locally:', err.message);
     const requestId = `req-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
@@ -254,6 +262,8 @@ export async function createReservationRequest(payload) {
     const local = JSON.parse(localStorage.getItem('ims_reservation_requests') || '[]');
     local.unshift(created);
     localStorage.setItem('ims_reservation_requests', JSON.stringify(local));
+    emitDataSync('transactions', created);
+    emitDataSync('inventory', created);
     return created;
   }
 }
@@ -325,10 +335,14 @@ export async function createTransaction(payload) {
   };
 
   try {
-    return await apiRequest('/transactions', {
+    const res = await apiRequest('/transactions', {
       method: 'POST',
       body: JSON.stringify(dto),
     });
+    emitDataSync('transactions', res);
+    emitDataSync('inventory', res);
+    emitDataSync('revenue', res);
+    return res;
   } catch (err) {
     console.warn('Backend /transactions offline, saving locally:', err.message);
     const orderId = `ORD-${Date.now()}`;
@@ -340,6 +354,9 @@ export async function createTransaction(payload) {
     const local = JSON.parse(localStorage.getItem('ims_transactions') || '[]');
     local.unshift(created);
     localStorage.setItem('ims_transactions', JSON.stringify(local));
+    emitDataSync('transactions', created);
+    emitDataSync('inventory', created);
+    emitDataSync('revenue', created);
     return created;
   }
 }

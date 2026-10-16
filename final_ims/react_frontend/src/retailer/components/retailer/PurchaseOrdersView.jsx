@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { retailerApi } from '../../api/retailerApi';
 import { useAuth } from '../../context/AuthContext';
+import { useDataSync } from '../../../context/DataSyncContext';
 
 export default function PurchaseOrdersView({ onBrowseCatalogue }) {
   const { user } = useAuth();
@@ -120,6 +121,10 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
   useEffect(() => {
     loadData();
   }, [user]);
+
+  useDataSync(['orders'], () => {
+    loadData();
+  });
 
   const selectedSupplierObj = suppliers.find((s) => s.id === selectedSupplierId) || suppliers[0];
 

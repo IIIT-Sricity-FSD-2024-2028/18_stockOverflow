@@ -64,6 +64,7 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
         activeView={activeView}
         setActiveView={handleNavigate}
         onSwitchModule={onSwitchModule}
+        onLogout={onLogout}
       >
         {activeView === 'dashboard' && (
           <DashboardView onNavigate={handleNavigate} />

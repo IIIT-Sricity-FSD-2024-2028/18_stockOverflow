@@ -309,7 +309,8 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         expiryDate: p.expiryDate || undefined,
         reviewSummary: p.reviewSummary || undefined,
         description: p.description || undefined
-      }))
+      })),
+      profileStatus: 'pending'
     };
 
     try {
@@ -319,13 +320,20 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
 
       if (user?.id) {
         try {
-          await updateUser(user.id, { profileId: supplierId });
+          await updateUser(user.id, { profileId: supplierId, status: 'Pending' });
         } catch (e) {
           console.warn('Could not link profileId to user in backend:', e);
         }
         try {
           localStorage.setItem(`so_supplier_setup_completed_${user.id}`, 'true');
         } catch {}
+      }
+
+      // Trigger employee task distribution in round-robin
+      try {
+        await fetch('/api/employees/assignments/distribute', { method: 'POST' });
+      } catch (_distErr) {
+        console.warn('Distribution trigger note:', _distErr);
       }
 
       const updatedProfile = {
@@ -345,7 +353,7 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         ownerName: contact.fullName.trim(),
         ownerTitle: contact.designation.trim(),
         ownerEmail: contact.directEmail.trim(),
-        profileStatus: 'active',
+        profileStatus: 'pending',
         retailers: [],
         productCount: products.length
       };
@@ -357,18 +365,20 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         supplierName: business.companyName,
         email: business.businessEmail,
         role: 'supplier',
+        status: 'Pending',
         profile: updatedProfile
       });
 
       if (saveSession) {
         saveSession({
           ...user,
+          status: 'Pending',
           profileId: supplierId,
           profile: updatedProfile
         });
       }
 
-      showToast('Setup saved to backend.');
+      showToast('Setup submitted! Awaiting employee verification.');
     } catch {
       // Local fallback
       const dummyId = `sup-${Date.now()}`;
@@ -385,7 +395,7 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         supplierCode: business.supplierCode.trim(),
         address: business.businessAddress.trim(),
         state: business.state,
-        profileStatus: 'active',
+        profileStatus: 'pending',
         retailers: [],
         productCount: products.length
       };
@@ -396,16 +406,18 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         supplierName: business.companyName,
         email: business.businessEmail,
         role: 'supplier',
+        status: 'Pending',
         profile: fallbackProfile
       });
       if (saveSession) {
         saveSession({
           ...user,
+          status: 'Pending',
           profileId: dummyId,
           profile: fallbackProfile
         });
       }
-      showToast('Setup saved locally.');
+      showToast('Setup saved locally! Awaiting verification.');
     }
 
     setSetupComplete(true);
@@ -488,9 +500,9 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
                 <polyline points="20,6 9,17 4,12" />
               </svg>
             </div>
-            <div className="finish-title">You're All Set! 🎉</div>
+            <div className="finish-title">Application Submitted for Review! ⏳</div>
             <div className="finish-sub">
-              Your supplier account has been fully configured. Launch your dashboard now to begin managing inventory, orders, and retail distribution.
+              Your supplier account has been configured and submitted. Our compliance team will review your business credentials and approve your account shortly.
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               <button
@@ -505,7 +517,7 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
                   <rect x="1.5" y="7.5" width="4" height="4" rx=".8" />
                   <rect x="7.5" y="7.5" width="4" height="4" rx=".8" />
                 </svg>
-                Launch Supplier Dashboard
+                Check Verification Status &rarr;
               </button>
               <button
                 type="button"

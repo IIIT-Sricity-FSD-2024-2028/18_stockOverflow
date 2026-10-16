@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { request } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import { useDataSync } from '../../../context/DataSyncContext';
 
 export default function ProductListView({ onNavigate, onEditProduct }) {
   const { user } = useAuth();
@@ -33,6 +34,10 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
   useEffect(() => {
     loadProducts();
   }, [user]);
+
+  useDataSync(['products', 'inventory'], () => {
+    loadProducts();
+  });
 
   const handleDelete = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete "${name}"?`)) {

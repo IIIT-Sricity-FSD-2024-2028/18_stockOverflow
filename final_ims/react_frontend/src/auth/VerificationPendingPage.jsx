@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDataSync } from '../context/DataSyncContext';
 
 /**
  * VerificationPendingPage.jsx - React port of verification-pending.html
@@ -25,6 +26,11 @@ export default function VerificationPendingPage({ user, onRefreshUser, onLogout,
     }
   }, [user]);
 
+  // Real-time synchronization: automatically unlocks when employee approves
+  useDataSync(['users', 'assignments'], () => {
+    checkStatus();
+  }, { intervalMs: 3000 });
+
   const isRejected = String(status).toLowerCase() === 'rejected';
 
   const checkStatus = async () => {
@@ -39,7 +45,11 @@ export default function VerificationPendingPage({ user, onRefreshUser, onLogout,
           setRejectionReason(updated?.profile?.rejectionReason || updated?.rejectionReason || '');
           if (String(st).toLowerCase() === 'active') {
             // Unlocked!
-            window.location.reload();
+            if (onNavigate) {
+              onNavigate(updated?.role || userData?.role || 'retailer');
+            } else {
+              window.location.reload();
+            }
           }
         }
       } else if (userData?.id) {
@@ -51,7 +61,11 @@ export default function VerificationPendingPage({ user, onRefreshUser, onLogout,
           setStatus(st);
           setRejectionReason(fresh?.profile?.rejectionReason || fresh?.rejectionReason || '');
           if (String(st).toLowerCase() === 'active') {
-            window.location.reload();
+            if (onNavigate) {
+              onNavigate(fresh?.role || userData?.role || 'retailer');
+            } else {
+              window.location.reload();
+            }
           }
         }
       }
