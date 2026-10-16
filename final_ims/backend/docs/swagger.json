@@ -4189,6 +4189,9 @@
                     "totalSubscriptionRevenue": {
                       "type": "number"
                     },
+                    "totalTransactions": {
+                      "type": "number"
+                    },
                     "totalTransactionsProcessed": {
                       "type": "number"
                     }
@@ -4208,6 +4211,7 @@
                     "totalGrossVolume",
                     "totalPlatformRevenue",
                     "totalSubscriptionRevenue",
+                    "totalTransactions",
                     "totalTransactionsProcessed"
                   ],
                   "type": "object"
@@ -6680,6 +6684,9 @@
             "minLength": 1,
             "type": "string"
           },
+          "password": {
+            "type": "string"
+          },
           "phone": {
             "minLength": 1,
             "type": "string"
@@ -6777,6 +6784,9 @@
             "type": "string"
           },
           "name": {
+            "type": "string"
+          },
+          "password": {
             "type": "string"
           },
           "phone": {
@@ -8679,6 +8689,8 @@
         "properties": {
           "action": {
             "enum": [
+              "rejected",
+              "approved",
               "approve",
               "reject"
             ],
@@ -8689,11 +8701,14 @@
           },
           "notes": {
             "type": "string"
+          },
+          "rejectionReason": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
           }
         },
-        "required": [
-          "action"
-        ],
         "type": "object"
       },
       "employees_dto_resolve_query_dto_ResolveQueryDto": {

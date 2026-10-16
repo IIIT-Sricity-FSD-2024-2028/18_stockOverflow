@@ -37,9 +37,29 @@ export class EmployeesService {
    * Distribute pending items (retailers, suppliers, stores, queries) across all active employees.
    */
   distributePendingWork() {
-    const employees = this.usersService
+    let employees = this.usersService
       .findAll('employee')
       .filter((u) => u.status === 'Active');
+
+    if (employees.length === 0) {
+      // Auto-create default employee Alex Morgan if none active
+      try {
+        const defaultEmp = this.usersService.create({
+          name: 'Alex Morgan',
+          email: 'employee@stockoverflow.com',
+          password: 'Password123!',
+          role: 'employee',
+          status: 'Active',
+        });
+        employees = [defaultEmp];
+      } catch (_e) {
+        const allEmps = this.usersService.findAll('employee');
+        if (allEmps.length > 0) {
+          const activated = this.usersService.update(allEmps[0].id, { status: 'Active' });
+          employees = [activated];
+        }
+      }
+    }
 
     if (employees.length === 0) {
       return {
@@ -51,28 +71,11 @@ export class EmployeesService {
     const assignments = this.db.getCollection('employeeAssignments') || [];
     const assignedTargetIds = new Set(assignments.map((a) => a.targetId));
 
-    // Calculate initial workload for each employee
-    const workload = new Map<string, number>();
-    employees.forEach((emp) => {
-      const activeCount = assignments.filter(
-        (a) => a.employeeId === emp.id && a.status === 'pending',
-      ).length;
-      workload.set(emp.id, activeCount);
-    });
-
+    // Strict round-robin distribution across active employees
+    let rrIndex = assignments.length % employees.length;
     const getNextEmployee = () => {
-      let minCount = Infinity;
-      let selectedEmp = employees[0];
-
-      for (const emp of employees) {
-        const count = workload.get(emp.id) ?? 0;
-        if (count < minCount) {
-          minCount = count;
-          selectedEmp = emp;
-        }
-      }
-
-      workload.set(selectedEmp.id, (workload.get(selectedEmp.id) ?? 0) + 1);
+      const selectedEmp = employees[rrIndex % employees.length];
+      rrIndex++;
       return selectedEmp;
     };
 
@@ -304,27 +307,48 @@ export class EmployeesService {
       }
     }
 
-    const newStatus: EmployeeAssignmentStatus =
-      dto.action === 'approve' ? 'approved' : 'rejected';
+    const rawAction = dto.action || dto.status || '';
+    const isApprove =
+      rawAction.toLowerCase() === 'approve' ||
+      rawAction.toLowerCase() === 'approved' ||
+      rawAction.toLowerCase() === 'active';
+    const newStatus: EmployeeAssignmentStatus = isApprove ? 'approved' : 'rejected';
+    const notes = dto.notes || dto.rejectionReason || '';
     assignment.status = newStatus;
-    assignment.notes = dto.notes || '';
+    assignment.notes = notes;
     assignment.resolvedAt = new Date().toISOString();
 
     // Propagate status to corresponding entity
     if (assignment.targetType === 'retailer') {
       try {
-        const nextStatus = dto.action === 'approve' ? 'active' : 'rejected';
-        const reason = dto.action === 'reject' ? (dto.notes || 'Your application did not meet our verification requirements.') : undefined;
+        const nextStatus = isApprove ? 'active' : 'rejected';
+        const reason = !isApprove
+          ? (notes || 'Your application did not meet our verification requirements.')
+          : undefined;
         this.retailersService.updateProfileStatus(
           assignment.targetId,
           nextStatus,
           reason,
         );
         const users = this.usersService.findAll('retailer');
-        const user = users.find((u) => u.profileId === assignment.targetId || (assignment.details?.email && u.email === assignment.details.email));
+        const user = users.find(
+          (u) =>
+            u.profileId === assignment.targetId ||
+            (assignment.details?.email && u.email === assignment.details.email),
+        );
         if (user) {
+          const nextProfile: Record<string, any> = {
+            ...(user.profile || {}),
+            profileStatus: nextStatus,
+          };
+          if (!isApprove && reason) {
+            nextProfile.rejectionReason = reason;
+          } else {
+            delete nextProfile.rejectionReason;
+          }
           this.usersService.update(user.id, {
-            status: dto.action === 'approve' ? 'Active' : 'Inactive',
+            status: isApprove ? 'Active' : 'Inactive',
+            profile: nextProfile,
           });
         }
       } catch (err) {
@@ -332,18 +356,34 @@ export class EmployeesService {
       }
     } else if (assignment.targetType === 'supplier') {
       try {
-        const nextStatus = dto.action === 'approve' ? 'active' : 'rejected';
-        const supReason = dto.action === 'reject' ? (dto.notes || 'Your application did not meet our verification requirements.') : undefined;
+        const nextStatus = isApprove ? 'active' : 'rejected';
+        const supReason = !isApprove
+          ? (notes || 'Your application did not meet our verification requirements.')
+          : undefined;
         this.suppliersService.updateProfileStatus(
           assignment.targetId,
           nextStatus,
           supReason,
         );
         const users = this.usersService.findAll('supplier');
-        const user = users.find((u) => u.profileId === assignment.targetId || (assignment.details?.email && u.email === assignment.details.email));
+        const user = users.find(
+          (u) =>
+            u.profileId === assignment.targetId ||
+            (assignment.details?.email && u.email === assignment.details.email),
+        );
         if (user) {
+          const nextProfile: Record<string, any> = {
+            ...(user.profile || {}),
+            profileStatus: nextStatus,
+          };
+          if (!isApprove && supReason) {
+            nextProfile.rejectionReason = supReason;
+          } else {
+            delete nextProfile.rejectionReason;
+          }
           this.usersService.update(user.id, {
-            status: dto.action === 'approve' ? 'Active' : 'Inactive',
+            status: isApprove ? 'Active' : 'Inactive',
+            profile: nextProfile,
           });
         }
       } catch (err) {
@@ -358,7 +398,7 @@ export class EmployeesService {
           if (retailer && retailer.stores) {
             const store = retailer.stores.find((s) => s.code === storeCode);
             if (store) {
-              store.status = dto.action === 'approve' ? 'active' : 'rejected';
+              store.status = isApprove ? 'active' : 'rejected';
               this.retailersService.update(retailerId, { stores: retailer.stores });
             }
           }

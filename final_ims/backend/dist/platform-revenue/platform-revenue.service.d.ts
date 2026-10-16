@@ -25,6 +25,7 @@ export declare class PlatformRevenueService {
         totalSubscriptionRevenue: number;
         totalPlatformRevenue: number;
         netRetailerPayout: number;
+        totalTransactions: number;
         totalTransactionsProcessed: number;
         activeSubscriptionsCount: number;
         monthlyBreakdown: Record<string, {

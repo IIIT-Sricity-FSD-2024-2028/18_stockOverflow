@@ -1,5 +1,81 @@
 [
   {
+    "id": "9ea880b4-5700-497c-925b-bb1851e557fc",
+    "profileStatus": "rejected",
+    "business": {
+      "businessName": "reta1 Retail",
+      "businessType": "Retailer",
+      "businessEmail": "reta1@gamil.com",
+      "retailerCode": "RET-3948",
+      "currency": "INR"
+    },
+    "primaryContact": {
+      "fullName": "reta1",
+      "directEmail": "reta1@gamil.com"
+    },
+    "stores": [],
+    "suppliers": [],
+    "createdAt": "2026-10-16T10:09:48.976Z",
+    "updatedAt": "2026-10-16T12:40:49.873Z",
+    "products": [],
+    "rejectionReason": "GSTIN tax certificate is missing, invalid, or could not be verified on the official registry."
+  },
+  {
+    "business": {
+      "businessName": "retai4's Retail Store",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "retai4@gmail.com",
+      "retailerCode": "RET-132",
+      "currency": "INR",
+      "fiscalYear": "April",
+      "primaryIndustry": "Mixed / General"
+    },
+    "primaryContact": {
+      "fullName": "retai4",
+      "designation": "Store Owner",
+      "directEmail": "retai4@gmail.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "retai4's Main Store",
+        "code": "STORE-01",
+        "contactPerson": "retai4",
+        "phone": "+91 98765 43210",
+        "address": "Central Market, Main Street",
+        "type": "Retail Store",
+        "notes": "Primary flagship location",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "b9c46dfc-0c93-4062-ab22-a6553c3bcd7d",
+    "status": "completed",
+    "createdAt": "2026-10-16T12:09:18.145Z",
+    "updatedAt": "2026-10-16T12:40:38.858Z"
+  },
+  {
+    "id": "aa609525-b381-4c2d-8d69-15b4e49521a0",
+    "profileStatus": "pending",
+    "business": {
+      "businessName": "reatai2 Retail",
+      "businessType": "Retailer",
+      "businessEmail": "reatai2@gmail.com",
+      "retailerCode": "RET-3366",
+      "currency": "INR"
+    },
+    "primaryContact": {
+      "fullName": "reatai2",
+      "directEmail": "reatai2@gmail.com"
+    },
+    "stores": [],
+    "suppliers": [],
+    "createdAt": "2026-10-16T10:18:01.618Z",
+    "updatedAt": "2026-10-16T10:18:01.618Z",
+    "products": []
+  },
+  {
     "business": {
       "businessName": "retaile2",
       "businessType": "Sole Proprietorship",

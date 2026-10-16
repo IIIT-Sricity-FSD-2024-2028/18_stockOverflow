@@ -118,6 +118,27 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
     };
     requests.push(newRequest);
     this.db.saveCollection('biller_requests', requests);
+
+    // Pre-stage biller user account with Pending status so credentials are preserved
+    const existing = this.usersService.findAll(undefined, requestData.email);
+    if (!existing.length) {
+      this.usersService.create({
+        name: requestData.name,
+        email: requestData.email,
+        password: requestData.password || 'temp123',
+        role: 'biller',
+        status: 'Pending',
+        store: '',
+        storeId: scope.storeId,
+        currentStoreId: scope.storeId,
+      });
+    } else if (requestData.password) {
+      this.usersService.update(existing[0].id, {
+        password: requestData.password,
+        role: 'biller',
+      } as any);
+    }
+
     return newRequest;
   }
 
@@ -139,7 +160,7 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
       storeId: this.normalizeText(approvalScope?.storeId, request.storeId),
     });
     const biller = this.upsertApprovedBiller(request, scope);
-    this.ensureBillerUserExists(request);
+    this.ensureBillerUserExists(request, scope);
 
     request.retailerId = scope.retailerId;
     if (scope.storeId) {
@@ -261,16 +282,25 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
     return updated;
   }
 
-  private ensureBillerUserExists(request: BillerRequest) {
+  private ensureBillerUserExists(
+    request: BillerRequest,
+    scope?: { retailerId?: string; storeId?: string },
+  ) {
     const existingUsers = this.usersService.findAll(undefined, request.email);
+    const password = request.password || 'temp123';
+    const storeId = scope?.storeId || request.storeId || '';
 
     if (!existingUsers.length) {
       this.usersService.create({
         name: request.name,
         email: request.email,
-        password: 'temp123',
+        password: password,
         role: 'biller',
+        status: 'Active',
         store: '',
+        storeId: storeId,
+        currentStoreId: storeId,
+        accessibleStoreIds: storeId ? [storeId] : [],
       });
       return;
     }
@@ -281,6 +311,13 @@ export class BillersService extends JsonCollectionService<Biller, 'billers'> {
         'A non-biller user already exists with this email address.',
       );
     }
+
+    this.usersService.update(existingUser.id, {
+      status: 'Active',
+      role: 'biller',
+      ...(request.password ? { password: request.password } : {}),
+      ...(storeId ? { storeId, currentStoreId: storeId, accessibleStoreIds: [storeId] } : {}),
+    } as any);
   }
 
   private resolveRequestScope(payload: Partial<BillerRequest>) {

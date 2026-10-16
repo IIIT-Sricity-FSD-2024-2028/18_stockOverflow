@@ -88,6 +88,25 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
         };
         requests.push(newRequest);
         this.db.saveCollection('biller_requests', requests);
+        const existing = this.usersService.findAll(undefined, requestData.email);
+        if (!existing.length) {
+            this.usersService.create({
+                name: requestData.name,
+                email: requestData.email,
+                password: requestData.password || 'temp123',
+                role: 'biller',
+                status: 'Pending',
+                store: '',
+                storeId: scope.storeId,
+                currentStoreId: scope.storeId,
+            });
+        }
+        else if (requestData.password) {
+            this.usersService.update(existing[0].id, {
+                password: requestData.password,
+                role: 'biller',
+            });
+        }
         return newRequest;
     }
     getRequests() {
@@ -106,7 +125,7 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
             storeId: this.normalizeText(approvalScope?.storeId, request.storeId),
         });
         const biller = this.upsertApprovedBiller(request, scope);
-        this.ensureBillerUserExists(request);
+        this.ensureBillerUserExists(request, scope);
         request.retailerId = scope.retailerId;
         if (scope.storeId) {
             request.storeId = scope.storeId;
@@ -191,15 +210,21 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
         this.write(billers);
         return updated;
     }
-    ensureBillerUserExists(request) {
+    ensureBillerUserExists(request, scope) {
         const existingUsers = this.usersService.findAll(undefined, request.email);
+        const password = request.password || 'temp123';
+        const storeId = scope?.storeId || request.storeId || '';
         if (!existingUsers.length) {
             this.usersService.create({
                 name: request.name,
                 email: request.email,
-                password: 'temp123',
+                password: password,
                 role: 'biller',
+                status: 'Active',
                 store: '',
+                storeId: storeId,
+                currentStoreId: storeId,
+                accessibleStoreIds: storeId ? [storeId] : [],
             });
             return;
         }
@@ -207,6 +232,12 @@ let BillersService = class BillersService extends collection_service_1.JsonColle
         if (String(existingUser.role || '').toLowerCase() !== 'biller') {
             throw new common_1.ConflictException('A non-biller user already exists with this email address.');
         }
+        this.usersService.update(existingUser.id, {
+            status: 'Active',
+            role: 'biller',
+            ...(request.password ? { password: request.password } : {}),
+            ...(storeId ? { storeId, currentStoreId: storeId, accessibleStoreIds: [storeId] } : {}),
+        });
     }
     resolveRequestScope(payload) {
         const requestedRetailerId = this.normalizeText(payload.retailerId);

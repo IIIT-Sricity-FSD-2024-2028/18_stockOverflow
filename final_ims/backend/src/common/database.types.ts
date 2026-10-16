@@ -379,6 +379,7 @@ export interface BillerRequest {
   country: string;
   retailerId: string;
   storeId?: string;
+  password?: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
   approvedAt?: string;

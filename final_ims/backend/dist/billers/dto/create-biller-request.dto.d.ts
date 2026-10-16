@@ -6,4 +6,5 @@ export declare class CreateBillerRequestDto {
     phone: string;
     company: string;
     country: string;
+    password?: string;
 }

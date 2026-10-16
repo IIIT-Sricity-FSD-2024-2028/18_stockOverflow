@@ -36,4 +36,9 @@ export class CreateBillerRequestDto {
   @IsString()
   @MinLength(1)
   country!: string;
+
+  @IsOptional()
+  @Transform(trimString)
+  @IsString()
+  password?: string;
 }

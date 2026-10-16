@@ -57,4 +57,10 @@ __decorate([
     (0, class_validator_1.MinLength)(1),
     __metadata("design:type", String)
 ], CreateBillerRequestDto.prototype, "country", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(dto_transforms_1.trimString),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateBillerRequestDto.prototype, "password", void 0);
 //# sourceMappingURL=create-biller-request.dto.js.map

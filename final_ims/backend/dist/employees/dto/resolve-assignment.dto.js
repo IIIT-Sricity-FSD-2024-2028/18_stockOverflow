@@ -15,10 +15,21 @@ class ResolveAssignmentDto {
 }
 exports.ResolveAssignmentDto = ResolveAssignmentDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(['approve', 'reject']),
+    (0, class_validator_1.IsIn)(['approve', 'reject', 'approved', 'rejected']),
     __metadata("design:type", String)
 ], ResolveAssignmentDto.prototype, "action", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ResolveAssignmentDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ResolveAssignmentDto.prototype, "rejectionReason", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),

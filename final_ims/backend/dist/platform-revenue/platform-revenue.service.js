@@ -124,31 +124,47 @@ let PlatformRevenueService = class PlatformRevenueService {
         const scopedTransactions = retailerId
             ? transactions.filter((t) => String(t.retailerId || '').trim() === String(retailerId).trim())
             : transactions;
-        if (commissions.length < transactions.length) {
-            const existingTxnIds = new Set(commissions.map((c) => c.transactionId || c.orderId));
-            transactions.forEach((t) => {
-                if (!existingTxnIds.has(t.orderId)) {
-                    const orderTotal = Number(t.finalTotal || 0);
-                    const commissionAmount = Number((orderTotal * 0.02).toFixed(2));
-                    commissions.push({
-                        id: `comm-${t.orderId}`,
-                        transactionId: t.orderId,
-                        orderId: t.orderId,
-                        retailerId: t.retailerId || 'default-retailer',
-                        retailerName: t.store || 'Retailer Store',
-                        storeId: t.storeId || 's1',
-                        storeName: t.store || 'Main Store',
-                        customerName: t.customer || 'Customer',
-                        orderTotal,
-                        commissionRate: 0.02,
-                        commissionAmount,
-                        netRetailerAmount: Number((orderTotal - commissionAmount).toFixed(2)),
-                        currency: 'INR',
-                        timestamp: t.timestamp || new Date().toISOString(),
-                        status: 'settled',
-                    });
-                }
-            });
+        const commByTxId = new Map(commissions.map((c) => [c.transactionId || c.orderId, c]));
+        let commUpdated = false;
+        transactions.forEach((t) => {
+            const existing = commByTxId.get(t.orderId);
+            const orderTotal = Number(t.finalTotal || 0);
+            const expectedCommission = Number((orderTotal * 0.02).toFixed(2));
+            const expectedNet = Number((orderTotal - expectedCommission).toFixed(2));
+            if (!existing) {
+                commissions.push({
+                    id: `comm-${t.orderId}`,
+                    transactionId: t.orderId,
+                    orderId: t.orderId,
+                    retailerId: t.retailerId || 'default-retailer',
+                    retailerName: t.store || 'Retailer Store',
+                    storeId: t.storeId || 's1',
+                    storeName: t.store || 'Main Store',
+                    customerName: t.customer || 'Customer',
+                    orderTotal,
+                    commissionRate: 0.02,
+                    commissionAmount: expectedCommission,
+                    netRetailerAmount: expectedNet,
+                    currency: 'INR',
+                    timestamp: t.timestamp || new Date().toISOString(),
+                    status: 'settled',
+                });
+                commUpdated = true;
+            }
+            else if (existing.commissionAmount === 0 && orderTotal > 0) {
+                existing.commissionAmount = expectedCommission;
+                existing.netRetailerAmount = expectedNet;
+                existing.orderTotal = orderTotal;
+                if (!existing.retailerId && t.retailerId)
+                    existing.retailerId = t.retailerId;
+                if (!existing.storeId && t.storeId)
+                    existing.storeId = t.storeId;
+                if (!existing.storeName && t.store)
+                    existing.storeName = t.store;
+                commUpdated = true;
+            }
+        });
+        if (commUpdated) {
             this.db.saveCollection('platformCommissions', commissions);
         }
         const scopedCommissions = retailerId
@@ -226,6 +242,7 @@ let PlatformRevenueService = class PlatformRevenueService {
             totalSubscriptionRevenue: Number(totalSubscriptionRevenue.toFixed(2)),
             totalPlatformRevenue,
             netRetailerPayout,
+            totalTransactions: scopedTransactions.length,
             totalTransactionsProcessed: scopedTransactions.length,
             activeSubscriptionsCount: activeSubscriptions.length,
             monthlyBreakdown: monthlyData,
