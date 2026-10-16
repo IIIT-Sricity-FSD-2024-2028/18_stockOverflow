@@ -41,85 +41,6 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
 import { fetchProducts } from '../utils/api_consumer';
 
-// ── REALISTIC DEFAULT SEED ALERTS (EXACT MATCH TO VANILLA CUSTOMER MODULE) ──
-// In layman's terms: When opening the restock page for the first time, these pre-populated
-// alerts give the customer an authentic view of how restock notifications look in action.
-const DEFAULT_HARDCODED_ALERTS = [
-  {
-    id: 'alert-seed-1',
-    productSku: 'PT001',
-    sku: 'PT001',
-    product: 'nike shoes',
-    productName: 'nike shoes',
-    qty: 5,
-    baselineQty: 2,
-    lastKnownQty: 28,
-    priority: 'High',
-    status: 'Notified',
-    date: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),
-    productImg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720"><rect width="960" height="720" rx="42" fill="%23dbeafe"/><text x="480" y="380" text-anchor="middle" font-size="120">📦</text></svg>',
-    emoji: '📦',
-  },
-  {
-    id: 'alert-seed-2',
-    productSku: 'PT002',
-    sku: 'PT002',
-    product: 'op3',
-    productName: 'op3',
-    qty: 8,
-    baselineQty: 0,
-    lastKnownQty: 5,
-    priority: 'Medium',
-    status: 'Notified',
-    date: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
-    productImg: 'http://127.0.0.1:3001/uploads/products/prod-1788113362534-412026785.jpg',
-    emoji: '📦',
-  },
-  {
-    id: 'alert-seed-3',
-    productSku: 'PT005',
-    sku: 'PT005',
-    product: 'Premium Basmati Rice',
-    productName: 'Premium Basmati Rice',
-    qty: 50,
-    baselineQty: 10,
-    lastKnownQty: 100,
-    priority: 'Low',
-    status: 'Fulfilled',
-    date: new Date(Date.now() - 96 * 60 * 60 * 1000).toISOString(),
-    productImg: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720"><rect width="960" height="720" rx="42" fill="%23dbeafe"/><text x="480" y="380" text-anchor="middle" font-size="120">🌾</text></svg>',
-    emoji: '🌾',
-  },
-];
-
-// ── SAMPLE RECENTLY RESTOCKED ITEMS (FALLBACK IF CATALOG HAS NO RESTOCK TIMESTAMPS) ──
-const SAMPLE_RECENTLY_RESTOCKED = [
-  {
-    id: 'restock-sample-1',
-    name: 'MacBook Air M4',
-    qty: 12,
-    restockedAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-    productImg: 'https://picsum.photos/seed/PT012/400',
-    emoji: '💻',
-  },
-  {
-    id: 'restock-sample-2',
-    name: 'Dyson V16 Vacuum',
-    qty: 5,
-    restockedAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
-    productImg: 'https://picsum.photos/seed/PT014/400',
-    emoji: '🧹',
-  },
-  {
-    id: 'restock-sample-3',
-    name: 'Sony WH-1000XM6 Headphones',
-    qty: 8,
-    restockedAt: new Date(Date.now() - 42 * 60 * 60 * 1000).toISOString(),
-    productImg: 'https://picsum.photos/seed/PT011/400',
-    emoji: '🎧',
-  },
-];
-
 export default function RestockAlertPage_consumer({
   initialSku = '',
   cart = [],
@@ -136,18 +57,16 @@ export default function RestockAlertPage_consumer({
   const [editingAlertId, setEditingAlertId] = useState('');
   const formRef = useRef(null);
 
-  // ── LOAD ALERTS FROM LOCAL STORAGE OR USE DEFAULT SEEDS ──
-  // In layman's terms: Read the user's saved alerts from the browser.
-  // If this is their first visit, load our realistic default alerts.
+  // ── LOAD ALERTS FROM LOCAL STORAGE ──
   const [allAlerts, setAllAlerts] = useState(() => {
     try {
       const state = JSON.parse(localStorage.getItem('imsAppStateV1') || '{}');
-      if (Array.isArray(state.alerts) && state.alerts.length > 0) {
+      if (Array.isArray(state.alerts)) {
         return state.alerts;
       }
-      return DEFAULT_HARDCODED_ALERTS;
+      return [];
     } catch (_e) {
-      return DEFAULT_HARDCODED_ALERTS;
+      return [];
     }
   });
 
@@ -224,25 +143,14 @@ export default function RestockAlertPage_consumer({
     return String((prod && prod.emoji) || '📦').trim();
   };
 
-  // ── CALCULATE DYNAMIC STOCK STATE TAG (EXACT MATCH TO restockalert.html) ──
-  // In layman's terms: Determines whether a product is Out of Stock (red), Critical / Low Stock (yellow),
-  // or In Stock (green) depending on current inventory and requested quantity.
-  const getStockState = (prod, requestedQty = currentQty) => {
+  // ── CALCULATE DYNAMIC STOCK STATE TAG ──
+  const getStockState = (prod) => {
     const qty = Math.max(0, Number(prod && prod.qty) || 0);
-    const max = Math.max(1, Number(prod && prod.max) || Math.max(qty, requestedQty, 1));
-
     if (qty === 0) {
       return {
         label: 'Out of Stock',
         background: '#fee2e2',
         color: '#7f1d1d',
-      };
-    }
-    if (qty < requestedQty || qty < max * 0.25) {
-      return {
-        label: qty < max * 0.1 ? 'Critical' : 'Low Stock',
-        background: '#fef3c7',
-        color: '#92400e',
       };
     }
     return {
@@ -251,16 +159,6 @@ export default function RestockAlertPage_consumer({
       color: '#065f46',
     };
   };
-
-  // ── STATS CALCULATION (EXACT MATCH TO VANILLA JS LOGIC) ──
-  // In layman's terms: Calculates the 3 metric cards at the top of the page.
-  const lowStockCount = useMemo(() => {
-    return products.filter((p) => {
-      const q = Number(p.qty || 0);
-      const m = Math.max(1, Number(p.max || 0) * 0.25);
-      return q > 0 && q < m;
-    }).length;
-  }, [products]);
 
   const outOfStockCount = useMemo(() => {
     return products.filter((p) => Number(p.qty || 0) === 0).length;
@@ -304,20 +202,7 @@ export default function RestockAlertPage_consumer({
     return resolvedAlerts.filter((row) => row.status.toLowerCase() === activeStatusTab.toLowerCase());
   }, [resolvedAlerts, activeStatusTab]);
 
-  // ── RECENTLY RESTOCKED PRODUCTS (EXACT MATCH TO VANILLA JS LOGIC) ──
-  // In layman's terms: Finds products with recent restock events from the live catalog.
-  // If none have restocked yet, uses realistic sample restock items so the cards are visually complete.
-  const recentlyRestockedItems = useMemo(() => {
-    const liveRestocked = products
-      .filter((p) => p && p.restockedAt && Number(p.qty || 0) > 0)
-      .sort((a, b) => new Date(b.restockedAt).getTime() - new Date(a.restockedAt).getTime())
-      .slice(0, 3);
 
-    if (liveRestocked.length > 0) {
-      return liveRestocked;
-    }
-    return SAMPLE_RECENTLY_RESTOCKED;
-  }, [products]);
 
   // ── QUANTITY STEPPER HANDLERS ──
   const increaseQty = () => {
@@ -412,12 +297,7 @@ export default function RestockAlertPage_consumer({
         {/* ══════════════════════════════════════════════════════════════
            TOP STAT METRIC CARDS (EXACT MATCH TO restockalert.html)
         ══════════════════════════════════════════════════════════════ */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-label">Low Stock Products</div>
-            <div className="stat-value" id="lowStockCount">{lowStockCount}</div>
-            <div className="stat-note">Products currently running low</div>
-          </div>
+        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
           <div className="stat-card">
             <div className="stat-label">Out of Stock</div>
             <div className="stat-value" id="outOfStockCount">{outOfStockCount}</div>
@@ -761,44 +641,6 @@ export default function RestockAlertPage_consumer({
               </div>
             </div>
 
-            {/* Recently Restocked Card (Exact match to restockalert.html) */}
-            <div className="restock-card-box">
-              <div className="restock-card-title">Recently Restocked</div>
-              <div className="restocked-grid" id="restockedGrid">
-                {recentlyRestockedItems.length === 0 ? (
-                  <div className="empty-state">No recent retailer restocks yet.</div>
-                ) : (
-                  recentlyRestockedItems.map((item, idx) => {
-                    const img = resolveProductImage(item);
-                    const emoji = resolveFallback(item);
-                    const count = Math.max(0, Number(item.qty || 0));
-                    return (
-                      <div key={item.id || item.sku || idx} className="restock-card">
-                        <div className="restock-icon">
-                          {img ? (
-                            <img
-                              src={img}
-                              alt={item.name}
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.parentElement.textContent = emoji;
-                              }}
-                            />
-                          ) : (
-                            <span style={{ fontSize: '24px' }}>{emoji}</span>
-                          )}
-                        </div>
-                        <div className="restock-name">{item.name}</div>
-                        <div className="restock-units">{count} units now available</div>
-                        <div className="restock-time">
-                          Restocked {formatRestockTime(item.restockedAt)}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
           </div>
         </div>
       </div>

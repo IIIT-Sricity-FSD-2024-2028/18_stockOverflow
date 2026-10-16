@@ -20,8 +20,6 @@
  *     it seamlessly falls back to cached data without crashing!
  */
 
-import { MOCK_PRODUCTS, MOCK_STORES } from '../data/mockProducts_consumer';
-
 // Resolve backend API URL (defaults to port 3001 or Vite proxy)
 const API_BASE_URL =
   typeof window !== 'undefined' && window.IMS_API_BASE_URL
@@ -29,7 +27,7 @@ const API_BASE_URL =
     : 'http://localhost:3001/api';
 
 /**
- * Generic HTTP request helper with dual fallback (Direct -> Proxy -> Mock/Local).
+ * Generic HTTP request helper with dual fallback (Direct -> Proxy -> Local).
  */
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
@@ -84,7 +82,12 @@ async function apiRequest(endpoint, options = {}) {
 function getCustomerLookup(customer = '') {
   if (customer) return String(customer).trim();
   const session = getLocalSession();
-  return String(session?.name || session?.email || session?.id || '').trim();
+  if (!session) return '';
+  const role = String(session.role || '').toLowerCase();
+  if (role && role !== 'consumer' && role !== 'customer') {
+    return '';
+  }
+  return String(session.name || session.email || session.id || '').trim();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -98,7 +101,7 @@ export async function fetchProducts(storeId = '') {
   try {
     const endpoint = storeId ? `/products?storeId=${encodeURIComponent(storeId)}` : '/products';
     const data = await apiRequest(endpoint);
-    if (Array.isArray(data) && data.length > 0) {
+    if (Array.isArray(data)) {
       return data;
     }
   } catch (_err) {
@@ -113,7 +116,7 @@ export async function fetchProducts(storeId = '') {
     }
   } catch (_e) {}
 
-  return MOCK_PRODUCTS;
+  return [];
 }
 
 /**
@@ -209,9 +212,9 @@ export async function submitProductFeedback(sku, feedbackData) {
 export async function fetchStores() {
   try {
     const data = await apiRequest('/stores');
-    if (Array.isArray(data) && data.length > 0) return data;
+    if (Array.isArray(data)) return data;
   } catch (_e) {}
-  return MOCK_STORES;
+  return [];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -397,11 +400,15 @@ export async function fetchTransactionByOrderId(orderId) {
  * Fetches purchased products summary from the backend for the order history view.
  */
 export async function fetchPurchasedProducts(customer = '') {
+  const customerLookup = getCustomerLookup(customer);
+  if (!customerLookup && !customer) {
+    return [];
+  }
+
+  const target = customerLookup || customer;
   try {
-    const customerLookup = getCustomerLookup(customer);
-    const query = customerLookup ? `?customer=${encodeURIComponent(customerLookup)}` : '';
-    const data = await apiRequest(`/transactions/purchased-products${query}`);
-    if (Array.isArray(data) && data.length > 0) {
+    const data = await apiRequest(`/transactions/purchased-products?customer=${encodeURIComponent(target)}`);
+    if (Array.isArray(data)) {
       return data.map((item) => ({
         ...item,
         orderId: item.lastOrderId || item.orderId || '',
@@ -409,7 +416,7 @@ export async function fetchPurchasedProducts(customer = '') {
     }
   } catch (_e) {}
 
-  const orders = await fetchTransactions(customer);
+  const orders = await fetchTransactions(target);
   const map = {};
   orders.forEach((ord) => {
     (ord.items || []).forEach((item) => {

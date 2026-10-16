@@ -41,7 +41,6 @@ import {
   saveLocalCart,
   getLocalSession,
 } from './utils/api_consumer';
-import { MOCK_PRODUCTS, MOCK_STORES } from './data/mockProducts_consumer';
 
 export default function App_consumer({ onSwitchModule, onLogout }) {
   // ─── 1. Navigation & View Routing State ─────────────────────────────────────
@@ -63,8 +62,6 @@ export default function App_consumer({ onSwitchModule, onLogout }) {
   });
 
   // ─── 2. Global Catalog & Stores State ───────────────────────────────────────
-  // In layman's terms: Initialize with pre-seeded products and stores immediately
-  // so all pages and product clicks render INSTANTLY without waiting for network!
   const [products, setProducts] = useState(() => {
     try {
       const local = localStorage.getItem('so_inventory') || localStorage.getItem('imsRetailerProductsV1');
@@ -73,9 +70,9 @@ export default function App_consumer({ onSwitchModule, onLogout }) {
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
     } catch {}
-    return MOCK_PRODUCTS;
+    return [];
   });
-  const [stores, setStores] = useState(() => MOCK_STORES);
+  const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

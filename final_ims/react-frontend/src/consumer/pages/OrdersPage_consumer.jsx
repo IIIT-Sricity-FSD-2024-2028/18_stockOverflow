@@ -16,60 +16,6 @@ import {
   fetchProducts,
 } from '../utils/api_consumer';
 
-// ── REALISTIC DEFAULT SEED ORDERS (GIVES AUTHENTIC POPULATED LOOK RIGHT AWAY) ──
-// In layman's terms: If the customer hasn't purchased anything yet or is testing offline,
-// we display these realistic past orders so the screen looks active and authentic right out of the box.
-const DEFAULT_HARDCODED_ORDERS = [
-  {
-    orderId: 'ORD-84920',
-    sku: 'PT001',
-    name: 'Lenovo IdeaPad 3',
-    totalQty: 1,
-    totalSpent: 600,
-    lastOrderedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-    store: 'Downtown Store',
-    productImg: 'https://picsum.photos/seed/PT001/400',
-    emoji: '💻',
-    isPending: false,
-  },
-  {
-    orderId: 'ORD-84919',
-    sku: 'PT002',
-    name: 'Beats Pro Headphone',
-    totalQty: 1,
-    totalSpent: 160,
-    lastOrderedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
-    store: 'Downtown Store',
-    productImg: 'https://picsum.photos/seed/PT002/400',
-    emoji: '🎧',
-    isPending: false,
-  },
-  {
-    orderId: 'ORD-84918',
-    sku: 'PT004',
-    name: 'Apple Series 5 Watch',
-    totalQty: 2,
-    totalSpent: 240,
-    lastOrderedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), // 12 days ago
-    store: 'East Coast Hub',
-    productImg: 'https://picsum.photos/seed/PT004/400',
-    emoji: '⌚',
-    isPending: false,
-  },
-  {
-    orderId: 'RES-77201',
-    sku: 'PT011',
-    name: 'Sony WH-1000XM6',
-    totalQty: 1,
-    totalSpent: 349,
-    lastOrderedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-    store: 'Downtown Store',
-    productImg: 'https://picsum.photos/seed/PT011/400',
-    emoji: '⏳',
-    isPending: true, // Pending verification
-  },
-];
-
 export default function OrdersPage_consumer({
   cart = [],
   userSession,
@@ -103,9 +49,10 @@ export default function OrdersPage_consumer({
     async function loadOrders() {
       setLoading(true);
       try {
+        const customerLookup = userSession?.name || userSession?.email || userSession?.id || '';
         const [purchased, pending, allCatalog] = await Promise.all([
-          fetchPurchasedProducts(),
-          fetchReservationRequests('pending'),
+          fetchPurchasedProducts(customerLookup),
+          fetchReservationRequests('pending', customerLookup),
           fetchProducts(),
         ]);
 
@@ -161,14 +108,9 @@ export default function OrdersPage_consumer({
     };
   }, []);
 
-  // ── COMBINE ORDERS & APPLY HARDCODED SEED FALLBACK ──
-  // In layman's terms: If there are real orders from the database, show them.
-  // If there are none, use our hardcoded demo orders so the page always looks complete.
+  // ── COMBINE ORDERS ──
   const allOrders = useMemo(() => {
     let combined = [...pendingReservations, ...purchasedProducts];
-    if (combined.length === 0) {
-      combined = DEFAULT_HARDCODED_ORDERS;
-    }
     if (!searchQuery.trim()) return combined;
     const q = searchQuery.toLowerCase().trim();
     return combined.filter(

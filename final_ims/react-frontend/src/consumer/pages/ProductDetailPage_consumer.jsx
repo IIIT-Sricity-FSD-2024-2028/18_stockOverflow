@@ -33,7 +33,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
 import ReservationModal_consumer from '../components/ReservationModal_consumer';
-import { MOCK_PRODUCTS, MOCK_STORES } from '../data/mockProducts_consumer';
 import {
   fetchProductBySku,
   fetchRatingSummary,
@@ -77,12 +76,11 @@ export default function ProductDetailPage_consumer({
 }) {
   // In layman's terms: Resolve product IMMEDIATELY so the user never sees a stuck loading spinner!
   const initialProduct = useMemo(() => {
-    const catalog = Array.isArray(products) && products.length > 0 ? products : MOCK_PRODUCTS;
+    const catalog = Array.isArray(products) && products.length > 0 ? products : [];
     return (
       findProductInCatalog(catalog, sku) ||
-      findProductInCatalog(MOCK_PRODUCTS, sku) ||
       catalog[0] ||
-      MOCK_PRODUCTS[0]
+      null
     );
   }, [products, sku]);
 
@@ -210,7 +208,7 @@ export default function ProductDetailPage_consumer({
   // ── DYNAMIC 3-ITEM RECOMMENDATIONS ──
   // In layman's terms: Displays 3 suggested items from the catalog for the "You Might Also Like" card.
   const recommendations = useMemo(() => {
-    const catalog = Array.isArray(products) && products.length > 0 ? products : MOCK_PRODUCTS;
+    const catalog = Array.isArray(products) && products.length > 0 ? products : [];
     const others = catalog.filter((p) => p && p.sku !== product?.sku);
     return others.slice(0, 3);
   }, [products, product]);
@@ -223,7 +221,7 @@ export default function ProductDetailPage_consumer({
   // ── STORE AVAILABILITY BREAKDOWN ──
   // In layman's terms: Computes the available stock for each physical branch.
   const storeList = useMemo(() => {
-    const activeStores = Array.isArray(stores) && stores.length > 0 ? stores : MOCK_STORES;
+    const activeStores = Array.isArray(stores) && stores.length > 0 ? stores : [];
     if (storeInventory.length > 0) {
       return storeInventory.map((inv, idx) => {
         const matched = activeStores.find(

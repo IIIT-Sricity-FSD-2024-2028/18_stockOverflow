@@ -6906,3 +6906,707 @@
 [2026-10-15T19:35:37.087Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
 [2026-10-15T19:35:37.091Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/8db84cd6-b87e-4691-ac52-138f20ceed2b/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
 [2026-10-15T19:35:37.092Z] [GET] /api/suppliers/8db84cd6-b87e-4691-ac52-138f20ceed2b/documents 304 - 1ms - IP: ::1
+[2026-10-16T04:30:06.556Z] [GET] /api/products 200 - 6ms - IP: ::1
+[2026-10-16T04:31:55.688Z] [POST] /api/users 201 - 7ms - IP: ::1
+[2026-10-16T04:31:55.735Z] [GET] /api/products 200 - 4ms - IP: ::1
+[2026-10-16T04:31:55.737Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T04:31:55.740Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T04:31:55.742Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T04:31:58.376Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T04:31:58.378Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:31:58.379Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T04:31:58.380Z] [GET] /api/transactions/purchased-products?customer=joe1 200 - 1ms - IP: ::1
+[2026-10-16T04:31:58.382Z] [GET] /api/reservations/requests?status=pending&customer=joe1 200 - 1ms - IP: ::1
+[2026-10-16T04:31:58.383Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T04:31:58.384Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T04:31:58.385Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T04:31:58.416Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T04:31:58.417Z] [GET] /api/transactions?customer=joe1 200 - 1ms - IP: ::1
+[2026-10-16T04:31:58.417Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T04:31:58.418Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T04:32:03.374Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T04:32:03.375Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T04:32:03.376Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T04:32:03.382Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T04:32:03.383Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T04:32:03.384Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T04:32:18.925Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920?customer=joe1
+[2026-10-16T04:32:18.926Z] [GET] /api/transactions/ORD-84920?customer=joe1 404 - 1ms - IP: ::1
+[2026-10-16T04:32:18.927Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920?customer=joe1
+[2026-10-16T04:32:18.928Z] [GET] /api/transactions/ORD-84920?customer=joe1 404 - 1ms - IP: ::1
+[2026-10-16T04:32:18.938Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920?customer=joe1
+[2026-10-16T04:32:18.940Z] [GET] /api/transactions/ORD-84920?customer=joe1 404 - 2ms - IP: ::1
+[2026-10-16T04:32:18.943Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920?customer=joe1
+[2026-10-16T04:32:18.944Z] [GET] /api/transactions/ORD-84920?customer=joe1 404 - 1ms - IP: ::1
+[2026-10-16T04:32:18.948Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T04:32:18.949Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T04:32:18.949Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T04:32:18.950Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T04:32:27.579Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:32:27.581Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:32:27.647Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T04:33:44.435Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920?customer=joe1
+[2026-10-16T04:33:44.436Z] [GET] /api/transactions/ORD-84920?customer=joe1 404 - 1ms - IP: ::1
+[2026-10-16T04:33:44.437Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920?customer=joe1
+[2026-10-16T04:33:44.439Z] [GET] /api/transactions/ORD-84920?customer=joe1 404 - 2ms - IP: ::1
+[2026-10-16T04:33:44.443Z] [GET] /api/transactions/ORD-84920?customer=joe1 404 - 1ms - IP: ::1
+[2026-10-16T04:33:44.442Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920?customer=joe1
+[2026-10-16T04:33:44.447Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD-84920?customer=joe1
+[2026-10-16T04:33:44.448Z] [GET] /api/transactions/ORD-84920?customer=joe1 404 - 1ms - IP: ::1
+[2026-10-16T04:33:44.451Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T04:33:44.452Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T04:33:44.453Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T04:33:44.453Z] [GET] /api/transactions?customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T04:34:59.788Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:34:59.791Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T04:34:59.797Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:39:22.413Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T04:39:22.414Z] [GET] /api/transactions 200 - 1ms - IP: ::1
+[2026-10-16T04:39:29.889Z] [GET] /api/returns 200 - 1ms - IP: ::1
+[2026-10-16T04:39:38.262Z] [GET] /api/products 200 - 2ms - IP: ::1
+[2026-10-16T04:39:45.913Z] [GET] /api/products 200 - 1ms - IP: ::1
+[2026-10-16T04:39:53.081Z] [GET] /api/products 200 - 1ms - IP: ::1
+[2026-10-16T04:40:38.831Z] [GET] /api/products 200 - 2ms - IP: ::1
+[2026-10-16T04:43:21.692Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=James
+[2026-10-16T04:43:21.694Z] [GET] /api/transactions/purchased-products?customer=James 200 - 2ms - IP: ::1
+[2026-10-16T04:43:30.425Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=James
+[2026-10-16T04:43:30.426Z] [GET] /api/transactions?customer=James 200 - 1ms - IP: ::1
+[2026-10-16T04:44:40.291Z] [GET] /api/stores 200 - 1ms - IP: ::1
+[2026-10-16T04:47:09.877Z] [POST] /api/products 201 - 5ms - IP: ::1
+[2026-10-16T04:47:09.890Z] [POST] /api/products 201 - 6ms - IP: ::1
+[2026-10-16T04:47:09.896Z] [POST] /api/products 201 - 4ms - IP: ::1
+[2026-10-16T04:47:09.909Z] [POST] /api/products 201 - 10ms - IP: ::1
+[2026-10-16T04:47:09.917Z] [POST] /api/products 201 - 5ms - IP: ::1
+[2026-10-16T04:47:19.927Z] [GET] /api/products 200 - 2ms - IP: ::1
+[2026-10-16T04:48:00.354Z] [GET] /api/products 200 - 1ms - IP: ::1
+[2026-10-16T04:48:00.355Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T04:48:00.357Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:50:13.749Z] [GET] /api/products 200 - 1ms - IP: ::1
+[2026-10-16T04:50:20.392Z] [GET] /api/products 200 - 2ms - IP: ::1
+[2026-10-16T04:50:26.981Z] [GET] /api/products 200 - 2ms - IP: ::1
+[2026-10-16T04:51:03.666Z] [GET] /api/products 200 - 3ms - IP: ::1
+[2026-10-16T04:51:10.577Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T04:51:10.578Z] [GET] /api/transactions 200 - 1ms - IP: ::1
+[2026-10-16T04:51:17.446Z] [GET] /api/returns 200 - 1ms - IP: ::1
+[2026-10-16T04:51:38.114Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T04:51:38.115Z] [GET] /api/transactions/purchased-products 200 - 1ms - IP: ::1
+[2026-10-16T04:53:06.141Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T04:53:06.142Z] [GET] /api/transactions 200 - 1ms - IP: ::1
+[2026-10-16T04:55:52.363Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:55:52.365Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:55:52.365Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T04:56:15.354Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T04:56:15.356Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T04:56:15.358Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T04:56:27.356Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:56:27.358Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:56:27.359Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T04:56:41.341Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:56:41.342Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T04:56:41.343Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T04:56:41.345Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:03:31.857Z] [GET] /api/returns?customer=joe1 200 - 1ms - IP: ::1
+[2026-10-16T05:03:31.858Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T05:03:31.859Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:03:31.860Z] [GET] /api/returns?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:03:31.861Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T05:03:31.862Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:12.401Z] [POST] /api/users/login 201 - 2ms - IP: ::1
+[2026-10-16T05:04:12.423Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:04:12.426Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:04:12.428Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:04:12.429Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T05:04:24.977Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:04:24.977Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:04:24.978Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:04:24.980Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:04:24.981Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:24.981Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:04:24.982Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:24.983Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:04:24.986Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:04:24.987Z] [GET] /api/transactions/purchased-products 200 - 1ms - IP: ::1
+[2026-10-16T05:04:24.987Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:04:24.988Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-16T05:04:29.974Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:04:29.975Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:29.976Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:04:29.979Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:04:29.979Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:04:29.981Z] [GET] /api/transactions/purchased-products 304 - 2ms - IP: ::1
+[2026-10-16T05:04:35.346Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:04:35.347Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:35.347Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:04:35.349Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:04:35.350Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:04:35.351Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-16T05:04:40.342Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:04:40.343Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:40.344Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:40.346Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:04:40.346Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:04:40.348Z] [GET] /api/transactions/purchased-products 304 - 2ms - IP: ::1
+[2026-10-16T05:04:45.340Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:04:45.341Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:45.344Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:04:45.341Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:04:45.346Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:04:45.347Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-16T05:04:50.331Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:04:50.332Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:04:50.333Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:04:50.336Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:04:50.337Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:04:50.339Z] [GET] /api/transactions/purchased-products 304 - 2ms - IP: ::1
+[2026-10-16T05:04:55.339Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:04:55.339Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:04:55.340Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:04:55.342Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:04:55.346Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:04:55.347Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-16T05:05:00.336Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:05:00.337Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:05:00.337Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:05:00.340Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:05:00.341Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:05:00.343Z] [GET] /api/transactions/purchased-products 304 - 2ms - IP: ::1
+[2026-10-16T05:13:25.964Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:13:25.969Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-16T05:13:25.971Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:13:25.972Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T05:14:09.699Z] [POST] /api/users 201 - 5ms - IP: ::1
+[2026-10-16T05:14:09.722Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:14:09.725Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:14:09.726Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T05:14:09.727Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:14:13.673Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:14:13.677Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:14:13.678Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe
+[2026-10-16T05:14:13.679Z] [GET] /api/transactions/purchased-products?customer=joe 200 - 2ms - IP: ::1
+[2026-10-16T05:14:13.680Z] [GET] /api/reservations/requests?status=pending&customer=joe 200 - 0ms - IP: ::1
+[2026-10-16T05:14:13.682Z] [GET] /api/transactions/purchased-products?customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:14:13.681Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe
+[2026-10-16T05:14:13.683Z] [GET] /api/reservations/requests?status=pending&customer=joe 304 - 0ms - IP: ::1
+[2026-10-16T05:14:13.684Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:14:13.685Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-16T05:14:13.686Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:14:13.687Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-16T05:14:18.156Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe
+[2026-10-16T05:14:18.158Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe
+[2026-10-16T05:14:18.159Z] [GET] /api/transactions/purchased-products?customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:14:18.157Z] [GET] /api/transactions/purchased-products?customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:14:18.160Z] [GET] /api/reservations/requests?status=pending&customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:14:18.161Z] [GET] /api/reservations/requests?status=pending&customer=joe 304 - 0ms - IP: ::1
+[2026-10-16T05:14:18.163Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-16T05:14:18.162Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:14:18.164Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:14:18.165Z] [GET] /api/transactions/purchased-products 304 - 1ms - IP: ::1
+[2026-10-16T05:14:18.168Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:14:18.170Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:14:23.160Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:14:23.161Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe
+[2026-10-16T05:14:23.163Z] [GET] /api/reservations/requests?status=pending&customer=joe 304 - 0ms - IP: ::1
+[2026-10-16T05:14:23.162Z] [GET] /api/transactions/purchased-products?customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:14:23.167Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products
+[2026-10-16T05:14:23.169Z] [GET] /api/transactions/purchased-products 304 - 2ms - IP: ::1
+[2026-10-16T05:14:29.423Z] [GET] /api/returns?customer=joe 200 - 1ms - IP: ::1
+[2026-10-16T05:14:29.424Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe
+[2026-10-16T05:14:29.425Z] [GET] /api/transactions?customer=joe 200 - 1ms - IP: ::1
+[2026-10-16T05:14:29.426Z] [GET] /api/returns?customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:14:29.428Z] [GET] /api/transactions?customer=joe 304 - 2ms - IP: ::1
+[2026-10-16T05:14:29.426Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe
+[2026-10-16T05:14:34.403Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:14:34.407Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:14:34.419Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:15:49.994Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:15:49.995Z] [GET] /api/transactions 200 - 1ms - IP: ::1
+[2026-10-16T05:16:29.837Z] [GET] /api/products 200 - 3ms - IP: ::1
+[2026-10-16T05:18:34.365Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:18:34.369Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:18:34.370Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:20:31.350Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-16T05:20:31.355Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:20:31.369Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:21:51.394Z] [POST] /api/users/login 201 - 16ms - IP: ::1
+[2026-10-16T05:21:51.514Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 5ms - IP: ::1
+[2026-10-16T05:21:51.515Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:21:51.517Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:21:51.521Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:21:51.524Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:21:51.530Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 200 - 4ms - IP: ::1
+[2026-10-16T05:21:51.535Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:21:51.539Z] [GET] /api/suppliers 200 - 7ms - IP: ::1
+[2026-10-16T05:21:51.553Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 11ms - IP: ::1
+[2026-10-16T05:21:51.555Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:21:51.559Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:21:51.582Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:21:51.589Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:21:51.596Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:21:51.597Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:21:51.599Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:21:51.601Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:21:51.602Z] [GET] /api/suppliers 304 - 1ms - IP: ::1
+[2026-10-16T05:21:51.606Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:21:51.621Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 5ms - IP: ::1
+[2026-10-16T05:21:51.627Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:21:51.624Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:21:51.631Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:21:51.639Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 6ms - IP: ::1
+[2026-10-16T05:21:51.650Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 5ms - IP: ::1
+[2026-10-16T05:21:51.657Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:08.374Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:08.377Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:08.379Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:08.380Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:08.382Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:08.384Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:08.385Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:22:08.386Z] [GET] /api/suppliers 304 - 1ms - IP: ::1
+[2026-10-16T05:22:08.390Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 2ms - IP: ::1
+[2026-10-16T05:22:08.392Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:08.393Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:08.403Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:08.428Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:08.432Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:08.435Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:08.437Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:08.437Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:22:08.440Z] [GET] /api/suppliers 304 - 3ms - IP: ::1
+[2026-10-16T05:22:08.446Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:22:08.426Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:22:08.453Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 1ms - IP: ::1
+[2026-10-16T05:22:08.456Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:08.458Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:08.469Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:08.467Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 5ms - IP: ::1
+[2026-10-16T05:22:08.478Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 5ms - IP: ::1
+[2026-10-16T05:22:31.238Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:22:31.241Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:31.242Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:31.243Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:31.245Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:31.247Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:31.248Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:22:31.250Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:22:31.259Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 3ms - IP: ::1
+[2026-10-16T05:22:31.262Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:31.263Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:31.274Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:31.278Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:31.286Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:31.287Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:31.290Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:31.293Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:31.295Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:22:31.297Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:22:31.299Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:31.303Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 3ms - IP: ::1
+[2026-10-16T05:22:31.310Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:31.322Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 11ms - IP: ::1
+[2026-10-16T05:22:31.311Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:31.326Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:31.332Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:43.327Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.329Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:43.329Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:43.331Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.332Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::1
+[2026-10-16T05:22:43.339Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:22:43.340Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:22:43.342Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.348Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 2ms - IP: ::1
+[2026-10-16T05:22:43.348Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:43.350Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.370Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.373Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:43.372Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:43.375Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.379Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:43.377Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:43.381Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:22:43.383Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.386Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:43.385Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 1ms - IP: ::1
+[2026-10-16T05:22:43.389Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:43.392Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.397Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.415Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:43.418Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.252Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:53.254Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.258Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:53.260Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:53.261Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.264Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:53.266Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:22:53.269Z] [GET] /api/suppliers 304 - 3ms - IP: ::1
+[2026-10-16T05:22:53.274Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 1ms - IP: ::1
+[2026-10-16T05:22:53.276Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:53.277Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.292Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.298Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:22:53.305Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:53.306Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.307Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.309Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.311Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:22:53.313Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:22:53.315Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 1ms - IP: ::1
+[2026-10-16T05:22:53.318Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:22:53.319Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.321Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:22:53.325Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:22:53.332Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:22:53.339Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:23:29.727Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:23:29.730Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:23:29.736Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:23:29.733Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:23:29.734Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:23:29.741Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:23:29.742Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:23:29.745Z] [GET] /api/suppliers 304 - 3ms - IP: ::1
+[2026-10-16T05:23:29.750Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 1ms - IP: ::1
+[2026-10-16T05:23:29.753Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:23:29.757Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:23:29.764Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:23:29.768Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:23:29.772Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:23:29.773Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:23:29.776Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:23:29.779Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:23:29.781Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:23:29.783Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:23:29.785Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 1ms - IP: ::1
+[2026-10-16T05:23:29.786Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:23:29.787Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:23:29.792Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:23:29.796Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:23:29.802Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:23:29.807Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:24:01.324Z] [GET] /api/returns?customer=joe 304 - 0ms - IP: ::1
+[2026-10-16T05:24:01.325Z] [GET] /api/returns?customer=joe 304 - 0ms - IP: ::1
+[2026-10-16T05:24:01.326Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe
+[2026-10-16T05:24:01.326Z] [GET] /api/transactions?customer=joe 304 - 0ms - IP: ::1
+[2026-10-16T05:24:01.327Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe
+[2026-10-16T05:24:01.328Z] [GET] /api/transactions?customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:24:02.969Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe
+[2026-10-16T05:24:02.970Z] [GET] /api/transactions/purchased-products?customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:24:02.971Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe
+[2026-10-16T05:24:02.972Z] [GET] /api/transactions/purchased-products?customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:24:02.974Z] [GET] /api/reservations/requests?status=pending&customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:24:02.977Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:24:02.980Z] [GET] /api/reservations/requests?status=pending&customer=joe 304 - 1ms - IP: ::1
+[2026-10-16T05:24:02.984Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:25:02.943Z] [POST] /api/users/login 201 - 6ms - IP: ::1
+[2026-10-16T05:25:03.000Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:03.002Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 0ms - IP: ::1
+[2026-10-16T05:25:03.006Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:25:03.008Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:03.016Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:03.021Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:25:03.022Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:25:03.024Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:25:03.028Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 2ms - IP: ::1
+[2026-10-16T05:25:03.033Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:25:03.035Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:03.051Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:03.055Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:25:03.065Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:25:03.067Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:03.071Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:03.063Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:03.076Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:25:03.080Z] [GET] /api/suppliers 304 - 5ms - IP: ::1
+[2026-10-16T05:25:03.083Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 1ms - IP: ::1
+[2026-10-16T05:25:03.088Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:25:03.090Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:03.092Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:03.103Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 7ms - IP: ::1
+[2026-10-16T05:25:03.107Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:03.112Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.072Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:25:45.075Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.076Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:25:45.078Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.080Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:45.090Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:25:45.092Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:25:45.094Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.098Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 2ms - IP: ::1
+[2026-10-16T05:25:45.099Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:25:45.101Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.118Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:45.120Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:45.127Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:25:45.130Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.132Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:25:45.134Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.135Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:25:45.137Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.142Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 4ms - IP: ::1
+[2026-10-16T05:25:45.147Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:25:45.149Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.152Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:45.155Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:25:45.167Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:25:45.171Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:26:10.514Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:26:10.517Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:26:10.518Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:26:10.522Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 4ms - IP: ::1
+[2026-10-16T05:26:10.525Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:26:10.529Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:26:10.531Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:26:10.533Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:26:10.539Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 2ms - IP: ::1
+[2026-10-16T05:26:10.540Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:26:10.542Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:26:10.549Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:26:10.555Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:26:10.557Z] [GET] /api/purchase-orders?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:26:10.559Z] [GET] /api/customers?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:26:10.559Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:26:10.561Z] [GET] /api/transactions?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:26:10.563Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-16T05:26:10.565Z] [GET] /api/suppliers 304 - 2ms - IP: ::1
+[2026-10-16T05:26:10.567Z] [GET] /api/platform-revenue/subscriptions/active?userId=cedc0064-0c9e-445e-9649-d344d6fe094d 404 - 1ms - IP: ::1
+[2026-10-16T05:26:10.569Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE
+[2026-10-16T05:26:10.570Z] [GET] /api/transactions/order-activity?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 1ms - IP: ::1
+[2026-10-16T05:26:10.578Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:26:10.574Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 3ms - IP: ::1
+[2026-10-16T05:26:10.585Z] [GET] /api/returns?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:26:10.589Z] [GET] /api/products?retailerId=cedc0064-0c9e-445e-9649-d344d6fe094d&storeId=JOHN-S-STORE 304 - 2ms - IP: ::1
+[2026-10-16T05:29:14.702Z] [GET] /api/products 200 - 4ms - IP: ::1
+[2026-10-16T05:29:14.705Z] [GET] /api/stores 200 - 1ms - IP: ::1
+[2026-10-16T05:29:14.711Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-16T05:29:14.716Z] [GET] /api/stores 304 - 2ms - IP: ::1
+[2026-10-16T05:29:41.127Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:29:41.129Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 200 - 2ms - IP: ::1
+[2026-10-16T05:29:41.131Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 200 - 1ms - IP: ::1
+[2026-10-16T05:29:41.135Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:29:41.137Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:29:41.139Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:29:41.142Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:29:41.146Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:29:46.124Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:29:46.127Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 3ms - IP: ::1
+[2026-10-16T05:29:46.131Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:29:46.135Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:29:51.131Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:29:51.132Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:29:51.134Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:29:51.140Z] [GET] /api/products 304 - 5ms - IP: ::1
+[2026-10-16T05:29:56.130Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:29:56.133Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 3ms - IP: ::1
+[2026-10-16T05:29:56.135Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:29:56.138Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:29:58.656Z] [GET] /api/products 304 - 5ms - IP: ::1
+[2026-10-16T05:29:58.661Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:29:58.739Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:30:25.036Z] [GET] /api/returns?customer=Test%20Customer 200 - 3ms - IP: ::1
+[2026-10-16T05:30:25.038Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=Test%20Customer
+[2026-10-16T05:30:25.040Z] [GET] /api/transactions?customer=Test%20Customer 200 - 3ms - IP: ::1
+[2026-10-16T05:30:25.043Z] [GET] /api/returns?customer=Test%20Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:30:25.049Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=Test%20Customer
+[2026-10-16T05:30:25.051Z] [GET] /api/transactions?customer=Test%20Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:30:44.002Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:30:44.008Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 6ms - IP: ::1
+[2026-10-16T05:30:44.018Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:30:44.022Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 4ms - IP: ::1
+[2026-10-16T05:30:59.766Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:30:59.768Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:30:59.774Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:30:59.778Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:30:59.780Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:30:59.783Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 3ms - IP: ::1
+[2026-10-16T05:30:59.787Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 3ms - IP: ::1
+[2026-10-16T05:30:59.793Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:31:04.767Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:31:04.771Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 4ms - IP: ::1
+[2026-10-16T05:31:04.772Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 0ms - IP: ::1
+[2026-10-16T05:31:04.777Z] [GET] /api/products 304 - 4ms - IP: ::1
+[2026-10-16T05:31:09.770Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:31:09.771Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:31:09.773Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:31:09.776Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:31:14.761Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:31:14.764Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 3ms - IP: ::1
+[2026-10-16T05:31:14.766Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:31:14.772Z] [GET] /api/products 304 - 5ms - IP: ::1
+[2026-10-16T05:31:19.767Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:31:19.768Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Test%20Customer
+[2026-10-16T05:31:19.771Z] [GET] /api/transactions/purchased-products?customer=Test%20Customer 304 - 3ms - IP: ::1
+[2026-10-16T05:31:19.774Z] [GET] /api/reservations/requests?status=pending&customer=Test+Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:31:59.600Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239
+[2026-10-16T05:31:59.602Z] [GET] /api/transactions/ORD820239 200 - 2ms - IP: ::1
+[2026-10-16T05:32:18.700Z] [GET] /api/returns?customer=Test%20Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:32:18.701Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=Test%20Customer
+[2026-10-16T05:32:18.702Z] [GET] /api/transactions?customer=Test%20Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:32:18.703Z] [GET] /api/returns?customer=Test%20Customer 304 - 0ms - IP: ::1
+[2026-10-16T05:32:18.706Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=Test%20Customer
+[2026-10-16T05:32:18.707Z] [GET] /api/transactions?customer=Test%20Customer 304 - 2ms - IP: ::1
+[2026-10-16T05:32:33.407Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:32:33.410Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 3ms - IP: ::1
+[2026-10-16T05:32:33.424Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:32:33.426Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 3ms - IP: ::1
+[2026-10-16T05:32:47.671Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:32:47.674Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 3ms - IP: ::1
+[2026-10-16T05:32:47.684Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:32:47.686Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:32:57.209Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:32:57.211Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:32:57.225Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:32:57.227Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 3ms - IP: ::1
+[2026-10-16T05:33:02.816Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:33:02.818Z] [GET] /api/transactions 200 - 2ms - IP: ::1
+[2026-10-16T05:33:02.830Z] [GET] /api/returns 200 - 2ms - IP: ::1
+[2026-10-16T05:33:06.180Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:33:06.183Z] [GET] /api/transactions 304 - 3ms - IP: ::1
+[2026-10-16T05:33:28.725Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:33:28.727Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-16T05:33:34.704Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:33:34.706Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-16T05:33:34.717Z] [AUDIT] Action invoked on route: [PUT] /api/transactions/ORD615353
+[2026-10-16T05:33:34.721Z] [PUT] /api/transactions/ORD615353 404 - 4ms - IP: ::1
+[2026-10-16T05:33:34.727Z] [AUDIT] Action invoked on route: [PUT] /api/transactions/ORD840499
+[2026-10-16T05:33:34.728Z] [PUT] /api/transactions/ORD840499 404 - 1ms - IP: ::1
+[2026-10-16T05:33:34.733Z] [AUDIT] Action invoked on route: [PUT] /api/transactions/ORD154403
+[2026-10-16T05:33:34.734Z] [PUT] /api/transactions/ORD154403 404 - 1ms - IP: ::1
+[2026-10-16T05:33:34.742Z] [AUDIT] Action invoked on route: [PUT] /api/transactions/ORD546371
+[2026-10-16T05:33:34.744Z] [PUT] /api/transactions/ORD546371 404 - 2ms - IP: ::1
+[2026-10-16T05:33:34.751Z] [AUDIT] Action invoked on route: [PUT] /api/transactions/ORD820239
+[2026-10-16T05:33:34.753Z] [PUT] /api/transactions/ORD820239 404 - 2ms - IP: ::1
+[2026-10-16T05:33:34.758Z] [AUDIT] Action invoked on route: [PUT] /api/transactions/ORD632591
+[2026-10-16T05:33:34.761Z] [PUT] /api/transactions/ORD632591 404 - 3ms - IP: ::1
+[2026-10-16T05:33:37.703Z] [GET] /api/returns 304 - 1ms - IP: ::1
+[2026-10-16T05:33:42.257Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:33:42.258Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 1ms - IP: ::1
+[2026-10-16T05:33:42.268Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:33:42.270Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:33:47.151Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:33:47.153Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-16T05:33:49.423Z] [GET] /api/transactions 304 - 1ms - IP: ::1
+[2026-10-16T05:33:49.422Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:33:52.633Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:33:52.635Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-16T05:33:58.151Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:33:58.153Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:33:58.163Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Test%20Customer
+[2026-10-16T05:33:58.165Z] [GET] /api/transactions/ORD820239?customer=Test%20Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:34:03.448Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:34:03.450Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-16T05:34:03.468Z] [GET] /api/returns 304 - 2ms - IP: ::1
+[2026-10-16T05:34:13.567Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:34:13.568Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T05:34:13.570Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:34:13.573Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:34:31.833Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:34:31.834Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:34:31.836Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:34:31.838Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:35:08.279Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:35:08.281Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:35:08.283Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:35:08.285Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:36:23.490Z] [GET] /api/users 200 - 36ms - IP: ::1
+[2026-10-16T05:36:49.258Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:36:49.259Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T05:36:49.261Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:36:49.262Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T05:37:06.470Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:37:06.472Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:37:06.474Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:37:06.475Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T05:37:30.975Z] [GET] /api/users 304 - 37ms - IP: ::1
+[2026-10-16T05:37:33.533Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:37:33.534Z] [GET] /api/stores 304 - 0ms - IP: ::1
+[2026-10-16T05:37:33.537Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:37:33.538Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:37:56.195Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Customer
+[2026-10-16T05:37:56.198Z] [GET] /api/reservations/requests?status=pending&customer=Customer 200 - 1ms - IP: ::1
+[2026-10-16T05:37:56.196Z] [GET] /api/transactions/purchased-products?customer=Customer 200 - 1ms - IP: ::1
+[2026-10-16T05:37:56.199Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:37:56.200Z] [GET] /api/transactions/purchased-products?customer=Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:37:56.199Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Customer
+[2026-10-16T05:37:56.201Z] [GET] /api/reservations/requests?status=pending&customer=Customer 304 - 0ms - IP: ::1
+[2026-10-16T05:37:56.203Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:38:01.195Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=Customer
+[2026-10-16T05:38:01.197Z] [GET] /api/reservations/requests?status=pending&customer=Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:38:01.196Z] [GET] /api/transactions/purchased-products?customer=Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:38:01.198Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:38:03.219Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=Customer
+[2026-10-16T05:38:03.218Z] [GET] /api/returns?customer=Customer 200 - 0ms - IP: ::1
+[2026-10-16T05:38:03.219Z] [GET] /api/transactions?customer=Customer 200 - 0ms - IP: ::1
+[2026-10-16T05:38:03.221Z] [GET] /api/returns?customer=Customer 304 - 1ms - IP: ::1
+[2026-10-16T05:38:03.222Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=Customer
+[2026-10-16T05:38:03.222Z] [GET] /api/transactions?customer=Customer 304 - 0ms - IP: ::1
+[2026-10-16T05:38:07.673Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Customer
+[2026-10-16T05:38:07.675Z] [GET] /api/transactions/ORD820239?customer=Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:38:07.688Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Customer
+[2026-10-16T05:38:07.689Z] [GET] /api/transactions/ORD820239?customer=Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:38:16.574Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Customer
+[2026-10-16T05:38:16.576Z] [GET] /api/transactions/ORD820239?customer=Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:38:16.587Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Customer
+[2026-10-16T05:38:16.589Z] [GET] /api/transactions/ORD820239?customer=Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:38:22.259Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:38:22.261Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-16T05:38:25.019Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:38:25.021Z] [GET] /api/transactions 304 - 2ms - IP: ::1
+[2026-10-16T05:38:27.086Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Customer
+[2026-10-16T05:38:27.088Z] [GET] /api/transactions/ORD820239?customer=Customer 404 - 2ms - IP: ::1
+[2026-10-16T05:38:27.096Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=Customer
+[2026-10-16T05:38:27.097Z] [GET] /api/transactions/ORD820239?customer=Customer 404 - 1ms - IP: ::1
+[2026-10-16T05:38:46.632Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:38:46.633Z] [GET] /api/transactions 304 - 1ms - IP: ::1
+[2026-10-16T05:38:52.648Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=James
+[2026-10-16T05:38:52.649Z] [GET] /api/transactions/ORD820239?customer=James 200 - 1ms - IP: ::1
+[2026-10-16T05:38:57.547Z] [GET] /api/returns 304 - 0ms - IP: ::1
+[2026-10-16T05:39:03.730Z] [GET] /api/returns 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-10-16T05:39:06.688Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=James
+[2026-10-16T05:39:06.688Z] [GET] /api/transactions/ORD820239?customer=James 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-10-16T05:39:11.432Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:39:11.433Z] [GET] /api/transactions 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-10-16T05:39:13.842Z] [AUDIT] Action invoked on route: [GET] /api/transactions
+[2026-10-16T05:39:13.843Z] [GET] /api/transactions 304 - 1ms - IP: ::ffff:127.0.0.1
+[2026-10-16T05:39:17.274Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD820239?customer=James
+[2026-10-16T05:39:17.274Z] [GET] /api/transactions/ORD820239?customer=James 304 - 0ms - IP: ::ffff:127.0.0.1
+[2026-10-16T05:39:23.559Z] [AUDIT] Action invoked on route: [GET] /api/transactions/ORD154403?customer=James
+[2026-10-16T05:39:23.560Z] [GET] /api/transactions/ORD154403?customer=James 200 - 1ms - IP: ::1
+[2026-10-16T05:39:28.952Z] [POST] /api/returns 201 - 8ms - IP: ::1
+[2026-10-16T05:39:28.959Z] [GET] /api/returns?customer=James 304 - 1ms - IP: ::1
+[2026-10-16T05:39:28.959Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=James
+[2026-10-16T05:39:28.961Z] [GET] /api/transactions?customer=James 200 - 2ms - IP: ::1
+[2026-10-16T05:41:03.230Z] [POST] /api/users/login 201 - 2ms - IP: ::1
+[2026-10-16T05:41:03.240Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:41:03.242Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:41:03.246Z] [GET] /api/products 304 - 3ms - IP: ::1
+[2026-10-16T05:41:03.248Z] [GET] /api/stores 304 - 1ms - IP: ::1
+[2026-10-16T05:41:05.840Z] [GET] /api/products 304 - 1ms - IP: ::1
+[2026-10-16T05:41:05.841Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:41:05.842Z] [GET] /api/transactions/purchased-products?customer=joe1 200 - 1ms - IP: ::1
+[2026-10-16T05:41:05.843Z] [GET] /api/reservations/requests?status=pending&customer=joe1 200 - 1ms - IP: ::1
+[2026-10-16T05:41:05.845Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:41:05.845Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:41:05.846Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:41:05.847Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:41:07.847Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:41:07.849Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 2ms - IP: ::1
+[2026-10-16T05:41:07.850Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:41:07.852Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:41:07.853Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=joe1
+[2026-10-16T05:41:07.854Z] [GET] /api/transactions/purchased-products?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:41:07.855Z] [GET] /api/reservations/requests?status=pending&customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:41:07.858Z] [GET] /api/products 304 - 2ms - IP: ::1
+[2026-10-16T05:41:08.294Z] [GET] /api/returns?customer=joe1 304 - 0ms - IP: ::1
+[2026-10-16T05:41:08.294Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T05:41:08.293Z] [GET] /api/returns?customer=joe1 200 - 1ms - IP: ::1
+[2026-10-16T05:41:08.295Z] [GET] /api/transactions?customer=joe1 200 - 1ms - IP: ::1
+[2026-10-16T05:41:08.295Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T05:41:08.296Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:41:09.485Z] [GET] /api/returns?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:41:09.485Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T05:41:09.486Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:41:09.487Z] [GET] /api/returns?customer=joe1 304 - 1ms - IP: ::1
+[2026-10-16T05:41:09.487Z] [AUDIT] Action invoked on route: [GET] /api/transactions?customer=joe1
+[2026-10-16T05:41:09.488Z] [GET] /api/transactions?customer=joe1 304 - 1ms - IP: ::1
