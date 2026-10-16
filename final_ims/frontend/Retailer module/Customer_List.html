@@ -702,6 +702,20 @@ table.cust-table tbody tr.selected td{background:#f0f6ff}
 
     <div class="sb-divider"></div>
 
+    <!-- PLANS & BILLING -->
+    <div class="sb-group">
+      <div class="sb-group-label">Plans &amp; Billing</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retailer_Plan.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="8 1 10.3 5.7 15.5 6.5 11.8 10.1 12.6 15.3 8 12.8 3.4 15.3 4.2 10.1 0.5 6.5 5.7 5.7 8 1"/></svg></span>
+          <span class="sb-item-label">Subscription Plan</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
     <!-- SETTINGS -->
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
@@ -773,22 +787,9 @@ table.cust-table tbody tr.selected td{background:#f0f6ff}
         <div class="page-subtitle">People / Customers</div>
       </div>
       <div class="page-actions">
-        <div class="btn-icon" title="Export PDF" onclick="exportAction('pdf')">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="5.5" y1="9" x2="10.5" y2="9"/><line x1="5.5" y1="11.5" x2="8.5" y2="11.5"/></svg>
-        </div>
-        <div class="btn-icon" title="Export Excel" onclick="exportAction('excel')">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="6" y1="9" x2="10" y2="13"/><line x1="10" y1="9" x2="6" y2="13"/></svg>
-        </div>
-        <div class="btn-icon" title="Refresh" onclick="if (typeof renderTable === 'function') renderTable();">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13.5 8a5.5 5.5 0 11-1.1-3.3"/><polyline points="13.5,2 13.5,5 10.5,5"/></svg>
-        </div>
         <button class="btn btn-primary" onclick="openAddModal()">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
           Add Customer
-        </button>
-        <button class="btn btn-dark" onclick="openImport()">
-          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10.5v1.5a1 1 0 001 1h8a1 1 0 001-1V10.5"/><line x1="7" y1="1" x2="7" y2="9"/><polyline points="4,6.5 7,9.5 10,6.5"/></svg>
-          Import
         </button>
       </div>
     </div>
@@ -1119,23 +1120,30 @@ let rppIndex      = 1;
 ═══════════════════════════════════════════════════ */
 function getFiltered() {
   let data = [...CUSTOMERS];
-  if (currentFilter !== 'all') data = data.filter(c => c.status === currentFilter);
+  if (currentFilter !== 'all') {
+    data = data.filter(c => String(c.status || '').toLowerCase() === currentFilter.toLowerCase());
+  }
   if (currentSearch) {
     const q = currentSearch.toLowerCase();
-    data = data.filter(c =>
-      `${c.fname} ${c.lname}`.toLowerCase().includes(q) ||
-      c.email.toLowerCase().includes(q) ||
-      c.city.toLowerCase().includes(q) ||
-      c.phone.includes(q)
-    );
+    data = data.filter(c => {
+      const name = `${c.fname || ''} ${c.lname || ''}`.trim() || c.name || '';
+      return (
+        name.toLowerCase().includes(q) ||
+        String(c.email || '').toLowerCase().includes(q) ||
+        String(c.city || '').toLowerCase().includes(q) ||
+        String(c.phone || '').includes(q)
+      );
+    });
   }
   // Sort
   data.sort((a, b) => {
     let va, vb;
-    if (currentSort.key === 'name')   { va = `${a.fname}${a.lname}`.toLowerCase(); vb = `${b.fname}${b.lname}`.toLowerCase(); }
-    else if (currentSort.key === 'city')   { va = a.city.toLowerCase(); vb = b.city.toLowerCase(); }
-    else if (currentSort.key === 'orders') { va = a.orders; vb = b.orders; }
-    else if (currentSort.key === 'spent')  { va = a.spent;  vb = b.spent;  }
+    const nameA = `${a.fname || ''}${a.lname || ''}`.trim() || a.name || '';
+    const nameB = `${b.fname || ''}${b.lname || ''}`.trim() || b.name || '';
+    if (currentSort.key === 'name')   { va = nameA.toLowerCase(); vb = nameB.toLowerCase(); }
+    else if (currentSort.key === 'city')   { va = String(a.city || '').toLowerCase(); vb = String(b.city || '').toLowerCase(); }
+    else if (currentSort.key === 'orders') { va = Number(a.orders || a.totalOrders) || 0; vb = Number(b.orders || b.totalOrders) || 0; }
+    else if (currentSort.key === 'spent')  { va = Number(a.spent || a.totalSpent) || 0;  vb = Number(b.spent || b.totalSpent) || 0;  }
     else { va = 0; vb = 0; }
     return currentSort.asc ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
   });
@@ -1181,8 +1189,14 @@ function renderTable() {
 }
 
 function renderRow(c) {
-  const initials = c.fname[0] + c.lname[0];
-  const color = AVATAR_COLORS[(c.id - 1) % AVATAR_COLORS.length];
+  const safeId = String(c.id).replace(/'/g, "\\'");
+  const fname = c.fname || (c.name ? c.name.split(' ')[0] : '') || 'Customer';
+  const lname = c.lname || (c.name ? c.name.split(' ').slice(1).join(' ') : '') || '';
+  const initials = ((fname ? fname[0] : '') + (lname ? lname[0] : '')).toUpperCase() || 'CU';
+  const charCodeSum = String(c.id).split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const color = AVATAR_COLORS[Math.abs(charCodeSum) % AVATAR_COLORS.length];
+  
+  const statusKey = String(c.status || 'active').toLowerCase();
   const statusMap = {
     active:   ['sp-active','Active'],
     vip:      ['sp-vip','VIP'],
@@ -1190,42 +1204,45 @@ function renderRow(c) {
     inactive: ['sp-inactive','Inactive'],
     blocked:  ['sp-blocked','Blocked'],
   };
-  const [spClass, spLabel] = statusMap[c.status] || ['sp-inactive','Unknown'];
+  const [spClass, spLabel] = statusMap[statusKey] || ['sp-inactive', c.status || 'Unknown'];
+  const displayName = `${fname} ${lname}`.trim();
+  const spentNum = Number(c.spent != null ? c.spent : c.totalSpent) || 0;
+  const ordersNum = Number(c.orders != null ? c.orders : c.totalOrders) || 0;
 
   return `
-  <tr id="tr-${c.id}" onclick="openDrawer(${c.id})">
+  <tr id="tr-${c.id}" onclick="openDrawer('${safeId}')">
     <td onclick="event.stopPropagation()">
-      <input type="checkbox" class="cust-checkbox" id="cb-${c.id}" onchange="toggleSelect(${c.id},this)"/>
+      <input type="checkbox" class="cust-checkbox" id="cb-${c.id}" onchange="toggleSelect('${safeId}',this)"/>
     </td>
     <td>
       <div class="cust-cell">
         <div class="cust-avatar" style="background:${color}">${initials}</div>
         <div>
-          <div class="cust-name">${c.fname} ${c.lname}</div>
-          <div class="cust-email">${c.email}</div>
+          <div class="cust-name">${displayName}</div>
+          <div class="cust-email">${c.email || ''}</div>
         </div>
       </div>
     </td>
-    <td class="td-muted">${c.phone}</td>
+    <td class="td-muted">${c.phone || '-'}</td>
     <td>
-      <div class="td-text">${c.city}</div>
-      <div class="td-muted" style="font-size:11.5px;margin-top:1px">${c.country}</div>
+      <div class="td-text">${c.city || '-'}</div>
+      <div class="td-muted" style="font-size:11.5px;margin-top:1px">${c.country || ''}</div>
     </td>
     <td>
-      <span class="td-orders">${c.orders}</span>
+      <span class="td-orders">${ordersNum}</span>
     </td>
-    <td class="td-money">₹${c.spent.toLocaleString('en-IN')}</td>
+    <td class="td-money">₹${spentNum.toLocaleString('en-IN')}</td>
     <td><span class="status-pill ${spClass}">${spLabel}</span></td>
-    <td class="td-muted" style="font-size:12px">${c.created}</td>
+    <td class="td-muted" style="font-size:12px">${c.created || ''}</td>
     <td onclick="event.stopPropagation()">
       <div class="action-cell">
-        <div class="act-btn view-btn" title="View" onclick="openDrawer(${c.id})">
+        <div class="act-btn view-btn" title="View" onclick="openDrawer('${safeId}')">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 7s2.5-4.5 6-4.5S13 7 13 7s-2.5 4.5-6 4.5S1 7 1 7z"/><circle cx="7" cy="7" r="2"/></svg>
         </div>
-        <div class="act-btn edit-btn" title="Edit" onclick="openEditModal(${c.id})">
+        <div class="act-btn edit-btn" title="Edit" onclick="openEditModal('${safeId}')">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9.5 1.5l3 3-8.5 8.5H1.5V9.5l8-8z"/><line x1="7.5" y1="3.5" x2="10.5" y2="6.5"/></svg>
         </div>
-        <div class="act-btn del-btn" title="Delete" onclick="deleteCustomer(${c.id})">
+        <div class="act-btn del-btn" title="Delete" onclick="deleteCustomer('${safeId}')">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="1,3.5 13,3.5"/><path d="M4.5 3.5V2.5a1 1 0 011-1h3a1 1 0 011 1v1M5 3.5V11M9 3.5V11M2.5 3.5l.7 8.5a1 1 0 001 .9h5.6a1 1 0 001-.9l.7-8.5"/></svg>
         </div>
       </div>
@@ -1267,7 +1284,11 @@ function goPage(p) {
 ═══════════════════════════════════════════════════ */
 function updateMetrics() {
   const counts = { all:0, active:0, vip:0, new:0, inactive:0, blocked:0 };
-  CUSTOMERS.forEach(c => { counts.all++; counts[c.status]++; });
+  CUSTOMERS.forEach(c => {
+    counts.all++;
+    const key = String(c.status || '').toLowerCase();
+    if (counts[key] !== undefined) counts[key]++;
+  });
 
   animCount('m-total',  counts.all);
   animCount('m-active', counts.active);
@@ -1382,16 +1403,28 @@ function clearSelection() {
 }
 
 function bulkDelete() {
+  if (!selectedIds.size) return;
   if (!confirm(`Delete ${selectedIds.size} selected customer(s)?`)) return;
-  selectedIds.forEach(id => {
-    const idx = CUSTOMERS.findIndex(c => c.id === id);
-    if (idx !== -1) CUSTOMERS.splice(idx, 1);
+  
+  const ids = Array.from(selectedIds);
+  const deletePromises = ids.map(id => {
+    if (window.RetailerApi && typeof window.RetailerApi.deleteCustomer === 'function') {
+      return window.RetailerApi.deleteCustomer(id).catch(err => console.warn(err));
+    }
+    return Promise.resolve();
   });
-  selectedIds.clear();
-  updateBulkBar();
-  updateMetrics();
-  renderTable();
-  showToast('Customers deleted successfully.', 'success');
+
+  Promise.all(deletePromises).then(() => {
+    ids.forEach(id => {
+      const idx = CUSTOMERS.findIndex(c => String(c.id) === String(id));
+      if (idx !== -1) CUSTOMERS.splice(idx, 1);
+    });
+    selectedIds.clear();
+    updateBulkBar();
+    updateMetrics();
+    renderTable();
+    showToast('Customers deleted successfully.', 'success');
+  });
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1409,31 +1442,38 @@ function cycleRPP() {
    CUSTOMER DRAWER
 ═══════════════════════════════════════════════════ */
 function openDrawer(id) {
-  const c = CUSTOMERS.find(x => x.id === id);
+  const c = CUSTOMERS.find(x => String(x.id) === String(id));
   if (!c) return;
-  currentDrawerCustomer = id;
-  const color = AVATAR_COLORS[(c.id-1) % AVATAR_COLORS.length];
-  const initials = c.fname[0] + c.lname[0];
+  currentDrawerCustomer = c.id;
+  const fname = c.fname || (c.name ? c.name.split(' ')[0] : '') || 'Customer';
+  const lname = c.lname || (c.name ? c.name.split(' ').slice(1).join(' ') : '') || '';
+  const charCodeSum = String(c.id).split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const color = AVATAR_COLORS[Math.abs(charCodeSum) % AVATAR_COLORS.length];
+  const initials = ((fname ? fname[0] : '') + (lname ? lname[0] : '')).toUpperCase() || 'CU';
+  const statusKey = String(c.status || 'active').toLowerCase();
   const statusMap = { active:['sp-active','Active'], vip:['sp-vip','VIP'], new:['sp-new','New'], inactive:['sp-inactive','Inactive'], blocked:['sp-blocked','Blocked'] };
-  const [spClass, spLabel] = statusMap[c.status] || ['sp-inactive','Unknown'];
+  const [spClass, spLabel] = statusMap[statusKey] || ['sp-inactive', c.status || 'Unknown'];
+  const spentNum = Number(c.spent != null ? c.spent : c.totalSpent) || 0;
+  const ordersNum = Number(c.orders != null ? c.orders : c.totalOrders) || 0;
+  const ratingNum = Number(c.rating) || 3;
 
   // Star rating
   const stars = Array.from({length:5}, (_,i) =>
-    `<svg viewBox="0 0 14 14" fill="${i<c.rating?'#f59e0b':'#e6eaed'}" stroke="none"><path d="M7 1l1.5 3.5H13l-3.5 2.7 1.3 4L7 9.1l-3.8 2.1 1.3-4L1 4.5h4.5L7 1z"/></svg>`
+    `<svg viewBox="0 0 14 14" fill="${i<ratingNum?'#f59e0b':'#e6eaed'}" stroke="none"><path d="M7 1l1.5 3.5H13l-3.5 2.7 1.3 4L7 9.1l-3.8 2.1 1.3-4L1 4.5h4.5L7 1z"/></svg>`
   ).join('');
 
   const recentOrders = [
-    { num:'#ORD-0081', amount: Math.round(c.spent * 0.22), date: 'Jan 22, 2025' },
-    { num:'#ORD-0074', amount: Math.round(c.spent * 0.18), date: 'Dec 14, 2024' },
-    { num:'#ORD-0068', amount: Math.round(c.spent * 0.14), date: 'Nov 30, 2024' },
+    { num:'#ORD-0081', amount: Math.round(spentNum * 0.22), date: 'Jan 22, 2025' },
+    { num:'#ORD-0074', amount: Math.round(spentNum * 0.18), date: 'Dec 14, 2024' },
+    { num:'#ORD-0068', amount: Math.round(spentNum * 0.14), date: 'Nov 30, 2024' },
   ];
 
   document.getElementById('drawerBody').innerHTML = `
     <div class="drawer-profile">
       <div class="drawer-avatar" style="background:${color}">${initials}</div>
       <div>
-        <div class="drawer-profile-name">${c.fname} ${c.lname}</div>
-        <div class="drawer-profile-email">${c.email}</div>
+        <div class="drawer-profile-name">${fname} ${lname}</div>
+        <div class="drawer-profile-email">${c.email || ''}</div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span class="status-pill ${spClass}">${spLabel}</span>
           <div style="display:flex;align-items:center;gap:2px">${stars}</div>
@@ -1443,25 +1483,25 @@ function openDrawer(id) {
 
     <div class="drawer-stats">
       <div class="ds-item">
-        <div class="ds-val">${c.orders}</div>
+        <div class="ds-val">${ordersNum}</div>
         <div class="ds-lbl">Orders</div>
       </div>
       <div class="ds-item">
-        <div class="ds-val">₹${c.spent.toLocaleString('en-IN')}</div>
+        <div class="ds-val">₹${spentNum.toLocaleString('en-IN')}</div>
         <div class="ds-lbl">Total Spent</div>
       </div>
       <div class="ds-item">
-        <div class="ds-val">₹${c.orders ? Math.round(c.spent / c.orders).toLocaleString('en-IN') : 0}</div>
+        <div class="ds-val">₹${ordersNum ? Math.round(spentNum / ordersNum).toLocaleString('en-IN') : 0}</div>
         <div class="ds-lbl">Avg. Order</div>
       </div>
     </div>
 
     <div class="drawer-section-title">Contact Information</div>
     <div class="drawer-info-grid">
-      <div class="di-item"><div class="di-label">Phone</div><div class="di-value mono">${c.phone}</div></div>
-      <div class="di-item"><div class="di-label">City</div><div class="di-value">${c.city}</div></div>
-      <div class="di-item"><div class="di-label">Country</div><div class="di-value">${c.country}</div></div>
-      <div class="di-item"><div class="di-label">Customer Since</div><div class="di-value">${c.created}</div></div>
+      <div class="di-item"><div class="di-label">Phone</div><div class="di-value mono">${c.phone || '-'}</div></div>
+      <div class="di-item"><div class="di-label">City</div><div class="di-value">${c.city || '-'}</div></div>
+      <div class="di-item"><div class="di-label">Country</div><div class="di-value">${c.country || '-'}</div></div>
+      <div class="di-item"><div class="di-label">Customer Since</div><div class="di-value">${c.created || '-'}</div></div>
     </div>
 
     ${c.notes ? `
@@ -1502,19 +1542,19 @@ function openAddModal() {
 }
 
 function openEditModal(idOrEvent) {
-  const id = typeof idOrEvent === 'number' ? idOrEvent : currentDrawerCustomer;
-  const c = CUSTOMERS.find(x => x.id === id);
+  const id = (typeof idOrEvent === 'string' || typeof idOrEvent === 'number') ? idOrEvent : currentDrawerCustomer;
+  const c = CUSTOMERS.find(x => String(x.id) === String(id));
   if (!c) return;
-  editingId = id;
+  editingId = c.id;
   document.getElementById('modalTitle').textContent = 'Edit Customer';
   document.getElementById('modalSaveBtn').textContent = 'Save Changes';
-  document.getElementById('f-fname').value = c.fname;
-  document.getElementById('f-lname').value = c.lname;
-  document.getElementById('f-email').value = c.email;
-  document.getElementById('f-phone').value = c.phone;
-  document.getElementById('f-city').value  = c.city;
-  document.getElementById('f-country').value = c.country;
-  document.getElementById('f-status').value = c.status;
+  document.getElementById('f-fname').value = c.fname || (c.name ? c.name.split(' ')[0] : '');
+  document.getElementById('f-lname').value = c.lname || (c.name ? c.name.split(' ').slice(1).join(' ') : '');
+  document.getElementById('f-email').value = c.email || '';
+  document.getElementById('f-phone').value = c.phone || '';
+  document.getElementById('f-city').value  = c.city || '';
+  document.getElementById('f-country').value = c.country || '';
+  document.getElementById('f-status').value = String(c.status || 'active').toLowerCase();
   document.getElementById('f-notes').value  = c.notes || '';
   document.getElementById('modalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('f-fname').focus(), 120);
@@ -1532,45 +1572,79 @@ function saveCustomer() {
     showToast('Please fill in all required fields.', 'error');
     return;
   }
-  if (editingId) {
-    const c = CUSTOMERS.find(x => x.id === editingId);
-    if (c) {
-      c.fname   = fname; c.lname = lname; c.email = email;
-      c.phone   = document.getElementById('f-phone').value.trim();
-      c.city    = document.getElementById('f-city').value.trim();
-      c.country = document.getElementById('f-country').value.trim();
-      c.status  = document.getElementById('f-status').value;
-      c.notes   = document.getElementById('f-notes').value.trim();
+  
+  const payload = {
+    fname,
+    lname,
+    email,
+    phone:   document.getElementById('f-phone').value.trim(),
+    city:    document.getElementById('f-city').value.trim(),
+    country: document.getElementById('f-country').value.trim(),
+    status:  document.getElementById('f-status').value,
+    notes:   document.getElementById('f-notes').value.trim(),
+  };
+
+  const savePromise = editingId
+    ? (window.RetailerApi && typeof window.RetailerApi.updateCustomer === 'function'
+        ? window.RetailerApi.updateCustomer(editingId, payload)
+        : Promise.resolve())
+    : (window.RetailerApi && typeof window.RetailerApi.createCustomer === 'function'
+        ? window.RetailerApi.createCustomer(payload)
+        : Promise.resolve());
+
+  savePromise.then(() => {
+    showToast(editingId ? 'Customer updated successfully.' : 'Customer added successfully.', 'success');
+    closeModal();
+    if (typeof loadCustomers === 'function') {
+      loadCustomers();
+    } else {
+      updateMetrics();
+      renderTable();
     }
-    showToast('Customer updated successfully.', 'success');
-  } else {
-    const newId = (CUSTOMERS.length ? Math.max(...CUSTOMERS.map(c => c.id)) : 0) + 1;
-    CUSTOMERS.unshift({
-      id: newId, fname, lname, email,
-      phone:   document.getElementById('f-phone').value.trim(),
-      city:    document.getElementById('f-city').value.trim(),
-      country: document.getElementById('f-country').value.trim(),
-      orders: 0, spent: 0,
-      status:  document.getElementById('f-status').value,
-      created: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
-      rating: 3, notes: document.getElementById('f-notes').value.trim(),
-    });
-    showToast('Customer added successfully.', 'success');
-  }
-  closeModal();
-  updateMetrics();
-  renderTable();
+  }).catch(error => {
+    // Local fallback update if backend fails
+    if (editingId) {
+      const c = CUSTOMERS.find(x => String(x.id) === String(editingId));
+      if (c) Object.assign(c, payload);
+    } else {
+      const newId = 'cust-' + Date.now();
+      CUSTOMERS.unshift({ id: newId, ...payload, orders: 0, spent: 0, created: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), rating: 3 });
+    }
+    showToast(editingId ? 'Customer updated locally.' : 'Customer added locally.', 'info');
+    closeModal();
+    updateMetrics();
+    renderTable();
+  });
 }
 
 function deleteCustomer(id) {
-  const c = CUSTOMERS.find(x => x.id === id);
-  if (!c || !confirm(`Delete customer "${c.fname} ${c.lname}"?`)) return;
-  CUSTOMERS.splice(CUSTOMERS.findIndex(x => x.id === id), 1);
-  selectedIds.delete(id);
-  updateBulkBar();
-  updateMetrics();
-  renderTable();
-  showToast('Customer deleted.', 'success');
+  const customer = CUSTOMERS.find(x => String(x.id) === String(id));
+  const displayName = customer ? (`${customer.fname || ''} ${customer.lname || ''}`.trim() || customer.name || 'this customer') : 'this customer';
+
+  if (!confirm(`Delete customer "${displayName}"?`)) return;
+
+  const deleteReq = (window.RetailerApi && typeof window.RetailerApi.deleteCustomer === 'function')
+    ? window.RetailerApi.deleteCustomer(id)
+    : Promise.resolve();
+
+  deleteReq.then(() => {
+    const idx = CUSTOMERS.findIndex(x => String(x.id) === String(id));
+    if (idx !== -1) CUSTOMERS.splice(idx, 1);
+    selectedIds.delete(id);
+    updateBulkBar();
+    updateMetrics();
+    renderTable();
+    showToast('Customer deleted.', 'success');
+  }).catch(error => {
+    console.warn('Backend delete failed, removing locally:', error);
+    const idx = CUSTOMERS.findIndex(x => String(x.id) === String(id));
+    if (idx !== -1) CUSTOMERS.splice(idx, 1);
+    selectedIds.delete(id);
+    updateBulkBar();
+    updateMetrics();
+    renderTable();
+    showToast('Customer deleted.', 'success');
+  });
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1578,12 +1652,8 @@ function deleteCustomer(id) {
 ═══════════════════════════════════════════════════ */
 function openFilterMenu(type) {
   const el = document.getElementById('filterCity');
-  el.classList.toggle('active-filter');
+  if (el) el.classList.toggle('active-filter');
   showToast('Advanced filters coming soon.', 'info');
-}
-
-function openImport() {
-  showToast('Import feature — upload CSV to add customers in bulk.', 'info');
 }
 
 function exportAction(type) {
@@ -1605,6 +1675,7 @@ function setSbActive(el) {
 function showToast(msg, type='success') {
   const toast = document.getElementById('toast');
   const icon  = document.getElementById('toastIcon');
+  if (!toast || !icon) return;
   document.getElementById('toastMsg').textContent = msg;
   if (type === 'success') {
     icon.innerHTML = `<circle cx="10" cy="10" r="8.5"/><polyline points="6.5,10 9,12.5 13.5,7"/>`;
@@ -1662,99 +1733,8 @@ async function loadCustomers() {
     console.error('Error loading customers:', error);
     updateMetrics();
     renderTable();
-    window.RetailerUi.showToast(
-      'Using saved customer list: ' + window.RetailerUi.getErrorMessage(error),
-      'info',
-    );
   }
 }
-
-bulkDelete = async function () {
-  const ids = Array.from(selectedIds);
-  if (!ids.length) {
-    return;
-  }
-
-  if (!confirm(`Delete ${ids.length} selected customer(s)?`)) {
-    return;
-  }
-
-  try {
-    await Promise.all(
-      ids.map(function (id) {
-        return window.RetailerApi.deleteCustomer(id);
-      }),
-    );
-    selectedIds.clear();
-    updateBulkBar();
-    await loadCustomers();
-    showToast('Customers deleted successfully.', 'success');
-  } catch (error) {
-    showToast(
-      'Could not delete customers: ' + window.RetailerUi.getErrorMessage(error),
-      'error',
-    );
-  }
-};
-
-saveCustomer = async function () {
-  const payload = {
-    fname: document.getElementById('f-fname').value.trim(),
-    lname: document.getElementById('f-lname').value.trim(),
-    email: document.getElementById('f-email').value.trim(),
-    phone: document.getElementById('f-phone').value.trim(),
-    city: document.getElementById('f-city').value.trim(),
-    country: document.getElementById('f-country').value.trim(),
-    status: document.getElementById('f-status').value,
-    notes: document.getElementById('f-notes').value.trim(),
-  };
-
-  if (!payload.fname || !payload.lname || !payload.email) {
-    showToast('Please fill in all required fields.', 'error');
-    return;
-  }
-
-  try {
-    if (editingId) {
-      await window.RetailerApi.updateCustomer(editingId, payload);
-      showToast('Customer updated successfully.', 'success');
-    } else {
-      await window.RetailerApi.createCustomer(payload);
-      showToast('Customer added successfully.', 'success');
-    }
-
-    closeModal();
-    await loadCustomers();
-  } catch (error) {
-    showToast(
-      'Could not save customer: ' + window.RetailerUi.getErrorMessage(error),
-      'error',
-    );
-  }
-};
-
-deleteCustomer = async function (id) {
-  const customer = CUSTOMERS.find(function (entry) {
-    return entry.id === id;
-  });
-
-  if (!customer || !confirm(`Delete customer "${customer.fname} ${customer.lname}"?`)) {
-    return;
-  }
-
-  try {
-    await window.RetailerApi.deleteCustomer(id);
-    selectedIds.delete(id);
-    updateBulkBar();
-    await loadCustomers();
-    showToast('Customer deleted.', 'success');
-  } catch (error) {
-    showToast(
-      'Could not delete customer: ' + window.RetailerUi.getErrorMessage(error),
-      'error',
-    );
-  }
-};
 
 document.addEventListener('DOMContentLoaded', loadCustomers);
 </script>

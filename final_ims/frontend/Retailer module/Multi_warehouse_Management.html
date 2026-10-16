@@ -181,6 +181,10 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:p
 .action-btn.delete:hover{background:var(--danger-light);border-color:#fca5a5}
 .action-btn.delete:hover svg{color:var(--danger)}
 
+/* Add Store button */
+.btn-add-store{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:#2e6bc5;color:#fff;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:'Nunito Sans',sans-serif;transition:background .15s,box-shadow .15s;box-shadow:0 2px 8px rgba(46,107,197,0.18)}
+.btn-add-store:hover{background:#1d5bb8;box-shadow:0 4px 16px rgba(46,107,197,0.28)}
+
 /* ═══ PAGINATION ═══ */
 .table-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);background:#fff}
 .tf-left{display:flex;align-items:center;gap:10px;font-family:'Nunito Sans',sans-serif;font-size:12.5px;color:var(--text-muted)}
@@ -406,6 +410,20 @@ canvas{display:block;width:100%!important}
 
     <div class="sb-divider"></div>
 
+    <!-- PLANS & BILLING -->
+    <div class="sb-group">
+      <div class="sb-group-label">Plans &amp; Billing</div>
+      <div class="sb-menus">
+        <a class="sb-item" href="Retailer_Plan.html">
+          <span class="sb-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="8 1 10.3 5.7 15.5 6.5 11.8 10.1 12.6 15.3 8 12.8 3.4 15.3 4.2 10.1 0.5 6.5 5.7 5.7 8 1"/></svg></span>
+          <span class="sb-item-label">Subscription Plan</span>
+          <span class="sb-end-icon"><svg viewBox="0 0 10 10" fill="none" stroke="#6b7280" stroke-width="1.6"><polyline points="3.5,2 6.5,5 3.5,8"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
     <!-- SETTINGS -->
     <div class="sb-group">
       <div class="sb-group-label">Settings</div>
@@ -471,10 +489,16 @@ canvas{display:block;width:100%!important}
   <div class="page-wrap">
 
     <!-- PAGE HEADER -->
-    <div class="page-head">
+    <div class="page-head" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
       <div>
         <div class="page-title">Multi Store View</div>
         <div class="page-subtitle">Inventory / Multi Store View</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button id="addStoreBtn" onclick="openAddStoreModal()" class="btn-add-store" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Store
+        </button>
       </div>
     </div>
 
@@ -549,6 +573,99 @@ canvas{display:block;width:100%!important}
     </div>
     <div class="drawer-body" id="drawerBody">
       <!-- Rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ADD STORE MODAL -->
+<div id="addStoreModalBg" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;" onclick="handleAddStoreOverlayClick(event)">
+  <div id="addStoreModalBox" onclick="event.stopPropagation()" style="background:#fff;border-radius:14px;padding:28px 32px;width:100%;max-width:540px;box-shadow:0 20px 60px rgba(0,0,0,0.18);font-family:'DM Sans',sans-serif;max-height:90vh;overflow-y:auto;">
+    <!-- Plan limit exceeded UI -->
+    <div id="planLimitBox" style="display:none;text-align:center;padding:24px 0;">
+      <div style="width:64px;height:64px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div style="font-size:20px;font-weight:800;color:#212b36;margin-bottom:8px;">Store Limit Reached</div>
+      <div id="planLimitMsg" style="font-size:14px;color:#646b72;margin-bottom:24px;line-height:1.6;">You've reached the maximum stores for your current plan.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+        <a href="Retailer_Plan.html" style="display:inline-flex;align-items:center;gap:8px;background:#2e6bc5;color:#fff;font-size:14px;font-weight:700;padding:11px 28px;border-radius:8px;text-decoration:none;transition:background 0.15s;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Upgrade Your Plan
+        </a>
+        <button onclick="closeAddStoreModal()" style="background:none;border:none;font-size:13px;color:#a6aaaf;cursor:pointer;padding:4px;">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Actual form -->
+    <div id="addStoreFormArea">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
+        <div style="width:40px;height:40px;background:#eef3fc;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2e6bc5" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#212b36;">Add New Store Location</div>
+          <div id="addStoreSubtitle" style="font-size:12px;color:#a6aaaf;margin-top:2px;">Fill in the store details below</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:700;color:#4a5568;margin-bottom:5px;">Store Name <span style="color:#ef4444;">*</span></label>
+          <input type="text" id="ms-name" placeholder="e.g. Eastern Branch" style="width:100%;padding:9px 12px;border:1px solid #e6eaed;border-radius:7px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;" oninput="autoFillStoreCode()" />
+          <div id="ms-name-err" style="display:none;font-size:11.5px;color:#ef4444;margin-top:3px;">Store name is required</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:700;color:#4a5568;margin-bottom:5px;">Store Code</label>
+          <input type="text" id="ms-code" placeholder="e.g. EAST-01" style="width:100%;padding:9px 12px;border:1px solid #e6eaed;border-radius:7px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;text-transform:uppercase;" />
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:700;color:#4a5568;margin-bottom:5px;">Contact Person <span style="color:#ef4444;">*</span></label>
+          <input type="text" id="ms-contact" placeholder="Manager name" style="width:100%;padding:9px 12px;border:1px solid #e6eaed;border-radius:7px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;" />
+          <div id="ms-contact-err" style="display:none;font-size:11.5px;color:#ef4444;margin-top:3px;">Contact person is required</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:700;color:#4a5568;margin-bottom:5px;">Phone Number</label>
+          <input type="tel" id="ms-phone" placeholder="+91 98765 00000" style="width:100%;padding:9px 12px;border:1px solid #e6eaed;border-radius:7px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;" />
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:12.5px;font-weight:700;color:#4a5568;margin-bottom:5px;">Address</label>
+        <input type="text" id="ms-addr" placeholder="Store full address" style="width:100%;padding:9px 12px;border:1px solid #e6eaed;border-radius:7px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;" />
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:700;color:#4a5568;margin-bottom:5px;">Store Type</label>
+          <select id="ms-type" style="width:100%;padding:9px 12px;border:1px solid #e6eaed;border-radius:7px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;background:#fff;">
+            <option>Retail Store</option><option>Warehouse</option><option>Outlet</option>
+            <option>Pop-up</option><option>Online Fulfillment</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:12.5px;font-weight:700;color:#4a5568;margin-bottom:5px;">Status</label>
+          <div style="display:flex;gap:8px;">
+            <button type="button" id="ms-status-active" onclick="setStoreStatus('active')" style="flex:1;padding:9px;border:1.5px solid #22c55e;background:#dcfce7;color:#15803d;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">Active</button>
+            <button type="button" id="ms-status-inactive" onclick="setStoreStatus('inactive')" style="flex:1;padding:9px;border:1.5px solid #e6eaed;background:#f9fafb;color:#a6aaaf;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">Inactive</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:12.5px;font-weight:700;color:#4a5568;margin-bottom:5px;">Notes</label>
+        <textarea id="ms-notes" placeholder="Any additional notes about this store…" style="width:100%;padding:9px 12px;border:1px solid #e6eaed;border-radius:7px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;min-height:65px;resize:vertical;"></textarea>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;">
+        <button type="button" onclick="closeAddStoreModal()" style="padding:10px 22px;border:1.5px solid #e6eaed;background:#fff;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;color:#4a5568;">Cancel</button>
+        <button type="button" id="saveStoreBtn" onclick="saveNewStore()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#2e6bc5;color:#fff;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Save Store
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -1153,6 +1270,233 @@ window.addEventListener('DOMContentLoaded', () => {
   setupUserSession();
   loadRetailerStores();
 });
+
+/* ═══════════════════════════════════════════
+   ADD STORE MODAL
+═══════════════════════════════════════════ */
+let _currentStoreStatus = 'active';
+
+const PLAN_LIMITS = { free: 1, pro: 5, enterprise: Infinity };
+const PLAN_NAMES = { free: 'Starter Kirana (Free)', pro: 'Vyapar Pro (₹799/mo)', enterprise: 'Bharat Enterprise (₹3,499/mo)' };
+
+function openAddStoreModal() {
+  const session = (() => { try { return JSON.parse(localStorage.getItem('so_session') || '{}'); } catch { return {}; } })();
+  const plan = ((session.plan) || 'free').toLowerCase();
+  const limit = PLAN_LIMITS[plan] ?? 1;
+
+  const modalBg = document.getElementById('addStoreModalBg');
+  const planLimitBox = document.getElementById('planLimitBox');
+  const addStoreFormArea = document.getElementById('addStoreFormArea');
+  const addStoreSubtitle = document.getElementById('addStoreSubtitle');
+
+  // Check if store limit reached
+  const currentStoreCount = STORES.length;
+  if (currentStoreCount >= limit) {
+    planLimitBox.style.display = 'block';
+    addStoreFormArea.style.display = 'none';
+    const limitMsg = document.getElementById('planLimitMsg');
+    if (limitMsg) {
+      const planLabel = PLAN_NAMES[plan] || plan;
+      const isEnterprise = plan === 'enterprise';
+      if (isEnterprise) {
+        limitMsg.textContent = 'Enterprise plan has unlimited stores. Please contact support.';
+      } else if (plan === 'free') {
+        limitMsg.innerHTML = `Your <strong>Starter Kirana (Free)</strong> plan allows only <strong>1 store</strong>.<br>Upgrade to <strong>Vyapar Pro</strong> (up to 5 stores) or <strong>Bharat Enterprise</strong> (unlimited stores) to add more.`;
+      } else {
+        limitMsg.innerHTML = `Your <strong>${planLabel}</strong> plan allows up to <strong>${limit} stores</strong>.<br>Upgrade to <strong>Bharat Enterprise</strong> for unlimited stores.`;
+      }
+    }
+  } else {
+    planLimitBox.style.display = 'none';
+    addStoreFormArea.style.display = 'block';
+
+    // Show remaining stores info
+    if (addStoreSubtitle) {
+      const remaining = limit === Infinity ? 'unlimited' : `${limit - currentStoreCount} more`;
+      addStoreSubtitle.textContent = `You can add ${remaining} store${remaining === 'unlimited' || Number(limit - currentStoreCount) !== 1 ? 's' : ''} on your ${PLAN_NAMES[plan] || plan} plan`;
+    }
+
+    // Reset form
+    ['ms-name','ms-code','ms-contact','ms-phone','ms-addr','ms-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const typeEl = document.getElementById('ms-type');
+    if (typeEl) typeEl.selectedIndex = 0;
+    setStoreStatus('active');
+    ['ms-name-err','ms-contact-err'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
+    // Focus
+    setTimeout(() => { const n = document.getElementById('ms-name'); if (n) n.focus(); }, 80);
+  }
+
+  modalBg.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAddStoreModal() {
+  const modalBg = document.getElementById('addStoreModalBg');
+  if (modalBg) modalBg.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function handleAddStoreOverlayClick(e) {
+  if (e.target === document.getElementById('addStoreModalBg')) closeAddStoreModal();
+}
+
+function setStoreStatus(status) {
+  _currentStoreStatus = status;
+  const activeBtn = document.getElementById('ms-status-active');
+  const inactiveBtn = document.getElementById('ms-status-inactive');
+  if (status === 'active') {
+    activeBtn.style.borderColor = '#22c55e';
+    activeBtn.style.background = '#dcfce7';
+    activeBtn.style.color = '#15803d';
+    inactiveBtn.style.borderColor = '#e6eaed';
+    inactiveBtn.style.background = '#f9fafb';
+    inactiveBtn.style.color = '#a6aaaf';
+  } else {
+    inactiveBtn.style.borderColor = '#ef4444';
+    inactiveBtn.style.background = '#fee2e2';
+    inactiveBtn.style.color = '#b91c1c';
+    activeBtn.style.borderColor = '#e6eaed';
+    activeBtn.style.background = '#f9fafb';
+    activeBtn.style.color = '#a6aaaf';
+  }
+}
+
+function autoFillStoreCode() {
+  const nameEl = document.getElementById('ms-name');
+  const codeEl = document.getElementById('ms-code');
+  if (!nameEl || !codeEl) return;
+  // Only auto-fill if code is empty or was auto-filled before
+  const autoCode = (nameEl.value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 16);
+  codeEl.value = autoCode;
+}
+
+async function saveNewStore() {
+  // Validate
+  const nameEl = document.getElementById('ms-name');
+  const contactEl = document.getElementById('ms-contact');
+  const nameErr = document.getElementById('ms-name-err');
+  const contactErr = document.getElementById('ms-contact-err');
+
+  let valid = true;
+  const name = (nameEl?.value || '').trim();
+  const contact = (contactEl?.value || '').trim();
+
+  if (!name) { nameErr.style.display = 'block'; valid = false; } else { nameErr.style.display = 'none'; }
+  if (!contact) { contactErr.style.display = 'block'; valid = false; } else { contactErr.style.display = 'none'; }
+  if (!valid) return;
+
+  const session = (() => { try { return JSON.parse(localStorage.getItem('so_session') || '{}'); } catch { return {}; } })();
+  const plan = ((session.plan) || 'free').toLowerCase();
+  const retailerProfileId = session.profileId || session.id || '';
+
+  const code = (document.getElementById('ms-code')?.value || '').trim().toUpperCase()
+    || name.toUpperCase().replace(/[^A-Z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 16);
+  const phone = (document.getElementById('ms-phone')?.value || '').trim();
+  const address = (document.getElementById('ms-addr')?.value || '').trim();
+  const type = document.getElementById('ms-type')?.value || 'Retail Store';
+  const notes = (document.getElementById('ms-notes')?.value || '').trim();
+
+  const storePayload = { name, code, contactPerson: contact, phone, address, type, status: _currentStoreStatus, notes };
+
+  const saveBtn = document.getElementById('saveStoreBtn');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
+
+  try {
+    const API_BASE = (window.RetailerApi?.baseUrl || window.IMS_API?.baseUrl || 'http://localhost:3001/api').replace(/\/api$/, '/api');
+
+    let saved = false;
+    let updatedRetailer = null;
+
+    if (retailerProfileId) {
+      try {
+        const res = await fetch(`${API_BASE}/retailers/${encodeURIComponent(retailerProfileId)}/stores?userPlan=${encodeURIComponent(plan)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(storePayload),
+        });
+
+        if (res.ok) {
+          updatedRetailer = await res.json();
+          saved = true;
+        } else if (res.status === 400) {
+          const err = await res.json();
+          const msg = String(err.message || '');
+          if (msg.startsWith('PLAN_LIMIT_REACHED:')) {
+            // Should not happen since we checked before, but handle gracefully
+            showMsToast('Store limit reached. Please upgrade your plan.', 'warn');
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Save Store'; }
+            return;
+          }
+          throw new Error(msg || 'Save failed');
+        } else {
+          throw new Error('Save failed with status ' + res.status);
+        }
+      } catch (e) {
+        if (e.message && e.message.includes('Store limit')) throw e;
+        console.warn('Could not save to backend, saving locally:', e);
+      }
+    }
+
+    // Update session stores list
+    if (updatedRetailer && updatedRetailer.stores) {
+      if (session.profile && Array.isArray(session.profile.stores)) {
+        session.profile.stores = updatedRetailer.stores;
+      }
+    }
+    if (session.accessibleStoreIds) {
+      session.accessibleStoreIds = [...(session.accessibleStoreIds || []), code];
+    }
+    localStorage.setItem('so_session', JSON.stringify(session));
+
+    // Add to local STORES array for instant UI update
+    const totalProds = STORES.length ? STORES[0].totalProducts : 0;
+    const totalStock = STORES.length ? STORES[0].totalStock : 0;
+    STORES.push({
+      id: code,
+      name,
+      contact,
+      phone,
+      totalProducts: totalProds,
+      totalStock: totalStock,
+      createdOn: new Date().toLocaleDateString('en-IN'),
+      status: _currentStoreStatus
+    });
+
+    closeAddStoreModal();
+    renderTable();
+    showMsToast(`Store "${name}" added successfully!`, 'success');
+  } catch (e) {
+    console.error('Error saving store:', e);
+    showMsToast('Failed to save store. Please try again.', 'error');
+  } finally {
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Save Store'; }
+  }
+}
+
+function showMsToast(msg, type = 'success') {
+  let toast = document.getElementById('msToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'msToast';
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:13px 22px;border-radius:10px;font-family:"Nunito Sans",sans-serif;font-size:13.5px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,0.18);transition:all 0.3s;opacity:0;pointer-events:none;display:flex;align-items:center;gap:10px;min-width:200px;max-width:380px;';
+    document.body.appendChild(toast);
+  }
+  const colors = { success: '#22c55e', error: '#ef4444', warn: '#f59e0b' };
+  const icons = { success: '✓', error: '✕', warn: '⚠' };
+  toast.style.background = colors[type] || '#22c55e';
+  toast.style.color = '#fff';
+  toast.innerHTML = `<span style="font-size:16px">${icons[type] || '✓'}</span> ${msg}`;
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 3500);
+}
 </script>
 </body>
 </html>

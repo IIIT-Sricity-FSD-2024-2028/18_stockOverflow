@@ -62,6 +62,7 @@
   const parsePrice = (priceText) => Number(String(priceText || '').replace(/[^\d.]/g, '')) || 0;
   const toInr = (price) => '₹' + Number(price || 0).toFixed(2);
   const formatInr = (amount) => currencyFormatter.format(amount);
+  const toUsd = (amount) => formatInr(Number(amount || 0));
 
   let retailerProducts = [];
   let storeRecords = [];

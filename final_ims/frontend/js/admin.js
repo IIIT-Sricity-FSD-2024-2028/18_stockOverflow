@@ -40,6 +40,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     return `<span class="badge ${colorClass}">${r.charAt(0).toUpperCase() + r.slice(1)}</span>`;
   };
 
+  const getPlanBadge = (user) => {
+    const role = String(user.role || '').toLowerCase();
+    if (role !== 'retailer' && role !== 'supplier') {
+      return '<span style="color:var(--text-muted);font-size:12px">—</span>';
+    }
+    const plan = (user.plan || 'free').toLowerCase();
+    if (plan === 'enterprise') {
+      return '<span class="badge" style="background:#f3e8ff;color:#7e22ce;font-weight:700">Enterprise</span>';
+    }
+    if (plan === 'pro') {
+      return '<span class="badge" style="background:#e0f2fe;color:#0284c7;font-weight:700">Vyapar Pro</span>';
+    }
+    return '<span class="badge" style="background:#f1f5f9;color:#475569;font-weight:600">Starter Kirana</span>';
+  };
+
   const getStatusBadge = (status) => {
     let colorClass = 'badge-success';
     if (status === 'Warning') colorClass = 'badge-warning';
@@ -116,6 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           </td>
           <td style="color: var(--text-muted);">${user.email}</td>
           <td>${getRoleBadge(user.role)}</td>
+          <td>${getPlanBadge(user)}</td>
           <td style="color: var(--text-muted);">${user.store || '-'}</td>
           <td>${getStatusBadge(user.status)}</td>
           <td>
@@ -149,24 +165,38 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const searchInput = document.getElementById('userSearch');
     const roleFilter = document.getElementById('roleFilter');
+    const planFilter = document.getElementById('planFilter');
     const statusFilter = document.getElementById('statusFilter');
 
     const filterData = () => {
       const q = (searchInput ? searchInput.value : '').toLowerCase();
       const r = roleFilter ? roleFilter.value : '';
+      const p = planFilter ? planFilter.value.toLowerCase() : '';
       const s = statusFilter ? statusFilter.value : '';
       const filtered = users.filter(u => {
         const matchQ = u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
         const matchR = r ? u.role.toLowerCase() === r.toLowerCase() : true;
         const matchS = s ? u.status === s : true;
-        return matchQ && matchR && matchS;
+        const isSaaS = u.role.toLowerCase() === 'retailer' || u.role.toLowerCase() === 'supplier';
+        const userPlan = (u.plan || 'free').toLowerCase();
+        const matchP = p ? (isSaaS && (userPlan === p || (!u.plan && p === 'free'))) : true;
+        return matchQ && matchR && matchS && matchP;
       });
       renderUsers(filtered);
     };
 
     if (searchInput) searchInput.addEventListener('input', filterData);
     if (roleFilter) roleFilter.addEventListener('change', filterData);
+    if (planFilter) planFilter.addEventListener('change', filterData);
     if (statusFilter) statusFilter.addEventListener('change', filterData);
+
+    // Parse URL query parameter (e.g. users.html?plan=free)
+    const urlParams = new URLSearchParams(window.location.search);
+    const planParam = urlParams.get('plan');
+    if (planParam && planFilter) {
+      planFilter.value = planParam.toLowerCase();
+      filterData();
+    }
 
     window.openUserModal = () => {
       document.getElementById('userForm').reset();
@@ -174,6 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('modalTitle').textContent = 'Add User';
       document.getElementById('pass_group').style.display = 'block';
       document.getElementById('u_password').setAttribute('required', 'required');
+      if (document.getElementById('u_plan')) document.getElementById('u_plan').value = 'free';
       document.getElementById('userModal').classList.add('active');
     };
 
@@ -192,6 +223,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('v_store').textContent = user.store || 'Not assigned';
       document.getElementById('v_id').textContent = user.id;
       document.getElementById('v_role_badge').innerHTML = getRoleBadge(user.role);
+      const vPlan = document.getElementById('v_plan');
+      if (vPlan) vPlan.innerHTML = getPlanBadge(user);
       document.getElementById('viewUserModal').classList.add('active');
     };
 
@@ -236,6 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('u_role').value = user.role.toLowerCase();
       document.getElementById('u_status').value = user.status;
       document.getElementById('u_store').value = user.store || '';
+      if (document.getElementById('u_plan')) document.getElementById('u_plan').value = user.plan || 'free';
       document.getElementById('pass_group').style.display = 'none';
       document.getElementById('u_password').removeAttribute('required');
       document.getElementById('userModal').classList.add('active');
@@ -251,6 +285,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         status: document.getElementById('u_status').value,
         store: document.getElementById('u_store').value,
       };
+      if (document.getElementById('u_plan')) {
+        newData.plan = document.getElementById('u_plan').value;
+      }
 
       try {
         if (id) {

@@ -1,0 +1,47 @@
+<header class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb" id="bc">
+        <a href="#">Home</a>
+        <span class="bc-sep">/</span>
+        <span class="current">Dashboard</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <button class="topbar-avatar" id="topbarAvatar" onclick="toggleProfilePopover(event)" type="button">SP</button>
+      <div class="profile-popover" id="profilePopover">
+        <div class="profile-popover-head">
+          <div class="profile-popover-avatar" id="profilePopoverAvatar">SP</div>
+          <div>
+            <div class="profile-popover-name" id="profilePopoverName">Supplier profile</div>
+            <div class="profile-popover-sub" id="profilePopoverCode">No supplier code</div>
+          </div>
+        </div>
+        <div class="profile-popover-grid">
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Email</div>
+            <div class="profile-popover-value" id="profilePopoverEmail">No email linked</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Phone</div>
+            <div class="profile-popover-value" id="profilePopoverPhone">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">Category</div>
+            <div class="profile-popover-value" id="profilePopoverCategory">-</div>
+          </div>
+          <div class="profile-popover-item">
+            <div class="profile-popover-label">State</div>
+            <div class="profile-popover-value" id="profilePopoverState">-</div>
+          </div>
+        </div>
+        <div class="profile-popover-actions">
+          <button class="btn btn-outline btn-sm" onclick="openProfileFromPopover()" type="button">Open Profile</button>
+          <button class="btn btn-primary btn-sm" onclick="copySupplierDirectoryEndpoint()" type="button">Directory API</button>
+        </div>
+      </div>
+    </div>
+  </header>
