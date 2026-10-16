@@ -6,6 +6,8 @@
  * Zero mock fallbacks - all operations reflect live backend state.
  */
 
+import { emitDataSync } from '../../context/DataSyncContext';
+
 const API_BASE_URL =
   typeof window !== 'undefined' && window.IMS_API_BASE_URL
     ? window.IMS_API_BASE_URL
@@ -58,23 +60,29 @@ export async function fetchAdminUserById(id) {
 }
 
 export async function createAdminUser(userData) {
-  return await apiRequest('/admin/users', {
+  const res = await apiRequest('/admin/users', {
     method: 'POST',
     body: JSON.stringify(userData),
   });
+  emitDataSync('users', res);
+  return res;
 }
 
 export async function updateAdminUser(id, userData) {
-  return await apiRequest(`/admin/users/${id}`, {
+  const res = await apiRequest(`/admin/users/${id}`, {
     method: 'PUT',
     body: JSON.stringify(userData),
   });
+  emitDataSync('users', res);
+  return res;
 }
 
 export async function deleteAdminUser(id) {
-  return await apiRequest(`/admin/users/${id}`, {
+  const res = await apiRequest(`/admin/users/${id}`, {
     method: 'DELETE',
   });
+  emitDataSync('users', { id });
+  return res;
 }
 
 // ─── 3. Role & Permission Management (CRUD) ──────────────────────────────────
@@ -87,23 +95,29 @@ export async function fetchAdminRoleById(id) {
 }
 
 export async function createAdminRole(roleData) {
-  return await apiRequest('/admin/roles', {
+  const res = await apiRequest('/admin/roles', {
     method: 'POST',
     body: JSON.stringify(roleData),
   });
+  emitDataSync('users', res);
+  return res;
 }
 
 export async function updateAdminRole(id, roleData) {
-  return await apiRequest(`/admin/roles/${id}`, {
+  const res = await apiRequest(`/admin/roles/${id}`, {
     method: 'PUT',
     body: JSON.stringify(roleData),
   });
+  emitDataSync('users', res);
+  return res;
 }
 
 export async function deleteAdminRole(id) {
-  return await apiRequest(`/admin/roles/${id}`, {
+  const res = await apiRequest(`/admin/roles/${id}`, {
     method: 'DELETE',
   });
+  emitDataSync('users', { id });
+  return res;
 }
 
 // ─── 4. Store Branch Management (CRUD) ───────────────────────────────────────
@@ -116,23 +130,29 @@ export async function fetchAdminStoreById(id) {
 }
 
 export async function createAdminStore(storeData) {
-  return await apiRequest('/admin/stores', {
+  const res = await apiRequest('/admin/stores', {
     method: 'POST',
     body: JSON.stringify(storeData),
   });
+  emitDataSync('stores', res);
+  return res;
 }
 
 export async function updateAdminStore(id, storeData) {
-  return await apiRequest(`/admin/stores/${id}`, {
+  const res = await apiRequest(`/admin/stores/${id}`, {
     method: 'PUT',
     body: JSON.stringify(storeData),
   });
+  emitDataSync('stores', res);
+  return res;
 }
 
 export async function deleteAdminStore(id) {
-  return await apiRequest(`/admin/stores/${id}`, {
+  const res = await apiRequest(`/admin/stores/${id}`, {
     method: 'DELETE',
   });
+  emitDataSync('stores', { id });
+  return res;
 }
 
 // ─── 5. Platform Revenue & Monetization ───────────────────────────────────────
@@ -174,3 +194,21 @@ export async function updateAdminSettings(settingsData) {
     body: JSON.stringify(settingsData),
   });
 }
+
+// ─── 7. Store-Scoped Catalog & Transactions ──────────────────────────────────
+export async function fetchAdminProducts(storeId, retailerId) {
+  const params = new URLSearchParams();
+  if (storeId) params.set('storeId', storeId);
+  if (retailerId) params.set('retailerId', retailerId);
+  const qs = params.toString();
+  return await apiRequest(`/products${qs ? `?${qs}` : ''}`);
+}
+
+export async function fetchAdminTransactions(storeId, retailerId) {
+  const params = new URLSearchParams();
+  if (storeId) params.set('storeId', storeId);
+  if (retailerId) params.set('retailerId', retailerId);
+  const qs = params.toString();
+  return await apiRequest(`/transactions${qs ? `?${qs}` : ''}`);
+}
+

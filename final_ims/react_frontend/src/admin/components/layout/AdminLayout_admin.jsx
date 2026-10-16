@@ -14,6 +14,7 @@ export default function AdminLayout_admin({
   activeMenu = 'dashboard',
   onNavigate,
   onSwitchModule,
+  onLogout,
   children,
 }) {
   const [activeStoreId, setActiveStoreId] = useState(() => {
@@ -132,26 +133,45 @@ export default function AdminLayout_admin({
         </nav>
 
         <div className="admin-sidebar-footer" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {onSwitchModule && (
-            <>
-              <button
-                type="button"
-                className="admin-btn admin-btn-primary"
-                style={{ width: '100%', fontSize: '0.82rem', justifyContent: 'center' }}
-                onClick={() => onSwitchModule('employee')}
-              >
-                👔 Switch to Employee Desk →
-              </button>
-              <button
-                type="button"
-                className="admin-btn admin-btn-outline"
-                style={{ width: '100%', fontSize: '0.78rem', justifyContent: 'center', color: '#64748b' }}
-                onClick={() => onSwitchModule('landing')}
-              >
-                ← Back to Landing Page
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            className="admin-btn admin-btn-outline"
+            style={{ width: '100%', fontSize: '0.8rem', justifyContent: 'center', color: '#475569', gap: '6px' }}
+            onClick={() => onLogout && onLogout()}
+            title="Log out of Admin and enter another module via Login"
+          >
+            <span>🔄</span> Switch Role / Account
+          </button>
+
+          {/* Prominent Sidebar Logout Button */}
+          <button
+            type="button"
+            className="admin-btn"
+            style={{
+              width: '100%',
+              fontSize: '0.82rem',
+              justifyContent: 'center',
+              background: '#fee2e2',
+              color: '#b91c1c',
+              border: '1px solid #fecaca',
+              fontWeight: 600,
+              cursor: 'pointer',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginTop: '4px',
+            }}
+            onClick={() => onLogout && onLogout()}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Sign Out
+          </button>
         </div>
       </aside>
 
@@ -190,7 +210,7 @@ export default function AdminLayout_admin({
             </div>
           </div>
 
-          <div className="admin-topbar-right">
+          <div className="admin-topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div className="admin-user-profile">
               <div className="admin-user-avatar">SA</div>
               <div className="admin-user-info">
@@ -198,6 +218,33 @@ export default function AdminLayout_admin({
                 <span className="admin-user-role">Administrator</span>
               </div>
             </div>
+
+            {/* Prominent Header Logout Button */}
+            <button
+              type="button"
+              onClick={() => onLogout && onLogout()}
+              title="Sign out of Admin Portal"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '7px 12px',
+                background: '#fee2e2',
+                color: '#b91c1c',
+                border: '1px solid #fecaca',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 600,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Logout
+            </button>
           </div>
         </header>
 

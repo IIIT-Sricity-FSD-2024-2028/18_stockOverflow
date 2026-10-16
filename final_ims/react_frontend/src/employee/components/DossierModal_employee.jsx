@@ -9,6 +9,7 @@ export default function DossierModal_employee({
   entity,
   onClose,
   onStatusChange,
+  onOpenActionModal,
 }) {
   const [showRejectPrompt, setShowRejectPrompt] = useState(false);
   const [rejectReason, setRejectReason] = useState('Missing or expired legal documents.');
@@ -16,14 +17,24 @@ export default function DossierModal_employee({
   if (!entity) return null;
 
   const handleConfirmReject = () => {
-    onStatusChange(entity.id, 'rejected', rejectReason);
-    setShowRejectPrompt(false);
-    onClose();
+    if (onOpenActionModal) {
+      onOpenActionModal(entity, 'reject');
+      onClose();
+    } else {
+      onStatusChange(entity.id, 'rejected', rejectReason);
+      setShowRejectPrompt(false);
+      onClose();
+    }
   };
 
   const handleApprove = () => {
-    onStatusChange(entity.id, 'approved', 'All compliance documents verified.');
-    onClose();
+    if (onOpenActionModal) {
+      onOpenActionModal(entity, 'approve');
+      onClose();
+    } else {
+      onStatusChange(entity.id, 'approved', 'All compliance documents verified.');
+      onClose();
+    }
   };
 
   return (

@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useDataSync } from '../../context/DataSyncContext';
 import {
   fetchAdminUsers,
   createAdminUser,
@@ -53,6 +54,10 @@ export default function UsersPage_admin() {
   useEffect(() => {
     loadUsers();
   }, [loadUsers]);
+
+  useDataSync(['users', 'assignments'], () => {
+    loadUsers();
+  });
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {

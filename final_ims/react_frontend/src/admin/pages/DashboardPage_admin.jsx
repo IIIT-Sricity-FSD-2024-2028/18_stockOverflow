@@ -8,7 +8,8 @@
  * 4. /api/admin/stores
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDataSync } from '../../context/DataSyncContext';
 import {
   fetchAdminDashboardStats,
   fetchPlatformRevenueSummary,
@@ -29,63 +30,79 @@ export default function DashboardPage_admin({ onNavigate, onSwitchModule }) {
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [stores, setStores] = useState([]);
 
-  // Active store scope from localStorage
-  const activeStoreId = typeof window !== 'undefined'
-    ? localStorage.getItem('stockoverflow_active_store_id') || 'all'
-    : 'all';
+  const [activeStoreId, setActiveStoreId] = useState(() => {
+    try {
+      return localStorage.getItem('stockoverflow_active_store_id') || 'all';
+    } catch {
+      return 'all';
+    }
+  });
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function loadDashboardData() {
-      setLoading(true);
+    const handleStorage = () => {
       try {
-        const [dashStats, revSummary, commissions, storesList] = await Promise.all([
-          fetchAdminDashboardStats().catch(() => ({})),
-          fetchPlatformRevenueSummary().catch(() => ({})),
-          fetchPlatformCommissions(undefined, 8).catch(() => []),
-          fetchAdminStores().catch(() => []),
-        ]);
-
-        if (isMounted) {
-          const totalRev = Number(
-            revSummary?.grossPlatformVolume ?? dashStats?.platformRevenue ?? 0
-          );
-          const commission = Number(
-            revSummary?.netPlatformRevenue ?? dashStats?.platformRevenue * 0.02 ?? 0
-          );
-          const storesCount = Array.isArray(storesList)
-            ? storesList.length
-            : Number(dashStats?.totalStores || 0);
-
-          setStats({
-            totalRevenue: totalRev,
-            platformCommission: commission,
-            totalStores: storesCount,
-            lowStockAlerts: Number(dashStats?.lowStockAlerts || 0),
-            pendingValidations: Number(dashStats?.pendingValidations || 0),
-            settledTransactions: Number(dashStats?.settledTransactions || 0),
-          });
-
-          if (Array.isArray(commissions)) {
-            setRecentTransactions(commissions);
-          }
-          if (Array.isArray(storesList)) {
-            setStores(storesList);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to load admin dashboard live data:', err);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    }
-
-    loadDashboardData();
-    return () => {
-      isMounted = false;
+        const id = localStorage.getItem('stockoverflow_active_store_id') || 'all';
+        setActiveStoreId(id);
+      } catch {}
     };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
+
+  const loadDashboardData = useCallback(async () => {
+    try {
+      const [dashStats, revSummary, commissions, storesList] = await Promise.all([
+        fetchAdminDashboardStats().catch(() => ({})),
+        fetchPlatformRevenueSummary().catch(() => ({})),
+        fetchPlatformCommissions(undefined, 8).catch(() => []),
+        fetchAdminStores().catch(() => []),
+      ]);
+
+      const totalRev = Number(
+        revSummary?.totalGrossVolume ?? revSummary?.grossPlatformVolume ?? dashStats?.platformRevenue ?? 0
+      );
+      const commission = Number(
+        revSummary?.totalCommissionEarned ?? revSummary?.netPlatformRevenue ?? (totalRev * 0.02) ?? 0
+      );
+      const storesCount = Array.isArray(storesList)
+        ? storesList.length
+        : Number(dashStats?.totalStores || 0);
+      const settledCount = Number(
+        revSummary?.totalTransactionsProcessed ??
+        revSummary?.totalTransactions ??
+        dashStats?.settledTransactions ??
+        (Array.isArray(commissions) ? commissions.length : 0)
+      );
+
+      setStats({
+        totalRevenue: totalRev,
+        platformCommission: commission,
+        totalStores: storesCount,
+        settledTransactions: settledCount,
+        pendingValidations: Number(dashStats?.pendingValidations || 0),
+      });
+
+      if (Array.isArray(commissions)) {
+        setRecentTransactions(commissions);
+      }
+      if (Array.isArray(storesList)) {
+        setStores(storesList);
+      }
+    } catch (err) {
+      console.error('Failed to load admin dashboard live data:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
+
+  // Real-time synchronization across modules
+  useDataSync(['transactions', 'revenue', 'users', 'products', 'assignments', 'stores'], () => {
+    loadDashboardData();
+  });
 
   const activeStoreName =
     activeStoreId === 'all'
@@ -98,22 +115,60 @@ export default function DashboardPage_admin({ onNavigate, onSwitchModule }) {
       <div className="admin-page-header">
         <div>
           <h1 className="admin-page-title">Executive Command Dashboard</h1>
-          <p className="admin-page-subtitle">
-            Current operational scope: <strong>{activeStoreName}</strong>
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
+            <p className="admin-page-subtitle" style={{ margin: 0 }}>
+              Current operational scope: <strong>{activeStoreName}</strong>
+            </p>
+            {activeStoreId !== 'all' && (
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    localStorage.setItem('stockoverflow_active_store_id', 'all');
+                    window.dispatchEvent(new Event('storage'));
+                    setActiveStoreId('all');
+                  } catch (e) {
+                    console.warn(e);
+                  }
+                }}
+                style={{
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
+                  borderRadius: '9999px',
+                  padding: '2px 8px',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#2563eb',
+                  cursor: 'pointer',
+                }}
+              >
+                Reset to Global Scope ✕
+              </button>
+            )}
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {activeStoreId !== 'all' && (
+            <button
+              type="button"
+              className="admin-btn admin-btn-primary"
+              onClick={() => onNavigate && onNavigate('store-dashboard', { storeId: activeStoreId })}
+            >
+              🏬 Open {activeStoreName} Dashboard →
+            </button>
+          )}
           <button
             type="button"
             className="admin-btn admin-btn-outline"
-            onClick={() => onNavigate('revenue')}
+            onClick={() => onNavigate && onNavigate('revenue')}
           >
             💰 View Revenue Model
           </button>
           <button
             type="button"
-            className="admin-btn admin-btn-primary"
-            onClick={() => onNavigate('users')}
+            className="admin-btn admin-btn-outline"
+            onClick={() => onNavigate && onNavigate('users')}
           >
             + Manage Users
           </button>
@@ -145,16 +200,14 @@ export default function DashboardPage_admin({ onNavigate, onSwitchModule }) {
           </div>
         </div>
 
-        {onSwitchModule && (
-          <button
-            type="button"
-            className="admin-btn"
-            style={{ background: '#f59e0b', color: '#ffffff', border: 'none', fontSize: '12px', fontWeight: 700 }}
-            onClick={() => onSwitchModule('employee')}
-          >
-            Open Employee Desk →
-          </button>
-        )}
+        <button
+          type="button"
+          className="admin-btn admin-btn-outline"
+          style={{ borderColor: '#f59e0b', color: '#b45309', fontSize: '12px', fontWeight: 700 }}
+          onClick={() => onNavigate && onNavigate('users')}
+        >
+          Review Users &amp; Staff →
+        </button>
       </div>
 
       {/* ── Core Executive KPIs ── */}
@@ -195,15 +248,15 @@ export default function DashboardPage_admin({ onNavigate, onSwitchModule }) {
           </div>
         </div>
 
-        <div className="admin-metric-card" style={{ borderLeft: '4px solid #dc2626', backgroundColor: '#fef2f2' }}>
-          <span style={{ fontSize: '0.8rem', color: '#b91c1c', fontWeight: 600, textTransform: 'uppercase' }}>
-            Low Stock Critical Alerts
+        <div className="admin-metric-card" style={{ borderLeft: '4px solid #0891b2', backgroundColor: '#f0fdfa' }}>
+          <span style={{ fontSize: '0.8rem', color: '#0f766e', fontWeight: 600, textTransform: 'uppercase' }}>
+            Platform Order Throughput
           </span>
-          <div className="admin-metric-value" style={{ color: '#dc2626' }}>
-            {loading ? '...' : stats.lowStockAlerts}
+          <div className="admin-metric-value" style={{ color: '#0d9488' }}>
+            {loading ? '...' : `${stats.settledTransactions} Processed`}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#b91c1c', marginTop: '4px' }}>
-            ⚠️ Reorder threshold reached
+          <div style={{ fontSize: '0.75rem', color: '#0f766e', marginTop: '4px' }}>
+            ⚡ 100% automated 2% take-rate settled
           </div>
         </div>
       </div>
@@ -235,31 +288,46 @@ export default function DashboardPage_admin({ onNavigate, onSwitchModule }) {
                 </tr>
               </thead>
               <tbody>
-                {recentTransactions.length > 0 ? (
-                  recentTransactions.slice(0, 5).map((row, idx) => (
-                    <tr key={row.orderId || row.id || idx}>
-                      <td style={{ fontFamily: 'monospace', fontWeight: 700, color: '#475569' }}>
-                        {row.orderId || row.id}
-                      </td>
-                      <td style={{ fontWeight: 600 }}>{row.storeName || row.store || 'Downtown Store'}</td>
-                      <td style={{ fontWeight: 700 }}>
-                        ₹{Number(row.orderTotal || row.amount || 0).toLocaleString('en-IN')}
-                      </td>
-                      <td style={{ fontWeight: 700, color: '#16a34a' }}>
-                        +₹{Number(row.commissionAmount || row.commission || 0).toFixed(2)}
-                      </td>
-                      <td>
-                        <span className="admin-badge success">{row.status || 'settled'}</span>
+                {(() => {
+                  const displayedTransactions = activeStoreId === 'all'
+                    ? recentTransactions
+                    : recentTransactions.filter((t) => {
+                        const sid = String(t.storeId || '').toLowerCase();
+                        const sname = String(t.storeName || t.store || '').toLowerCase();
+                        const target = activeStoreId.toLowerCase();
+                        return sid === target || sname.includes(target);
+                      });
+
+                  return displayedTransactions.length > 0 ? (
+                    displayedTransactions.slice(0, 5).map((row, idx) => (
+                      <tr key={row.orderId || row.id || idx}>
+                        <td style={{ fontFamily: 'monospace', fontWeight: 700, color: '#475569' }}>
+                          {row.orderId || row.id}
+                        </td>
+                        <td style={{ fontWeight: 600 }}>{row.storeName || row.store || 'Downtown Store'}</td>
+                        <td style={{ fontWeight: 700 }}>
+                          ₹{Number(row.orderTotal || row.amount || 0).toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ fontWeight: 700, color: '#16a34a' }}>
+                          +₹{Number(row.commissionAmount || row.commission || 0).toFixed(2)}
+                        </td>
+                        <td>
+                          <span className="admin-badge success">{row.status || 'settled'}</span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: 'center', color: '#94a3b8', padding: '24px' }}>
+                        {loading
+                          ? 'Loading real transactions...'
+                          : activeStoreId !== 'all'
+                          ? `No orders recorded for ${activeStoreName} yet.`
+                          : 'No orders recorded yet. Process a POS sale to see live 2% monetization.'}
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" style={{ textAlign: 'center', color: '#94a3b8', padding: '24px' }}>
-                      {loading ? 'Loading real transactions...' : 'No orders recorded yet. Process a POS sale to see live 2% monetization.'}
-                    </td>
-                  </tr>
-                )}
+                  );
+                })()}
               </tbody>
             </table>
           </div>
@@ -287,14 +355,20 @@ export default function DashboardPage_admin({ onNavigate, onSwitchModule }) {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    padding: '8px 12px',
+                    padding: '10px 12px',
                     background: '#f8fafc',
                     borderRadius: '8px',
                     border: '1px solid #e2e8f0',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
                   }}
+                  onClick={() => onNavigate && onNavigate('store-dashboard', { storeId: store.id || store.code })}
+                  title={`Open ${store.name} Scoped Dashboard`}
                 >
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>{store.name}</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#0f172a' }}>
+                      🏬 {store.name}
+                    </div>
                     <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
                       {store.code} &bull; Mgr: {store.contactPerson || store.manager || 'Store Manager'}
                     </div>
@@ -302,7 +376,7 @@ export default function DashboardPage_admin({ onNavigate, onSwitchModule }) {
                   <div style={{ textAlign: 'right' }}>
                     <span className="admin-badge success">{store.status || 'active'}</span>
                     <div style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700, marginTop: '2px' }}>
-                      {store.type || 'Retail Branch'}
+                      View Dashboard →
                     </div>
                   </div>
                 </div>

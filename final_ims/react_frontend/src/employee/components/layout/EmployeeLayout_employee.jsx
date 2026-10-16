@@ -11,6 +11,7 @@ export default function EmployeeLayout_employee({
   activeMenu = 'dashboard',
   onNavigate,
   onSwitchModule,
+  onLogout,
   children,
 }) {
   return (
@@ -78,26 +79,45 @@ export default function EmployeeLayout_employee({
         </div>
 
         <div style={{ padding: '16px', borderTop: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {onSwitchModule && (
-            <>
-              <button
-                type="button"
-                className="emp-btn emp-btn-primary"
-                style={{ width: '100%', fontSize: '12px', justifyContent: 'center' }}
-                onClick={() => onSwitchModule('admin')}
-              >
-                🛡️ Switch to Admin Portal →
-              </button>
-              <button
-                type="button"
-                className="emp-btn"
-                style={{ width: '100%', background: '#f9fafb', color: '#6b7280', border: '1px solid #e5e7eb', fontSize: '11.5px', justifyContent: 'center' }}
-                onClick={() => onSwitchModule('consumer')}
-              >
-                🛒 Consumer View
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            className="emp-btn"
+            style={{ width: '100%', background: '#f3f4f6', color: '#4b5563', border: '1px solid #d1d5db', fontSize: '12px', justifyContent: 'center', gap: '6px' }}
+            onClick={() => onLogout && onLogout()}
+            title="Log out of Employee Desk and authenticate into another module via Login"
+          >
+            <span>🔄</span> Switch Role / Account
+          </button>
+
+          {/* Prominent Sidebar Logout Button */}
+          <button
+            type="button"
+            className="emp-btn"
+            style={{
+              width: '100%',
+              fontSize: '12px',
+              justifyContent: 'center',
+              background: '#fee2e2',
+              color: '#b91c1c',
+              border: '1px solid #fecaca',
+              fontWeight: 600,
+              cursor: 'pointer',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginTop: '4px',
+            }}
+            onClick={() => onLogout && onLogout()}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Sign Out
+          </button>
         </div>
       </aside>
 
@@ -115,7 +135,34 @@ export default function EmployeeLayout_employee({
               </svg>
               <input type="text" placeholder="Search desk..." />
             </div>
-            <button type="button" className="emp-topbar-avatar">EM</button>
+            <button type="button" className="emp-topbar-avatar" title="Employee Profile">EM</button>
+
+            {/* Header Logout Button */}
+            <button
+              type="button"
+              onClick={() => onLogout && onLogout()}
+              title="Sign out of Employee Portal"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                background: '#fee2e2',
+                color: '#b91c1c',
+                border: '1px solid #fecaca',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 600,
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Logout
+            </button>
           </div>
         </header>
 

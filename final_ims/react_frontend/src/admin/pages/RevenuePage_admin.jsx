@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useDataSync } from '../../context/DataSyncContext';
 import {
   fetchPlatformRevenueSummary,
   fetchPlatformCommissions,
@@ -84,25 +85,67 @@ export default function RevenuePage_admin() {
         );
       }
 
+      // Set of matched commission IDs to track any transactions not tied to user accounts
+      const matchedCommIds = new Set();
+
       // Group commissions and subscriptions by user/retailer
       const records = userList
         .filter((u) => ['retailer', 'supplier', 'consumer'].includes(String(u.role || '').toLowerCase()))
         .map((u) => {
-          const uid = String(u.id);
+          const uid = String(u.id || '');
+          const uProfileId = String(u.profileId || '');
+          const uRetailerId = String(u.retailerId || '');
+          const uStoreId = String(u.storeId || '');
+          const uStoreName = String(u.store || '').toLowerCase().trim();
+          const uName = String(u.name || '').toLowerCase().trim();
+          const uEmail = String(u.email || '').toLowerCase().trim();
           const urole = String(u.role || '').toLowerCase();
 
           // Subscriptions for this user
-          const userSubs = subList.filter((s) => String(s.userId || s.retailerId || '') === uid && s.status === 'active');
-          const subFee = userSubs.reduce((acc, s) => acc + Number(s.pricePerMonth || 0), 0);
-          const planName = userSubs.length > 0 ? userSubs[0].tierName || userSubs[0].tier : (u.plan || 'Starter (Free)');
+          const userSubs = subList.filter(
+            (s) =>
+              (s.userId && (String(s.userId) === uid || String(s.userId) === uProfileId)) ||
+              (s.retailerId && (String(s.retailerId) === uid || String(s.retailerId) === uProfileId || String(s.retailerId) === uRetailerId))
+          );
+          const subFee = userSubs
+            .filter((s) => s.status === 'active')
+            .reduce((acc, s) => acc + Number(s.pricePerMonth || 0), 0);
+          const planName =
+            userSubs.length > 0
+              ? userSubs[0].tierName || userSubs[0].tier
+              : u.plan || 'Starter (Free)';
 
           // Commissions & Orders for this user
-          const userComms = commList.filter(
-            (c) => String(c.retailerId || c.userId || '') === uid || String(c.retailerName || '').toLowerCase() === String(u.name || '').toLowerCase()
-          );
+          const userComms = commList.filter((c) => {
+            const cRetId = String(c.retailerId || c.userId || '');
+            const cStoreId = String(c.storeId || '');
+            const cStoreName = String(c.storeName || c.retailerName || '').toLowerCase().trim();
+            const cCust = String(c.customerName || '').toLowerCase().trim();
+            const cEmail = String(c.customerEmail || '').toLowerCase().trim();
+
+            let matched = false;
+            if (urole === 'retailer') {
+              if (cRetId && (cRetId === uid || cRetId === uProfileId || cRetId === uRetailerId)) matched = true;
+              else if (uStoreId && cStoreId && uStoreId === cStoreId) matched = true;
+              else if (uStoreName && cStoreName && (cStoreName === uStoreName || cStoreName.includes(uName))) matched = true;
+              else if (uName && cStoreName && cStoreName.includes(uName)) matched = true;
+            } else if (urole === 'consumer') {
+              if (uName && cCust && (cCust === uName || cCust.includes(uName))) matched = true;
+              else if (uEmail && cEmail && cEmail === uEmail) matched = true;
+            }
+
+            if (matched && c.id) {
+              matchedCommIds.add(c.id);
+            }
+            return matched;
+          });
+
           const commissionEarned = userComms.reduce((acc, c) => acc + Number(c.commissionAmount || 0), 0);
           const grossVolume = userComms.reduce((acc, c) => acc + Number(c.orderTotal || c.grossAmount || 0), 0);
-          const userEarnings = userComms.reduce((acc, c) => acc + Number(c.netRetailerAmount || (c.orderTotal - c.commissionAmount) || 0), 0);
+          const userEarnings = userComms.reduce(
+            (acc, c) => acc + Number(c.netRetailerAmount || (c.orderTotal - c.commissionAmount) || 0),
+            0
+          );
           const transactionCount = userComms.length;
 
           const platformRevenue = Number((subFee + commissionEarned).toFixed(2));
@@ -123,6 +166,41 @@ export default function RevenuePage_admin() {
           };
         });
 
+      // Capture any store transactions not tied to a registered user account
+      const unmappedComms = commList.filter((c) => !matchedCommIds.has(c.id));
+      if (unmappedComms.length > 0) {
+        // Group unmapped by store/retailer name
+        const storeGroups = new Map();
+        unmappedComms.forEach((c) => {
+          const key = c.storeName || c.retailerName || c.storeId || 'Central Branch';
+          if (!storeGroups.has(key)) {
+            storeGroups.set(key, []);
+          }
+          storeGroups.get(key).push(c);
+        });
+
+        storeGroups.forEach((comms, storeKey) => {
+          const gross = comms.reduce((sum, c) => sum + Number(c.orderTotal || 0), 0);
+          const comm = comms.reduce((sum, c) => sum + Number(c.commissionAmount || (c.orderTotal * 0.02) || 0), 0);
+          const net = comms.reduce((sum, c) => sum + Number(c.netRetailerAmount || (c.orderTotal - comm) || 0), 0);
+
+          records.push({
+            id: comms[0]?.retailerId || `store-${storeKey.toLowerCase().replace(/\s+/g, '-')}`,
+            name: comms[0]?.retailerName || storeKey,
+            role: 'retailer',
+            store: storeKey,
+            plan: 'Starter (Free)',
+            subscriptionFee: 0,
+            commissionEarned: Number(comm.toFixed(2)),
+            platformRevenue: Number(comm.toFixed(2)),
+            grossVolume: Number(gross.toFixed(2)),
+            userEarnings: Number(net.toFixed(2)),
+            transactionCount: comms.length,
+            status: 'Active',
+          });
+        });
+      }
+
       setStakeholders(records);
     } catch (err) {
       console.error('Failed to load revenue data:', err);
@@ -136,13 +214,17 @@ export default function RevenuePage_admin() {
     loadRevenueData();
   }, [loadRevenueData]);
 
+  useDataSync(['revenue', 'transactions'], () => {
+    loadRevenueData();
+  });
+
   // Filtered records
   const filteredRecords = useMemo(() => {
     return stakeholders.filter((item) => {
       const matchesRole = roleFilter === 'all' || item.role === roleFilter;
       const matchesSearch =
         item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.id.toLowerCase().includes(search.toLowerCase()) ||
+        String(item.id).toLowerCase().includes(search.toLowerCase()) ||
         (item.store && item.store.toLowerCase().includes(search.toLowerCase()));
       return matchesRole && matchesSearch;
     });
@@ -150,14 +232,14 @@ export default function RevenuePage_admin() {
 
   // Aggregated KPI Totals
   const totals = useMemo(() => {
-    if (filteredRecords.length === 0 && summaryData) {
+    if (roleFilter === 'all' && !search.trim() && summaryData) {
       return {
         grossVolume: Number(summaryData.totalGrossVolume || 0),
         commissionEarned: Number(summaryData.totalCommissionEarned || 0),
         subscriptionFee: Number(summaryData.totalSubscriptionRevenue || 0),
         platformRevenue: Number(summaryData.totalPlatformRevenue || 0),
         userEarnings: Number(summaryData.netRetailerPayout || 0),
-        transactionCount: Number(summaryData.totalTransactions || 0),
+        transactionCount: Number(summaryData.totalTransactionsProcessed ?? summaryData.totalTransactions ?? 0),
       };
     }
     return filteredRecords.reduce(
@@ -179,7 +261,7 @@ export default function RevenuePage_admin() {
         transactionCount: 0,
       }
     );
-  }, [filteredRecords, summaryData]);
+  }, [filteredRecords, summaryData, roleFilter, search]);
 
   // Download real CSV
   const handleExportCSV = () => {
@@ -581,6 +663,97 @@ export default function RevenuePage_admin() {
                     </td>
                   </tr>
                 ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── Monthly Revenue & 2% Commission Ledger ── */}
+      <div className="admin-card" style={{ padding: 0, overflow: 'hidden', marginBottom: '2rem' }}>
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>
+              📅 Monthly Platform Revenue &amp; 2.0% Commission Ledger
+            </h3>
+            <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: '#64748b' }}>
+              Month-over-month breakdown of 2% transaction commission, subscription fees, and total revenue inflow.
+            </p>
+          </div>
+          <span style={{ fontSize: '11px', fontWeight: 700, background: '#eff6ff', color: '#2563eb', padding: '4px 10px', borderRadius: '9999px', border: '1px solid #bfdbfe' }}>
+            2.0% Automated Take-Rate
+          </span>
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Billing Month</th>
+                <th>Gross Volume (GMV)</th>
+                <th>2.0% POS Commission</th>
+                <th>SaaS Subscriptions</th>
+                <th>Total Platform Revenue</th>
+                <th>Orders Processed</th>
+                <th>Net Stakeholder Payout</th>
+                <th>Effective Yield</th>
+              </tr>
+            </thead>
+            <tbody>
+              {summaryData?.monthlyBreakdown && Object.keys(summaryData.monthlyBreakdown).length > 0 ? (
+                Object.entries(summaryData.monthlyBreakdown)
+                  .sort(([a], [b]) => b.localeCompare(a))
+                  .map(([monthKey, mData]) => {
+                    const [year, month] = monthKey.split('-');
+                    const dateObj = new Date(Number(year), Number(month) - 1, 1);
+                    const monthLabel = !isNaN(dateObj.getTime())
+                      ? dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+                      : monthKey;
+                    const gross = Number(mData.grossVolume || 0);
+                    const comm = Number(mData.commission || 0);
+                    const subs = Number(mData.subscriptions || 0);
+                    const total = Number(mData.totalPlatform || (comm + subs));
+                    const orders = Number(mData.ordersCount || 0);
+                    const payout = Number((gross - comm).toFixed(2));
+                    const yieldRate = gross > 0 ? ((total / gross) * 100).toFixed(2) : '2.00';
+
+                    return (
+                      <tr key={monthKey}>
+                        <td style={{ fontWeight: 700, color: '#0f172a' }}>
+                          📅 {monthLabel}
+                        </td>
+                        <td style={{ fontWeight: 600, color: '#2563eb' }}>
+                          ₹{gross.toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ fontWeight: 700, color: '#10b981' }}>
+                          ₹{comm.toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ fontWeight: 600, color: '#8b5cf6' }}>
+                          ₹{subs.toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ fontWeight: 800, color: '#0f172a', fontSize: '13.5px' }}>
+                          ₹{total.toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ fontWeight: 600, color: '#475569' }}>
+                          {orders} orders
+                        </td>
+                        <td style={{ fontWeight: 600, color: '#64748b' }}>
+                          ₹{payout.toLocaleString('en-IN')}
+                        </td>
+                        <td>
+                          <span className="admin-badge primary">
+                            {yieldRate}% Yield
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+              ) : (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '1.5rem', color: '#94a3b8' }}>
+                    No monthly transaction history recorded yet. Completed transactions will automatically calculate 2% commission and populate here.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>

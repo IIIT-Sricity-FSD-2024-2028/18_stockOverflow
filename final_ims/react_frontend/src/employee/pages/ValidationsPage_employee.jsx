@@ -6,12 +6,14 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useDataSync } from '../../context/DataSyncContext';
 import {
   fetchEmployeeAssignments,
   resolveEmployeeAssignment,
   distributeEmployeeWork,
 } from '../utils/api_employee';
 import DossierModal_employee from '../components/DossierModal_employee';
+import VerificationActionModal from '../components/VerificationActionModal';
 
 function mapAssignmentToEntity(asgn) {
   const d = asgn.details || {};
@@ -43,6 +45,19 @@ export default function ValidationsPage_employee() {
   const [search, setSearch] = useState('');
   const [selectedEntity, setSelectedEntity] = useState(null);
 
+  // Dedicated Action Modal & Toast notification state
+  const [actionModal, setActionModal] = useState({
+    isOpen: false,
+    mode: 'approve',
+    entity: null,
+  });
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   const loadAssignments = useCallback(async () => {
     try {
       setLoading(true);
@@ -63,6 +78,10 @@ export default function ValidationsPage_employee() {
   useEffect(() => {
     loadAssignments();
   }, [loadAssignments]);
+
+  useDataSync(['assignments', 'users'], () => {
+    loadAssignments();
+  });
 
   const entities = useMemo(() => {
     return assignments.map(mapAssignmentToEntity);
@@ -91,7 +110,10 @@ export default function ValidationsPage_employee() {
 
   const handleStatusChange = async (id, newStatus, reason = '') => {
     try {
+      const isApprove = newStatus === 'approved' || newStatus === 'active';
+      const action = isApprove ? 'approve' : 'reject';
       await resolveEmployeeAssignment(id, {
+        action,
         status: newStatus,
         rejectionReason: reason || undefined,
         notes: reason || undefined,
@@ -104,19 +126,32 @@ export default function ValidationsPage_employee() {
           notes: reason || prev.notes,
         }));
       }
+      showToast(
+        isApprove
+          ? 'Verification approved successfully! Entity is now Active.'
+          : 'Application rejected with deficiency feedback logged.',
+        'success'
+      );
     } catch (err) {
-      alert(`Error updating verification status: ${err.message}`);
+      showToast(`Error updating verification status: ${err.message}`, 'error');
+      throw err;
     }
   };
 
-  const handleQuickReject = (id, name) => {
-    const reason = window.prompt(
-      `Enter rejection reason for ${name}:`,
-      'Invalid tax documentation or missing store lease.'
-    );
-    if (reason !== null && reason.trim()) {
-      handleStatusChange(id, 'rejected', reason.trim());
-    }
+  const handleOpenApproveModal = (item) => {
+    setActionModal({
+      isOpen: true,
+      mode: 'approve',
+      entity: item,
+    });
+  };
+
+  const handleOpenRejectModal = (item) => {
+    setActionModal({
+      isOpen: true,
+      mode: 'reject',
+      entity: item,
+    });
   };
 
   return (
@@ -277,18 +312,20 @@ export default function ValidationsPage_employee() {
                             <button
                               type="button"
                               className="emp-btn emp-btn-primary"
-                              style={{ padding: '4px 8px', fontSize: '11.5px', background: '#10b981', borderColor: '#10b981' }}
-                              onClick={() => handleStatusChange(item.id, 'approved', 'Compliance verified')}
+                              style={{ padding: '4px 10px', fontSize: '11.5px', background: '#10b981', borderColor: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}
+                              onClick={() => handleOpenApproveModal(item)}
                             >
-                              Approve
+                              <span>✓</span>
+                              <span>Approve</span>
                             </button>
                             <button
                               type="button"
                               className="emp-btn emp-btn-outline"
-                              style={{ padding: '4px 8px', fontSize: '11.5px', color: '#ef4444', borderColor: '#fca5a5' }}
-                              onClick={() => handleQuickReject(item.id, item.entityName)}
+                              style={{ padding: '4px 10px', fontSize: '11.5px', color: '#ef4444', borderColor: '#fca5a5', display: 'flex', alignItems: 'center', gap: '4px' }}
+                              onClick={() => handleOpenRejectModal(item)}
                             >
-                              Reject
+                              <span>✕</span>
+                              <span>Reject</span>
                             </button>
                           </>
                         )}
@@ -307,7 +344,46 @@ export default function ValidationsPage_employee() {
         entity={selectedEntity}
         onClose={() => setSelectedEntity(null)}
         onStatusChange={handleStatusChange}
+        onOpenActionModal={(ent, mode) => {
+          setSelectedEntity(null);
+          setActionModal({ isOpen: true, mode, entity: ent });
+        }}
       />
+
+      {/* Verification Action (Approve / Reject) Modal */}
+      <VerificationActionModal
+        isOpen={actionModal.isOpen}
+        mode={actionModal.mode}
+        entity={actionModal.entity}
+        onClose={() => setActionModal({ isOpen: false, mode: 'approve', entity: null })}
+        onConfirm={handleStatusChange}
+      />
+
+      {/* Floating Toast Notification */}
+      {toast && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 999999,
+            background: toast.type === 'error' ? '#991b1b' : '#065f46',
+            color: '#ffffff',
+            padding: '12px 20px',
+            borderRadius: '10px',
+            fontSize: '13px',
+            fontWeight: 700,
+            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            animation: 'fadeIn 0.2s ease-out',
+          }}
+        >
+          <span>{toast.type === 'error' ? '⚠️' : '✓'}</span>
+          <span>{toast.message}</span>
+        </div>
+      )}
     </div>
   );
 }

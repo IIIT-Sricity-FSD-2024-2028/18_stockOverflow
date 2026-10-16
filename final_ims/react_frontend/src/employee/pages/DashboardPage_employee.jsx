@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useDataSync } from '../../context/DataSyncContext';
 import {
   fetchEmployeeStats,
   fetchEmployeeAssignments,
@@ -80,6 +81,10 @@ export default function DashboardPage_employee({ onNavigate }) {
   useEffect(() => {
     loadDashboardData();
   }, [loadDashboardData]);
+
+  useDataSync(['assignments', 'users'], () => {
+    loadDashboardData();
+  });
 
   const handleToggleDuty = () => {
     const next = !isOnDuty;

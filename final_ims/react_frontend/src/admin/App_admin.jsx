@@ -27,17 +27,24 @@ import UsersPage_admin from './pages/UsersPage_admin';
 import RolesPage_admin from './pages/RolesPage_admin';
 import RevenuePage_admin from './pages/RevenuePage_admin';
 import StoresPage_admin from './pages/StoresPage_admin';
+import StoreDashboardPage_admin from './pages/StoreDashboardPage_admin';
 import ReportsPage_admin from './pages/ReportsPage_admin';
 import SettingsPage_admin from './pages/SettingsPage_admin';
 
-export default function App_admin({ onSwitchModule }) {
+export default function App_admin({ onSwitchModule, onLogout }) {
   // ─── 1. Navigation & View Routing State ───
   const [currentView, setCurrentView] = useState('dashboard');
+  const [viewParams, setViewParams] = useState({});
+
+  const handleNavigate = (view, params = {}) => {
+    setCurrentView(view);
+    setViewParams(params);
+  };
 
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
-        return <DashboardPage_admin onNavigate={setCurrentView} />;
+        return <DashboardPage_admin onNavigate={handleNavigate} />;
       case 'users':
         return <UsersPage_admin />;
       case 'roles':
@@ -46,21 +53,30 @@ export default function App_admin({ onSwitchModule }) {
         return <RevenuePage_admin />;
       case 'stores':
       case 'multistore':
-        return <StoresPage_admin />;
+        return <StoresPage_admin onNavigate={handleNavigate} />;
+      case 'store-dashboard':
+        return (
+          <StoreDashboardPage_admin
+            storeId={viewParams.storeId || (typeof window !== 'undefined' ? localStorage.getItem('stockoverflow_active_store_id') : '')}
+            onNavigate={handleNavigate}
+            onBack={() => handleNavigate('stores')}
+          />
+        );
       case 'reports':
         return <ReportsPage_admin />;
       case 'settings':
         return <SettingsPage_admin />;
       default:
-        return <DashboardPage_admin onNavigate={setCurrentView} />;
+        return <DashboardPage_admin onNavigate={handleNavigate} />;
     }
   };
 
   return (
     <AdminLayout_admin
-      activeMenu={currentView}
-      onNavigate={setCurrentView}
+      activeMenu={currentView === 'store-dashboard' ? 'stores' : currentView}
+      onNavigate={handleNavigate}
       onSwitchModule={onSwitchModule}
+      onLogout={onLogout}
     >
       {renderView()}
     </AdminLayout_admin>

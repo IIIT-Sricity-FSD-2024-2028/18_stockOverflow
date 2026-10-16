@@ -21,7 +21,7 @@ import DashboardPage_employee from './pages/DashboardPage_employee';
 import ValidationsPage_employee from './pages/ValidationsPage_employee';
 import QueriesPage_employee from './pages/QueriesPage_employee';
 
-export default function App_employee({ onSwitchModule }) {
+export default function App_employee({ onSwitchModule, onLogout }) {
   // ─── 1. Navigation & View Routing State ───
   const [currentView, setCurrentView] = useState('dashboard');
 
@@ -43,6 +43,7 @@ export default function App_employee({ onSwitchModule }) {
       activeMenu={currentView}
       onNavigate={setCurrentView}
       onSwitchModule={onSwitchModule}
+      onLogout={onLogout}
     >
       {renderView()}
     </EmployeeLayout_employee>

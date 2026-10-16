@@ -6,6 +6,8 @@
  * Zero mock fallbacks - all operations reflect live backend assignments and tickets.
  */
 
+import { emitDataSync } from '../../context/DataSyncContext';
+
 const API_BASE_URL =
   typeof window !== 'undefined' && window.IMS_API_BASE_URL
     ? window.IMS_API_BASE_URL
@@ -64,15 +66,19 @@ export async function fetchEmployeeAssignmentById(id) {
   return await apiRequest(`/employees/assignments/${id}`);
 }
 
-export async function resolveEmployeeAssignment(id, { status, rejectionReason, notes }) {
-  return await apiRequest(`/employees/assignments/${id}`, {
+export async function resolveEmployeeAssignment(id, { action, status, rejectionReason, notes }) {
+  const resolvedAction = action || (status === 'approved' || status === 'active' ? 'approve' : 'reject');
+  const resolvedNotes = notes || rejectionReason || '';
+  const res = await apiRequest(`/employees/assignments/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({
-      status, // 'approved' | 'rejected'
-      rejectionReason: rejectionReason || undefined,
-      notes: notes || undefined,
+      action: resolvedAction,
+      notes: resolvedNotes || undefined,
     }),
   });
+  emitDataSync('assignments', res);
+  emitDataSync('users', res);
+  return res;
 }
 
 // ─── 3. Employee Support Helpdesk & Queries ──────────────────────────────────
@@ -85,20 +91,24 @@ export async function fetchEmployeeQueries(employeeId, status) {
 }
 
 export async function createEmployeeQuery(queryData) {
-  return await apiRequest('/employees/queries', {
+  const res = await apiRequest('/employees/queries', {
     method: 'POST',
     body: JSON.stringify(queryData),
   });
+  emitDataSync('assignments', res);
+  return res;
 }
 
 export async function resolveEmployeeQuery(id, { status, resolutionNotes }) {
-  return await apiRequest(`/employees/queries/${id}`, {
+  const res = await apiRequest(`/employees/queries/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({
       status, // 'in_progress' | 'resolved' | 'closed'
       resolutionNotes,
     }),
   });
+  emitDataSync('assignments', res);
+  return res;
 }
 
 // ─── 4. Aliases for legacy component calls ───────────────────────────────────
