@@ -3812,3 +3812,62 @@
 [2026-10-17T09:49:44.777Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
 [2026-10-17T09:49:44.801Z] [GET] /api/suppliers 304 - 24ms - IP: ::1
 [2026-10-17T09:49:44.807Z] [GET] /api/purchase-orders?retailerId=af859a42-899e-471f-8181-e7d7603924e2&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-17T09:58:49.265Z] [GET] /api/users 200 - 111ms - IP: ::1
+[2026-10-17T09:58:49.421Z] [GET] /api/users 304 - 153ms - IP: ::1
+[2026-10-17T10:01:03.784Z] [GET] /api/users 304 - 135ms - IP: ::1
+[2026-10-17T10:01:03.907Z] [GET] /api/users 304 - 122ms - IP: ::1
+[2026-10-17T10:01:07.751Z] [GET] /api/users 304 - 141ms - IP: ::1
+[2026-10-17T10:01:07.898Z] [GET] /api/users 304 - 145ms - IP: ::1
+[2026-10-17T10:46:34.288Z] [HEAD] /api/users 200 - 90ms - IP: ::1
+[2026-10-17T10:46:45.110Z] [GET] /api/users 200 - 96ms - IP: ::1
+[2026-10-17T10:46:45.210Z] [GET] /api/users 304 - 98ms - IP: ::1
+[2026-10-17T10:46:48.753Z] [POST] /api/users/login 201 - 16ms - IP: ::1
+[2026-10-17T10:46:53.377Z] [POST] /api/users/login 201 - 5ms - IP: ::1
+[2026-10-17T10:46:53.499Z] [GET] /api/products?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 200 - 9ms - IP: ::1
+[2026-10-17T10:46:53.504Z] [GET] /api/customers?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 200 - 4ms - IP: ::1
+[2026-10-17T10:46:53.505Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO
+[2026-10-17T10:46:53.508Z] [GET] /api/transactions?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 200 - 3ms - IP: ::1
+[2026-10-17T10:46:53.513Z] [GET] /api/purchase-orders?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 200 - 3ms - IP: ::1
+[2026-10-17T10:46:53.521Z] [GET] /api/returns?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 200 - 6ms - IP: ::1
+[2026-10-17T10:46:53.523Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-17T10:46:53.528Z] [GET] /api/suppliers 200 - 6ms - IP: ::1
+[2026-10-17T10:46:53.538Z] [GET] /api/transactions/order-activity?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 200 - 2ms - IP: ::1
+[2026-10-17T10:46:53.536Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO
+[2026-10-17T10:46:53.543Z] [GET] /api/customers?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 1ms - IP: ::1
+[2026-10-17T10:46:53.544Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO
+[2026-10-17T10:46:53.546Z] [GET] /api/transactions?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 2ms - IP: ::1
+[2026-10-17T10:46:53.535Z] [GET] /api/platform-revenue/subscriptions/active?userId=u-retailer-1 200 - 4ms - IP: ::1
+[2026-10-17T10:46:53.541Z] [GET] /api/products?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 2ms - IP: ::1
+[2026-10-17T10:46:53.552Z] [GET] /api/purchase-orders?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 3ms - IP: ::1
+[2026-10-17T10:46:53.554Z] [GET] /api/returns?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 1ms - IP: ::1
+[2026-10-17T10:46:53.555Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-17T10:46:53.558Z] [GET] /api/suppliers 304 - 3ms - IP: ::1
+[2026-10-17T10:46:53.561Z] [GET] /api/platform-revenue/subscriptions/active?userId=u-retailer-1 200 - 2ms - IP: ::1
+[2026-10-17T10:46:53.565Z] [GET] /api/transactions/order-activity?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 1ms - IP: ::1
+[2026-10-17T10:46:53.567Z] [GET] /api/products?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 1ms - IP: ::1
+[2026-10-17T10:46:53.569Z] [GET] /api/returns?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 0ms - IP: ::1
+[2026-10-17T10:46:53.564Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO
+[2026-10-17T10:46:53.574Z] [GET] /api/products?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 2ms - IP: ::1
+[2026-10-17T10:46:53.576Z] [GET] /api/returns?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 1ms - IP: ::1
+[2026-10-17T10:46:54.883Z] [GET] /api/products?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 2ms - IP: ::1
+[2026-10-17T10:46:54.885Z] [GET] /api/customers?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 0ms - IP: ::1
+[2026-10-17T10:46:54.887Z] [GET] /api/purchase-orders?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 1ms - IP: ::1
+[2026-10-17T10:46:54.890Z] [GET] /api/returns?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 2ms - IP: ::1
+[2026-10-17T10:46:54.893Z] [GET] /api/transactions?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 1ms - IP: ::1
+[2026-10-17T10:46:54.894Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-17T10:46:54.897Z] [GET] /api/suppliers 304 - 3ms - IP: ::1
+[2026-10-17T10:46:54.892Z] [AUDIT] Action invoked on route: [GET] /api/transactions?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO
+[2026-10-17T10:46:54.902Z] [AUDIT] Action invoked on route: [GET] /api/transactions/order-activity?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO
+[2026-10-17T10:46:54.903Z] [GET] /api/transactions/order-activity?retailerId=4be7ecb5-c37b-42a9-8db2-209901e86ba9&storeId=HELLO 304 - 1ms - IP: ::1
+[2026-10-17T10:46:54.901Z] [GET] /api/platform-revenue/subscriptions/active?userId=u-retailer-1 200 - 3ms - IP: ::1
+[2026-10-17T10:47:08.327Z] [POST] /api/users/login 201 - 4ms - IP: ::1
+[2026-10-17T10:47:08.405Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-17T10:47:08.408Z] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5 200 - 4ms - IP: ::1
+[2026-10-17T10:47:08.413Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5 | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-17T10:47:08.416Z] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5 304 - 3ms - IP: ::1
+[2026-10-17T10:47:08.446Z] [GET] /api/purchase-orders 200 - 2ms - IP: ::1
+[2026-10-17T10:47:08.449Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-17T10:47:08.455Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
+[2026-10-17T10:47:08.452Z] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5/documents 200 - 4ms - IP: ::1
+[2026-10-17T10:47:08.458Z] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5/documents 304 - 3ms - IP: ::1
+[2026-10-17T10:47:08.463Z] [GET] /api/purchase-orders 304 - 2ms - IP: ::1
