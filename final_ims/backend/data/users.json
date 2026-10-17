@@ -1,5 +1,215 @@
 [
   {
+    "id": "9a331299-11ae-435f-8766-0338a90d4288",
+    "name": "supplier",
+    "email": "supplier1@gmail.com",
+    "password": "pass1234",
+    "role": "supplier",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "retailerId": "",
+    "profileId": "64aa95dd-c853-4f83-8a05-8994d4e7a1c5",
+    "profile": {
+      "businessName": "Apex Electronics Supplies",
+      "businessEmail": "supplier1@gmail.com",
+      "businessPhone": "9876543210",
+      "supplierCode": "APX-1001",
+      "address": "101 Industrial Estate",
+      "website": "",
+      "businessType": "Wholesaler",
+      "currency": "INR",
+      "primaryCategory": "Electronics & Technology",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "description": "",
+      "state": "Gujarat",
+      "ownerName": "Supplier One",
+      "ownerTitle": "Managing Director",
+      "ownerEmail": "supplier1@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "retailers": [],
+      "productCount": 3
+    },
+    "plan": "pro",
+    "createdAt": "2026-10-17T09:05:01.321Z",
+    "updatedAt": "2026-10-17T09:48:43.124Z"
+  },
+  {
+    "id": "ac8dfd35-4b31-44e1-a023-e744591a1782",
+    "name": "supplier2",
+    "email": "supplier2@gmail.com",
+    "password": "pass1234",
+    "role": "supplier",
+    "status": "Active",
+    "store": "",
+    "storeId": "",
+    "currentStoreId": "",
+    "accessibleStoreIds": [],
+    "retailerId": "",
+    "profileId": "309827ab-7b3b-48e4-b9ca-007c5b8eb300",
+    "profile": {
+      "businessName": "supplier2 Supplies",
+      "businessEmail": "supplier2@gmail.com",
+      "businessPhone": "",
+      "supplierCode": "SUP-9734",
+      "address": "",
+      "website": "",
+      "businessType": "Wholesaler",
+      "currency": "INR",
+      "primaryCategory": "General",
+      "paymentTerms": "",
+      "sellingType": "",
+      "description": "",
+      "state": "",
+      "ownerName": "supplier2",
+      "ownerTitle": "",
+      "ownerEmail": "supplier2@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "retailers": [],
+      "productCount": 0
+    },
+    "plan": "pro",
+    "createdAt": "2026-10-17T09:19:48.917Z",
+    "updatedAt": "2026-10-17T09:20:23.181Z"
+  },
+  {
+    "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+    "name": "John",
+    "email": "john@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "John's Retail Store",
+    "storeId": "JOHN-S-STORE",
+    "currentStoreId": "JOHN-S-STORE",
+    "accessibleStoreIds": [
+      "JOHN-S-STORE"
+    ],
+    "retailerId": "",
+    "profileId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
+    "profile": {
+      "businessName": "John's Retail Store",
+      "businessEmail": "john@gmail.com",
+      "businessPhone": "+91 98765 11111",
+      "taxId": "",
+      "retailerCode": "RET-101",
+      "address": "Gujarat, India",
+      "website": "",
+      "businessType": "Retailer",
+      "currency": "INR",
+      "fiscalYear": "",
+      "primaryIndustry": "Retail",
+      "ownerName": "John",
+      "ownerTitle": "Owner",
+      "ownerEmail": "john@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "stores": [
+        {
+          "name": "John's Retail Store",
+          "code": "JOHN-S-STORE",
+          "contactPerson": "John",
+          "phone": "+91 98765 11111",
+          "address": "Gujarat, India",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "plan": "free",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-10-17T08:46:28.168Z"
+  },
+  {
+    "id": "857b8fc6-dd72-4cca-a4cb-7c2927005386",
+    "name": "biller1",
+    "email": "biller1@gmail.com",
+    "password": "pass1234",
+    "role": "biller",
+    "status": "Active",
+    "store": "John's Main Store",
+    "storeId": "STORE-01",
+    "currentStoreId": "STORE-01",
+    "accessibleStoreIds": [
+      "STORE-01",
+      "STORE-02"
+    ],
+    "retailerId": "af859a42-899e-471f-8181-e7d7603924e2",
+    "profileId": "2",
+    "profile": {
+      "name": "biller",
+      "email": "biller1@gmail.com",
+      "retailerId": "af859a42-899e-471f-8181-e7d7603924e2"
+    },
+    "createdAt": "2026-10-16T14:13:50.172Z",
+    "updatedAt": "2026-10-17T07:54:43.049Z"
+  },
+  {
+    "id": "8adc6e4a-cc49-4604-bb67-55add7824152",
+    "name": "John",
+    "email": "john1@gmail.com",
+    "password": "pass1234",
+    "role": "retailer",
+    "status": "Active",
+    "store": "John's Main Store",
+    "storeId": "STORE-01",
+    "currentStoreId": "STORE-01",
+    "accessibleStoreIds": [
+      "STORE-01",
+      "STORE-02"
+    ],
+    "retailerId": "",
+    "profileId": "af859a42-899e-471f-8181-e7d7603924e2",
+    "profile": {
+      "businessName": "John's Retail Store",
+      "businessEmail": "john1@gmail.com",
+      "businessPhone": "",
+      "taxId": "",
+      "retailerCode": "RET-640",
+      "address": "",
+      "website": "",
+      "businessType": "Sole Proprietorship",
+      "currency": "INR",
+      "fiscalYear": "April",
+      "primaryIndustry": "Mixed / General",
+      "ownerName": "John",
+      "ownerTitle": "Store Owner",
+      "ownerEmail": "john1@gmail.com",
+      "profileStatus": "active",
+      "rejectionReason": "",
+      "stores": [
+        {
+          "name": "John's Main Store",
+          "code": "STORE-01",
+          "contactPerson": "John",
+          "phone": "+91 98765 43210",
+          "address": "Central Market, Main Street",
+          "type": "Retail Store",
+          "status": "active"
+        },
+        {
+          "name": "John's 2nd store",
+          "code": "STORE-02",
+          "contactPerson": "John",
+          "phone": "",
+          "address": "",
+          "type": "Retail Store",
+          "status": "active"
+        }
+      ],
+      "suppliers": []
+    },
+    "plan": "pro",
+    "createdAt": "2026-10-17T07:49:18.490Z",
+    "updatedAt": "2026-10-17T07:50:11.409Z"
+  },
+  {
     "id": "44091e8c-36a7-4f7b-80e9-4fc81987cca9",
     "name": "consume1",
     "email": "consume1@gmail.com",
@@ -10,6 +220,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-10-16T17:40:25.809Z",
     "updatedAt": "2026-10-16T17:40:25.809Z"
@@ -27,6 +238,7 @@
     "accessibleStoreIds": [
       "STORE-01"
     ],
+    "retailerId": "b9c46dfc-0c93-4062-ab22-a6553c3bcd7d",
     "profileId": "3",
     "profile": {
       "name": "bil1",
@@ -35,28 +247,6 @@
     },
     "createdAt": "2026-10-16T14:36:47.417Z",
     "updatedAt": "2026-10-16T14:36:47.417Z"
-  },
-  {
-    "id": "857b8fc6-dd72-4cca-a4cb-7c2927005386",
-    "name": "biller1",
-    "email": "biller1@gmail.com",
-    "password": "temp123",
-    "role": "biller",
-    "status": "Active",
-    "store": "",
-    "storeId": "STORE-01",
-    "currentStoreId": "STORE-01",
-    "accessibleStoreIds": [
-      "STORE-01"
-    ],
-    "profileId": "2",
-    "profile": {
-      "name": "biller1",
-      "email": "biller1@gmail.com",
-      "retailerId": "b9c46dfc-0c93-4062-ab22-a6553c3bcd7d"
-    },
-    "createdAt": "2026-10-16T14:13:50.172Z",
-    "updatedAt": "2026-10-16T14:13:50.172Z"
   },
   {
     "id": "c4e92ba1-ac85-4e7a-a9ee-5672a851042b",
@@ -69,6 +259,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-10-16T12:56:35.569Z",
     "updatedAt": "2026-10-16T12:56:35.569Z"
@@ -84,6 +275,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "9ea880b4-5700-497c-925b-bb1851e557fc",
     "profile": {
       "businessName": "reta1 Retail",
@@ -122,6 +314,7 @@
     "accessibleStoreIds": [
       "STORE-01"
     ],
+    "retailerId": "",
     "profileId": "b9c46dfc-0c93-4062-ab22-a6553c3bcd7d",
     "profile": {
       "businessName": "retai4's Retail Store",
@@ -170,6 +363,7 @@
     "accessibleStoreIds": [
       "HELLO"
     ],
+    "retailerId": "",
     "profileId": "4be7ecb5-c37b-42a9-8db2-209901e86ba9",
     "profile": {
       "businessName": "Abhiraj Aayush",
@@ -216,6 +410,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "aa609525-b381-4c2d-8d69-15b4e49521a0",
     "profile": {
       "businessName": "reatai2 Retail",
@@ -252,6 +447,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-09-01T09:03:05.801Z",
     "updatedAt": "2026-09-01T09:03:05.801Z"
@@ -269,6 +465,7 @@
     "accessibleStoreIds": [
       "RETAILE2"
     ],
+    "retailerId": "",
     "profileId": "a81acfc2-f8e5-4d80-8071-e4055d110b00",
     "profile": {
       "businessName": "retaile2",
@@ -317,6 +514,7 @@
     "accessibleStoreIds": [
       "RETAILE1"
     ],
+    "retailerId": "",
     "profileId": "36af4d63-43d4-40ee-9cf0-d617522504a1",
     "profile": {
       "businessName": "retaile1",
@@ -365,6 +563,7 @@
     "accessibleStoreIds": [
       "RETAIL4"
     ],
+    "retailerId": "",
     "profileId": "b57b7d51-a638-4e99-910f-f02aecb2db51",
     "profile": {
       "businessName": "retail4",
@@ -411,6 +610,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "4fc69375-5dcf-4ff1-939f-65a3c87a0390",
     "profile": {
       "businessName": "supply1",
@@ -451,6 +651,7 @@
     "accessibleStoreIds": [
       "R17"
     ],
+    "retailerId": "",
     "profileId": "d95e9b78-ba61-4719-be72-1835013b93bf",
     "profile": {
       "businessName": "r17",
@@ -499,6 +700,7 @@
     "accessibleStoreIds": [
       "RETAIL2"
     ],
+    "retailerId": "",
     "profileId": "3a55cddd-69ad-43da-848d-69a4141fec81",
     "profile": {
       "businessName": "retail2",
@@ -547,6 +749,7 @@
     "accessibleStoreIds": [
       "RETAIL1"
     ],
+    "retailerId": "",
     "profileId": "38887f39-99c2-47f1-8b40-e52fca1f7442",
     "profile": {
       "businessName": "retail1",
@@ -592,6 +795,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "f0f5dba4-7f85-48fb-8b23-19d32ad58f10",
     "profile": {
       "businessName": "New Retailer Retail",
@@ -629,6 +833,7 @@
     "accessibleStoreIds": [
       "RETAIL2"
     ],
+    "retailerId": "",
     "profileId": "95cb70c8-2412-4de1-bf97-b59fad391f32",
     "profile": {
       "businessName": "retail2",
@@ -676,6 +881,7 @@
     "accessibleStoreIds": [
       "NYC-01"
     ],
+    "retailerId": "",
     "profileId": "40d12845-0f3f-45b6-9d9d-1771dc3861c7",
     "profile": {
       "businessName": "Test Retailer Business",
@@ -723,6 +929,7 @@
     "accessibleStoreIds": [
       "APEX-MAIN-ST"
     ],
+    "retailerId": "",
     "profileId": "ee83f903-29cf-460f-816f-6115a81ba191",
     "profile": {
       "businessName": "Apex Retailers Ltd",
@@ -768,6 +975,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "plan": "free",
     "createdAt": "2026-08-30T09:47:29.757Z",
@@ -786,6 +994,7 @@
     "accessibleStoreIds": [
       "JOHN-S-STORE"
     ],
+    "retailerId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
     "profileId": "1",
     "profile": {
       "name": "jones",
@@ -806,6 +1015,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-08-28T05:07:32.825Z",
     "updatedAt": "2026-08-28T05:07:32.825Z"
@@ -823,6 +1033,7 @@
     "accessibleStoreIds": [
       "0ccceb67-958d-4957-9728-e023994a8e8d"
     ],
+    "retailerId": "",
     "profileId": "0ccceb67-958d-4957-9728-e023994a8e8d",
     "profile": {
       "businessName": "Hans",
@@ -850,53 +1061,6 @@
     "updatedAt": "2026-08-28T05:05:15.937Z"
   },
   {
-    "id": "cedc0064-0c9e-445e-9649-d344d6fe094d",
-    "name": "John",
-    "email": "john@gmail.com",
-    "password": "pass1234",
-    "role": "retailer",
-    "status": "Active",
-    "store": "John's Retail Store",
-    "storeId": "JOHN-S-STORE",
-    "currentStoreId": "JOHN-S-STORE",
-    "accessibleStoreIds": [
-      "JOHN-S-STORE"
-    ],
-    "profileId": "cedc0064-0c9e-445e-9649-d344d6fe094d",
-    "profile": {
-      "businessName": "John's Retail Store",
-      "businessEmail": "john@gmail.com",
-      "businessPhone": "+91 98765 11111",
-      "taxId": "",
-      "retailerCode": "RET-101",
-      "address": "Gujarat, India",
-      "website": "",
-      "businessType": "Retailer",
-      "currency": "INR",
-      "fiscalYear": "",
-      "primaryIndustry": "Retail",
-      "ownerName": "John",
-      "ownerTitle": "Owner",
-      "ownerEmail": "john@gmail.com",
-      "profileStatus": "active",
-      "stores": [
-        {
-          "name": "John's Retail Store",
-          "code": "JOHN-S-STORE",
-          "contactPerson": "John",
-          "phone": "+91 98765 11111",
-          "address": "Gujarat, India",
-          "type": "Retail Store",
-          "status": "active"
-        }
-      ],
-      "suppliers": []
-    },
-    "plan": "free",
-    "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-28T04:31:20.182Z"
-  },
-  {
     "id": "a1315d24-89d4-4b5a-aeef-d89924b2df9a",
     "name": "consumer",
     "email": "consumer1@gmail.com",
@@ -907,6 +1071,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-08-25T16:34:39.552Z",
     "updatedAt": "2026-08-25T16:34:39.552Z"
@@ -924,6 +1089,7 @@
     "accessibleStoreIds": [
       "JKJDFSJKDF"
     ],
+    "retailerId": "f53f8742-69ce-4553-b410-97773f2494bb",
     "profileId": "7",
     "profile": {
       "name": "biller",
@@ -946,6 +1112,7 @@
     "accessibleStoreIds": [
       "JKJDFSJKDF"
     ],
+    "retailerId": "",
     "profileId": "f53f8742-69ce-4553-b410-97773f2494bb",
     "profile": {
       "businessName": "Retailer",
@@ -991,6 +1158,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-08-25T15:36:54.179Z",
     "updatedAt": "2026-08-25T15:36:54.179Z"
@@ -1006,6 +1174,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-08-25T15:34:51.401Z",
     "updatedAt": "2026-08-25T15:34:51.401Z"
@@ -1024,6 +1193,7 @@
       "R11",
       "R11-2"
     ],
+    "retailerId": "",
     "profileId": "d5b9b17a-3287-4be4-9164-e9173a49033d",
     "profile": {
       "businessName": "r11",
@@ -1080,6 +1250,7 @@
     "accessibleStoreIds": [
       "R10-1"
     ],
+    "retailerId": "eea40a42-2284-47e8-89ef-c4d837017996",
     "profileId": "6",
     "profile": {
       "name": "biller10",
@@ -1100,6 +1271,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "a58228f2-85eb-416d-a975-dc7b2019cd27",
     "profile": {
       "businessName": "s10",
@@ -1140,6 +1312,7 @@
       "R10-1",
       "R10-2"
     ],
+    "retailerId": "",
     "profileId": "eea40a42-2284-47e8-89ef-c4d837017996",
     "profile": {
       "businessName": "r10",
@@ -1196,6 +1369,7 @@
     "accessibleStoreIds": [
       "R8-O"
     ],
+    "retailerId": "5dcb8503-df17-4058-ae6f-bff73aae9e34",
     "profileId": "5",
     "profile": {
       "name": "biller8",
@@ -1216,6 +1390,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "3b55e140-e31e-48d3-a830-497de7ffc084",
     "profile": {
       "businessName": "s8",
@@ -1256,6 +1431,7 @@
       "R8-O",
       "R8-S"
     ],
+    "retailerId": "",
     "profileId": "5dcb8503-df17-4058-ae6f-bff73aae9e34",
     "profile": {
       "businessName": "r8",
@@ -1312,6 +1488,7 @@
     "accessibleStoreIds": [
       "R7-1"
     ],
+    "retailerId": "c212d790-8f65-43f7-b42b-bdccce777cea",
     "profileId": "4",
     "profile": {
       "name": "biller7",
@@ -1332,6 +1509,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-05-03T23:17:58.398Z",
     "updatedAt": "2026-05-03T23:17:58.398Z"
@@ -1347,6 +1525,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "ba6cb817-8629-4c02-a698-be7d91169f01",
     "profile": {
       "businessName": "s4",
@@ -1387,6 +1566,7 @@
       "R7-1",
       "R7-S"
     ],
+    "retailerId": "",
     "profileId": "c212d790-8f65-43f7-b42b-bdccce777cea",
     "profile": {
       "businessName": "r7",
@@ -1441,6 +1621,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "plan": "free",
     "createdAt": "2026-05-03T23:02:24.300Z",
@@ -1457,6 +1638,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-05-03T22:19:42.522Z",
     "updatedAt": "2026-05-03T22:19:42.522Z"
@@ -1475,6 +1657,7 @@
       "R2-1",
       "R2-2"
     ],
+    "retailerId": "",
     "profileId": "590d6bb2-e7b9-4fd7-8477-ed6787f928b8",
     "profile": {
       "businessName": "r2",
@@ -1529,6 +1712,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "7b68f3e3-5dc2-40e6-972e-e2dfa433641b",
     "profile": {
       "businessName": "s1",
@@ -1566,6 +1750,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-05-03T21:42:26.890Z",
     "updatedAt": "2026-05-03T21:42:26.890Z"
@@ -1581,6 +1766,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-05-03T21:32:04.078Z",
     "updatedAt": "2026-05-03T21:32:04.078Z"
@@ -1596,6 +1782,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-05-03T21:30:15.990Z",
     "updatedAt": "2026-05-03T21:30:15.990Z"
@@ -1613,6 +1800,7 @@
     "accessibleStoreIds": [
       "R1"
     ],
+    "retailerId": "",
     "profileId": "5148fe43-0e98-46ec-a05b-f76acc5a748e",
     "profile": {
       "businessName": "r1",
@@ -1661,6 +1849,7 @@
       "USMAR-STORE",
       "HELLO"
     ],
+    "retailerId": "",
     "profileId": "2c4635b5-039d-4191-9137-988fb38c02f5",
     "profile": {
       "businessName": "Hello world",
@@ -1715,6 +1904,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-05-03T14:48:05.497Z",
     "updatedAt": "2026-05-03T14:48:05.497Z"
@@ -1732,6 +1922,7 @@
     "accessibleStoreIds": [
       "STORE-01"
     ],
+    "retailerId": "",
     "profileId": "3",
     "createdAt": "2026-05-03T14:41:35.230Z",
     "updatedAt": "2026-05-03T14:41:35.230Z"
@@ -1747,6 +1938,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-05-03T14:40:21.280Z",
     "updatedAt": "2026-05-03T14:40:21.280Z"
@@ -1762,6 +1954,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-01-01T00:00:00.000Z"
@@ -1777,6 +1970,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "plan": "free",
     "createdAt": "2026-01-01T00:00:00.000Z",
@@ -1793,6 +1987,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-01-01T00:00:00.000Z"
@@ -1808,6 +2003,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-01-01T00:00:00.000Z"
@@ -1823,6 +2019,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-01-01T00:00:00.000Z"
@@ -1838,6 +2035,7 @@
     "storeId": "",
     "currentStoreId": "",
     "accessibleStoreIds": [],
+    "retailerId": "",
     "profileId": "",
     "createdAt": "2026-01-01T00:00:00.000Z",
     "updatedAt": "2026-01-01T00:00:00.000Z"

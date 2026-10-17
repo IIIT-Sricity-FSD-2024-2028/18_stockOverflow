@@ -223,11 +223,16 @@
   function updateProductVisibility() {
     const activeCategory = document.querySelector('.cat-item.active')?.dataset.category || 'all';
     const query = (searchInput.value || '').trim().toLowerCase();
+    const currentStoreId = String(getCurrentStoreId() || '').trim().toLowerCase();
 
     products.forEach((product) => {
       const inCategory = activeCategory === 'all' || product.category === activeCategory;
       const inSearch = !query || product.name.toLowerCase().includes(query) || product.category.toLowerCase().includes(query);
-      product.card.classList.toggle('is-hidden', !(inCategory && inSearch));
+      const storeEntry = Array.isArray(product.retailerProduct?.storeInventory)
+        ? product.retailerProduct.storeInventory.find((e) => String(e.storeId || '').trim().toLowerCase() === currentStoreId)
+        : null;
+      const inStore = storeEntry ? Number(storeEntry.qty) > 0 : Number(product.retailerProduct?.qty || 0) > 0;
+      product.card.classList.toggle('is-hidden', !(inCategory && inSearch && inStore));
     });
   }
 
@@ -495,6 +500,7 @@
     }
     storeIndex = (storeIndex + 1) % storeNames.length;
     syncStoreLabel();
+    updateProductVisibility();
     await renderReservedProducts();
     showToast('Switched to ' + getCurrentStoreName());
   });

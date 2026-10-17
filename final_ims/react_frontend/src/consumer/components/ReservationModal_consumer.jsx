@@ -48,8 +48,16 @@ export default function ReservationModal_consumer({
 
     // 1. Check retailer stores
     stores.forEach((store) => {
-      const entry = inventory.find((inv) => String(inv.storeId) === String(store.id));
-      const count = entry ? Number(entry.qty) || 0 : (inventory.length > 0 ? 0 : totalStock);
+      const entry = inventory.find(
+        (inv) =>
+          String(inv.storeId) === String(store.id) ||
+          String(inv.storeId) === String(store.code) ||
+          String(store.id).endsWith(':' + String(inv.storeId)) ||
+          (product.retailerId &&
+            store.retailerId === product.retailerId &&
+            String(store.code || store.id) === String(inv.storeId)),
+      );
+      const count = entry ? Number(entry.qty) || 0 : (inventory.length === 0 && store.name === product.storeName ? totalStock : 0);
       if (count > 0) {
         list.push({ ...store, availableQty: count });
         seenStoreIds.add(String(store.id));
@@ -126,8 +134,36 @@ export default function ReservationModal_consumer({
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="modal-backdrop"
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(15, 23, 42, 0.65)',
+        backdropFilter: 'blur(4px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+        padding: '16px',
+      }}
+    >
+      <div
+        className="modal-container"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: 'min(520px, 94vw)',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          background: '#ffffff',
+          borderRadius: '16px',
+          boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.8)',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+        }}
+      >
         {/* Modal Header */}
         <div className="modal-header">
           <div className="modal-title-wrap">
@@ -137,34 +173,83 @@ export default function ReservationModal_consumer({
               <p className="modal-subtitle">Hold this item at a local store branch without paying now.</p>
             </div>
           </div>
-          <button className="modal-close-btn" onClick={onClose}>
+          <button className="modal-close-btn" onClick={onClose} title="Close dialog">
             ✕
           </button>
         </div>
 
         {/* Product Snapshot */}
         <div className="modal-product-summary">
-          <div className="summary-thumb">
+          <div
+            className="summary-thumb"
+            style={{
+              width: '56px',
+              height: '56px',
+              minWidth: '56px',
+              minHeight: '56px',
+              maxWidth: '56px',
+              maxHeight: '56px',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              background: '#e0f2fe',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
             {product.productImg ? (
-              <img src={product.productImg} alt={product.name} />
+              <img
+                src={product.productImg}
+                alt={product.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                }}
+              />
             ) : (
-              <span>{product.emoji || '📦'}</span>
+              <span style={{ fontSize: '26px' }}>{product.emoji || '📦'}</span>
             )}
           </div>
           <div className="summary-details">
-            <h4>{product.name}</h4>
-            <p>SKU: {product.sku} · Category: {product.category}</p>
-            <div className="summary-price">₹{Number(product.priceUSD || product.price || 0).toLocaleString('en-IN')}</div>
+            <h4 style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 700 }}>{product.name}</h4>
+            <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#64748b' }}>
+              SKU: {product.sku} · Category: {product.category}
+            </p>
+            <div className="summary-price" style={{ fontSize: '14px', fontWeight: 700, color: '#0284c7' }}>
+              ₹{Number(product.priceUSD || product.price || 0).toLocaleString('en-IN')}
+            </div>
           </div>
         </div>
 
-        {errorMsg && <div className="modal-error-banner" style={{ background: '#fee2e2', color: '#ef4444', padding: '8px 12px', borderRadius: '6px', marginBottom: '12px' }}>{errorMsg}</div>}
+        {errorMsg && (
+          <div
+            className="modal-error-banner"
+            style={{
+              background: '#fee2e2',
+              color: '#ef4444',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              margin: '12px 24px 0',
+              fontSize: '13px',
+              fontWeight: 500,
+            }}
+          >
+            {errorMsg}
+          </div>
+        )}
 
         {/* Reservation Form */}
         <form onSubmit={handleSubmit} className="modal-form">
           {/* Pickup Store Selector */}
           <div className="form-group">
-            <label>Select Pickup Store Branch</label>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+              Select Pickup Store Branch <span style={{ color: '#ef4444' }}>*</span>
+            </label>
             <select
               value={storeId}
               onChange={(e) => setStoreId(e.target.value)}
@@ -179,12 +264,19 @@ export default function ReservationModal_consumer({
                 </option>
               ))}
             </select>
+            <div style={{ fontSize: '12px', color: maxAvailable > 0 ? '#059669' : '#dc2626', fontWeight: 600, marginTop: '2px' }}>
+              {maxAvailable > 0
+                ? `✓ ${maxAvailable} unit(s) available for in-store pickup hold`
+                : `✕ Out of stock at this location`}
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {/* Full Name */}
             <div className="form-group">
-              <label>Full Name</label>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+                Full Name <span style={{ color: '#ef4444' }}>*</span>
+              </label>
               <input
                 type="text"
                 placeholder="e.g. John Doe"
@@ -195,7 +287,9 @@ export default function ReservationModal_consumer({
             </div>
             {/* Email Address */}
             <div className="form-group">
-              <label>Email Address</label>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+                Email Address <span style={{ color: '#ef4444' }}>*</span>
+              </label>
               <input
                 type="email"
                 placeholder="john@example.com"
@@ -209,7 +303,7 @@ export default function ReservationModal_consumer({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {/* Phone Number */}
             <div className="form-group">
-              <label>Phone Number</label>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Phone Number</label>
               <input
                 type="tel"
                 placeholder="+91 98765 43210"
@@ -219,7 +313,9 @@ export default function ReservationModal_consumer({
             </div>
             {/* Quantity */}
             <div className="form-group">
-              <label>Quantity to Hold (Max: {maxAvailable})</label>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+                Quantity to Hold (Max: {maxAvailable}) <span style={{ color: '#ef4444' }}>*</span>
+              </label>
               <input
                 type="number"
                 min="1"
@@ -233,7 +329,9 @@ export default function ReservationModal_consumer({
 
           {/* Payment Preference at Counter */}
           <div className="form-group">
-            <label>Payment Mode at Store Counter</label>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+              Payment Mode at Store Counter
+            </label>
             <select
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
@@ -246,7 +344,12 @@ export default function ReservationModal_consumer({
 
           {/* Action Buttons */}
           <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={onClose} disabled={submitting}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={onClose}
+              disabled={submitting}
+            >
               Cancel
             </button>
             <button

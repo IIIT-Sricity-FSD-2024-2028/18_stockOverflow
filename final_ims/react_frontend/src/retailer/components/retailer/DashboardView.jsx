@@ -52,9 +52,9 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const loadAllData = async () => {
+  const loadAllData = async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
       const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
       const storeId = user?.currentStoreId || user?.storeId || '';
       const scopedQuery = retailerId
@@ -93,7 +93,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
@@ -101,10 +101,10 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     loadAllData();
   }, [user]);
 
-  // Real-time synchronization with all transactions, POs, and product adjustments
+  // Real-time synchronization with all transactions, POs, and product adjustments (event-driven, no polling loop)
   useDataSync(['transactions', 'inventory', 'revenue', 'products', 'orders'], () => {
-    loadAllData();
-  });
+    loadAllData(true);
+  }, { intervalMs: 0 });
 
   // Calculations
   const formatCurrency = (val) => {
@@ -229,23 +229,36 @@ export default function DashboardView({ setActiveView, onNavigate }) {
   const getCategoryColor = (label, index = 0) => {
     const l = String(label || '').toLowerCase();
     if (l.includes('elect')) return '#5b67ca'; // Blue for Electronics
-    if (l.includes('food') || l.includes('bev')) return '#22c55e'; // Green for Food & Beverage
+    if (l.includes('comp')) return '#22c55e'; // Green for Computers
+    if (l.includes('food') || l.includes('bev')) return '#10b981'; // Green for Food & Beverage
     if (l.includes('gen')) return '#f59e0b'; // Orange for General
     if (l.includes('fash') || l.includes('cloth')) return '#ec4899'; // Pink for Fashion
     const fallbackPalette = ['#5b67ca', '#22c55e', '#f59e0b', '#3b82f6', '#8b5cf6'];
     return fallbackPalette[index % fallbackPalette.length];
   };
 
-  // Real Category Sales Breakdown
+  // Real Category Sales Breakdown from Transactions
   const categorySalesMap = {};
-  data.products.forEach((product) => {
-    const category = product.category || 'General';
-    categorySalesMap[category] = (categorySalesMap[category] || 0) + (Number(product.qty) || 0);
+  (data.transactions || []).forEach((tx) => {
+    const s = String(tx.status || '').toLowerCase();
+    if (s.includes('cancel')) return;
+
+    (tx.items || []).forEach((item) => {
+      const prod = (data.products || []).find(
+        (p) =>
+          (p.sku && item.sku && p.sku.toLowerCase() === item.sku.toLowerCase()) ||
+          (p.name && item.name && p.name.toLowerCase() === item.name.toLowerCase())
+      );
+      const category = prod?.category || item.category || 'General';
+      const qtySold = Math.max(0, Number(item.quantity || item.qty || 1));
+      categorySalesMap[category] = (categorySalesMap[category] || 0) + qtySold;
+    });
   });
+
   const categoryEntries = Object.keys(categorySalesMap)
     .map((key) => ({ label: key, value: categorySalesMap[key] }))
     .sort((left, right) => right.value - left.value)
-    .slice(0, 3)
+    .slice(0, 5)
     .map((entry, idx) => ({
       ...entry,
       color: getCategoryColor(entry.label, idx),
@@ -513,7 +526,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     return () => {
       if (salesChartInstance.current) salesChartInstance.current.destroy();
     };
-  }, [activeFilter, data, loading, totalSales, totalPurchase]);
+  }, [activeFilter, data, totalSales, totalPurchase]);
 
   // Secondary Charts Effect (Customer Donut, Rev vs Exp, Category Donut)
   useEffect(() => {
@@ -668,7 +681,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
               callbacks: {
                 label: (c) =>
                   hasCategories
-                    ? ` ${c.label}: ${categoryTotal ? Math.round((c.raw / categoryTotal) * 100) : 0}% (${c.raw} pcs)`
+                    ? ` ${c.label}: ${categoryTotal ? Math.round((c.raw / categoryTotal) * 100) : 0}% (${c.raw} ${c.raw === 1 ? 'pc' : 'pcs'})`
                     : ' No category sales yet',
               },
             },
@@ -682,7 +695,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
       if (revExpChartInstance.current) revExpChartInstance.current.destroy();
       if (catDonutInstance.current) catDonutInstance.current.destroy();
     };
-  }, [loading, data, totalSales, totalPurchase]);
+  }, [data, totalSales, totalPurchase]);
 
   // Subscription Actions
   const handlePlanSelectionClick = (targetTier) => {

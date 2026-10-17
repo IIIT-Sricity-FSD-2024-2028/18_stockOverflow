@@ -9,6 +9,7 @@ export class User {
   storeId?: string;
   currentStoreId?: string;
   accessibleStoreIds?: string[];
+  retailerId?: string;
   profileId?: string;
   profile?: Record<string, unknown>;
   plan?: string;

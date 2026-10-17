@@ -36,9 +36,9 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
   };
 
   // Load suppliers and existing PO history
-  const loadData = async () => {
+  const loadData = async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
       const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
       const storeId = user?.currentStoreId || user?.storeId || '';
       const [supRes, poRes] = await Promise.all([
@@ -114,7 +114,7 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
     } catch (err) {
       console.error('Error loading PO page data:', err);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
@@ -123,8 +123,8 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
   }, [user]);
 
   useDataSync(['orders'], () => {
-    loadData();
-  });
+    loadData(true);
+  }, { intervalMs: 0 });
 
   const selectedSupplierObj = suppliers.find((s) => s.id === selectedSupplierId) || suppliers[0];
 

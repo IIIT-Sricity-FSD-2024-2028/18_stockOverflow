@@ -144,6 +144,10 @@ let EmployeesService = class EmployeesService {
                             supplierCode: supplier.business?.supplierCode || '',
                             paymentTerms: supplier.business?.paymentTerms || 'Net 30',
                             submittedAt: supplier.updatedAt || supplier.createdAt || new Date().toISOString(),
+                            gstin: supplier.business?.taxId || supplier.business?.registrationNumber || supplier?.gstin || 'GSTIN-PENDING',
+                            documents: supplier.documents && supplier.documents.length > 0
+                                ? supplier.documents.map((d) => typeof d === 'string' ? d : d.name || d.type || 'Document')
+                                : ['Business Registration Certificate', 'GSTIN Certificate', 'Bank Account Verification Letter'],
                         },
                         status: 'pending',
                         createdAt: new Date().toISOString(),
@@ -170,6 +174,44 @@ let EmployeesService = class EmployeesService {
                         };
                     }
                 }
+            }
+        });
+        const supplierUsers = this.usersService.findAll('supplier');
+        supplierUsers.forEach((supUser) => {
+            const p = (supUser.profile || {});
+            const isPending = String(supUser.status || '').toLowerCase() === 'pending' ||
+                String(p.profileStatus || '').toLowerCase() === 'pending';
+            const targetId = supUser.profileId || supUser.id;
+            if (isPending && !assignedTargetIds.has(targetId) && !assignedTargetIds.has(supUser.id)) {
+                const emp = getNextEmployee();
+                const assignment = {
+                    id: `asgn-${(0, node_crypto_1.randomUUID)()}`,
+                    employeeId: emp.id,
+                    employeeName: emp.name,
+                    employeeEmail: emp.email,
+                    targetId: targetId,
+                    targetType: 'supplier',
+                    title: `Supplier Verification: ${p.businessName || supUser.name || 'New Supplier'}`,
+                    details: {
+                        companyName: p.businessName || supUser.name || 'Unnamed Supplier',
+                        ownerName: p.ownerName || supUser.name || 'Unknown',
+                        email: supUser.email || p.businessEmail || '',
+                        phone: p.businessPhone || '',
+                        address: p.address || '',
+                        category: p.primaryCategory || 'General',
+                        supplierCode: p.supplierCode || '',
+                        paymentTerms: p.paymentTerms || 'Net 30',
+                        submittedAt: supUser.updatedAt || supUser.createdAt || new Date().toISOString(),
+                        gstin: p.taxId || 'GSTIN-PENDING',
+                        documents: ['Business Registration Certificate', 'GSTIN Certificate', 'Bank Account Verification Letter'],
+                    },
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                };
+                assignments.unshift(assignment);
+                assignedTargetIds.add(targetId);
+                assignedTargetIds.add(supUser.id);
+                newAssignmentsCount++;
             }
         });
         retailers.forEach((retailer) => {
@@ -305,11 +347,21 @@ let EmployeesService = class EmployeesService {
                 const supReason = !isApprove
                     ? (notes || 'Your application did not meet our verification requirements.')
                     : undefined;
-                this.suppliersService.updateProfileStatus(assignment.targetId, nextStatus, supReason);
+                try {
+                    this.suppliersService.updateProfileStatus(assignment.targetId, nextStatus, supReason);
+                }
+                catch (_supErr) { }
                 const users = this.usersService.findAll('supplier');
-                const user = users.find((u) => u.profileId === assignment.targetId ||
+                const user = users.find((u) => u.id === assignment.targetId ||
+                    u.profileId === assignment.targetId ||
                     (assignment.details?.email && u.email === assignment.details.email));
                 if (user) {
+                    if (user.profileId && user.profileId !== assignment.targetId) {
+                        try {
+                            this.suppliersService.updateProfileStatus(user.profileId, nextStatus, supReason);
+                        }
+                        catch (_e) { }
+                    }
                     const nextProfile = {
                         ...(user.profile || {}),
                         profileStatus: nextStatus,

@@ -549,7 +549,10 @@ export function saveLocalCart(cart) {
 
 export function getLocalSession() {
   try {
-    return JSON.parse(localStorage.getItem('so_session') || 'null');
+    const sessionStr =
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_session') : null) ||
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('so_session') : null);
+    return JSON.parse(sessionStr || 'null');
   } catch (_e) {
     return null;
   }

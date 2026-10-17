@@ -1,5 +1,47 @@
 [
   {
+    "business": {
+      "businessName": "John's Retail Store",
+      "businessType": "Sole Proprietorship",
+      "businessEmail": "john1@gmail.com",
+      "retailerCode": "RET-640",
+      "currency": "INR",
+      "fiscalYear": "April",
+      "primaryIndustry": "Mixed / General"
+    },
+    "primaryContact": {
+      "fullName": "John",
+      "designation": "Store Owner",
+      "directEmail": "john1@gmail.com"
+    },
+    "profileStatus": "active",
+    "stores": [
+      {
+        "name": "John's Main Store",
+        "code": "STORE-01",
+        "contactPerson": "John",
+        "phone": "+91 98765 43210",
+        "address": "Central Market, Main Street",
+        "type": "Retail Store",
+        "notes": "Primary flagship location",
+        "status": "active"
+      },
+      {
+        "name": "John's 2nd store",
+        "code": "STORE-02",
+        "contactPerson": "John",
+        "type": "Retail Store",
+        "status": "active"
+      }
+    ],
+    "suppliers": [],
+    "products": [],
+    "id": "af859a42-899e-471f-8181-e7d7603924e2",
+    "status": "completed",
+    "createdAt": "2026-10-17T07:49:50.670Z",
+    "updatedAt": "2026-10-17T07:50:11.332Z"
+  },
+  {
     "id": "9ea880b4-5700-497c-925b-bb1851e557fc",
     "profileStatus": "rejected",
     "business": {

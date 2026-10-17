@@ -27,10 +27,8 @@ export default function MultiStoreView() {
     totalPoCount: 0,
     products: [],
     alerts: [],
-    warehouses: [],
   });
   const [drawerLoading, setDrawerLoading] = useState(false);
-  const canvasRef = useRef(null);
 
   // Fetch real stores and live product counts matching vanilla
   useEffect(() => {
@@ -187,11 +185,6 @@ export default function MultiStoreView() {
 
       const netProfit = Math.max(0, netSales - netPurchase);
 
-      const warehouses = [
-        { name: 'Zone A – Main Floor', used: totalUnits, total: Math.max(totalUnits + 50, 100), color: '#2e6bc5' },
-        { name: 'Zone B – Backroom Storage', used: 0, total: 50, color: '#22c55e' },
-      ];
-
       setDrawerStats({
         netProfit,
         netSales,
@@ -202,7 +195,6 @@ export default function MultiStoreView() {
         totalPoCount: poList.length,
         products: prods,
         alerts,
-        warehouses,
       });
     } catch (err) {
       console.error('Error fetching drawer stats:', err);
@@ -211,99 +203,7 @@ export default function MultiStoreView() {
     }
   };
 
-  // Draw trend canvas when drawer opens
-  useEffect(() => {
-    if (!activeDrawerStore || drawerLoading) return;
 
-    const timer = setTimeout(() => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const W = canvas.parentElement.offsetWidth || 600;
-      const H = 160;
-      canvas.width = W;
-      canvas.height = H;
-
-      const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      const inData = [12, 18, 15, 25, 20, 14, 10];
-      const outData = [8, 12, 10, 18, 15, 9, 6];
-
-      const padL = 36;
-      const padR = 12;
-      const padT = 10;
-      const padB = 26;
-      const chartW = W - padL - padR;
-      const chartH = H - padT - padB;
-      const maxVal = Math.max(...inData, ...outData) * 1.2;
-      const n = labels.length;
-
-      ctx.clearRect(0, 0, W, H);
-
-      for (let i = 0; i <= 4; i++) {
-        const y = padT + (chartH / 4) * i;
-        ctx.strokeStyle = '#f0f2f4';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(padL, y);
-        ctx.lineTo(W - padR, y);
-        ctx.stroke();
-        ctx.fillStyle = '#a6aaaf';
-        ctx.font = '9px "Nunito Sans", sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillText(Math.round(maxVal - (maxVal / 4) * i), padL - 4, y + 3);
-      }
-
-      function drawLine(data, color) {
-        const pts = data.map((v, i) => [padL + (chartW / (n - 1)) * i, padT + chartH - (v / maxVal) * chartH]);
-        const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-        grad.addColorStop(0, color.replace(')', ',0.15)').replace('rgb', 'rgba'));
-        grad.addColorStop(1, color.replace(')', ',0)').replace('rgb', 'rgba'));
-        ctx.beginPath();
-        ctx.moveTo(pts[0][0], pts[0][1]);
-        for (let i = 1; i < pts.length; i++) {
-          const mx = (pts[i - 1][0] + pts[i][0]) / 2;
-          ctx.bezierCurveTo(mx, pts[i - 1][1], mx, pts[i][1], pts[i][0], pts[i][1]);
-        }
-        ctx.lineTo(pts[pts.length - 1][0], padT + chartH);
-        ctx.lineTo(pts[0][0], padT + chartH);
-        ctx.closePath();
-        ctx.fillStyle = grad;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.moveTo(pts[0][0], pts[0][1]);
-        for (let i = 1; i < pts.length; i++) {
-          const mx = (pts[i - 1][0] + pts[i][0]) / 2;
-          ctx.bezierCurveTo(mx, pts[i - 1][1], mx, pts[i][1], pts[i][0], pts[i][1]);
-        }
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        pts.forEach(([x, y]) => {
-          ctx.beginPath();
-          ctx.arc(x, y, 3, 0, Math.PI * 2);
-          ctx.fillStyle = '#fff';
-          ctx.fill();
-          ctx.strokeStyle = color;
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-        });
-      }
-
-      drawLine(outData, 'rgb(239,68,68)');
-      drawLine(inData, 'rgb(46,107,197)');
-
-      labels.forEach((lbl, i) => {
-        ctx.fillStyle = '#a6aaaf';
-        ctx.font = '9px "Nunito Sans", sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(lbl, padL + (chartW / (n - 1)) * i, H - 6);
-      });
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [activeDrawerStore, drawerLoading]);
 
   // Filter & sort
   const filtered = stores.filter((s) => {
@@ -773,9 +673,9 @@ export default function MultiStoreView() {
                       </div>
                     </div>
 
-                    {/* Right: Low Stock Alerts & Warehouse Utilization */}
+                    {/* Right: Low Stock Alerts */}
                     <div>
-                      <div className="panel" style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+                      <div className="panel" style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
                         <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '13px', color: 'var(--text-primary)' }}>
                           <div style={{ width: '22px', height: '22px', borderRadius: '4px', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <svg viewBox="0 0 13 13" width="13" height="13" fill="none" stroke="#ef4444" strokeWidth="1.4">
@@ -808,51 +708,6 @@ export default function MultiStoreView() {
                             );
                           })
                         )}
-                      </div>
-
-                      {/* Warehouse Utilization */}
-                      <div className="panel" style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
-                        <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '13px', color: 'var(--text-primary)' }}>
-                          <svg viewBox="0 0 13 13" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.4">
-                            <path d="M1 5.5L6.5 2l5.5 3.5V12H1V5.5z" />
-                            <rect x="4.5" y="8" width="4" height="4" />
-                          </svg>
-                          Warehouse Utilization
-                        </div>
-                        {drawerStats.warehouses.map((w, idx) => {
-                          const pct = Math.round((w.used / w.total) * 100);
-                          const barColor = pct > 90 ? '#ef4444' : pct > 70 ? '#f59e0b' : w.color;
-                          return (
-                            <div className="wi-item" key={idx}>
-                              <div className="wi-head">
-                                <div className="wi-name">{w.name}</div>
-                                <div className="wi-pct" style={{ color: barColor }}>{pct}%</div>
-                              </div>
-                              <div className="wi-bar-bg">
-                                <div className="wi-bar-fill" style={{ width: `${pct}%`, background: barColor }}></div>
-                              </div>
-                              <div className="wi-foot">
-                                <span>{w.used.toLocaleString()} used</span>
-                                <span>{(w.total - w.used).toLocaleString()} free</span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Stock Movement Trend Chart */}
-                  <div className="panel" style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'hidden' }}>
-                    <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '13px', color: 'var(--text-primary)' }}>
-                      <svg viewBox="0 0 13 13" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.4">
-                        <polyline points="1,10 4,6.5 7,8 11,3 12,4" />
-                      </svg>
-                      Stock Movement Trend
-                    </div>
-                    <div style={{ padding: '16px 20px' }}>
-                      <div className="drawer-chart-wrap" style={{ height: '160px' }}>
-                        <canvas ref={canvasRef}></canvas>
                       </div>
                     </div>
                   </div>

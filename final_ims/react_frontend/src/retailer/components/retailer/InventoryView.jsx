@@ -15,9 +15,9 @@ export default function InventoryView() {
   const barChartRef = useRef(null);
   const barChartInstance = useRef(null);
 
-  const load = async () => {
+  const load = async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
       const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
       const storeId = user?.currentStoreId || user?.storeId || '';
       const data = await retailerApi.getProducts(retailerId, storeId);
@@ -25,7 +25,7 @@ export default function InventoryView() {
     } catch (e) {
       console.error('Failed to load products for inventory overview:', e);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
@@ -34,8 +34,8 @@ export default function InventoryView() {
   }, [user]);
 
   useDataSync(['inventory', 'products'], () => {
-    load();
-  });
+    load(true);
+  }, { intervalMs: 0 });
 
   const totalSKUs = products.length;
   const totalUnits = products.reduce((acc, p) => acc + (Number(p.qty || p.quantity) || 0), 0);

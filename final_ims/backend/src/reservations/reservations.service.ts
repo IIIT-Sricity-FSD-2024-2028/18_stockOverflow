@@ -61,7 +61,13 @@ export class ReservationsService {
   createRequest(createReservationRequestDto: CreateReservationRequestDto) {
     const product = this.productsService.findBySku(createReservationRequestDto.sku);
     let storeId = this.normalizeText(createReservationRequestDto.storeId);
-    let storeEntry = product.storeInventory.find((entry) => entry.storeId === storeId);
+    const rawStoreCode = storeId.includes(':') ? storeId.split(':').pop() : storeId;
+    let storeEntry = product.storeInventory.find(
+      (entry) =>
+        entry.storeId === storeId ||
+        entry.storeId === rawStoreCode ||
+        storeId.endsWith(':' + entry.storeId),
+    );
 
     // Fallback gracefully to the central fulfillment store or the first branch with inventory
     if (!storeEntry) {
@@ -71,6 +77,8 @@ export class ReservationsService {
       if (storeEntry) {
         storeId = storeEntry.storeId;
       }
+    } else {
+      storeId = storeEntry.storeId;
     }
 
     if (!storeEntry) {

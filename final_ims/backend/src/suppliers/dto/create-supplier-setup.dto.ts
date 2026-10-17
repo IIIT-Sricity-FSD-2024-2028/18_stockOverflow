@@ -52,25 +52,20 @@ export class SupplierBusinessInfoDto {
   businessEmail: string;
 
   @IsOptional()
-  @Matches(PHONE_REGEX, {
-    message: 'phoneNumber must be a valid phone number',
-  })
+  @IsString()
   phoneNumber?: string;
 
   @IsOptional()
-  @Matches(GST_REGEX, {
-    message: 'gstNumber must be a valid Indian GST number',
-  })
+  @IsString()
   gstNumber?: string;
 
   @IsOptional()
-  @Matches(SUPPLIER_CODE_REGEX, {
-    message: 'supplierCode must look like SUP-1234',
-  })
+  @IsString()
   supplierCode?: string;
 
-  @IsEnum(Currency)
-  currency: Currency = Currency.INR;
+  @IsOptional()
+  @IsString()
+  currency?: string = Currency.INR;
 
   @IsOptional()
   @IsString()
@@ -83,21 +78,21 @@ export class SupplierBusinessInfoDto {
   state?: string;
 
   @IsOptional()
-  @IsUrl({ require_protocol: true })
+  @IsString()
   @MaxLength(180)
   website?: string;
 
   @IsOptional()
-  @IsEnum(SupplierCategory)
-  primaryCategory?: SupplierCategory;
+  @IsString()
+  primaryCategory?: string;
 
   @IsOptional()
-  @IsEnum(PaymentTerms)
-  paymentTerms?: PaymentTerms = PaymentTerms.Net30;
+  @IsString()
+  paymentTerms?: string = PaymentTerms.Net30;
 
   @IsOptional()
-  @IsEnum(SellingType)
-  sellingType?: SellingType = SellingType.Wholesale;
+  @IsString()
+  sellingType?: string = SellingType.Wholesale;
 
   @IsOptional()
   @IsString()
@@ -117,59 +112,82 @@ export class PrimaryContactDto {
   designation?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  jobTitle?: string;
+
+  @IsOptional()
   @IsEmail()
   @MaxLength(160)
   directEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  directPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  mobileNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
 }
 
 export class RetailerDto {
+  @IsOptional()
+  @IsString()
+  id?: string;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(120)
   name: string;
 
   @IsOptional()
-  @Matches(RETAILER_CODE_REGEX, {
-    message: 'code must look like RET-001',
-  })
   code?: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(120)
-  contactPerson: string;
+  contactPerson?: string;
 
   @IsOptional()
-  @Matches(PHONE_REGEX, {
-    message: 'phone must be a valid phone number',
-  })
+  @IsString()
+  contact?: string;
+
+  @IsOptional()
   phone?: string;
 
   @IsOptional()
-  @IsEmail()
-  @MaxLength(160)
   email?: string;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(80)
   state?: string;
 
   @IsOptional()
-  @IsEnum(RetailerCategory)
-  categorySupplied?: RetailerCategory;
+  categorySupplied?: any;
 
   @IsOptional()
-  @IsEnum(PaymentTerms)
-  creditTerms?: PaymentTerms = PaymentTerms.Net30;
+  creditTerms?: any;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(250)
+  terms?: string;
+
+  @IsOptional()
+  creditLimit?: string | number;
+
+  @IsOptional()
   address?: string;
+
+  @IsOptional()
+  addr?: string;
 }
 
 export class ProductDto {
+  @IsOptional()
+  @IsString()
+  id?: string;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(40)
@@ -191,8 +209,12 @@ export class ProductDto {
   variant?: string;
 
   @IsOptional()
-  @IsEnum(ProductCategory)
-  category?: ProductCategory;
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsString()
+  cat?: string;
 
   @IsOptional()
   @Type(() => Number)
@@ -202,20 +224,44 @@ export class ProductDto {
 
   @IsOptional()
   @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  price?: number;
+
+  @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   minOrderQty?: number;
 
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  moq?: number;
+
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  stockAvailable: number;
-
-  @IsEnum(ProductUnit)
-  unit: ProductUnit = ProductUnit.Piece;
+  stockAvailable?: number;
 
   @IsOptional()
-  @IsDateString()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  stock?: number;
+
+  @IsOptional()
+  @IsString()
+  unit?: string = 'Piece';
+
+  @IsOptional()
+  @IsString()
+  status?: string;
+
+  @IsOptional()
+  @IsString()
   expiryDate?: string;
 
   @IsOptional()
@@ -227,6 +273,11 @@ export class ProductDto {
   @IsString()
   @MaxLength(1000)
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  desc?: string;
 }
 
 export class PricingPoliciesDto {
@@ -294,6 +345,10 @@ export class BankDetailsDto {
 }
 
 export class CreateSupplierSetupDto {
+  @IsOptional()
+  @IsString()
+  id?: string;
+
   @ValidateNested()
   @Type(() => SupplierBusinessInfoDto)
   business: SupplierBusinessInfoDto;

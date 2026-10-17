@@ -1144,12 +1144,12 @@ html, body {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 9999;
   padding: 16px;
   animation: fadeIn 0.2s ease;
 }
@@ -1159,13 +1159,19 @@ html, body {
   to { opacity: 1; }
 }
 
+.modal-container,
 .modal-card {
-  width: min(520px, 100%);
+  width: min(540px, 94vw);
+  max-height: 90vh;
+  overflow-y: auto;
   background: #ffffff;
-  border-radius: 20px;
-  box-shadow: var(--shadow-xl);
-  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.8);
+  display: flex;
+  flex-direction: column;
   animation: popModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  box-sizing: border-box;
 }
 
 @keyframes popModal {
@@ -1174,32 +1180,221 @@ html, body {
 }
 
 .modal-header {
-  padding: 24px 24px 16px;
+  padding: 20px 24px 16px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-color);
+  background: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-icon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  flex-shrink: 0;
 }
 
 .modal-title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: #0f172a;
+  margin: 0;
 }
 
 .modal-subtitle {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text-muted);
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .modal-close-btn {
-  background: none;
+  background: #f1f5f9;
   border: none;
-  font-size: 18px;
-  color: var(--text-muted);
+  font-size: 14px;
+  color: #64748b;
   cursor: pointer;
-  padding: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.modal-close-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Modal Product Summary */
+.modal-product-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 16px 24px 0;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.summary-thumb {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e0f2fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.summary-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  display: block;
+}
+
+.summary-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.summary-details h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summary-details p {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 4px;
+}
+
+.summary-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0284c7;
+}
+
+/* Modal Form Controls */
+.modal-form {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-form .form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.modal-form .form-group input,
+.modal-form .form-group select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+.modal-form .form-group input:focus,
+.modal-form .form-group select:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.modal-actions .btn-secondary {
+  padding: 10px 18px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.modal-actions .btn-primary {
+  padding: 10px 22px;
+  background: #0284c7;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+  transition: all 0.15s ease;
+}
+
+.modal-actions .btn-primary:hover:not(:disabled) {
+  background: #0369a1;
+}
+
+.modal-actions .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .stores-list {

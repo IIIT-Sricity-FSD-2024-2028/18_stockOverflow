@@ -114,7 +114,7 @@ export function useDataSyncContext() {
  */
 export function useDataSync(topics, onSync, options = {}) {
   const {
-    intervalMs = 5000,
+    intervalMs = 0,
     enabled = true,
     runImmediately = false,
   } = options;

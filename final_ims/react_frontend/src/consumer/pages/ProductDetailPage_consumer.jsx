@@ -39,6 +39,7 @@ import {
   fetchProductFeedback,
   submitProductFeedback,
   createReservationRequest,
+  fetchTransactions,
 } from '../utils/api_consumer';
 
 // Helper: Safely renders stars without any repeat() RangeError
@@ -88,11 +89,12 @@ export default function ProductDetailPage_consumer({
   const [activeImage, setActiveImage] = useState(initialProduct?.productImg || '');
   const [imgError, setImgError] = useState(false);
   const [ratingSummary, setRatingSummary] = useState({
-    avg: Number(initialProduct?.ratingAvg || 4.8),
-    total: Number(initialProduct?.ratingCount || 3),
-    breakdown: { 1: 0, 2: 0, 3: 0, 4: 1, 5: 2 },
+    avg: Number(initialProduct?.ratingAvg || 0),
+    total: Number(initialProduct?.ratingCount || 0),
+    breakdown: initialProduct?.ratingBreakdown || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
   });
   const [reviews, setReviews] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [isReserveModalOpen, setIsReserveModalOpen] = useState(false);
   const [pickupStoreId, setPickupStoreId] = useState(selectedStoreId);
 
@@ -137,21 +139,25 @@ export default function ProductDetailPage_consumer({
           }
         }
 
-        const [summary, feedbackList] = await Promise.all([
+        const [summary, feedbackList, txList] = await Promise.all([
           fetchRatingSummary(sku),
           fetchProductFeedback(sku),
+          fetchTransactions().catch(() => []),
         ]);
 
         if (isMounted) {
           if (summary && typeof summary === 'object') {
             setRatingSummary({
-              avg: Number(summary.avg) || Number(product?.ratingAvg) || 4.8,
-              total: Number(summary.total) || (Array.isArray(feedbackList) ? feedbackList.length : 3),
-              breakdown: summary.breakdown || { 1: 0, 2: 0, 3: 0, 4: 1, 5: 2 },
+              avg: Number(summary.avg) || Number(product?.ratingAvg) || 0,
+              total: Number(summary.total) || (Array.isArray(feedbackList) ? feedbackList.length : 0),
+              breakdown: summary.breakdown || product?.ratingBreakdown || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
             });
           }
-          if (Array.isArray(feedbackList) && feedbackList.length > 0) {
+          if (Array.isArray(feedbackList)) {
             setReviews(feedbackList);
+          }
+          if (Array.isArray(txList)) {
+            setTransactions(txList);
           }
         }
       } catch (err) {
@@ -188,22 +194,61 @@ export default function ProductDetailPage_consumer({
   }, [product]);
 
   // ── 7-DAY STOCK TREND DATA ──
-  // In layman's terms: Calculates on-hand inventory over the past 7 days,
-  // matching the trend chart in vanilla product-detail.html.
+  // In layman's terms: Calculates accurate on-hand inventory over the past 7 days based on real transactions.
   const trendData = useMemo(() => {
-    const qty = product?.qty !== undefined ? Number(product.qty) : 45;
-    const days = [];
+    const currentQty = Number(product?.qty ?? 0);
     const now = new Date();
-    const offsets = [-4, -3, -1, -2, 2, 1, 0];
+
+    if (Array.isArray(product?.stockHistory) && product.stockHistory.length >= 7) {
+      return product.stockHistory.slice(-7).map((entry, idx) => {
+        const d = new Date(entry.date);
+        const label =
+          idx === 6
+            ? 'Today'
+            : !isNaN(d.getTime())
+            ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            : String(entry.date);
+        return { label, val: Math.max(0, Math.round(Number(entry.qty || 0))) };
+      });
+    }
+
+    // Real daily sales deductions from transaction history
+    const dailyDeductions = [0, 0, 0, 0, 0, 0, 0];
+    const prodSku = String(product?.sku || '').toLowerCase().trim();
+    const prodName = String(product?.name || '').toLowerCase().trim();
+
+    (transactions || []).forEach((tx) => {
+      if (!tx || !tx.timestamp || !Array.isArray(tx.items)) return;
+      const txDate = new Date(tx.timestamp);
+      const diffDays = Math.floor((now.getTime() - txDate.getTime()) / (1000 * 60 * 60 * 24));
+      if (diffDays >= 0 && diffDays <= 6) {
+        const itemMatch = tx.items.find((i) => {
+          const skuMatch = prodSku && String(i.sku || '').toLowerCase().trim() === prodSku;
+          const nameMatch = prodName && String(i.name || '').toLowerCase().trim() === prodName;
+          return skuMatch || nameMatch;
+        });
+        if (itemMatch) {
+          const dayIndex = 6 - diffDays;
+          dailyDeductions[dayIndex] += Math.max(0, Number(itemMatch.quantity || itemMatch.qty || 1));
+        }
+      }
+    });
+
+    const series = new Array(7);
+    series[6] = currentQty;
+    for (let i = 5; i >= 0; i--) {
+      series[i] = series[i + 1] + dailyDeductions[i + 1];
+    }
+
+    const days = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(now);
       d.setDate(d.getDate() - (6 - i));
       const label = i === 6 ? 'Today' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const val = Math.max(0, qty + offsets[i]);
-      days.push({ label, val });
+      days.push({ label, val: series[i] });
     }
     return days;
-  }, [product]);
+  }, [product, transactions]);
 
   // ── DYNAMIC 3-ITEM RECOMMENDATIONS ──
   // In layman's terms: Displays 3 suggested items from the catalog for the "You Might Also Like" card.
@@ -219,49 +264,93 @@ export default function ProductDetailPage_consumer({
   const storeInventory = Array.isArray(product?.storeInventory) ? product.storeInventory : [];
 
   // ── STORE AVAILABILITY BREAKDOWN ──
-  // In layman's terms: Computes the available stock for each physical branch.
+  // In layman's terms: Computes the available stock for each physical branch from real inventory data.
   const storeList = useMemo(() => {
     const activeStores = Array.isArray(stores) && stores.length > 0 ? stores : [];
+
+    // Filter to stores belonging to the product's retailer, if known
+    const retailerStores = product?.retailerId
+      ? activeStores.filter(
+          (s) =>
+            s.retailerId === product.retailerId ||
+            String(s.id).startsWith(product.retailerId + ':'),
+        )
+      : [];
+
+    const storesToConsider = retailerStores.length > 0 ? retailerStores : activeStores;
+
     if (storeInventory.length > 0) {
-      return storeInventory.map((inv, idx) => {
-        const matched = activeStores.find(
-          (s) => String(s.id).toLowerCase() === String(inv.storeId).toLowerCase()
+      const result = [];
+      const seenStoreIds = new Set();
+
+      storeInventory.forEach((inv, idx) => {
+        const matched = storesToConsider.find(
+          (s) =>
+            String(s.id).toLowerCase() === String(inv.storeId).toLowerCase() ||
+            String(s.code || '').toLowerCase() === String(inv.storeId).toLowerCase() ||
+            String(s.id).toLowerCase().endsWith(':' + String(inv.storeId).toLowerCase()) ||
+            (product?.retailerId &&
+              s.retailerId === product.retailerId &&
+              String(s.code || s.id).toLowerCase() === String(inv.storeId).toLowerCase()),
         );
-        const name =
-          matched?.name ||
-          (inv.storeId === 'default-store' ? 'Central Fulfillment Store' : `Store #${inv.storeId || idx + 1}`);
-        const qty = Number(inv.qty || 0);
-        const status = qty === 0 ? 'Out of Stock' : (qty <= 5 ? 'Low Stock' : 'In Stock');
-        const statusClass = qty === 0 ? 's-out' : (qty <= 5 ? 's-low' : 's-in');
-        return {
-          id: inv.storeId || `store-${idx}`,
-          name,
-          qty,
-          status,
-          statusClass,
-        };
+
+        const storeKey = matched?.id || inv.storeId || `store-${idx}`;
+        if (!seenStoreIds.has(storeKey)) {
+          seenStoreIds.add(storeKey);
+          const name =
+            matched?.name ||
+            (product?.storeName && idx === 0 ? product.storeName : null) ||
+            (inv.storeId === 'default-store' ? 'Central Fulfillment Store' : `Store #${inv.storeId || idx + 1}`);
+          const qty = Number(inv.qty || 0);
+          const status = qty === 0 ? 'Out of Stock' : (qty <= 5 ? 'Low Stock' : 'In Stock');
+          const statusClass = qty === 0 ? 's-out' : (qty <= 5 ? 's-low' : 's-in');
+          result.push({
+            id: matched?.id || inv.storeId || `store-${idx}`,
+            code: matched?.code || inv.storeId,
+            name,
+            qty,
+            status,
+            statusClass,
+          });
+        }
       });
+
+      // If the retailer has other known branches that do NOT have this stock, list them with 0 units (Out of Stock)
+      retailerStores.forEach((s) => {
+        if (!seenStoreIds.has(s.id)) {
+          seenStoreIds.add(s.id);
+          result.push({
+            id: s.id,
+            code: s.code || s.id,
+            name: s.name,
+            qty: 0,
+            status: 'Out of Stock',
+            statusClass: 's-out',
+          });
+        }
+      });
+
+      return result;
     }
 
-    // Default distribution across known branches
-    return activeStores.map((s, idx) => {
-      const portion = Math.max(0, Math.floor(totalStock / (activeStores.length || 1)));
-      const qty = idx === 0 ? totalStock - portion * (activeStores.length - 1) : portion;
-      const status = qty === 0 ? 'Out of Stock' : (qty <= 5 ? 'Low Stock' : 'In Stock');
-      const statusClass = qty === 0 ? 's-out' : (qty <= 5 ? 's-low' : 's-in');
-      return {
-        id: s.id,
-        name: s.name,
-        qty,
-        status,
-        statusClass,
-      };
-    });
-  }, [stores, storeInventory, totalStock]);
+    // Only assign stock to the single primary store, NEVER distribute across branches
+    const primaryName = product?.storeName || storesToConsider[0]?.name || 'Main Store';
+    const primaryId = product?.storeId || storesToConsider[0]?.id || 'STORE-01';
+    return [
+      {
+        id: primaryId,
+        code: 'STORE-01',
+        name: primaryName,
+        qty: totalStock,
+        status: totalStock === 0 ? 'Out of Stock' : (totalStock <= 5 ? 'Low Stock' : 'In Stock'),
+        statusClass: totalStock === 0 ? 's-out' : (totalStock <= 5 ? 's-low' : 's-in'),
+      },
+    ];
+  }, [stores, storeInventory, totalStock, product]);
 
   const selectedPickupStore =
-    storeList.find((s) => String(s.id) === String(pickupStoreId)) ||
-    storeList.find((s) => s.name === selectedStore) ||
+    storeList.find((s) => String(s.id) === String(pickupStoreId) && s.qty > 0) ||
+    storeList.find((s) => s.qty > 0) ||
     storeList[0] ||
     null;
 
@@ -624,13 +713,16 @@ export default function ProductDetailPage_consumer({
                 const vals = trendData.map((d) => d.val);
                 const minV = Math.min(...vals);
                 const maxV = Math.max(...vals);
-                const range = Math.max(1, maxV - minV);
-                const pts = trendData.map((d, i) => ({
-                  x: 24 + (i / 6) * 312,
-                  y: 12 + (55 - ((d.val - minV) / range) * 45),
-                  val: d.val,
-                  label: d.label,
-                }));
+                const range = maxV - minV;
+                const pts = trendData.map((d, i) => {
+                  const y = range === 0 ? 45 : 12 + (55 - ((d.val - minV) / range) * 45);
+                  return {
+                    x: 24 + (i / 6) * 312,
+                    y,
+                    val: d.val,
+                    label: d.label,
+                  };
+                });
 
                 const pathLine = pts.map((p, idx) => (idx === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`)).join(' ');
                 const pathArea = `${pathLine} L ${pts[pts.length - 1].x} 80 L ${pts[0].x} 80 Z`;

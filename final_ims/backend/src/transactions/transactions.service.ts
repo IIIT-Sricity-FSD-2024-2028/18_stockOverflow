@@ -588,8 +588,18 @@ export class TransactionsService {
       return false;
     }
 
-    if (normalizedStoreId && this.normalizeText(transaction.storeId) !== normalizedStoreId) {
-      return false;
+    if (normalizedStoreId) {
+      const transStore = this.normalizeText(transaction.storeId);
+      const rawStoreCode = normalizedStoreId.includes(':')
+        ? normalizedStoreId.split(':').pop()!
+        : normalizedStoreId;
+      if (
+        transStore !== normalizedStoreId &&
+        transStore !== rawStoreCode &&
+        !normalizedStoreId.endsWith(':' + transStore)
+      ) {
+        return false;
+      }
     }
 
     if (normalizedCustomerLookup) {

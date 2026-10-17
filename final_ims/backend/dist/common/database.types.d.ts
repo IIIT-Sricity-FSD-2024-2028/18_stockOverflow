@@ -65,6 +65,9 @@ export interface ProductRecord {
     description: string;
     descriptionHtml?: string;
     supplier: string;
+    retailerName?: string;
+    storeId?: string;
+    storeName?: string;
     supplierSku?: string;
     barcode?: string;
     warehouse?: string;
@@ -107,7 +110,9 @@ export interface ProductRecord {
 export type Product = ProductRecord;
 export interface StoreRecord {
     id: string;
+    code?: string;
     retailerId?: string;
+    retailerName?: string;
     name: string;
     location: string;
     manager: string;

@@ -53,7 +53,10 @@ let ReservationsService = class ReservationsService {
     createRequest(createReservationRequestDto) {
         const product = this.productsService.findBySku(createReservationRequestDto.sku);
         let storeId = this.normalizeText(createReservationRequestDto.storeId);
-        let storeEntry = product.storeInventory.find((entry) => entry.storeId === storeId);
+        const rawStoreCode = storeId.includes(':') ? storeId.split(':').pop() : storeId;
+        let storeEntry = product.storeInventory.find((entry) => entry.storeId === storeId ||
+            entry.storeId === rawStoreCode ||
+            storeId.endsWith(':' + entry.storeId));
         if (!storeEntry) {
             storeEntry =
                 product.storeInventory.find((entry) => entry.storeId === 'default-store') ||
@@ -61,6 +64,9 @@ let ReservationsService = class ReservationsService {
             if (storeEntry) {
                 storeId = storeEntry.storeId;
             }
+        }
+        else {
+            storeId = storeEntry.storeId;
         }
         if (!storeEntry) {
             throw new common_1.BadRequestException('Selected store is unavailable for this product');

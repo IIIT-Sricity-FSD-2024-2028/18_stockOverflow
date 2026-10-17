@@ -20,11 +20,22 @@ export class StoresService {
       }
 
       return (retailer.stores || []).map<StoreRecord>((store, index) => ({
-        id: store.code || `${retailer.id}-store-${index + 1}`,
+        id: retailerId
+          ? (store.code || `${retailer.id}-store-${index + 1}`)
+          : `${retailer.id}:${store.code || index + 1}`,
+        code: store.code || `${retailer.id}-store-${index + 1}`,
         retailerId: retailer.id,
+        retailerName:
+          retailer.business?.businessName ||
+          retailer.primaryContact?.fullName ||
+          '',
         name: store.name,
         location: store.address || '',
-        manager: store.contactPerson || retailer.primaryContact.fullName,
+        manager:
+          store.contactPerson ||
+          retailer.primaryContact?.fullName ||
+          retailer.business?.businessName ||
+          '',
         status: store.status || 'active',
       }));
     });
@@ -32,7 +43,10 @@ export class StoresService {
     const merged = [...directStores, ...retailerStores];
     const unique = new Map<string, StoreRecord>();
     merged.forEach((store) => {
-      unique.set(String(store.id), store);
+      const key = store.retailerId
+        ? `${store.retailerId}:${store.code || store.id}`
+        : String(store.id);
+      unique.set(key, store);
     });
     return Array.from(unique.values());
   }

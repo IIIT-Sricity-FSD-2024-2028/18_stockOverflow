@@ -102,3 +102,9 @@
 [2026-09-01T08:09:47.597Z] [ERROR] PATCH /api/retailers/49b0082f-1388-4330-8ee6-d884c812f96d 404 - Retailer setup "49b0082f-1388-4330-8ee6-d884c812f96d" was not found
 [2026-09-01T08:44:13.797Z] [ERROR] PATCH /api/retailers/6cc1fd29-9678-4726-a595-de757a2f6816 404 - Retailer setup "6cc1fd29-9678-4726-a595-de757a2f6816" was not found
 [2026-09-01T08:57:21.400Z] [ERROR] PATCH /api/retailers/73e6b19f-e6f1-421a-bd56-214623a82376 404 - Retailer setup "73e6b19f-e6f1-421a-bd56-214623a82376" was not found
+[2026-10-17T07:32:50.153Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-10-17T07:49:50.691Z] [ERROR] PATCH /api/users/8adc6e4a-cc49-4604-bb67-55add7824152 400 - property retailerId should not exist
+[2026-10-17T09:05:23.918Z] [ERROR] POST /api/suppliers/setup 400 - products.0.category must be one of the following values: Electronics, Computers, Fashion, Furniture, Mobile, Bags, Appliances, Food & Beverage, Sports, Beauty, Mixed
+[2026-10-17T09:19:07.713Z] [ERROR] POST /api/users/login 401 - Invalid email or password
+[2026-10-17T09:20:05.670Z] [ERROR] POST /api/suppliers/setup 400 - products.0.category must be one of the following values: Electronics, Computers, Fashion, Furniture, Mobile, Bags, Appliances, Food & Beverage, Sports, Beauty, Mixed
+[2026-10-17T09:24:22.367Z] [ERROR] POST /api/suppliers/setup 400 - products.0.category must be one of the following values: Electronics, Computers, Fashion, Furniture, Mobile, Bags, Appliances, Food & Beverage, Sports, Beauty, Mixed

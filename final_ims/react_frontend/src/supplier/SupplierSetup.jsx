@@ -273,7 +273,11 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
   }, [products]);
 
   const handleCompleteSetup = async () => {
+    const existingSid = user?.profileId || readSupplierId() || undefined;
+    const cleanSid = existingSid && !existingSid.startsWith('sup-17') ? existingSid : undefined;
+
     const payload = {
+      id: cleanSid,
       business: {
         companyName: business.companyName.trim(),
         businessType: business.businessType || 'Wholesaler',
@@ -285,9 +289,9 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         businessAddress: business.businessAddress.trim() || undefined,
         state: business.state || undefined,
         website: business.website.trim() || undefined,
-        primaryCategory: business.primaryCategory || undefined,
-        paymentTerms: business.paymentTerms || undefined,
-        sellingType: business.sellingType || undefined,
+        primaryCategory: business.primaryCategory || 'General',
+        paymentTerms: business.paymentTerms || 'Net 30',
+        sellingType: business.sellingType || 'Wholesale',
         description: business.description.trim() || undefined
       },
       primaryContact: {
@@ -297,11 +301,11 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
       },
       retailers: [],
       products: products.map(p => ({
-        sku: p.sku,
+        sku: p.sku || `SKU-${Date.now()}`,
         name: p.name,
         brand: p.brand || undefined,
         variant: p.variant || undefined,
-        category: p.cat || undefined,
+        category: p.cat || p.category || 'General',
         stockAvailable: Number(p.stock || 0),
         unitPrice: Number(p.price || 0),
         minOrderQty: Number(p.moq || 1),
@@ -310,17 +314,17 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         reviewSummary: p.reviewSummary || undefined,
         description: p.description || undefined
       })),
-      profileStatus: 'pending'
+      profileStatus: user?.profile?.profileStatus === 'active' ? 'active' : 'pending'
     };
 
     try {
       const res = await createSupplierSetup(payload);
-      const supplierId = res?.id || res?.supplier?.id || `sup-${Date.now()}`;
+      const supplierId = res?.id || res?.supplier?.id || cleanSid || `sup-${Date.now()}`;
       writeSupplierId(supplierId);
 
       if (user?.id) {
         try {
-          await updateUser(user.id, { profileId: supplierId, status: 'Pending' });
+          await updateUser(user.id, { profileId: supplierId, status: user.status === 'Active' ? 'Active' : 'Pending' });
         } catch (e) {
           console.warn('Could not link profileId to user in backend:', e);
         }
@@ -353,7 +357,7 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         ownerName: contact.fullName.trim(),
         ownerTitle: contact.designation.trim(),
         ownerEmail: contact.directEmail.trim(),
-        profileStatus: 'pending',
+        profileStatus: user?.profile?.profileStatus === 'active' ? 'active' : 'pending',
         retailers: [],
         productCount: products.length
       };
@@ -365,63 +369,28 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         supplierName: business.companyName,
         email: business.businessEmail,
         role: 'supplier',
-        status: 'Pending',
+        status: user?.status === 'Active' ? 'Active' : 'Pending',
         profile: updatedProfile
       });
 
       if (saveSession) {
         saveSession({
           ...user,
-          status: 'Pending',
+          status: user?.status === 'Active' ? 'Active' : 'Pending',
           profileId: supplierId,
           profile: updatedProfile
         });
       }
 
-      showToast('Setup submitted! Awaiting employee verification.');
-    } catch {
-      // Local fallback
-      const dummyId = `sup-${Date.now()}`;
-      writeSupplierId(dummyId);
-      if (user?.id) {
-        try {
-          localStorage.setItem(`so_supplier_setup_completed_${user.id}`, 'true');
-        } catch {}
+      showToast('Setup submitted! Product catalog saved.');
+      setSetupComplete(true);
+      if (onNavigateToDashboard) {
+        setTimeout(() => onNavigateToDashboard(), 1200);
       }
-      const fallbackProfile = {
-        businessName: business.companyName.trim(),
-        businessEmail: business.businessEmail.trim(),
-        businessPhone: business.phoneNumber.trim(),
-        supplierCode: business.supplierCode.trim(),
-        address: business.businessAddress.trim(),
-        state: business.state,
-        profileStatus: 'pending',
-        retailers: [],
-        productCount: products.length
-      };
-      writeSession({
-        ...user,
-        supplierId: dummyId,
-        profileId: dummyId,
-        supplierName: business.companyName,
-        email: business.businessEmail,
-        role: 'supplier',
-        status: 'Pending',
-        profile: fallbackProfile
-      });
-      if (saveSession) {
-        saveSession({
-          ...user,
-          status: 'Pending',
-          profileId: dummyId,
-          profile: fallbackProfile
-        });
-      }
-      showToast('Setup saved locally! Awaiting verification.');
+    } catch (err) {
+      console.error('Failed to submit supplier setup:', err);
+      showToast(err.message || 'Setup submission failed. Please check the fields.', 'err');
     }
-
-    setSetupComplete(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

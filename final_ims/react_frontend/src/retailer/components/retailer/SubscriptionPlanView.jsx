@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { request } from '../../api/client';
+import { retailerApi } from '../../api/retailerApi';
 
 export default function SubscriptionPlanView({ onNavigate }) {
   const { user } = useAuth();
@@ -10,6 +12,54 @@ export default function SubscriptionPlanView({ onNavigate }) {
   const [processing, setProcessing] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
 
+  const initialStoresCount =
+    Array.isArray(user?.profile?.stores) && user.profile.stores.length > 0
+      ? user.profile.stores.length
+      : Array.isArray(user?.accessibleStoreIds) && user.accessibleStoreIds.length > 0
+        ? user.accessibleStoreIds.length
+        : user?.store
+          ? 1
+          : 2;
+  const [storesCount, setStoresCount] = useState(initialStoresCount);
+
+  useEffect(() => {
+    let isMounted = true;
+    const retailerId =
+      user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const userId = user?.id || user?.userId || '';
+
+    async function loadData() {
+      try {
+        const [subRes, storesRes] = await Promise.all([
+          userId
+            ? request(`/platform-revenue/subscriptions/active?userId=${encodeURIComponent(userId)}`).catch(() => null)
+            : Promise.resolve(null),
+          retailerId ? retailerApi.getStores(retailerId).catch(() => []) : Promise.resolve([]),
+        ]);
+
+        if (!isMounted) return;
+
+        if (subRes && subRes.tier) {
+          setActivePlan(subRes.tier);
+        }
+
+        const sList = Array.isArray(storesRes) ? storesRes : [];
+        if (sList.length > 0) {
+          setStoresCount(sList.length);
+        } else if (Array.isArray(user?.profile?.stores) && user.profile.stores.length > 0) {
+          setStoresCount(user.profile.stores.length);
+        }
+      } catch (err) {
+        console.warn('Error loading subscription or stores:', err);
+      }
+    }
+
+    loadData();
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
   const planConfigs = {
     free: {
       id: 'free',
@@ -19,8 +69,8 @@ export default function SubscriptionPlanView({ onNavigate }) {
       basePrice: 0,
       gst: 0,
       total: 0,
-      usageText: '1 / 1 Store Location',
-      usagePct: 100,
+      usageText: `${storesCount} / 1 Store Location`,
+      usagePct: Math.min(100, Math.round((storesCount / 1) * 100)),
     },
     starter: {
       id: 'starter',
@@ -30,8 +80,8 @@ export default function SubscriptionPlanView({ onNavigate }) {
       basePrice: 0,
       gst: 0,
       total: 0,
-      usageText: '1 / 1 Store Location',
-      usagePct: 100,
+      usageText: `${storesCount} / 1 Store Location`,
+      usagePct: Math.min(100, Math.round((storesCount / 1) * 100)),
     },
     pro: {
       id: 'pro',
@@ -41,8 +91,8 @@ export default function SubscriptionPlanView({ onNavigate }) {
       basePrice: 799,
       gst: 143.82,
       total: 942.82,
-      usageText: '1 / 5 Store Outlets',
-      usagePct: 20,
+      usageText: `${storesCount} / 5 Store Outlets`,
+      usagePct: Math.min(100, Math.round((storesCount / 5) * 100)),
     },
     enterprise: {
       id: 'enterprise',
@@ -52,8 +102,8 @@ export default function SubscriptionPlanView({ onNavigate }) {
       basePrice: 3499,
       gst: 629.82,
       total: 4128.82,
-      usageText: '1 / Unlimited Stores',
-      usagePct: 10,
+      usageText: `${storesCount} / Unlimited Stores`,
+      usagePct: Math.min(100, Math.round((storesCount / 10) * 100)),
     },
   };
 
@@ -77,8 +127,21 @@ export default function SubscriptionPlanView({ onNavigate }) {
       setIsModalOpen(false);
       setActivePlan(selectedTier);
 
-      // Persist plan in session
+      // Persist plan in backend & session
       try {
+        request('/platform-revenue/subscriptions', {
+          method: 'POST',
+          body: JSON.stringify({
+            userId: user?.id || user?.userId || 'u-retailer-1',
+            userName: user?.name || 'Retailer User',
+            userEmail: user?.email || 'retailer@stockoverflow.com',
+            userRole: 'retailer',
+            tier: selectedTier,
+            billingCycle: 'monthly',
+            paymentMethod: payMethod === 'upi' ? 'UPI AutoPay' : payMethod === 'card' ? 'Credit Card' : 'NetBanking',
+            paymentReference: 'PAY_SO_' + Math.floor(100000 + Math.random() * 900000),
+          }),
+        }).catch(() => {});
         const session = JSON.parse(localStorage.getItem('so_session') || '{}');
         session.plan = selectedTier;
         localStorage.setItem('so_session', JSON.stringify(session));
