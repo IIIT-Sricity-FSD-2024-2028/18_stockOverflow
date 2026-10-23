@@ -7,13 +7,15 @@
  * category selector, stock filter, sorting selector), and the 3-column products grid with stock status badges.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
 
 export default function ProductSearchPage_consumer({
   products = [],
   stores = [],
-  selectedStore = 'Downtown Store',
+  selectedStore = 'Global (All Stores)',
+  selectedStoreId = '',
+  onSelectStore,
   cart = [],
   userSession,
   loading = false,
@@ -23,11 +25,22 @@ export default function ProductSearchPage_consumer({
   onLogout,
 }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [storeFilter, setStoreFilter] = useState('');
+  const [storeFilter, setStoreFilter] = useState(selectedStoreId || '');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [brandFilter, setBrandFilter] = useState('');
   const [stockFilter, setStockFilter] = useState('');
   const [sortFilter, setSortFilter] = useState('featured');
+
+  useEffect(() => {
+    setStoreFilter(selectedStoreId || '');
+  }, [selectedStoreId]);
+
+  const handleStoreChange = (val) => {
+    setStoreFilter(val);
+    if (typeof onSelectStore === 'function') {
+      onSelectStore(val);
+    }
+  };
 
   // Total quantity of items in our cart (for the top cart badge)
   const cartCount = useMemo(() => {
@@ -61,13 +74,24 @@ export default function ProductSearchPage_consumer({
         const matchesCategory = !categoryFilter || product.category === categoryFilter;
         const matchesBrand = !brandFilter || product.brand === brandFilter;
 
+        const matchesStore =
+          !storeFilter ||
+          String(product.storeId) === String(storeFilter) ||
+          String(product.storeName) === String(storeFilter) ||
+          (Array.isArray(product.storeInventory) &&
+            product.storeInventory.some(
+              (si) =>
+                String(si.storeId) === String(storeFilter) ||
+                storeFilter.endsWith(':' + si.storeId),
+            ));
+
         const qty = product.qty !== undefined ? product.qty : 10;
         let matchesStock = true;
         if (stockFilter === 'in-stock') matchesStock = qty > 10;
         else if (stockFilter === 'low-stock') matchesStock = qty > 0 && qty <= 10;
         else if (stockFilter === 'out-stock') matchesStock = qty <= 0;
 
-        return matchesSearch && matchesCategory && matchesBrand && matchesStock;
+        return matchesSearch && matchesCategory && matchesBrand && matchesStock && matchesStore;
       })
       .sort((a, b) => {
         const priceA = Number(a.priceUSD || a.price || 0);
@@ -77,7 +101,7 @@ export default function ProductSearchPage_consumer({
         if (sortFilter === 'name-asc') return (a.name || '').localeCompare(b.name || '');
         return 0;
       });
-  }, [products, searchQuery, categoryFilter, brandFilter, stockFilter, sortFilter]);
+  }, [products, searchQuery, categoryFilter, brandFilter, stockFilter, sortFilter, storeFilter]);
 
   return (
     <CustomerLayout_consumer
@@ -106,7 +130,7 @@ export default function ProductSearchPage_consumer({
         <div className="filter-select">
           <select
             value={storeFilter}
-            onChange={(e) => setStoreFilter(e.target.value)}
+            onChange={(e) => handleStoreChange(e.target.value)}
             style={{ fontWeight: 500 }}
           >
             <option value="">Global (All Stores)</option>
@@ -246,7 +270,7 @@ export default function ProductSearchPage_consumer({
                     {p.name}
                   </div>
                   <div style={{ fontSize: '11.5px', color: '#0284c7', fontWeight: 600, marginTop: '2px' }}>
-                    Store: {p.retailerName || selectedStore || "John's Retail Store"}
+                    Store: {p.storeName || (selectedStore && selectedStore !== 'Global (All Stores)' && selectedStore !== 'Downtown Store' ? selectedStore : p.retailerName) || "John's Main Store"}
                   </div>
 
                   <hr className="prod-divider" />

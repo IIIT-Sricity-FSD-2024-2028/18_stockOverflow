@@ -14,7 +14,10 @@ const COLLECTION_PATHS = [
 
 function getSession() {
   try {
-    return JSON.parse(localStorage.getItem('so_session') || 'null');
+    const sessionStr =
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_session') : null) ||
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('so_session') : null);
+    return JSON.parse(sessionStr || 'null');
   } catch {
     return null;
   }
@@ -73,7 +76,10 @@ export async function request(path, options = {}) {
     }
   }
 
-  const token = session?.token || localStorage.getItem('so_token');
+  const token =
+    session?.token ||
+    (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_token') : null) ||
+    (typeof localStorage !== 'undefined' ? localStorage.getItem('so_token') : null);
   const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
   const url = scopedPath.startsWith('/api') ? scopedPath : `${API_BASE}${scopedPath}`;

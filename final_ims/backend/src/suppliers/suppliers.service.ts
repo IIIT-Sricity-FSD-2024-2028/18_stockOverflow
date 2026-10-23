@@ -25,30 +25,50 @@ export class SuppliersService {
   }
 
   create(createSupplierSetupDto: any): SupplierRecord {
+    this.loadFromDisk();
     const now = new Date().toISOString();
+    const email =
+      createSupplierSetupDto.business?.businessEmail ||
+      createSupplierSetupDto.businessEmail ||
+      createSupplierSetupDto.email ||
+      '';
+    const lookupEmail = email.trim().toLowerCase();
+
+    // Check if supplier already exists by ID or email
+    const existing =
+      (createSupplierSetupDto.id && this.suppliers.get(createSupplierSetupDto.id)) ||
+      (lookupEmail ? this.findByBusinessEmail(lookupEmail) : null);
+
+    const supplierId = createSupplierSetupDto.id || existing?.id || randomUUID();
+
     const companyName =
       createSupplierSetupDto.business?.companyName ||
       createSupplierSetupDto.companyName ||
       createSupplierSetupDto.company ||
       createSupplierSetupDto.name ||
+      existing?.business?.companyName ||
       'New Supplier';
-    const email =
-      createSupplierSetupDto.business?.businessEmail ||
-      createSupplierSetupDto.businessEmail ||
-      createSupplierSetupDto.email ||
-      'supplier@example.com';
     const phone =
       createSupplierSetupDto.business?.phoneNumber ||
       createSupplierSetupDto.phoneNumber ||
       createSupplierSetupDto.phone ||
+      existing?.business?.phoneNumber ||
       '';
     const code =
       createSupplierSetupDto.business?.supplierCode ||
       createSupplierSetupDto.supplierCode ||
       createSupplierSetupDto.code ||
+      existing?.business?.supplierCode ||
       `SUP-${Math.floor(100 + Math.random() * 900)}`;
 
-    const business = createSupplierSetupDto.business ?? {
+    const business = createSupplierSetupDto.business ? {
+      ...(existing?.business || {}),
+      ...createSupplierSetupDto.business,
+      companyName,
+      supplierCode: code,
+      businessEmail: email || existing?.business?.businessEmail || '',
+      phoneNumber: phone,
+    } : (existing?.business ?? {
       companyName,
       supplierCode: code,
       businessType: createSupplierSetupDto.businessType || 'Wholesaler',
@@ -64,26 +84,33 @@ export class SuppliersService {
       website: createSupplierSetupDto.website || '',
       primaryCategory: createSupplierSetupDto.primaryCategory || 'General',
       paymentTerms: createSupplierSetupDto.paymentTerms || 'Net 30',
-    };
+    });
 
-    const primaryContact = createSupplierSetupDto.primaryContact ?? {
+    const primaryContact = createSupplierSetupDto.primaryContact ? {
+      ...(existing?.primaryContact || {}),
+      ...createSupplierSetupDto.primaryContact,
+      fullName: createSupplierSetupDto.primaryContact?.fullName || createSupplierSetupDto.contactPerson || companyName,
+      directEmail: createSupplierSetupDto.primaryContact?.directEmail || email || existing?.primaryContact?.directEmail || '',
+      directPhone: createSupplierSetupDto.primaryContact?.directPhone || phone || existing?.primaryContact?.directPhone || '',
+    } : (existing?.primaryContact ?? {
       fullName: createSupplierSetupDto.contactPerson || companyName,
       jobTitle: 'Account Manager',
       directEmail: email,
       directPhone: phone,
-    };
+    });
 
     const supplier: SupplierRecord = {
+      ...(existing || {}),
       ...createSupplierSetupDto,
       business,
       primaryContact,
-      retailers: createSupplierSetupDto.retailers ?? [],
-      products: createSupplierSetupDto.products ?? [],
-      documents: createSupplierSetupDto.documents ?? [],
-      id: createSupplierSetupDto.id || randomUUID(),
+      retailers: createSupplierSetupDto.retailers ?? existing?.retailers ?? [],
+      products: createSupplierSetupDto.products ?? existing?.products ?? [],
+      documents: createSupplierSetupDto.documents ?? existing?.documents ?? [],
+      id: supplierId,
       status: 'completed',
-      profileStatus: createSupplierSetupDto.profileStatus ?? 'pending',
-      createdAt: now,
+      profileStatus: existing?.profileStatus || createSupplierSetupDto.profileStatus || 'pending',
+      createdAt: existing?.createdAt || now,
       updatedAt: now,
     };
 
@@ -112,6 +139,7 @@ export class SuppliersService {
   }
 
   findAll(): SupplierRecord[] {
+    this.loadFromDisk();
     return Array.from(this.suppliers.values()).sort((a, b) =>
       String(b.updatedAt || b.createdAt || '').localeCompare(
         String(a.updatedAt || a.createdAt || ''),
@@ -120,7 +148,11 @@ export class SuppliersService {
   }
 
   findOne(id: string): SupplierRecord {
-    const supplier = this.suppliers.get(id);
+    let supplier = this.suppliers.get(id);
+    if (!supplier) {
+      this.loadFromDisk();
+      supplier = this.suppliers.get(id);
+    }
 
     if (!supplier) {
       throw new NotFoundException(`Supplier setup "${id}" was not found`);
@@ -348,7 +380,7 @@ export class SuppliersService {
 
     try {
       const suppliers = JSON.parse(raw) as SupplierRecord[];
-
+      this.suppliers.clear();
       suppliers.forEach((supplier) => {
         const now = new Date().toISOString();
         this.suppliers.set(supplier.id, {
@@ -367,7 +399,11 @@ export class SuppliersService {
   }
 
   private persistToDisk(): void {
-    const suppliers = this.findAll();
+    const suppliers = Array.from(this.suppliers.values()).sort((a, b) =>
+      String(b.updatedAt || b.createdAt || '').localeCompare(
+        String(a.updatedAt || a.createdAt || ''),
+      ),
+    );
     writeFileSync(this.dataFile, JSON.stringify(suppliers, null, 2), 'utf-8');
   }
 

@@ -1,5 +1,111 @@
 [
   {
+    "id": "64aa95dd-c853-4f83-8a05-8994d4e7a1c5",
+    "profileStatus": "active",
+    "business": {
+      "companyName": "Apex Electronics Supplies",
+      "businessType": "Wholesaler",
+      "businessEmail": "supplier1@gmail.com",
+      "supplierCode": "APX-1001",
+      "currency": "INR",
+      "primaryCategory": "Electronics & Technology",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "phoneNumber": "9876543210",
+      "gstNumber": "24AAAAA0000A1Z5",
+      "businessAddress": "101 Industrial Estate",
+      "state": "Gujarat"
+    },
+    "primaryContact": {
+      "fullName": "Supplier One",
+      "directEmail": "supplier1@gmail.com",
+      "designation": "Managing Director",
+      "directPhone": "9876543210"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "id": "APX-001",
+        "sku": "APX-001",
+        "name": "Wireless Bluetooth Mouse",
+        "brand": "TechGear",
+        "cat": "Electronics & Technology",
+        "category": "Electronics & Technology",
+        "price": 499,
+        "unitPrice": 499,
+        "stock": 120,
+        "stockAvailable": 120,
+        "moq": 10,
+        "minOrderQty": 10,
+        "status": "active",
+        "desc": "Ergonomic 2.4GHz optical mouse",
+        "description": "Ergonomic 2.4GHz optical mouse"
+      },
+      {
+        "unit": "Piece",
+        "id": "APX-002",
+        "sku": "APX-002",
+        "name": "Type-C Fast Charging Cable",
+        "brand": "PowerLink",
+        "cat": "Mobile & Telecom",
+        "category": "Mobile & Telecom",
+        "price": 199,
+        "unitPrice": 199,
+        "stock": 250,
+        "stockAvailable": 250,
+        "moq": 25,
+        "minOrderQty": 25,
+        "status": "active",
+        "desc": "Braided 65W fast charging cable 1.5m",
+        "description": "Braided 65W fast charging cable 1.5m"
+      },
+      {
+        "unit": "Piece",
+        "id": "APX-003",
+        "sku": "APX-003",
+        "name": "Mechanical Gaming Keyboard",
+        "brand": "KeyCraft",
+        "cat": "Computers & Peripherals",
+        "category": "Computers & Peripherals",
+        "price": 1499,
+        "unitPrice": 1499,
+        "stock": 60,
+        "stockAvailable": 60,
+        "moq": 5,
+        "minOrderQty": 5,
+        "status": "active",
+        "desc": "Hot-swappable tactile switch keyboard",
+        "description": "Hot-swappable tactile switch keyboard"
+      }
+    ],
+    "createdAt": "2026-10-17T09:05:01.321Z",
+    "updatedAt": "2026-10-17T09:37:30.200Z",
+    "documents": [],
+    "status": "completed"
+  },
+  {
+    "id": "309827ab-7b3b-48e4-b9ca-007c5b8eb300",
+    "profileStatus": "active",
+    "business": {
+      "companyName": "supplier2 Supplies",
+      "businessType": "Wholesaler",
+      "businessEmail": "supplier2@gmail.com",
+      "supplierCode": "SUP-9734",
+      "currency": "INR",
+      "primaryCategory": "General"
+    },
+    "primaryContact": {
+      "fullName": "supplier2",
+      "directEmail": "supplier2@gmail.com"
+    },
+    "retailers": [],
+    "products": [],
+    "createdAt": "2026-10-17T09:19:48.917Z",
+    "updatedAt": "2026-10-17T09:20:23.148Z",
+    "documents": []
+  },
+  {
     "business": {
       "currency": "INR",
       "paymentTerms": "Net 30",

@@ -5,7 +5,10 @@ const API_BASE = '/api';
 
 function getSession() {
   try {
-    return JSON.parse(localStorage.getItem('so_session') || 'null');
+    const sessionStr =
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('so_session') : null) ||
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('so_session') : null);
+    return JSON.parse(sessionStr || 'null');
   } catch {
     return null;
   }
@@ -73,7 +76,12 @@ export function readSession() {
 
 export function writeSession(session) {
   try {
-    localStorage.setItem('so_session', JSON.stringify(session));
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem('so_session', JSON.stringify(session));
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('so_session');
+    }
   } catch {}
   return session;
 }

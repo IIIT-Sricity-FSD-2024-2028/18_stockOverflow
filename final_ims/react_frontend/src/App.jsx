@@ -36,7 +36,12 @@ export default function App() {
   const { user, logout, refreshUser } = useAuth();
 
   // Current active view: 'landing' | 'login' | 'register' | 'verification-pending' | 'admin' | 'employee' | 'consumer' | 'retailer' | 'supplier' | 'biller'
-  const [currentView, setCurrentView] = useState('landing');
+  const [currentView, setCurrentView] = useState(() => {
+    if (user && user.role) {
+      return user.role;
+    }
+    return 'landing';
+  });
   const [navParams, setNavParams] = useState({});
 
   useEffect(() => {

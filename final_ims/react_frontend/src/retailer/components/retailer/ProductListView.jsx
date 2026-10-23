@@ -14,9 +14,9 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
   const [viewProduct, setViewProduct] = useState(null);
   const [message, setMessage] = useState('');
 
-  const loadProducts = async () => {
+  const loadProducts = async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
       const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
       const storeId = user?.currentStoreId || user?.storeId || '';
       const scopedQuery = retailerId
@@ -27,7 +27,7 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
     } catch (e) {
       console.error('Failed to load products:', e);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
@@ -36,8 +36,8 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
   }, [user]);
 
   useDataSync(['products', 'inventory'], () => {
-    loadProducts();
-  });
+    loadProducts(true);
+  }, { intervalMs: 0 });
 
   const handleDelete = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete "${name}"?`)) {

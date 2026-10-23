@@ -1,11 +1,13 @@
 import { JsonDbService } from '../common/json-db.service';
+import { RetailersService } from '../retailers/retailers.service';
 import { ProductFeedback, ProductRecord, RatingBreakdown, StoreInventoryEntry, TransactionRecord } from '../common/database.types';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateProductFeedbackDto } from './dto/create-product-feedback.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 export declare class ProductsService {
     private readonly db;
-    constructor(db: JsonDbService);
+    private readonly retailersService;
+    constructor(db: JsonDbService, retailersService: RetailersService);
     findAll(retailerId?: string, storeId?: string): ProductRecord[];
     findOne(id: string, retailerId?: string, storeId?: string): ProductRecord;
     findBySku(sku: string, retailerId?: string, storeId?: string): ProductRecord;
@@ -61,6 +63,9 @@ export declare class ProductsService {
         description: string;
         descriptionHtml?: string;
         supplier: string;
+        retailerName?: string;
+        storeId?: string;
+        storeName?: string;
         supplierSku?: string;
         barcode?: string;
         warehouse?: string;
@@ -102,6 +107,7 @@ export declare class ProductsService {
     private getProducts;
     private saveProducts;
     private filterProducts;
+    private enrichAndProjectProduct;
     private normalizeStoredProduct;
     private buildProductRecord;
     private resolveStoreInventory;

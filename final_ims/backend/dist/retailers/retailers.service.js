@@ -53,6 +53,7 @@ let RetailersService = class RetailersService {
         return retailer;
     }
     findAll() {
+        this.loadFromDisk();
         return Array.from(this.retailers.values()).sort((a, b) => String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || '')));
     }
     findOne(id) {
@@ -61,6 +62,10 @@ let RetailersService = class RetailersService {
         }
         const target = String(id).trim().toLowerCase();
         let retailer = this.retailers.get(id);
+        if (!retailer) {
+            this.loadFromDisk();
+            retailer = this.retailers.get(id);
+        }
         if (retailer)
             return retailer;
         const all = Array.from(this.retailers.values());
@@ -208,6 +213,7 @@ let RetailersService = class RetailersService {
         }
         try {
             const retailers = JSON.parse(raw);
+            this.retailers.clear();
             retailers.forEach((retailer) => {
                 const now = new Date().toISOString();
                 this.retailers.set(retailer.id, {
@@ -226,7 +232,7 @@ let RetailersService = class RetailersService {
         }
     }
     persistToDisk() {
-        const retailers = this.findAll();
+        const retailers = Array.from(this.retailers.values()).sort((a, b) => String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || '')));
         (0, fs_1.writeFileSync)(this.dataFile, JSON.stringify(retailers, null, 2), 'utf-8');
     }
 };

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { JsonDbService } from '../common/json-db.service';
+import { RetailersService } from '../retailers/retailers.service';
 import {
   ProductFeedback,
   ProductRecord,
@@ -14,7 +15,10 @@ import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly db: JsonDbService) {}
+  constructor(
+    private readonly db: JsonDbService,
+    private readonly retailersService: RetailersService,
+  ) {}
 
   findAll(retailerId?: string, storeId?: string): ProductRecord[] {
     return this.filterProducts(this.getProducts(), retailerId, storeId);
@@ -293,11 +297,20 @@ export class ProductsService {
     retailerId?: string,
     storeId?: string,
   ) {
-    const normalizedStoreId = this.normalizeText(storeId);
+    let targetRetailerId = retailerId;
+    let targetStoreId = storeId;
+
+    if (storeId && storeId.includes(':') && !retailerId) {
+      const parts = storeId.split(':');
+      targetRetailerId = parts[0];
+      targetStoreId = parts.slice(1).join(':');
+    }
+
+    const normalizedStoreId = this.normalizeText(targetStoreId);
 
     return products
       .filter((product) =>
-        this.matchesRetailerScope(product.retailerId, retailerId),
+        this.matchesRetailerScope(product.retailerId, targetRetailerId),
       )
       .filter((product) => {
         if (!normalizedStoreId) {
@@ -306,14 +319,80 @@ export class ProductsService {
 
         return (
           product.storeInventory.some(
-            (entry) => this.normalizeText(entry.storeId) === normalizedStoreId,
+            (entry) =>
+              this.normalizeText(entry.storeId) === normalizedStoreId ||
+              normalizedStoreId.endsWith(':' + entry.storeId),
           ) ||
           product.initialStoreInventory.some(
-            (entry) => this.normalizeText(entry.storeId) === normalizedStoreId,
+            (entry) =>
+              this.normalizeText(entry.storeId) === normalizedStoreId ||
+              normalizedStoreId.endsWith(':' + entry.storeId),
           )
         );
       })
-      .map((product) => this.projectProductForStore(product, normalizedStoreId));
+      .map((product) =>
+        this.enrichAndProjectProduct(product, targetRetailerId, normalizedStoreId),
+      );
+  }
+
+  private enrichAndProjectProduct(
+    product: ProductRecord,
+    retailerId?: string,
+    storeId?: string,
+  ): ProductRecord {
+    const rawStoreCode = storeId && storeId.includes(':') ? storeId.split(':').pop() : storeId;
+    const projected = this.projectProductForStore(product, rawStoreCode || storeId);
+
+    let retailerName = '';
+    let storeName = '';
+    let resolvedStoreId = storeId || '';
+
+    const effectiveRetailerId = product.retailerId || retailerId;
+    if (effectiveRetailerId) {
+      const retailer = this.retailersService
+        .findAll()
+        .find((r) => r.id === effectiveRetailerId);
+      if (retailer) {
+        retailerName =
+          retailer.business?.businessName ||
+          retailer.primaryContact?.fullName ||
+          '';
+
+        const retailerStores = retailer.stores || [];
+        if (rawStoreCode || storeId) {
+          const matchedStore = retailerStores.find(
+            (s) =>
+              s.code === rawStoreCode ||
+              s.code === storeId ||
+              s.name === storeId ||
+              s.name === rawStoreCode,
+          );
+          storeName = matchedStore?.name || (typeof storeId === 'string' ? storeId : '');
+          resolvedStoreId = matchedStore?.code || rawStoreCode || storeId || '';
+        } else {
+          const firstInvStoreId = product.storeInventory?.[0]?.storeId;
+          const matchedStore =
+            retailerStores.find((s) => s.code === firstInvStoreId) ||
+            retailerStores[0];
+          storeName = matchedStore?.name || retailerName || 'Main Store';
+          resolvedStoreId = matchedStore?.code || firstInvStoreId || '';
+        }
+      }
+    }
+
+    if (!retailerName) {
+      retailerName = product.supplier || product.brand || 'StockOverflow';
+    }
+    if (!storeName) {
+      storeName = product.warehouse || 'Downtown Store';
+    }
+
+    return {
+      ...projected,
+      retailerName,
+      storeName,
+      storeId: resolvedStoreId || product.storeInventory?.[0]?.storeId || '',
+    };
   }
 
   private normalizeStoredProduct(entry: Partial<ProductRecord>, index: number) {
@@ -654,9 +733,7 @@ export class ProductsService {
             const d = new Date();
             d.setDate(d.getDate() - (6 - i));
             const dateIso = d.toISOString().split('T')[0];
-            const step = 6 - i;
-            const variance = step === 0 ? 0 : Math.min(qty, (step * 3) + Math.floor((step % 3) * 2));
-            return { date: dateIso, qty: Math.max(0, qty - variance) };
+            return { date: dateIso, qty };
           }),
       lastStockChangeAt: explicitQty && qty !== previousQty ? now : existing?.lastStockChangeAt,
     };
@@ -1001,11 +1078,16 @@ export class ProductsService {
     }
 
     const currentStore =
-      product.storeInventory.find((entry) => entry.storeId === normalizedStoreId) ||
-      null;
+      product.storeInventory.find(
+        (entry) =>
+          this.normalizeText(entry.storeId) === normalizedStoreId ||
+          normalizedStoreId.endsWith(':' + entry.storeId),
+      ) || null;
     const initialStore =
       product.initialStoreInventory.find(
-        (entry) => entry.storeId === normalizedStoreId,
+        (entry) =>
+          this.normalizeText(entry.storeId) === normalizedStoreId ||
+          normalizedStoreId.endsWith(':' + entry.storeId),
       ) || null;
 
     return {

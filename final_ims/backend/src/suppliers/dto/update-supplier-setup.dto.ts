@@ -48,4 +48,76 @@ export class UpdateSupplierSetupDto {
   @ValidateNested()
   @Type(() => BankDetailsDto)
   bankDetails?: BankDetailsDto;
+
+  @IsOptional()
+  companyName?: string;
+
+  @IsOptional()
+  name?: string;
+
+  @IsOptional()
+  supplierName?: string;
+
+  @IsOptional()
+  supplierCode?: string;
+
+  @IsOptional()
+  email?: string;
+
+  @IsOptional()
+  businessEmail?: string;
+
+  @IsOptional()
+  phone?: string;
+
+  @IsOptional()
+  phoneNumber?: string;
+
+  @IsOptional()
+  contactPerson?: string;
+
+  @IsOptional()
+  profileStatus?: string;
+
+  @IsOptional()
+  status?: string;
+
+  @IsOptional()
+  category?: string;
+
+  @IsOptional()
+  primaryCategory?: string;
+
+  @IsOptional()
+  state?: string;
+
+  @IsOptional()
+  paymentTerms?: string;
+
+  @IsOptional()
+  address?: string;
+
+  @IsOptional()
+  businessAddress?: string;
+
+  @IsOptional()
+  website?: string;
+
+  @IsOptional()
+  gstNumber?: string;
+
+  @IsOptional()
+  taxId?: string;
+
+  @IsOptional()
+  description?: string;
+
+  @IsOptional()
+  currency?: string;
+
+  @IsOptional()
+  businessType?: string;
+
+  @IsOptional()
+  sellingType?: string;
 }

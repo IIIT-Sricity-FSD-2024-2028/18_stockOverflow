@@ -158,7 +158,7 @@ export default function App_consumer({ onSwitchModule, onLogout }) {
 
   const selectedStore = useMemo(() => {
     const matched = stores.find((store) => String(store.id) === String(selectedStoreId));
-    return matched?.name || 'Downtown Store';
+    return matched?.name || 'Global (All Stores)';
   }, [stores, selectedStoreId]);
 
   // ─── 8. Cart Operations ─────────────────────────────────────────────────────
@@ -262,12 +262,20 @@ export default function App_consumer({ onSwitchModule, onLogout }) {
   };
 
   const handleSelectStore = (store) => {
+    if (!store) {
+      setSelectedStoreId('');
+      try {
+        localStorage.removeItem('imsSelectedStoreId');
+      } catch {}
+      showToast('Store location switched to: Global (All Stores)');
+      return;
+    }
     const matched =
       typeof store === 'object'
         ? store
         : stores.find((entry) => entry.name === store || String(entry.id) === String(store));
     const nextStoreId = matched?.id || (typeof store === 'string' ? store : '');
-    const nextStoreName = matched?.name || (typeof store === 'string' ? store : 'Downtown Store');
+    const nextStoreName = matched?.name || (typeof store === 'string' && store ? store : 'Global (All Stores)');
 
     setSelectedStoreId(nextStoreId);
     try {
@@ -336,6 +344,7 @@ export default function App_consumer({ onSwitchModule, onLogout }) {
             stores={stores}
             selectedStore={selectedStore}
             selectedStoreId={selectedStoreId}
+            onSelectStore={handleSelectStore}
             cart={cart}
             userSession={userSession}
             loading={loading}

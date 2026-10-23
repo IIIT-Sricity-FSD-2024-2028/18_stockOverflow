@@ -44,27 +44,22 @@ __decorate([
 ], SupplierBusinessInfoDto.prototype, "businessEmail", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.Matches)(PHONE_REGEX, {
-        message: 'phoneNumber must be a valid phone number',
-    }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SupplierBusinessInfoDto.prototype, "phoneNumber", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.Matches)(GST_REGEX, {
-        message: 'gstNumber must be a valid Indian GST number',
-    }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SupplierBusinessInfoDto.prototype, "gstNumber", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.Matches)(SUPPLIER_CODE_REGEX, {
-        message: 'supplierCode must look like SUP-1234',
-    }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SupplierBusinessInfoDto.prototype, "supplierCode", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(supplier_enums_1.Currency),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SupplierBusinessInfoDto.prototype, "currency", void 0);
 __decorate([
@@ -81,23 +76,23 @@ __decorate([
 ], SupplierBusinessInfoDto.prototype, "state", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUrl)({ require_protocol: true }),
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(180),
     __metadata("design:type", String)
 ], SupplierBusinessInfoDto.prototype, "website", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(supplier_enums_1.SupplierCategory),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SupplierBusinessInfoDto.prototype, "primaryCategory", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(supplier_enums_1.PaymentTerms),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SupplierBusinessInfoDto.prototype, "paymentTerms", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(supplier_enums_1.SellingType),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], SupplierBusinessInfoDto.prototype, "sellingType", void 0);
 __decorate([
@@ -123,16 +118,39 @@ __decorate([
 ], PrimaryContactDto.prototype, "designation", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(100),
+    __metadata("design:type", String)
+], PrimaryContactDto.prototype, "jobTitle", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.MaxLength)(160),
     __metadata("design:type", String)
 ], PrimaryContactDto.prototype, "directEmail", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], PrimaryContactDto.prototype, "directPhone", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], PrimaryContactDto.prototype, "mobileNumber", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], PrimaryContactDto.prototype, "phone", void 0);
 class RetailerDto {
-    constructor() {
-        this.creditTerms = supplier_enums_1.PaymentTerms.Net30;
-    }
 }
 exports.RetailerDto = RetailerDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RetailerDto.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -141,58 +159,65 @@ __decorate([
 ], RetailerDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.Matches)(RETAILER_CODE_REGEX, {
-        message: 'code must look like RET-001',
-    }),
     __metadata("design:type", String)
 ], RetailerDto.prototype, "code", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MaxLength)(120),
     __metadata("design:type", String)
 ], RetailerDto.prototype, "contactPerson", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.Matches)(PHONE_REGEX, {
-        message: 'phone must be a valid phone number',
-    }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RetailerDto.prototype, "contact", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], RetailerDto.prototype, "phone", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.MaxLength)(160),
     __metadata("design:type", String)
 ], RetailerDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(80),
     __metadata("design:type", String)
 ], RetailerDto.prototype, "state", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(supplier_enums_1.RetailerCategory),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], RetailerDto.prototype, "categorySupplied", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(supplier_enums_1.PaymentTerms),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], RetailerDto.prototype, "creditTerms", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(250),
+    __metadata("design:type", String)
+], RetailerDto.prototype, "terms", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], RetailerDto.prototype, "creditLimit", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], RetailerDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], RetailerDto.prototype, "addr", void 0);
 class ProductDto {
     constructor() {
-        this.unit = supplier_enums_1.ProductUnit.Piece;
+        this.unit = 'Piece';
     }
 }
 exports.ProductDto = ProductDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ProductDto.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -219,9 +244,14 @@ __decorate([
 ], ProductDto.prototype, "variant", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(supplier_enums_1.ProductCategory),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], ProductDto.prototype, "category", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ProductDto.prototype, "cat", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
@@ -232,23 +262,51 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], ProductDto.prototype, "price", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
     __metadata("design:type", Number)
 ], ProductDto.prototype, "minOrderQty", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    __metadata("design:type", Number)
+], ProductDto.prototype, "moq", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], ProductDto.prototype, "stockAvailable", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(supplier_enums_1.ProductUnit),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], ProductDto.prototype, "stock", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], ProductDto.prototype, "unit", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ProductDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], ProductDto.prototype, "expiryDate", void 0);
 __decorate([
@@ -263,6 +321,12 @@ __decorate([
     (0, class_validator_1.MaxLength)(1000),
     __metadata("design:type", String)
 ], ProductDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(1000),
+    __metadata("design:type", String)
+], ProductDto.prototype, "desc", void 0);
 class PricingPoliciesDto {
     constructor() {
         this.defaultPaymentTerms = supplier_enums_1.PaymentTerms.Net30;
@@ -347,6 +411,11 @@ __decorate([
 class CreateSupplierSetupDto {
 }
 exports.CreateSupplierSetupDto = CreateSupplierSetupDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSupplierSetupDto.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.ValidateNested)(),
     (0, class_transformer_1.Type)(() => SupplierBusinessInfoDto),

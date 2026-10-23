@@ -60,6 +60,7 @@ export class RetailersService {
   }
 
   findAll(): RetailerRecord[] {
+    this.loadFromDisk();
     return Array.from(this.retailers.values()).sort((a, b) =>
       String(b.updatedAt || b.createdAt || '').localeCompare(
         String(a.updatedAt || a.createdAt || ''),
@@ -75,6 +76,10 @@ export class RetailersService {
 
     // 1. Direct Map lookup
     let retailer = this.retailers.get(id);
+    if (!retailer) {
+      this.loadFromDisk();
+      retailer = this.retailers.get(id);
+    }
     if (retailer) return retailer;
 
     // 2. Lookup by case-insensitive ID, email, or retailer code
@@ -242,7 +247,7 @@ export class RetailersService {
 
     try {
       const retailers = JSON.parse(raw) as RetailerRecord[];
-
+      this.retailers.clear();
       retailers.forEach((retailer) => {
         const now = new Date().toISOString();
         this.retailers.set(retailer.id, {
@@ -261,7 +266,11 @@ export class RetailersService {
   }
 
   private persistToDisk(): void {
-    const retailers = this.findAll();
+    const retailers = Array.from(this.retailers.values()).sort((a, b) =>
+      String(b.updatedAt || b.createdAt || '').localeCompare(
+        String(a.updatedAt || a.createdAt || ''),
+      ),
+    );
     writeFileSync(this.dataFile, JSON.stringify(retailers, null, 2), 'utf-8');
   }
 }

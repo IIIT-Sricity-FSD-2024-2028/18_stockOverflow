@@ -6,4 +6,28 @@ export declare class UpdateSupplierSetupDto {
     products?: ProductDto[];
     pricingPolicies?: PricingPoliciesDto;
     bankDetails?: BankDetailsDto;
+    companyName?: string;
+    name?: string;
+    supplierName?: string;
+    supplierCode?: string;
+    email?: string;
+    businessEmail?: string;
+    phone?: string;
+    phoneNumber?: string;
+    contactPerson?: string;
+    profileStatus?: string;
+    status?: string;
+    category?: string;
+    primaryCategory?: string;
+    state?: string;
+    paymentTerms?: string;
+    address?: string;
+    businessAddress?: string;
+    website?: string;
+    gstNumber?: string;
+    taxId?: string;
+    description?: string;
+    currency?: string;
+    businessType?: string;
+    sellingType?: string;
 }

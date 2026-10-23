@@ -142,169 +142,182 @@ export default function SupplierDashboard({ onSwitchModule, onLogout }) {
 
   // ── INITIAL DATA LOAD ──
   const initSupplierPortal = useCallback(async () => {
-      const sess = readSession() || {};
-      let sid = readSupplierId() || sess.profileId || sess.supplierId || '';
-      if (!sid) {
-        try {
-          const p = new URLSearchParams(window.location.search).get('supplierId');
-          if (p) {
-            sid = p;
-            writeSupplierId(p);
-          }
-        } catch {}
-      }
-
-      // If still no sid, search specifically for the logged-in user's supplier profile
-      if (!sid && (sess.email || sess.profileId)) {
-        try {
-          const sups = await supplierRequest('/suppliers').catch(() => []);
-          if (Array.isArray(sups) && sups.length > 0) {
-            const userEmail = (sess.email || '').toLowerCase();
-            const matched = sups.find(
-              (s) =>
-                (s.id && s.id === sess.profileId) ||
-                (s.business?.businessEmail && s.business.businessEmail.toLowerCase() === userEmail) ||
-                (s.primaryContact?.directEmail && s.primaryContact.directEmail.toLowerCase() === userEmail)
-            );
-            if (matched) {
-              sid = matched.id;
-              writeSupplierId(sid);
-            }
-          }
-        } catch (e) {
-          console.error('Error auto-resolving supplier:', e);
+    const sess = readSession() || {};
+    let sid = readSupplierId() || sess.profileId || sess.supplierId || '';
+    if (!sid) {
+      try {
+        const p = new URLSearchParams(window.location.search).get('supplierId');
+        if (p) {
+          sid = p;
+          writeSupplierId(p);
         }
+      } catch {}
+    }
+
+    let s = null;
+    if (sid) {
+      try {
+        s = await getSupplier(sid);
+      } catch (err) {
+        console.warn('Failed to load supplier with sid:', sid, err);
+        s = null;
       }
+    }
+
+    // If s was not found or sid was an invalid/stale/dummy ID, search for the logged-in user's supplier profile
+    if (!s && (sess.email || sess.profileId || sess.supplierId)) {
+      try {
+        const sups = await supplierRequest('/suppliers').catch(() => []);
+        if (Array.isArray(sups) && sups.length > 0) {
+          const userEmail = (sess.email || '').toLowerCase();
+          const matched = sups.find(
+            (sup) =>
+              (sup.id && (sup.id === sess.profileId || sup.id === sess.supplierId)) ||
+              (sup.business?.businessEmail && sup.business.businessEmail.toLowerCase() === userEmail) ||
+              (sup.primaryContact?.directEmail && sup.primaryContact.directEmail.toLowerCase() === userEmail) ||
+              (sup.email && sup.email.toLowerCase() === userEmail)
+          );
+          if (matched) {
+            sid = matched.id;
+            writeSupplierId(sid);
+            s = matched;
+          }
+        }
+      } catch (e) {
+        console.error('Error auto-resolving supplier:', e);
+      }
+    }
+
+    if (sid) {
+      setSupplierId(sid);
+    }
+
+    if (s) {
+      setProfile((prev) => ({
+        ...prev,
+        supplierName:
+          s.business?.companyName || s.supplierName || s.name || prev.supplierName,
+        supplierCode:
+          s.business?.supplierCode || s.supplierCode || s.code || prev.supplierCode,
+        email: s.business?.businessEmail || s.email || prev.email,
+        phone:
+          s.business?.phoneNumber ||
+          s.primaryContact?.mobileNumber ||
+          s.phone ||
+          prev.phone,
+        category:
+          s.business?.primaryCategory || s.category || prev.category,
+        state: s.business?.state || s.state || prev.state,
+        paymentTerms:
+          s.business?.paymentTerms || s.paymentTerms || prev.paymentTerms,
+        address:
+          s.business?.businessAddress || s.address || prev.address,
+        website: s.business?.website || s.website || prev.website,
+        gstNumber:
+          s.business?.gstNumber || s.gstNumber || s.taxId || prev.gstNumber,
+        description:
+          s.business?.description || s.description || prev.description,
+      }));
+      if (Array.isArray(s.products)) {
+        setProducts(s.products.map(p => ({
+          ...p,
+          id: p.sku || p.id || `SKU-${Date.now()}`,
+          sku: p.sku || p.id || '',
+          cat: p.category || p.cat || 'Electronics',
+          category: p.category || p.cat || 'Electronics',
+          price: Number(p.unitPrice ?? p.price ?? 0),
+          unitPrice: Number(p.unitPrice ?? p.price ?? 0),
+          stock: Number(p.stockAvailable ?? p.stock ?? 0),
+          stockAvailable: Number(p.stockAvailable ?? p.stock ?? 0),
+          moq: Number(p.minOrderQty ?? p.moq ?? 1),
+          minOrderQty: Number(p.minOrderQty ?? p.moq ?? 1),
+          unit: p.unit || 'Piece',
+          status: p.status || 'active',
+          desc: p.description || p.desc || ''
+        })));
+      }
+      if (Array.isArray(s.retailers)) {
+        setRetailers(s.retailers);
+      }
+    } else {
+      setProducts([]);
+      setRetailers([]);
+      setOrders([]);
+    }
+
+    if (sid || sess.email) {
+      fetchPurchaseOrders()
+        .then((pos) => {
+          if (Array.isArray(pos)) {
+            const userEmail = (sess.email || '').toLowerCase();
+            const myOrders = pos.filter((po) => {
+              return (
+                (sid && po.supplierId === sid) ||
+                (po.supplierEmail && userEmail && po.supplierEmail.toLowerCase() === userEmail)
+              );
+            });
+
+            const mapped = myOrders.map((po) => {
+              const statusClean = String(po.status || 'pending')
+                .toLowerCase()
+                .replace(/\s+/g, '');
+              return {
+                id: po.orderNumber || po.id || 'PO-0001',
+                retailer: po.retailerName || 'Retail Store',
+                product:
+                  po.items?.[0]?.name ||
+                  po.items?.[0]?.productName ||
+                  po.productName ||
+                  'Product',
+                qty:
+                  po.items?.[0]?.qty ||
+                  po.items?.[0]?.quantity ||
+                  po.quantity ||
+                  1,
+                amount:
+                  po.total ||
+                  po.totalAmount ||
+                  (po.items?.[0]?.price
+                    ? po.items[0].price * (po.items[0].qty || 1)
+                    : 0),
+                date: po.createdAt
+                  ? new Date(po.createdAt).toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                    })
+                  : 'Recent',
+                delivery:
+                  po.deliveryDate ||
+                  (po.expectedDeliveryDate
+                    ? new Date(po.expectedDeliveryDate).toLocaleDateString(
+                        'en-GB',
+                        {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        },
+                      )
+                    : 'Scheduled'),
+                status: statusClean,
+                rawStatus: po.status || 'Pending',
+                supplierId: po.supplierId,
+                rawOrder: po,
+              };
+            });
+            setOrders(mapped);
+          }
+        })
+        .catch(console.error);
 
       if (sid) {
-        setSupplierId(sid);
-        getSupplier(sid)
-          .then((s) => {
-            if (s) {
-              setProfile((prev) => ({
-                ...prev,
-                supplierName:
-                  s.business?.companyName || s.supplierName || s.name || prev.supplierName,
-                supplierCode:
-                  s.business?.supplierCode || s.supplierCode || s.code || prev.supplierCode,
-                email: s.business?.businessEmail || s.email || prev.email,
-                phone:
-                  s.business?.phoneNumber ||
-                  s.primaryContact?.mobileNumber ||
-                  s.phone ||
-                  prev.phone,
-                category:
-                  s.business?.primaryCategory || s.category || prev.category,
-                state: s.business?.state || s.state || prev.state,
-                paymentTerms:
-                  s.business?.paymentTerms || s.paymentTerms || prev.paymentTerms,
-                address:
-                  s.business?.businessAddress || s.address || prev.address,
-                website: s.business?.website || s.website || prev.website,
-                gstNumber:
-                  s.business?.gstNumber || s.gstNumber || s.taxId || prev.gstNumber,
-                description:
-                  s.business?.description || s.description || prev.description,
-              }));
-              if (Array.isArray(s.products)) {
-                setProducts(s.products.map(p => ({
-                  ...p,
-                  id: p.sku || p.id || `SKU-${Date.now()}`,
-                  sku: p.sku || p.id || '',
-                  cat: p.category || p.cat || 'Electronics',
-                  category: p.category || p.cat || 'Electronics',
-                  price: Number(p.unitPrice ?? p.price ?? 0),
-                  unitPrice: Number(p.unitPrice ?? p.price ?? 0),
-                  stock: Number(p.stockAvailable ?? p.stock ?? 0),
-                  stockAvailable: Number(p.stockAvailable ?? p.stock ?? 0),
-                  moq: Number(p.minOrderQty ?? p.moq ?? 1),
-                  minOrderQty: Number(p.minOrderQty ?? p.moq ?? 1),
-                  unit: p.unit || 'Piece',
-                  status: p.status || 'active',
-                  desc: p.description || p.desc || ''
-                })));
-              }
-              if (Array.isArray(s.retailers)) {
-                setRetailers(s.retailers);
-              }
-            }
-          })
-          .catch(console.error);
-
-        fetchPurchaseOrders()
-          .then((pos) => {
-            if (Array.isArray(pos)) {
-              const userEmail = (sess.email || '').toLowerCase();
-              const myOrders = pos.filter((po) => {
-                return (
-                  po.supplierId === sid ||
-                  (po.supplierEmail && userEmail && po.supplierEmail.toLowerCase() === userEmail)
-                );
-              });
-
-              const mapped = myOrders.map((po) => {
-                const statusClean = String(po.status || 'pending')
-                  .toLowerCase()
-                  .replace(/\s+/g, '');
-                return {
-                  id: po.orderNumber || po.id || 'PO-0001',
-                  retailer: po.retailerName || 'Retail Store',
-                  product:
-                    po.items?.[0]?.name ||
-                    po.items?.[0]?.productName ||
-                    po.productName ||
-                    'Product',
-                  qty:
-                    po.items?.[0]?.qty ||
-                    po.items?.[0]?.quantity ||
-                    po.quantity ||
-                    1,
-                  amount:
-                    po.total ||
-                    po.totalAmount ||
-                    (po.items?.[0]?.price
-                      ? po.items[0].price * (po.items[0].qty || 1)
-                      : 0),
-                  date: po.createdAt
-                    ? new Date(po.createdAt).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })
-                    : 'Recent',
-                  delivery:
-                    po.deliveryDate ||
-                    (po.expectedDeliveryDate
-                      ? new Date(po.expectedDeliveryDate).toLocaleDateString(
-                          'en-GB',
-                          {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                          },
-                        )
-                      : 'Scheduled'),
-                  status: statusClean,
-                  rawStatus: po.status || 'Pending',
-                  supplierId: po.supplierId,
-                  rawOrder: po,
-                };
-              });
-              setOrders(mapped);
-            }
-          })
-          .catch(console.error);
-
         fetchSupplierDocuments(sid)
           .then((docs) => {
             if (Array.isArray(docs)) setDocuments(docs);
           })
           .catch(console.error);
-      } else {
-        setProducts([]);
-        setRetailers([]);
-        setOrders([]);
       }
+    }
   }, []);
 
   useEffect(() => {

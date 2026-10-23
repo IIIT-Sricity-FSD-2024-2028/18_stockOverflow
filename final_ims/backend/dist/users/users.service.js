@@ -474,18 +474,25 @@ let UsersService = class UsersService {
                 accessibleStoreIds: [],
             });
         }
-        const storeId = this.normalizeText(biller.storeId);
+        const storeId = this.normalizeText(biller.storeId, user.storeId);
+        const retailerId = this.normalizeText(biller.retailerId, user.retailerId, user.profile?.retailerId);
+        const accessibleStoreIds = Array.isArray(user.accessibleStoreIds) && user.accessibleStoreIds.length
+            ? user.accessibleStoreIds
+            : storeId
+                ? [storeId]
+                : [];
         return this.normalizeStoredUser({
             ...user,
+            retailerId,
             profileId: String(biller.id),
             profile: {
-                name: this.normalizeText(biller.name),
-                email: this.normalizeText(biller.email),
-                retailerId: this.normalizeText(biller.retailerId),
+                name: this.normalizeText(biller.name, user.name),
+                email: this.normalizeText(biller.email, user.email),
+                retailerId,
             },
             storeId: storeId,
             currentStoreId: storeId,
-            accessibleStoreIds: storeId ? [storeId] : [],
+            accessibleStoreIds,
         });
     }
     findRetailerProfile(user) {
@@ -710,6 +717,7 @@ let UsersService = class UsersService {
             storeId: this.normalizeText(user.storeId),
             currentStoreId: this.normalizeText(user.currentStoreId, user.storeId),
             accessibleStoreIds: this.normalizeStringList(user.accessibleStoreIds),
+            retailerId: this.normalizeText(user.retailerId, user.profile?.retailerId),
             profileId: this.normalizeText(user.profileId),
             profile: this.normalizeProfile(user.profile),
             plan: (this.normalizeRole(user.role || 'consumer') === 'retailer' || this.normalizeRole(user.role || 'consumer') === 'supplier')
