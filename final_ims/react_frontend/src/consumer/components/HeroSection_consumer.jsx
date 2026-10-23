@@ -11,7 +11,7 @@ import React from 'react';
 export default function HeroSection_consumer({
   onBrowseClick,
   title = 'Find Products That Fit Your Workflow',
-  subtitle = 'Browse professional tools, electronics, and accessories. Reserve products instantly and review them after delivery.'
+  subtitle = 'Browse professional tools, electronics, and accessories. Pre-order products directly from retail stores and review them after pickup.'
 }) {
   return (
     <section className="hero">

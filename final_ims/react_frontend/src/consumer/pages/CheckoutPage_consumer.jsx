@@ -90,12 +90,12 @@ export default function CheckoutPage_consumer({
         });
       }));
 
-      showToast('🎉 Reservation confirmed!');
+      showToast('🎉 Pre-order placed successfully!');
       if (onReservationsSubmitted) {
         onReservationsSubmitted(createdRequests);
       }
     } catch (err) {
-      showToast(err.message || 'Failed to place reservation.');
+      showToast(err.message || 'Failed to place order.');
     } finally {
       setIsSubmitting(false);
     }
@@ -104,8 +104,8 @@ export default function CheckoutPage_consumer({
   return (
     <CustomerLayout_consumer
       activeMenu="cart"
-      pageTitle="Finalize Reservation"
-      pageSub="Provide your contact info to complete your request"
+      pageTitle="Finalize Pre-order"
+      pageSub="Provide your contact info to complete your store order"
       cartCount={cartCount}
       userSession={userSession}
       onNavigate={onNavigate}
@@ -166,7 +166,7 @@ export default function CheckoutPage_consumer({
               className="submit-btn"
               disabled={isSubmitting || cart.length === 0}
             >
-              {isSubmitting ? 'Processing Reservation...' : 'Confirm Reservation'}
+              {isSubmitting ? 'Processing Order...' : 'Confirm Pre-order'}
             </button>
           </form>
 

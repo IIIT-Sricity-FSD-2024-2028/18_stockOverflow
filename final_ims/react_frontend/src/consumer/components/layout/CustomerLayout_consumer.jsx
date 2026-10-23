@@ -70,7 +70,7 @@ export default function CustomerLayout_consumer({
             onClick={() => onNavigate('cart')}
           >
             <span className="nav-icon">🛒</span>
-            <span>Reservations</span>
+            <span>Pre-orders</span>
             {cartCount > 0 && (
               <span className="sidebar-cart-badge">{cartCount}</span>
             )}

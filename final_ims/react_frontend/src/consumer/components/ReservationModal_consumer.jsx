@@ -127,7 +127,7 @@ export default function ReservationModal_consumer({
       await onConfirmReservation(payload);
       onClose();
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to place reservation hold.');
+      setErrorMsg(err.message || 'Failed to place pre-order.');
     } finally {
       setSubmitting(false);
     }
@@ -169,8 +169,8 @@ export default function ReservationModal_consumer({
           <div className="modal-title-wrap">
             <span className="modal-icon">📦</span>
             <div>
-              <h2 className="modal-title">Reserve for In-Store Pickup</h2>
-              <p className="modal-subtitle">Hold this item at a local store branch without paying now.</p>
+              <h2 className="modal-title">Pre-order for In-Store Pickup</h2>
+              <p className="modal-subtitle">Pre-order this item directly from your selected local store.</p>
             </div>
           </div>
           <button className="modal-close-btn" onClick={onClose} title="Close dialog">
@@ -266,7 +266,7 @@ export default function ReservationModal_consumer({
             </select>
             <div style={{ fontSize: '12px', color: maxAvailable > 0 ? '#059669' : '#dc2626', fontWeight: 600, marginTop: '2px' }}>
               {maxAvailable > 0
-                ? `✓ ${maxAvailable} unit(s) available for in-store pickup hold`
+                ? `✓ ${maxAvailable} unit(s) available to pre-order`
                 : `✕ Out of stock at this location`}
             </div>
           </div>
@@ -314,7 +314,7 @@ export default function ReservationModal_consumer({
             {/* Quantity */}
             <div className="form-group">
               <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>
-                Quantity to Hold (Max: {maxAvailable}) <span style={{ color: '#ef4444' }}>*</span>
+                Quantity to Order (Max: {maxAvailable}) <span style={{ color: '#ef4444' }}>*</span>
               </label>
               <input
                 type="number"
@@ -357,7 +357,7 @@ export default function ReservationModal_consumer({
               className="btn-primary"
               disabled={submitting || maxAvailable <= 0}
             >
-              {submitting ? 'Placing Hold...' : 'Confirm In-Store Hold'}
+              {submitting ? 'Placing Pre-order...' : 'Confirm Pre-order'}
             </button>
           </div>
         </form>
