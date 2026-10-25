@@ -295,6 +295,28 @@ export const retailerApi = {
     return res;
   },
 
+  // Pre-orders & Customer In-store Holds
+  getReservationRequests: (status = '', storeId = '') => {
+    const params = new URLSearchParams();
+    if (status) params.set('status', status);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString();
+    return request(`/reservations/requests${qs ? `?${qs}` : ''}`);
+  },
+  cancelReservationRequest: async (requestId, reason = '', cancelledBy = 'retailer') => {
+    const res = await request(`/reservations/requests/${encodeURIComponent(requestId)}/cancel`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        reason: reason || 'Cancelled by Retailer Management',
+        cancelledBy,
+      }),
+    });
+    emitDataSync('transactions', res);
+    emitDataSync('inventory', res);
+    emitDataSync('orders', res);
+    return res;
+  },
+
   // Retailer Setup Wizard & Profile
   setupRetailer: (data) =>
     request('/retailers/setup', {

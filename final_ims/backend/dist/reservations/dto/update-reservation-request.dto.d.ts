@@ -4,4 +4,7 @@ export declare class UpdateReservationRequestDto {
     completedAt?: string;
     completedBy?: string;
     confirmationShownAt?: string;
+    cancelledAt?: string;
+    cancelledBy?: string;
+    cancelReason?: string;
 }

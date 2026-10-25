@@ -236,6 +236,7 @@ export async function createReservationRequest(payload) {
     qty: Math.max(1, Number(payload.qty) || 1),
     customer: payload.customer ? String(payload.customer).trim() : undefined,
     customerEmail: payload.customerEmail ? String(payload.customerEmail).trim() : undefined,
+    customerPhone: payload.customerPhone ? String(payload.customerPhone).trim() : undefined,
     customerId: payload.customerId ? String(payload.customerId).trim() : undefined,
     storeId: String(payload.storeId || 's1').trim(),
     store: payload.store ? String(payload.store).trim() : undefined,
@@ -249,6 +250,7 @@ export async function createReservationRequest(payload) {
     });
     emitDataSync('transactions', res);
     emitDataSync('inventory', res);
+    emitDataSync('orders', res);
     return res;
   } catch (err) {
     console.warn('Backend /reservations/requests offline, saving locally:', err.message);
@@ -303,6 +305,60 @@ export async function fetchReservationRequests(status = '', customer = '') {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Cancels a customer reservation/pre-order request on the backend.
+ */
+export async function cancelReservationRequest(requestId, reason = '') {
+  if (!requestId) return null;
+  try {
+    const res = await apiRequest(`/reservations/requests/${encodeURIComponent(requestId)}/cancel`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        reason: reason || 'Cancelled by customer',
+        cancelledBy: 'customer',
+      }),
+    });
+    try {
+      const local = JSON.parse(localStorage.getItem('ims_reservation_requests') || '[]');
+      const updated = local.map((r) =>
+        r.requestId === requestId
+          ? { ...r, status: 'cancelled', cancelReason: reason || 'Cancelled by customer', cancelledAt: new Date().toISOString() }
+          : r
+      );
+      localStorage.setItem('ims_reservation_requests', JSON.stringify(updated));
+    } catch (_e) {}
+
+    emitDataSync('transactions', res);
+    emitDataSync('inventory', res);
+    emitDataSync('orders', res);
+    return res;
+  } catch (err) {
+    console.warn('Backend cancelReservationRequest offline, updating locally:', err.message);
+    let updatedItem = null;
+    try {
+      const local = JSON.parse(localStorage.getItem('ims_reservation_requests') || '[]');
+      const updated = local.map((r) => {
+        if (r.requestId === requestId) {
+          updatedItem = {
+            ...r,
+            status: 'cancelled',
+            cancelReason: reason || 'Cancelled by customer',
+            cancelledAt: new Date().toISOString(),
+          };
+          return updatedItem;
+        }
+        return r;
+      });
+      localStorage.setItem('ims_reservation_requests', JSON.stringify(updated));
+    } catch (_e) {}
+
+    emitDataSync('transactions', updatedItem);
+    emitDataSync('inventory', updatedItem);
+    emitDataSync('orders', updatedItem);
+    return updatedItem;
+  }
+}
+
 // 4. TRANSACTIONS & ORDER INVOICES
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -341,6 +397,7 @@ export async function createTransaction(payload) {
     });
     emitDataSync('transactions', res);
     emitDataSync('inventory', res);
+    emitDataSync('orders', res);
     emitDataSync('revenue', res);
     return res;
   } catch (err) {

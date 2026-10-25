@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { retailerApi } from '../../api/retailerApi';
+import { useDataSync } from '../../../context/DataSyncContext';
 import ContactSupportModal from '../../../components/common/ContactSupportModal';
 
 export default function RetailerLayout({ activeView, setActiveView, onSwitchModule, onLogout, children }) {
@@ -61,9 +62,10 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
       try {
         const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
         const storeId = user?.currentStoreId || user?.storeId || '';
-        const [returnsRes, productsRes] = await Promise.all([
+        const [returnsRes, productsRes, reservationsRes] = await Promise.all([
           retailerApi.getReturns(retailerId, storeId).catch(() => []),
           retailerApi.getProducts(retailerId, storeId).catch(() => []),
+          retailerApi.getReservationRequests('', storeId).catch(() => []),
         ]);
 
         const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
@@ -109,6 +111,25 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
           }
         });
 
+        // 3. Customer Pre-order Cancellations
+        const resList = Array.isArray(reservationsRes) ? reservationsRes : [];
+        resList.forEach((req) => {
+          if (String(req.status || '').toLowerCase() === 'cancelled') {
+            const id = `res-cancel-${req.requestId}`;
+            if (!dismissed.includes(id)) {
+              notifs.push({
+                id,
+                type: 'cancellation',
+                title: 'Customer Pre-order Cancelled',
+                msg: `${req.customer || 'Customer'} cancelled pre-order for ${req.productName || req.sku} (Qty: ${req.qty || 1}) · Hold released to stock`,
+                time: req.cancelledAt ? new Date(req.cancelledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent',
+                view: 'dashboard',
+                reason: req.cancelReason,
+              });
+            }
+          }
+        });
+
         setNotifications(notifs);
       } catch (err) {
         console.warn('Could not load notifications in layout:', err);
@@ -117,6 +138,10 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
 
     loadNotifications();
   }, [user, activeView]);
+
+  useDataSync(['transactions', 'inventory', 'orders'], () => {
+    loadNotifications();
+  });
 
   // Dismiss a single notification
   const handleDismissNotif = (e, notifId) => {
@@ -730,8 +755,9 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                   ) : (
                     notifications.map((n) => {
                       const isReturn = n.type === 'return';
-                      const iconBg = isReturn ? '#ede9fe' : '#fef3c7';
-                      const iconColor = isReturn ? '#7c3aed' : '#d97706';
+                      const isCancellation = n.type === 'cancellation';
+                      const iconBg = isCancellation ? '#fee2e2' : isReturn ? '#ede9fe' : '#fef3c7';
+                      const iconColor = isCancellation ? '#dc2626' : isReturn ? '#7c3aed' : '#d97706';
 
                       return (
                         <div
@@ -768,7 +794,13 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                               marginTop: '2px',
                             }}
                           >
-                            {isReturn ? (
+                            {isCancellation ? (
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="15" y1="9" x2="9" y2="15" />
+                                <line x1="9" y1="9" x2="15" y2="15" />
+                              </svg>
+                            ) : isReturn ? (
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="9 14 4 9 9 4" />
                                 <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
@@ -795,11 +827,11 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                                 style={{
                                   fontSize: '11px',
                                   fontWeight: 600,
-                                  color: isReturn ? '#6d28d9' : '#b45309',
-                                  background: isReturn ? '#f5f3ff' : '#fffbeb',
+                                  color: isCancellation ? '#b91c1c' : isReturn ? '#6d28d9' : '#b45309',
+                                  background: isCancellation ? '#fef2f2' : isReturn ? '#f5f3ff' : '#fffbeb',
                                   padding: '1px 7px',
                                   borderRadius: '4px',
-                                  border: `1px solid ${isReturn ? '#ddd6fe' : '#fde68a'}`,
+                                  border: `1px solid ${isCancellation ? '#fca5a5' : isReturn ? '#ddd6fe' : '#fde68a'}`,
                                 }}
                               >
                                 {n.time}

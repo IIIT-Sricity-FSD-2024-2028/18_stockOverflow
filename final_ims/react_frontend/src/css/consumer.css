@@ -2649,6 +2649,14 @@ html, body {
   margin-bottom: 4px;
 }
 
+.order-delivery.pending {
+  color: #d97706;
+}
+
+.order-delivery.cancelled {
+  color: #ef4444;
+}
+
 .order-name {
   font-size: 15px;
   font-weight: 700;

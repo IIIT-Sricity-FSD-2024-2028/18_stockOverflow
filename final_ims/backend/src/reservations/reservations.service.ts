@@ -28,15 +28,28 @@ export class ReservationsService {
       : items;
   }
 
-  findRequests(status?: string, customerLookup?: string) {
+  findRequests(
+    status?: string,
+    customerLookup?: string,
+    storeId?: string,
+  ) {
     const statusKey = this.normalizeText(status).toLowerCase();
     const customerKey = this.normalizeText(customerLookup).toLowerCase();
+    const storeKey = this.normalizeText(storeId).toLowerCase();
     const items = this.db.getCollection('reservationRequests').sort((a, b) => {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
     return items.filter((entry) => {
       if (statusKey && entry.status.toLowerCase() !== statusKey) {
+        return false;
+      }
+      if (
+        storeKey &&
+        entry.storeId &&
+        entry.storeId.toLowerCase() !== storeKey &&
+        !entry.storeId.toLowerCase().endsWith(':' + storeKey)
+      ) {
         return false;
       }
       if (customerKey && !this.matchesCustomer(entry, customerKey)) {
@@ -111,6 +124,7 @@ export class ReservationsService {
       qty: requestedQty,
       customer: this.normalizeText(createReservationRequestDto.customer),
       customerEmail: this.normalizeText(createReservationRequestDto.customerEmail),
+      customerPhone: this.normalizeText(createReservationRequestDto.customerPhone),
       customerId: this.normalizeText(createReservationRequestDto.customerId),
       storeId,
       store: storeName,
@@ -165,16 +179,50 @@ export class ReservationsService {
       throw new NotFoundException('Reservation request not found');
     }
 
+    const nextStatus = this.normalizeText(
+      updateReservationRequestDto.status,
+      requests[index].status,
+    );
+    const isCancelling = nextStatus.toLowerCase() === 'cancelled';
+    const now = new Date().toISOString();
+
     requests[index] = {
       ...requests[index],
       ...updateReservationRequestDto,
-      status: this.normalizeText(
-        updateReservationRequestDto.status,
-        requests[index].status,
-      ),
+      status: nextStatus,
+      ...(isCancelling
+        ? {
+            cancelledAt: requests[index].cancelledAt || now,
+            cancelledBy:
+              updateReservationRequestDto.cancelledBy ||
+              requests[index].cancelledBy ||
+              'customer',
+            cancelReason:
+              updateReservationRequestDto.cancelReason ||
+              requests[index].cancelReason ||
+              'Cancelled by customer',
+          }
+        : {}),
     };
     this.db.saveCollection('reservationRequests', requests);
+
+    if (isCancelling) {
+      const remainingReservations = this.db
+        .getCollection('reservations')
+        .filter((entry) => entry.requestId !== requestId);
+      this.db.saveCollection('reservations', remainingReservations);
+    }
+
     return requests[index];
+  }
+
+  cancelRequest(requestId: string, reason?: string, cancelledBy?: string) {
+    return this.updateRequest(requestId, {
+      status: 'cancelled',
+      cancelReason: reason || 'Cancelled by customer',
+      cancelledBy: cancelledBy || 'customer',
+      cancelledAt: new Date().toISOString(),
+    });
   }
 
   completeRequests(requestIds: string[], orderId: string) {
@@ -211,6 +259,22 @@ export class ReservationsService {
     this.db.saveCollection('reservations', remainingReservations);
 
     return requests.filter((entry) => requestIdSet.has(entry.requestId));
+  }
+
+  private matchesStore(entryStoreId?: string, queryStoreId?: string): boolean {
+    if (!queryStoreId || !queryStoreId.trim()) return true;
+    if (!entryStoreId || !entryStoreId.trim()) return true;
+    const e = entryStoreId.toLowerCase().trim();
+    const q = queryStoreId.toLowerCase().trim();
+    if (e === q) return true;
+    if (e === 'default-store' || q === 'default-store') return true;
+
+    const eCode = e.includes(':') ? e.split(':').pop()! : e;
+    const qCode = q.includes(':') ? q.split(':').pop()! : q;
+    if (eCode === qCode) return true;
+    if (e.endsWith(':' + qCode) || q.endsWith(':' + eCode)) return true;
+    if (e.includes(qCode) || q.includes(eCode)) return true;
+    return false;
   }
 
   private resolveStoreName(storeId: string) {

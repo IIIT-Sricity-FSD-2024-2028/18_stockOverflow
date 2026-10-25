@@ -240,6 +240,7 @@ export interface ReservationRecord {
     qty: number;
     customer?: string;
     customerEmail?: string;
+    customerPhone?: string;
     customerId?: string;
     priceUSD: number;
     productImg: string;
@@ -258,6 +259,7 @@ export interface ReservationRequestRecord {
     qty: number;
     customer?: string;
     customerEmail?: string;
+    customerPhone?: string;
     customerId?: string;
     storeId: string;
     store: string;
@@ -266,6 +268,9 @@ export interface ReservationRequestRecord {
     createdAt: string;
     completedAt?: string;
     completedBy?: string;
+    cancelledAt?: string;
+    cancelledBy?: string;
+    cancelReason?: string;
     confirmationShownAt?: string;
     orderId?: string;
 }
@@ -284,6 +289,7 @@ export interface TransactionRecord {
     timestamp: string;
     customer: string;
     customerEmail?: string;
+    customerPhone?: string;
     customerId?: string;
     store: string;
     storeId: string;

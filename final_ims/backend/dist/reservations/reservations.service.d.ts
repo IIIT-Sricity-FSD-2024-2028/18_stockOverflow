@@ -8,14 +8,16 @@ export declare class ReservationsService {
     private readonly productsService;
     constructor(db: JsonDbService, productsService: ProductsService);
     findAll(storeId?: string): ReservationRecord[];
-    findRequests(status?: string, customerLookup?: string): ReservationRequestRecord[];
+    findRequests(status?: string, customerLookup?: string, storeId?: string): ReservationRequestRecord[];
     findRequest(requestId: string): ReservationRequestRecord;
     createRequest(createReservationRequestDto: CreateReservationRequestDto): {
         request: ReservationRequestRecord;
         reservation: ReservationRecord;
     };
     updateRequest(requestId: string, updateReservationRequestDto: UpdateReservationRequestDto): ReservationRequestRecord;
+    cancelRequest(requestId: string, reason?: string, cancelledBy?: string): ReservationRequestRecord;
     completeRequests(requestIds: string[], orderId: string): ReservationRequestRecord[];
+    private matchesStore;
     private resolveStoreName;
     private normalizeText;
     private matchesCustomer;

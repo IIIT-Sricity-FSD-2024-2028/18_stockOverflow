@@ -19,6 +19,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     suppliers: [],
     subscription: null,
     orderActivity: null,
+    reservationRequests: [],
   });
 
   const [activeFilter, setActiveFilter] = useState('1D');
@@ -61,7 +62,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
         ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
         : '';
 
-      const [productsRes, customersRes, transactionsRes, poRes, returnsRes, suppliersRes, subRes, orderActRes] =
+      const [productsRes, customersRes, transactionsRes, poRes, returnsRes, suppliersRes, subRes, orderActRes, reservationsRes] =
         await Promise.all([
           request(`/products${scopedQuery}`).catch(() => []),
           request(`/customers${scopedQuery}`).catch(() => []),
@@ -71,6 +72,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           request('/suppliers').catch(() => []),
           request(`/platform-revenue/subscriptions/active?userId=${encodeURIComponent(user?.id || user?.userId || 'u-retailer-1')}`).catch(() => null),
           request(`/transactions/order-activity${scopedQuery}`).catch(() => null),
+          request(`/reservations/requests${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`).catch(() => []),
         ]);
 
       // Only count/show customers who have purchased something
@@ -89,6 +91,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
         suppliers: Array.isArray(suppliersRes) ? suppliersRes : [],
         subscription: subRes,
         orderActivity: orderActRes,
+        reservationRequests: Array.isArray(reservationsRes) ? reservationsRes : [],
       });
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -220,6 +223,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
   const transTabs = {
     Sale: salesRows,
     Purchase: purchaseRows,
+    'Pre-orders': preorderRows,
     Quotation: [],
     Expenses: [],
     Invoices: [],
@@ -1479,13 +1483,51 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                 <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
               </svg>
             </div>
-            <div className="panel-title">Recent Transactions</div>
+            <div className="panel-title">Recent Transactions & Pre-orders</div>
             <a className="panel-link" onClick={() => setActiveView('purchase-orders')}>
               View All
             </a>
           </div>
+          {(data.reservationRequests || []).some((r) => String(r.status || '').toLowerCase() === 'cancelled') && (
+            <div
+              style={{
+                margin: '0 16px 12px 16px',
+                backgroundColor: '#fef2f2',
+                border: '1.5px solid #fecaca',
+                borderRadius: '8px',
+                padding: '8px 12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>⚠️</span>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>
+                  {(data.reservationRequests || []).filter((r) => String(r.status || '').toLowerCase() === 'cancelled').length} Customer Pre-order(s) Cancelled
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTransTab('Pre-orders')}
+                style={{
+                  background: '#fff',
+                  border: '1px solid #fca5a5',
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#dc2626',
+                  cursor: 'pointer',
+                }}
+              >
+                View Pre-orders &rarr;
+              </button>
+            </div>
+          )}
+
           <div className="trans-tabs">
-            {['Sale', 'Purchase', 'Quotation', 'Expenses', 'Invoices'].map((tab) => (
+            {['Sale', 'Purchase', 'Pre-orders', 'Quotation', 'Expenses', 'Invoices'].map((tab) => (
               <div
                 key={tab}
                 className={`trans-tab ${activeTransTab === tab ? 'active' : ''}`}
@@ -1528,7 +1570,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                       </td>
                       <td>
                         <span className={`status-pill ${row.status}`}>
-                          {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+                          {row.statusLabel || (row.status.charAt(0).toUpperCase() + row.status.slice(1))}
                         </span>
                       </td>
                       <td style={{ fontWeight: 700, fontSize: '13px' }}>{row.total}</td>

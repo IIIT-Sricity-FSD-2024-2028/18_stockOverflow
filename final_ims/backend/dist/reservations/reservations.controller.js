@@ -24,14 +24,17 @@ let ReservationsController = class ReservationsController {
     findAll(storeId) {
         return this.reservationsService.findAll(storeId);
     }
-    findRequests(status, customer) {
-        return this.reservationsService.findRequests(status, customer);
+    findRequests(status, customer, storeId) {
+        return this.reservationsService.findRequests(status, customer, storeId);
     }
     findRequest(requestId) {
         return this.reservationsService.findRequest(requestId);
     }
     createRequest(createReservationRequestDto) {
         return this.reservationsService.createRequest(createReservationRequestDto);
+    }
+    cancelRequest(requestId, body) {
+        return this.reservationsService.cancelRequest(requestId, body?.reason, body?.cancelledBy);
     }
     updateRequest(requestId, updateReservationRequestDto) {
         return this.reservationsService.updateRequest(requestId, updateReservationRequestDto);
@@ -49,8 +52,9 @@ __decorate([
     (0, common_1.Get)('requests'),
     __param(0, (0, common_1.Query)('status')),
     __param(1, (0, common_1.Query)('customer')),
+    __param(2, (0, common_1.Query)('storeId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], ReservationsController.prototype, "findRequests", null);
 __decorate([
@@ -67,6 +71,14 @@ __decorate([
     __metadata("design:paramtypes", [create_reservation_request_dto_1.CreateReservationRequestDto]),
     __metadata("design:returntype", void 0)
 ], ReservationsController.prototype, "createRequest", null);
+__decorate([
+    (0, common_1.Patch)('requests/:requestId/cancel'),
+    __param(0, (0, common_1.Param)('requestId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ReservationsController.prototype, "cancelRequest", null);
 __decorate([
     (0, common_1.Patch)('requests/:requestId'),
     __param(0, (0, common_1.Param)('requestId')),

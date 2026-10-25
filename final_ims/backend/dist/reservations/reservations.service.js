@@ -25,14 +25,21 @@ let ReservationsService = class ReservationsService {
             ? items.filter((entry) => entry.storeId.toLowerCase() === storeKey)
             : items;
     }
-    findRequests(status, customerLookup) {
+    findRequests(status, customerLookup, storeId) {
         const statusKey = this.normalizeText(status).toLowerCase();
         const customerKey = this.normalizeText(customerLookup).toLowerCase();
+        const storeKey = this.normalizeText(storeId).toLowerCase();
         const items = this.db.getCollection('reservationRequests').sort((a, b) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
         return items.filter((entry) => {
             if (statusKey && entry.status.toLowerCase() !== statusKey) {
+                return false;
+            }
+            if (storeKey &&
+                entry.storeId &&
+                entry.storeId.toLowerCase() !== storeKey &&
+                !entry.storeId.toLowerCase().endsWith(':' + storeKey)) {
                 return false;
             }
             if (customerKey && !this.matchesCustomer(entry, customerKey)) {
@@ -91,6 +98,7 @@ let ReservationsService = class ReservationsService {
             qty: requestedQty,
             customer: this.normalizeText(createReservationRequestDto.customer),
             customerEmail: this.normalizeText(createReservationRequestDto.customerEmail),
+            customerPhone: this.normalizeText(createReservationRequestDto.customerPhone),
             customerId: this.normalizeText(createReservationRequestDto.customerId),
             storeId,
             store: storeName,
@@ -133,13 +141,41 @@ let ReservationsService = class ReservationsService {
         if (index === -1) {
             throw new common_1.NotFoundException('Reservation request not found');
         }
+        const nextStatus = this.normalizeText(updateReservationRequestDto.status, requests[index].status);
+        const isCancelling = nextStatus.toLowerCase() === 'cancelled';
+        const now = new Date().toISOString();
         requests[index] = {
             ...requests[index],
             ...updateReservationRequestDto,
-            status: this.normalizeText(updateReservationRequestDto.status, requests[index].status),
+            status: nextStatus,
+            ...(isCancelling
+                ? {
+                    cancelledAt: requests[index].cancelledAt || now,
+                    cancelledBy: updateReservationRequestDto.cancelledBy ||
+                        requests[index].cancelledBy ||
+                        'customer',
+                    cancelReason: updateReservationRequestDto.cancelReason ||
+                        requests[index].cancelReason ||
+                        'Cancelled by customer',
+                }
+                : {}),
         };
         this.db.saveCollection('reservationRequests', requests);
+        if (isCancelling) {
+            const remainingReservations = this.db
+                .getCollection('reservations')
+                .filter((entry) => entry.requestId !== requestId);
+            this.db.saveCollection('reservations', remainingReservations);
+        }
         return requests[index];
+    }
+    cancelRequest(requestId, reason, cancelledBy) {
+        return this.updateRequest(requestId, {
+            status: 'cancelled',
+            cancelReason: reason || 'Cancelled by customer',
+            cancelledBy: cancelledBy || 'customer',
+            cancelledAt: new Date().toISOString(),
+        });
     }
     completeRequests(requestIds, orderId) {
         if (!Array.isArray(requestIds) || !requestIds.length) {
@@ -168,6 +204,27 @@ let ReservationsService = class ReservationsService {
             .filter((entry) => !requestIdSet.has(entry.requestId));
         this.db.saveCollection('reservations', remainingReservations);
         return requests.filter((entry) => requestIdSet.has(entry.requestId));
+    }
+    matchesStore(entryStoreId, queryStoreId) {
+        if (!queryStoreId || !queryStoreId.trim())
+            return true;
+        if (!entryStoreId || !entryStoreId.trim())
+            return true;
+        const e = entryStoreId.toLowerCase().trim();
+        const q = queryStoreId.toLowerCase().trim();
+        if (e === q)
+            return true;
+        if (e === 'default-store' || q === 'default-store')
+            return true;
+        const eCode = e.includes(':') ? e.split(':').pop() : e;
+        const qCode = q.includes(':') ? q.split(':').pop() : q;
+        if (eCode === qCode)
+            return true;
+        if (e.endsWith(':' + qCode) || q.endsWith(':' + eCode))
+            return true;
+        if (e.includes(qCode) || q.includes(eCode))
+            return true;
+        return false;
     }
     resolveStoreName(storeId) {
         const stores = this.db.getCollection('stores');

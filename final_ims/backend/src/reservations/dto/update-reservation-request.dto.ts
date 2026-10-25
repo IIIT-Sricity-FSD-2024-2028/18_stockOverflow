@@ -20,4 +20,16 @@ export class UpdateReservationRequestDto {
   @IsOptional()
   @IsString()
   confirmationShownAt?: string;
+
+  @IsOptional()
+  @IsString()
+  cancelledAt?: string;
+
+  @IsOptional()
+  @IsString()
+  cancelledBy?: string;
+
+  @IsOptional()
+  @IsString()
+  cancelReason?: string;
 }

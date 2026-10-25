@@ -83,6 +83,7 @@ export default function CheckoutPage_consumer({
           qty: Number(item.qty || 1),
           customer: customerName.trim(),
           customerEmail,
+          customerPhone,
           customerId: userSession?.id || undefined,
           storeId,
           store: storeName || selectedStore,

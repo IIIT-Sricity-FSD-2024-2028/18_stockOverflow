@@ -83,6 +83,9 @@ export default function PosScreen({ onSwitchView, onLogout }) {
 
   // Incoming Consumer Orders (Reservations)
   const [reservedOrders, setReservedOrders] = useState([]);
+  const [cancelledOrders, setCancelledOrders] = useState([]);
+  const [ordersModalTab, setOrdersModalTab] = useState('active');
+  const [cancellingRequestId, setCancellingRequestId] = useState(null);
   const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
   const [isNewCustomerModalOpen, setIsNewCustomerModalOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
@@ -207,13 +210,19 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     async function loadIncomingOrders() {
       try {
         const targetStoreId = currentStoreId || user?.storeId || '';
-        const reservations = await billerApi.getReservations(targetStoreId).catch(() => []);
+        const [reservations, cancelledReqs] = await Promise.all([
+          billerApi.getReservations(targetStoreId).catch(() => []),
+          billerApi.getReservationRequests('cancelled', targetStoreId).catch(() => []),
+        ]);
         if (!isMounted) return;
 
         if (Array.isArray(reservations)) {
           // Filter out already staged items in the current transaction
           const unstaged = reservations.filter((r) => !stagedReservationIds[r.requestId]);
           setReservedOrders(unstaged);
+        }
+        if (Array.isArray(cancelledReqs)) {
+          setCancelledOrders(cancelledReqs);
         }
       } catch (err) {
         // silent polling catch
@@ -229,15 +238,21 @@ export default function PosScreen({ onSwitchView, onLogout }) {
   }, [currentStoreId, user, stagedReservationIds]);
 
   // Real-time synchronization across modules
-  useDataSync(['products', 'inventory', 'transactions'], async () => {
+  useDataSync(['products', 'inventory', 'transactions', 'orders'], async () => {
     try {
       const prods = await billerApi.getProducts(currentStoreId, retailerId).catch(() => []);
       if (Array.isArray(prods)) setProducts(prods);
       const targetStoreId = currentStoreId || user?.storeId || '';
-      const reservations = await billerApi.getReservations(targetStoreId).catch(() => []);
+      const [reservations, cancelledReqs] = await Promise.all([
+        billerApi.getReservations(targetStoreId).catch(() => []),
+        billerApi.getReservationRequests('cancelled', targetStoreId).catch(() => []),
+      ]);
       if (Array.isArray(reservations)) {
         const unstaged = reservations.filter((r) => !stagedReservationIds[r.requestId]);
         setReservedOrders(unstaged);
+      }
+      if (Array.isArray(cancelledReqs)) {
+        setCancelledOrders(cancelledReqs);
       }
     } catch (_e) {}
   });
@@ -464,6 +479,29 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     // Remove from UI reserved list
     setReservedOrders((prev) => prev.filter((r) => r.requestId !== requestId));
     showToast(`Approved order hold for ${reservation.name || 'product'}`);
+  };
+
+  const handleCancelOrderFromPos = async (reservation) => {
+    const requestId = reservation.requestId;
+    const confirmCancel = window.confirm(
+      `Cancel pre-order ${requestId} for ${reservation.name || reservation.sku}? This will release the stock hold back to store inventory.`
+    );
+    if (!confirmCancel) return;
+
+    try {
+      setCancellingRequestId(requestId);
+      await billerApi.cancelReservationRequest(
+        requestId,
+        'Cancelled by POS store staff',
+        `biller (${user?.name || 'Staff'})`
+      );
+      setReservedOrders((prev) => prev.filter((r) => r.requestId !== requestId));
+      showToast(`Order hold ${requestId} cancelled and stock released`);
+    } catch (err) {
+      alert('Failed to cancel order: ' + (err.message || 'Error'));
+    } finally {
+      setCancellingRequestId(null);
+    }
   };
 
   // Add Custom Walk-in Customer
@@ -852,9 +890,64 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                     {reservedOrders.length}
                   </span>
                 )}
+                {cancelledOrders.length > 0 && (
+                  <span
+                    title={`${cancelledOrders.length} pre-order(s) cancelled`}
+                    style={{
+                      background: '#dc2626',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      padding: '2px 6px',
+                      borderRadius: '10px',
+                    }}
+                  >
+                    {cancelledOrders.length} Cancelled
+                  </span>
+                )}
               </button>
             </div>
           </header>
+
+          {/* Cancelled Pre-orders Alert Banner */}
+          {cancelledOrders.length > 0 && (
+            <div
+              style={{
+                backgroundColor: '#fef2f2',
+                border: '1.5px solid #fecaca',
+                borderRadius: '12px',
+                padding: '10px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '18px' }}>⚠️</span>
+                <span style={{ fontWeight: 800, fontSize: '13px', color: '#991b1b' }}>
+                  {cancelledOrders.length} Customer Pre-order(s) Cancelled (Inventory Released)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setOrdersModalTab('cancelled');
+                  setIsOrdersModalOpen(true);
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#dc2626',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                }}
+              >
+                View Cancelled &rarr;
+              </button>
+            </div>
+          )}
 
           {/* Incoming Customer Orders Banner (Real-time Arrival) */}
           {reservedOrders.length > 0 && (
@@ -1540,12 +1633,13 @@ export default function PosScreen({ onSwitchView, onLogout }) {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(15,23,42,0.6)',
+            backgroundColor: 'rgba(15,23,42,0.65)',
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '16px',
+            backdropFilter: 'blur(3px)',
           }}
           onClick={() => setIsOrdersModalOpen(false)}
         >
@@ -1554,11 +1648,11 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               backgroundColor: '#fff',
               borderRadius: '16px',
               width: '100%',
-              maxWidth: '600px',
+              maxWidth: '680px',
               maxHeight: '85vh',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
               overflow: 'hidden',
             }}
             onClick={(e) => e.stopPropagation()}
@@ -1566,7 +1660,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             {/* Modal Header */}
             <div
               style={{
-                padding: '16px 20px',
+                padding: '16px 22px',
                 borderBottom: '1px solid #e2e8f0',
                 display: 'flex',
                 alignItems: 'center',
@@ -1574,98 +1668,236 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '20px' }}>📥</span>
+                <span style={{ fontSize: '22px' }}>📥</span>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800 }}>
-                    Incoming Customer Orders for Pickup
+                    Customer Pre-orders & Reservations
                   </h3>
                   <div style={{ fontSize: '11px', color: '#64748b' }}>
-                    Reservations placed by consumers for {currentStoreName}
+                    Pickup pre-orders for {currentStoreName}
                   </div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsOrdersModalOpen(false)}
-                style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#64748b' }}
+                style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#64748b' }}
               >
                 &times;
               </button>
             </div>
 
-            {/* Orders List */}
-            <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {reservedOrders.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎉</div>
-                  <div style={{ fontWeight: 700, fontSize: '14px' }}>All Orders Handled!</div>
-                  <div style={{ fontSize: '12px', marginTop: '4px' }}>
-                    There are no pending customer pickups right now.
-                  </div>
-                </div>
-              ) : (
-                reservedOrders.map((res) => (
-                  <div
-                    key={res.requestId}
-                    style={{
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '10px',
-                      padding: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      backgroundColor: '#f8fafc',
-                    }}
-                  >
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontWeight: 800, fontSize: '13px', color: '#0f172a' }}>
-                          {res.customer || 'Walk-in Customer'}
-                        </span>
-                        {res.customerEmail && (
-                          <span style={{ fontSize: '11px', color: '#64748b' }}>({res.customerEmail})</span>
-                        )}
-                        <span style={{ fontSize: '10px', background: '#e0e7ff', color: '#3730a3', padding: '1px 5px', borderRadius: '4px', fontWeight: 700 }}>
-                          Hold ID: {res.requestId}
-                        </span>
-                      </div>
+            {/* Modal Navigation Tabs */}
+            <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+              <button
+                type="button"
+                onClick={() => setOrdersModalTab('active')}
+                style={{
+                  flex: 1,
+                  padding: '12px 14px',
+                  border: 'none',
+                  background: ordersModalTab === 'active' ? '#fff' : 'transparent',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                  color: ordersModalTab === 'active' ? '#2563eb' : '#64748b',
+                  borderBottom: ordersModalTab === 'active' ? '2.5px solid #2563eb' : 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>📦</span> Active for Pickup ({reservedOrders.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setOrdersModalTab('cancelled')}
+                style={{
+                  flex: 1,
+                  padding: '12px 14px',
+                  border: 'none',
+                  background: ordersModalTab === 'cancelled' ? '#fff' : 'transparent',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                  color: ordersModalTab === 'cancelled' ? '#dc2626' : '#64748b',
+                  borderBottom: ordersModalTab === 'cancelled' ? '2.5px solid #dc2626' : 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>❌</span> Cancelled Requests ({cancelledOrders.length})
+              </button>
+            </div>
 
-                      <div style={{ fontSize: '12.5px', color: '#334155', marginTop: '4px', fontWeight: 600 }}>
-                        {res.name || res.productName} &times; {res.qty || 1}
-                      </div>
-
-                      <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
-                        Payment: <strong>{res.paymentMethod || 'Cash'}</strong> | Total:{' '}
-                        <strong style={{ color: '#0284c7' }}>
-                          {formatInr((Number(res.priceUSD || 0)) * (Number(res.qty) || 1))}
-                        </strong>
-                      </div>
+            {/* Orders List Body */}
+            <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {ordersModalTab === 'active' ? (
+                reservedOrders.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎉</div>
+                    <div style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>All Orders Handled!</div>
+                    <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                      There are no pending customer pickups for this store right now.
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleApproveReservedOrder(res);
-                        setIsOrdersModalOpen(false);
-                      }}
+                  </div>
+                ) : (
+                  reservedOrders.map((res) => (
+                    <div
+                      key={res.requestId}
                       style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#16a34a',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontWeight: 700,
-                        fontSize: '12px',
-                        cursor: 'pointer',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '14px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px',
+                        justifyContent: 'space-between',
+                        backgroundColor: '#f8fafc',
                       }}
                     >
-                      <span>+</span> Approve Order
-                    </button>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 800, fontSize: '13.5px', color: '#0f172a' }}>
+                            👤 Consumer: {res.customer || 'Valued Consumer'}
+                          </span>
+                          {res.customerEmail && (
+                            <span style={{ fontSize: '11px', color: '#64748b' }}>({res.customerEmail})</span>
+                          )}
+                          {res.customerPhone && (
+                            <span style={{ fontSize: '11px', color: '#64748b' }}>📞 {res.customerPhone}</span>
+                          )}
+                          <span style={{ fontSize: '10px', background: '#e0e7ff', color: '#3730a3', padding: '1px 5px', borderRadius: '4px', fontWeight: 700 }}>
+                            Hold ID: {res.requestId}
+                          </span>
+                        </div>
+
+                        <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px', fontWeight: 600 }}>
+                          📦 {res.name || res.productName} &times; {res.qty || 1} units
+                        </div>
+
+                        <div style={{ fontSize: '11.5px', color: '#64748b', marginTop: '2px' }}>
+                          Payment: <strong>{res.paymentMethod || 'Cash'}</strong> | Total:{' '}
+                          <strong style={{ color: '#0284c7' }}>
+                            {formatInr((Number(res.priceUSD || 0)) * (Number(res.qty) || 1))}
+                          </strong> · Store: {res.store || currentStoreName}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleCancelOrderFromPos(res)}
+                          disabled={cancellingRequestId === res.requestId}
+                          style={{
+                            padding: '8px 12px',
+                            backgroundColor: '#fff',
+                            color: '#ef4444',
+                            border: '1px solid #fca5a5',
+                            borderRadius: '8px',
+                            fontWeight: 700,
+                            fontSize: '11.5px',
+                            cursor: cancellingRequestId === res.requestId ? 'not-allowed' : 'pointer',
+                          }}
+                        >
+                          {cancellingRequestId === res.requestId ? 'Cancelling...' : '✕ Cancel Hold'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleApproveReservedOrder(res);
+                            setIsOrdersModalOpen(false);
+                          }}
+                          style={{
+                            padding: '8px 16px',
+                            backgroundColor: '#16a34a',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <span>+</span> Approve Order
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )
+              ) : (
+                cancelledOrders.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>✨</div>
+                    <div style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>No Cancelled Pre-orders</div>
+                    <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                      No customers have cancelled orders for this store.
+                    </div>
                   </div>
-                ))
+                ) : (
+                  <>
+                    <div style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '10px 14px', fontSize: '12px', color: '#991b1b', lineHeight: 1.4 }}>
+                      ⚠️ <strong>Customer Cancellation Notice:</strong> The orders below were cancelled by the consumer.
+                      Do not fulfill or pack these items for pickup. Held stock has been automatically returned to store inventory.
+                    </div>
+                    {cancelledOrders.map((res) => (
+                      <div
+                        key={res.requestId}
+                        style={{
+                          border: '1.5px solid #fecaca',
+                          borderRadius: '12px',
+                          padding: '14px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          backgroundColor: '#fffafb',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{ fontWeight: 800, fontSize: '13.5px', color: '#0f172a' }}>
+                              👤 Consumer: {res.customer || 'Valued Consumer'}
+                            </span>
+                            <span style={{ fontSize: '10px', background: '#fee2e2', color: '#991b1b', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
+                              ❌ CANCELLED
+                            </span>
+                          </div>
+                          <span style={{ fontSize: '10px', background: '#f1f5f9', color: '#475569', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                            Hold ID: {res.requestId}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '16px', fontSize: '11.5px', color: '#64748b', flexWrap: 'wrap' }}>
+                          {res.customerEmail && <span>✉️ {res.customerEmail}</span>}
+                          {res.customerPhone && <span>📞 {res.customerPhone}</span>}
+                          <span>🏪 Store: {res.store || currentStoreName}</span>
+                        </div>
+
+                        <div style={{ fontSize: '13px', color: '#1e293b', fontWeight: 600, background: '#fff', padding: '8px 10px', borderRadius: '6px', border: '1px solid #f1f5f9' }}>
+                          📦 {res.productName || res.sku} &times; {res.qty || 1} units
+                        </div>
+
+                        <div style={{ fontSize: '12px', color: '#991b1b', fontWeight: 600, background: '#fef2f2', padding: '6px 10px', borderRadius: '6px' }}>
+                          Reason: {res.cancelReason || 'Cancelled by customer'}
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', color: '#64748b' }}>
+                          <span>
+                            Cancelled on: {res.cancelledAt ? new Date(res.cancelledAt).toLocaleString() : 'Recently'} (By: {res.cancelledBy || 'Consumer'})
+                          </span>
+                          <span style={{ color: '#16a34a', fontWeight: 700 }}>
+                            ✅ +{res.qty || 1} restored to available stock
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )
               )}
             </div>
 
