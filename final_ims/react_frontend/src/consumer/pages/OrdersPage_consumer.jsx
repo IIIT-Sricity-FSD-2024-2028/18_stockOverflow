@@ -43,6 +43,24 @@ export default function OrdersPage_consumer({
   const [cancelReasonCategory, setCancelReasonCategory] = useState('Changed my mind');
   const [otherReasonText, setOtherReasonText] = useState('');
   const [cancelError, setCancelError] = useState('');
+  const [currentTime, setCurrentTime] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatRemainingTime = (expiresAt, createdAt) => {
+    const targetMs = expiresAt
+      ? new Date(expiresAt).getTime()
+      : new Date(createdAt || Date.now()).getTime() + 15 * 60 * 1000;
+    const diffMs = targetMs - currentTime;
+    if (diffMs <= 0) return '00:00';
+    const totalSec = Math.floor(diffMs / 1000);
+    const min = Math.floor(totalSec / 60);
+    const sec = totalSec % 60;
+    return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  };
 
   // In layman's terms: Calculates total number of items currently in the cart badge.
   const cartCount = useMemo(() => {
@@ -78,21 +96,28 @@ export default function OrdersPage_consumer({
           .map((r) => {
             const matched = allCatalog.find((c) => c.sku === r.sku);
             const isCancelled = r.status === 'cancelled';
+            const expiresAtMs = r.expiresAt
+              ? new Date(r.expiresAt).getTime()
+              : new Date(r.createdAt || Date.now()).getTime() + 15 * 60 * 1000;
+            const isExpired = r.status === 'expired' || (!isCancelled && r.status === 'pending' && expiresAtMs <= Date.now());
+            const isPending = r.status === 'pending' && !isCancelled && !isExpired;
             return {
               sku: r.sku,
               name: r.productName || matched?.name || 'Pre-ordered Product',
               totalQty: r.qty || 1,
               totalSpent: (Number(matched?.priceUSD || matched?.price || 0)) * (r.qty || 1),
               lastOrderedAt: r.createdAt || new Date().toISOString(),
+              expiresAt: r.expiresAt || new Date(expiresAtMs).toISOString(),
               orderId: r.orderId || r.requestId,
               requestId: r.requestId,
               store: r.store || 'Downtown Store',
               productImg: matched?.productImg || '',
-              emoji: isCancelled ? '❌' : (matched?.emoji || '⏳'),
-              isPending: r.status === 'pending',
+              emoji: isCancelled ? '❌' : isExpired ? '⌛' : (matched?.emoji || '⏳'),
+              isPending,
+              isExpired,
               isCancelled: isCancelled,
-              cancelReason: r.cancelReason,
-              cancelledAt: r.cancelledAt,
+              cancelReason: isExpired ? (r.cancelReason || 'Pre-order hold expired: 15-minute payment/pickup window elapsed') : r.cancelReason,
+              cancelledAt: r.cancelledAt || (isExpired ? r.expiredAt : null),
             };
           })
       );
@@ -239,11 +264,30 @@ export default function OrdersPage_consumer({
 
                 {/* Metadata */}
                 <div className="order-meta">
-                  <div className={`order-delivery ${order.isCancelled ? 'cancelled' : order.isPending ? 'pending' : ''}`}>
-                    {order.isCancelled
+                  <div className={`order-delivery ${order.isExpired ? 'expired' : order.isCancelled ? 'cancelled' : order.isPending ? 'pending' : ''}`}>
+                    {order.isExpired ? (
+                      <span style={{ color: '#dc2626' }}>⌛ Pre-order Hold Expired · Stock released back to store · {order.store}</span>
+                    ) : order.isCancelled
                       ? `❌ Pre-order Cancelled · ${order.store}`
                       : order.isPending
-                      ? `⏳ Pre-order Placed · Store Pickup Pending · ${order.store}`
+                      ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span>⏳ Pre-order Placed · Store Pickup Pending · {order.store}</span>
+                        <span
+                          style={{
+                            background: '#fef3c7',
+                            color: '#92400e',
+                            border: '1px solid #fde68a',
+                            padding: '2px 8px',
+                            borderRadius: '12px',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                          }}
+                        >
+                          ⏱️ Hold expires in {formatRemainingTime(order.expiresAt, order.lastOrderedAt)}
+                        </span>
+                      </span>
+                    )
                       : `✓ Delivered on ${dateStr}`}
                   </div>
                   <div className="order-name">{order.name}</div>
@@ -286,7 +330,7 @@ export default function OrdersPage_consumer({
                     </button>
                   )}
 
-                  {order.isPending && !order.isCancelled && (
+                  {order.isPending && !order.isCancelled && !order.isExpired && (
                     <button
                       type="button"
                       className="order-btn"
@@ -307,9 +351,15 @@ export default function OrdersPage_consumer({
                     </button>
                   )}
 
-                  {order.isPending && !order.isCancelled && (
+                  {order.isPending && !order.isCancelled && !order.isExpired && (
                     <div className="order-hint">
                       Actions unlock after store pickup & confirmation.
+                    </div>
+                  )}
+
+                  {order.isExpired && (
+                    <div className="order-hint" style={{ color: '#dc2626', fontWeight: 600 }}>
+                      ⌛ 15-minute hold elapsed. Pre-order expired and inventory restored to store.
                     </div>
                   )}
 

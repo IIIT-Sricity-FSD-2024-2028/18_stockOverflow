@@ -220,6 +220,27 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     total: formatCurrency(po.total),
   }));
 
+  const preorderRows = (data.reservationRequests || []).slice(0, 10).map((req) => {
+    const isCancelled = String(req.status || '').toLowerCase() === 'cancelled';
+    const isExpired = String(req.status || '').toLowerCase() === 'expired';
+    const isCompleted = String(req.status || '').toLowerCase() === 'completed';
+    return {
+      date: formatDate(req.createdAt),
+      name: `${req.customer || 'Consumer'}${req.customerEmail ? ` (${req.customerEmail})` : ''}`,
+      id: `${req.productName || req.sku} (Qty: ${req.qty || 1}) · Hold: ${req.requestId}`,
+      color: isExpired ? '#ea580c' : isCancelled ? '#ef4444' : isCompleted ? '#10b981' : '#f59e0b',
+      status: isExpired ? 'returned' : isCancelled ? 'returned' : isCompleted ? 'delivered' : 'pending',
+      statusLabel: isExpired
+        ? '⌛ Expired (15m Timeout)'
+        : isCancelled
+        ? `❌ Cancelled (${req.cancelReason || 'by consumer'})`
+        : isCompleted
+        ? '✓ Completed'
+        : '⏳ Pre-order Hold',
+      total: req.store || 'Store Pickup',
+    };
+  });
+
   const transTabs = {
     Sale: salesRows,
     Purchase: purchaseRows,

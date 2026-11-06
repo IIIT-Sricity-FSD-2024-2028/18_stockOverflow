@@ -260,6 +260,7 @@ export async function createReservationRequest(payload) {
       ...dto,
       status: 'pending',
       createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
     };
     const local = JSON.parse(localStorage.getItem('ims_reservation_requests') || '[]');
     local.unshift(created);
@@ -557,6 +558,7 @@ export async function createReturnRequest(payload) {
       ...dto,
       status: 'Pending',
       createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
     };
     state.returns.unshift(created);
     localStorage.setItem('imsAppStateV1', JSON.stringify(state));

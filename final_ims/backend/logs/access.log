@@ -1622,3 +1622,9 @@
 [2026-10-25T17:03:29.856Z] [GET] /api/reservations/requests?status=cancelled&storeId=STORE-01 304 - 2ms - IP: ::1
 [2026-10-25T17:03:33.347Z] [GET] /api/reservations?storeId=STORE-01 304 - 1ms - IP: ::1
 [2026-10-25T17:03:33.350Z] [GET] /api/reservations/requests?status=cancelled&storeId=STORE-01 304 - 1ms - IP: ::1
+[2026-10-25T17:12:58.124Z] [GET] /api/users 200 - 1047ms - IP: ::1
+[2026-10-25T17:12:58.971Z] [GET] /api/users 304 - 747ms - IP: ::1
+[2026-10-25T17:39:13.709Z] [GET] /api/users 200 - 231ms - IP: ::1
+[2026-10-25T17:39:13.797Z] [GET] /api/users 304 - 79ms - IP: ::1
+[2026-10-25T17:56:20.296Z] [GET] /api/users 200 - 156ms - IP: ::1
+[2026-10-25T17:56:20.378Z] [GET] /api/users 304 - 78ms - IP: ::1

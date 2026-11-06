@@ -2653,6 +2653,10 @@ html, body {
   color: #d97706;
 }
 
+.order-delivery.expired {
+  color: #dc2626;
+}
+
 .order-delivery.cancelled {
   color: #ef4444;
 }

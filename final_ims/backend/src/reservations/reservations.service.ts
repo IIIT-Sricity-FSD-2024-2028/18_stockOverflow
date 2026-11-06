@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import {
@@ -14,17 +15,88 @@ import { CreateReservationRequestDto } from './dto/create-reservation-request.dt
 import { UpdateReservationRequestDto } from './dto/update-reservation-request.dto';
 
 @Injectable()
-export class ReservationsService {
+export class ReservationsService implements OnModuleInit {
+  // Hold duration for pre-orders: 15 minutes
+  public static readonly HOLD_DURATION_MS = 15 * 60 * 1000;
+
   constructor(
     private readonly db: JsonDbService,
     private readonly productsService: ProductsService,
   ) {}
 
+  onModuleInit() {
+    this.purgeExpiredReservations();
+    setInterval(() => {
+      try {
+        this.purgeExpiredReservations();
+      } catch (err) {
+        // silent interval catch
+      }
+    }, 15000); // Check every 15 seconds
+  }
+
+  purgeExpiredReservations(): { expiredCount: number } {
+    const now = Date.now();
+    const nowIso = new Date().toISOString();
+    const reservations = this.db.getCollection('reservations');
+    const requests = this.db.getCollection('reservationRequests');
+    const expiredRequestIds = new Set<string>();
+
+    reservations.forEach((entry) => {
+      const expiresAtMs = entry.expiresAt
+        ? new Date(entry.expiresAt).getTime()
+        : new Date(entry.reservedAt).getTime() + ReservationsService.HOLD_DURATION_MS;
+      if (expiresAtMs <= now) {
+        expiredRequestIds.add(entry.requestId);
+      }
+    });
+
+    requests.forEach((entry) => {
+      if (entry.status === 'pending') {
+        const expiresAtMs = entry.expiresAt
+          ? new Date(entry.expiresAt).getTime()
+          : new Date(entry.createdAt).getTime() + ReservationsService.HOLD_DURATION_MS;
+        if (expiresAtMs <= now) {
+          expiredRequestIds.add(entry.requestId);
+        }
+      }
+    });
+
+    if (!expiredRequestIds.size) {
+      return { expiredCount: 0 };
+    }
+
+    // 1. Remove expired holds from the active reservations queue (instantly frees available stock)
+    const remainingReservations = reservations.filter(
+      (entry) => !expiredRequestIds.has(entry.requestId),
+    );
+    this.db.saveCollection('reservations', remainingReservations);
+
+    // 2. Mark requests as 'expired' in reservationRequests ledger
+    const updatedRequests = requests.map((entry) => {
+      if (expiredRequestIds.has(entry.requestId) && entry.status === 'pending') {
+        return {
+          ...entry,
+          status: 'expired',
+          expiredAt: nowIso,
+          cancelReason:
+            entry.cancelReason ||
+            'Pre-order hold expired: 15-minute payment/pickup confirmation window elapsed',
+        };
+      }
+      return entry;
+    });
+    this.db.saveCollection('reservationRequests', updatedRequests);
+
+    return { expiredCount: expiredRequestIds.size };
+  }
+
   findAll(storeId?: string) {
-    const storeKey = this.normalizeText(storeId).toLowerCase();
+    this.purgeExpiredReservations();
+    const storeKey = this.normalizeText(storeId);
     const items = this.db.getCollection('reservations');
     return storeKey
-      ? items.filter((entry) => entry.storeId.toLowerCase() === storeKey)
+      ? items.filter((entry) => this.matchesStore(entry.storeId, storeKey))
       : items;
   }
 
@@ -33,9 +105,10 @@ export class ReservationsService {
     customerLookup?: string,
     storeId?: string,
   ) {
+    this.purgeExpiredReservations();
     const statusKey = this.normalizeText(status).toLowerCase();
     const customerKey = this.normalizeText(customerLookup).toLowerCase();
-    const storeKey = this.normalizeText(storeId).toLowerCase();
+    const storeKey = this.normalizeText(storeId);
     const items = this.db.getCollection('reservationRequests').sort((a, b) => {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
@@ -44,12 +117,7 @@ export class ReservationsService {
       if (statusKey && entry.status.toLowerCase() !== statusKey) {
         return false;
       }
-      if (
-        storeKey &&
-        entry.storeId &&
-        entry.storeId.toLowerCase() !== storeKey &&
-        !entry.storeId.toLowerCase().endsWith(':' + storeKey)
-      ) {
+      if (storeKey && !this.matchesStore(entry.storeId, storeKey)) {
         return false;
       }
       if (customerKey && !this.matchesCustomer(entry, customerKey)) {
@@ -60,6 +128,7 @@ export class ReservationsService {
   }
 
   findRequest(requestId: string) {
+    this.purgeExpiredReservations();
     const request = this.db
       .getCollection('reservationRequests')
       .find((entry) => entry.requestId === requestId);
@@ -72,6 +141,9 @@ export class ReservationsService {
   }
 
   createRequest(createReservationRequestDto: CreateReservationRequestDto) {
+    // Purge any expired holds first so available quantity is 100% current
+    this.purgeExpiredReservations();
+
     const product = this.productsService.findBySku(createReservationRequestDto.sku);
     let storeId = this.normalizeText(createReservationRequestDto.storeId);
     const rawStoreCode = storeId.includes(':') ? storeId.split(':').pop() : storeId;
@@ -100,7 +172,7 @@ export class ReservationsService {
 
     const pendingReservedQty = this.db
       .getCollection('reservations')
-      .filter((entry) => entry.sku === product.sku && entry.storeId === storeId)
+      .filter((entry) => entry.sku === product.sku && this.matchesStore(entry.storeId, storeId))
       .reduce((sum, entry) => sum + (entry.qty || 0), 0);
     const availableQty = Math.max(0, (storeEntry.qty || 0) - pendingReservedQty);
     const requestedQty = Math.max(1, Math.trunc(createReservationRequestDto.qty || 1));
@@ -112,7 +184,11 @@ export class ReservationsService {
     }
 
     const requestId = `req-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-    const now = new Date().toISOString();
+    const now = new Date();
+    const nowIso = now.toISOString();
+    const expiresAtIso = new Date(
+      now.getTime() + ReservationsService.HOLD_DURATION_MS,
+    ).toISOString();
     const storeName =
       this.normalizeText(createReservationRequestDto.store) ||
       this.resolveStoreName(storeId);
@@ -133,7 +209,8 @@ export class ReservationsService {
         'Cash',
       ),
       status: 'pending',
-      createdAt: now,
+      createdAt: nowIso,
+      expiresAt: expiresAtIso,
     };
 
     const reservation: ReservationRecord = {
@@ -143,6 +220,7 @@ export class ReservationsService {
       qty: requestedQty,
       customer: request.customer,
       customerEmail: request.customerEmail,
+      customerPhone: request.customerPhone,
       customerId: request.customerId,
       priceUSD: product.priceUSD,
       productImg: product.productImg,
@@ -152,7 +230,8 @@ export class ReservationsService {
       store: storeName,
       paymentMethod: request.paymentMethod,
       status: 'Pending POS Approval',
-      reservedAt: now,
+      reservedAt: nowIso,
+      expiresAt: expiresAtIso,
     };
 
     const requests = this.db.getCollection('reservationRequests');

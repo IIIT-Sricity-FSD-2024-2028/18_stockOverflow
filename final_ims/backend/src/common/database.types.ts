@@ -111,6 +111,8 @@ export interface ProductRecord {
   status: ProductStatus | string;
   visibility: ProductVisibility | string;
   createdAt: string;
+  expiresAt?: string;
+  expiredAt?: string;
   updatedAt: string;
   restockedAt?: string;
   stockHistory?: Array<{ date: string; qty: number }>;
@@ -253,6 +255,8 @@ export interface PurchaseOrder {
   units: number;
   status: PurchaseOrderStatus | string;
   createdAt: string;
+  expiresAt?: string;
+  expiredAt?: string;
 }
 
 export interface ReservationRecord {
@@ -273,6 +277,7 @@ export interface ReservationRecord {
   paymentMethod: string;
   status: string;
   reservedAt: string;
+  expiresAt?: string;
 }
 
 export interface ReservationRequestRecord {
@@ -289,6 +294,8 @@ export interface ReservationRequestRecord {
   paymentMethod: string;
   status: string;
   createdAt: string;
+  expiresAt?: string;
+  expiredAt?: string;
   completedAt?: string;
   completedBy?: string;
   cancelledAt?: string;
@@ -393,6 +400,8 @@ export interface BillerRequest {
   password?: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
+  expiresAt?: string;
+  expiredAt?: string;
   approvedAt?: string;
   rejectedAt?: string;
 }
@@ -412,6 +421,8 @@ export interface EmployeeAssignment {
   status: EmployeeAssignmentStatus;
   notes?: string;
   createdAt: string;
+  expiresAt?: string;
+  expiredAt?: string;
   resolvedAt?: string;
 }
 
@@ -429,6 +440,8 @@ export interface UserQuery {
   assignedEmployeeName?: string;
   response?: string;
   createdAt: string;
+  expiresAt?: string;
+  expiredAt?: string;
   resolvedAt?: string;
 }
 
@@ -448,6 +461,8 @@ export interface UserRecord {
   profileId?: string;
   plan?: string;
   createdAt: string;
+  expiresAt?: string;
+  expiredAt?: string;
   updatedAt: string;
 }
 
@@ -457,6 +472,8 @@ export interface RoleRecord {
   description: string;
   permissions: Record<string, boolean>;
   createdAt: string;
+  expiresAt?: string;
+  expiredAt?: string;
   updatedAt: string;
 }
 

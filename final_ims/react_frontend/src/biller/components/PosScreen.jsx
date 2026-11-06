@@ -38,6 +38,17 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     return () => clearInterval(interval);
   }, []);
 
+  const formatHoldTimeRemaining = (expiresAt, reservedAt) => {
+    const target = expiresAt
+      ? new Date(expiresAt).getTime()
+      : new Date(reservedAt || Date.now()).getTime() + 15 * 60 * 1000;
+    const diffMs = target - Date.now();
+    if (diffMs <= 0) return '00:00';
+    const mins = Math.floor(diffMs / 60000);
+    const secs = Math.floor((diffMs % 60000) / 1000);
+    return `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+  };
+
   // Store Affiliation & Scope
   const [stores, setStores] = useState([]);
   const [currentStoreId, setCurrentStoreId] = useState(() => {
@@ -212,7 +223,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
         const targetStoreId = currentStoreId || user?.storeId || '';
         const [reservations, cancelledReqs] = await Promise.all([
           billerApi.getReservations(targetStoreId).catch(() => []),
-          billerApi.getReservationRequests('cancelled', targetStoreId).catch(() => []),
+          billerApi.getReservationRequests('', targetStoreId).catch(() => []),
         ]);
         if (!isMounted) return;
 
@@ -222,7 +233,10 @@ export default function PosScreen({ onSwitchView, onLogout }) {
           setReservedOrders(unstaged);
         }
         if (Array.isArray(cancelledReqs)) {
-          setCancelledOrders(cancelledReqs);
+          const inactive = (Array.isArray(cancelledReqs) ? cancelledReqs : []).filter(
+            (r) => r.status === 'cancelled' || r.status === 'expired'
+          );
+          setCancelledOrders(inactive);
         }
       } catch (err) {
         // silent polling catch
@@ -245,14 +259,17 @@ export default function PosScreen({ onSwitchView, onLogout }) {
       const targetStoreId = currentStoreId || user?.storeId || '';
       const [reservations, cancelledReqs] = await Promise.all([
         billerApi.getReservations(targetStoreId).catch(() => []),
-        billerApi.getReservationRequests('cancelled', targetStoreId).catch(() => []),
+        billerApi.getReservationRequests('', targetStoreId).catch(() => []),
       ]);
       if (Array.isArray(reservations)) {
         const unstaged = reservations.filter((r) => !stagedReservationIds[r.requestId]);
         setReservedOrders(unstaged);
       }
       if (Array.isArray(cancelledReqs)) {
-        setCancelledOrders(cancelledReqs);
+        const inactive = (Array.isArray(cancelledReqs) ? cancelledReqs : []).filter(
+          (r) => r.status === 'cancelled' || r.status === 'expired'
+        );
+        setCancelledOrders(inactive);
       }
     } catch (_e) {}
   });
@@ -1729,7 +1746,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   gap: '6px',
                 }}
               >
-                <span>❌</span> Cancelled Requests ({cancelledOrders.length})
+                <span>❌</span> Cancelled & Expired ({cancelledOrders.length})
               </button>
             </div>
 
@@ -1783,6 +1800,9 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                           <strong style={{ color: '#0284c7' }}>
                             {formatInr((Number(res.priceUSD || 0)) * (Number(res.qty) || 1))}
                           </strong> · Store: {res.store || currentStoreName}
+                          <span style={{ marginLeft: '8px', background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '1px 7px', borderRadius: '10px', fontSize: '10.5px', fontWeight: 700 }}>
+                            ⏱️ {formatHoldTimeRemaining(res.expiresAt, res.reservedAt)} left
+                          </span>
                         </div>
                       </div>
 
@@ -1842,7 +1862,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                 ) : (
                   <>
                     <div style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '10px 14px', fontSize: '12px', color: '#991b1b', lineHeight: 1.4 }}>
-                      ⚠️ <strong>Customer Cancellation Notice:</strong> The orders below were cancelled by the consumer.
+                      ⚠️ <strong>Customer Cancellation & Expiration Notice:</strong> The pre-orders below were cancelled or expired after the 15-minute hold timeout.
                       Do not fulfill or pack these items for pickup. Held stock has been automatically returned to store inventory.
                     </div>
                     {cancelledOrders.map((res) => (
@@ -1863,9 +1883,15 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                             <span style={{ fontWeight: 800, fontSize: '13.5px', color: '#0f172a' }}>
                               👤 Consumer: {res.customer || 'Valued Consumer'}
                             </span>
-                            <span style={{ fontSize: '10px', background: '#fee2e2', color: '#991b1b', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
-                              ❌ CANCELLED
-                            </span>
+                            {res.status === 'expired' ? (
+                              <span style={{ fontSize: '10px', background: '#ffedd5', color: '#9a3412', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
+                                ⌛ EXPIRED (15m Timeout)
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '10px', background: '#fee2e2', color: '#991b1b', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
+                                ❌ CANCELLED
+                              </span>
+                            )}
                           </div>
                           <span style={{ fontSize: '10px', background: '#f1f5f9', color: '#475569', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
                             Hold ID: {res.requestId}
