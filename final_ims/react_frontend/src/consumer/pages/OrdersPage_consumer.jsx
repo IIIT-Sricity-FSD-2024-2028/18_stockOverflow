@@ -71,7 +71,7 @@ export default function OrdersPage_consumer({
           const matched = allCatalog.find((c) => c.sku === r.sku);
           return {
             sku: r.sku,
-            name: r.productName || matched?.name || 'Reserved Product',
+            name: r.productName || matched?.name || 'Pre-ordered Product',
             totalQty: r.qty || 1,
             totalSpent: (Number(matched?.priceUSD || matched?.price || 0)) * (r.qty || 1),
             lastOrderedAt: r.createdAt || new Date().toISOString(),
@@ -149,7 +149,7 @@ export default function OrdersPage_consumer({
           <p>
             {searchQuery
               ? `No orders matching "${searchQuery}".`
-              : "You haven't placed any orders or reservations yet."}
+              : "You haven't placed any orders or pre-orders yet."}
           </p>
           <button
             type="button"
@@ -195,7 +195,7 @@ export default function OrdersPage_consumer({
                 <div className="order-meta">
                   <div className={`order-delivery ${order.isPending ? 'pending' : ''}`}>
                     {order.isPending
-                      ? `⏳ Hold Pending Verification · ${order.store}`
+                      ? `⏳ Pre-order Placed · Store Pickup Pending · ${order.store}`
                       : `✓ Delivered on ${dateStr}`}
                   </div>
                   <div className="order-name">{order.name}</div>
@@ -236,7 +236,7 @@ export default function OrdersPage_consumer({
 
                   {order.isPending && (
                     <div className="order-hint">
-                      Actions unlock after order confirmation.
+                      Actions unlock after store pickup & confirmation.
                     </div>
                   )}
                 </div>

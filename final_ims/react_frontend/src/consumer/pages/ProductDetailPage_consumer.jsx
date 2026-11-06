@@ -449,14 +449,14 @@ export default function ProductDetailPage_consumer({
                 disabled={totalStock <= 0}
                 onClick={() => setIsReserveModalOpen(true)}
               >
-                + Reserve
+                + Preorder
               </button>
             </div>
 
             {/* In-Store Pickup Store Selector (matches product-detail.html) */}
             <div style={{ marginBottom: '16px', background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
               <label htmlFor="detailStoreSelect" style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>
-                Select Store to Reserve From <span style={{ color: '#ef4444' }}>*</span>
+                Select Store to Order From <span style={{ color: '#ef4444' }}>*</span>
               </label>
               <select
                 id="detailStoreSelect"
@@ -855,7 +855,7 @@ export default function ProductDetailPage_consumer({
         onClose={() => setIsReserveModalOpen(false)}
         onConfirmReservation={async (payload) => {
           await createReservationRequest(payload);
-          showToast?.('In-store pickup hold placed. Track its approval in My Orders.');
+          showToast?.('Pre-order placed successfully! Track its status in My Orders.');
           onNavigate?.('orders');
         }}
       />

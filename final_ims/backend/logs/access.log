@@ -1005,3 +1005,16 @@
 [2026-10-17T10:47:08.455Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36
 [2026-10-17T10:47:08.458Z] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5/documents 304 - 3ms - IP: ::1
 [2026-10-17T10:47:08.463Z] [GET] /api/purchase-orders 304 - 2ms - IP: ::1
+[2026-10-18T11:13:56.965Z] [POST] /api/users/login 201 - 14ms - IP: ::1
+[2026-10-18T11:13:56.996Z] [GET] /api/products 200 - 14ms - IP: ::1
+[2026-10-18T11:13:57.005Z] [GET] /api/stores 200 - 4ms - IP: ::1
+[2026-10-18T11:13:57.014Z] [GET] /api/products 304 - 8ms - IP: ::1
+[2026-10-18T11:13:57.019Z] [GET] /api/stores 304 - 3ms - IP: ::1
+[2026-10-18T11:18:50.691Z] [GET] /api/products 304 - 24ms - IP: ::1
+[2026-10-18T11:18:50.714Z] [GET] /api/products 304 - 10ms - IP: ::1
+[2026-10-18T11:18:50.703Z] [GET] /api/stores 304 - 4ms - IP: ::1
+[2026-10-18T11:18:50.725Z] [GET] /api/stores 304 - 5ms - IP: ::1
+[2026-10-18T11:23:49.550Z] [GET] /api/products 304 - 51ms - IP: ::1
+[2026-10-18T11:23:49.564Z] [GET] /api/stores 304 - 4ms - IP: ::1
+[2026-10-18T11:23:49.600Z] [GET] /api/products 304 - 34ms - IP: ::1
+[2026-10-18T11:23:49.608Z] [GET] /api/stores 304 - 4ms - IP: ::1

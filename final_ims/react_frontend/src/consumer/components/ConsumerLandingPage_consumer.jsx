@@ -221,7 +221,7 @@ export default function ConsumerLandingPage_consumer({
               Find Products That Fit Your <span>Workflow</span>
             </h1>
             <p>
-              Browse professional tools, electronics, and accessories. Reserve products instantly and review them after delivery.
+              Browse professional tools, electronics, and accessories. Pre-order products directly from retail stores and review them after pickup.
             </p>
             <button
               type="button"

@@ -34,7 +34,7 @@ export default function CartPage_consumer({
   return (
     <CustomerLayout_consumer
       activeMenu="cart"
-      pageTitle="Reservation Cart"
+      pageTitle="Order / Pre-order Cart"
       pageSub="Review and finalize your items for pickup"
       cartCount={cartCount}
       userSession={userSession}
@@ -46,8 +46,8 @@ export default function CartPage_consumer({
         <div className="cart-items">
           {cart.length === 0 ? (
             <div className="empty-state">
-              <h2>No items reserved</h2>
-              <p>Looks like you haven't added anything to reserve yet.</p>
+              <h2>No items in cart</h2>
+              <p>Looks like you haven't added anything to your order yet.</p>
               <button
                 type="button"
                 className="checkout-btn"
@@ -128,7 +128,7 @@ export default function CartPage_consumer({
 
         {/* Right Side: Reservation Summary Card */}
         <div className="summary-card">
-          <div className="summary-title">Reservation Summary</div>
+          <div className="summary-title">Order Summary</div>
           <div className="summary-row">
             <span>Estimated Subtotal</span>
             <span>₹{subtotal.toLocaleString('en-IN')}</span>
