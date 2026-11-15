@@ -20,6 +20,8 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { Provider } from 'react-redux';
+import { consumerStore } from './redux';
 import { useDataSync } from '../context/DataSyncContext';
 
 // Page Views
@@ -490,8 +492,10 @@ export default function App_consumer({ onSwitchModule, onLogout }) {
   };
 
   return (
-    <div className="consumer-module-root">
-      {renderCurrentView()}
-    </div>
+    <Provider store={consumerStore}>
+      <div className="consumer-module-root">
+        {renderCurrentView()}
+      </div>
+    </Provider>
   );
 }
