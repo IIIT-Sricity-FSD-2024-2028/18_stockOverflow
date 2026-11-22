@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { request } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import { createProduct } from '../../redux/slices/productsSlice';
 
 export default function AddProductView({ onNavigate }) {
   const { user } = useAuth();
+  const dispatch = useDispatch();
 
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1);
@@ -413,10 +416,7 @@ export default function AddProductView({ onNavigate }) {
         createdBy: user?.name || 'Retailer',
       };
 
-      await request('/products', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
+      await dispatch(createProduct(payload)).unwrap();
 
       triggerToast('Product added successfully! Redirecting…');
       setTimeout(() => {

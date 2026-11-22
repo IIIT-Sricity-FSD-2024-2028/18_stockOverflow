@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { request } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import { updateProduct } from '../../redux/slices/productsSlice';
 
 export default function EditProductView({ product: initialProduct, onNavigate }) {
   const { user } = useAuth();
+  const dispatch = useDispatch();
 
   // Selected product to edit
   const [currentProduct, setCurrentProduct] = useState(initialProduct || null);
@@ -488,10 +491,7 @@ export default function EditProductView({ product: initialProduct, onNavigate })
         visibility: formData.visibility || 'published',
       };
 
-      await request(`/products/${currentProduct.id}`, {
-        method: 'PUT',
-        body: JSON.stringify(payload),
-      });
+      await dispatch(updateProduct({ id: currentProduct.id, productData: payload })).unwrap();
 
       triggerToast('Product updated successfully! Redirecting…');
       setTimeout(() => {

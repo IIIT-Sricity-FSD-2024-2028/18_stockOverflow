@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { request } from '../../api/client';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { useDataSync } from '../../../context/DataSyncContext';
+import {
+  fetchProducts,
+  deleteProduct,
+  selectProducts,
+  selectProductsLoading,
+} from '../../redux/slices/productsSlice';
 
 export default function ProductListView({ onNavigate, onEditProduct }) {
   const { user } = useAuth();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const reduxProducts = useSelector(selectProducts);
+  const reduxLoading = useSelector(selectProductsLoading);
+
+  const products = reduxProducts || [];
+  const loading = reduxLoading;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedBrand, setSelectedBrand] = useState('All');
@@ -14,40 +25,28 @@ export default function ProductListView({ onNavigate, onEditProduct }) {
   const [viewProduct, setViewProduct] = useState(null);
   const [message, setMessage] = useState('');
 
-  const loadProducts = async (isSilent = false) => {
-    try {
-      if (!isSilent) setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const scopedQuery = retailerId
-        ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
-        : '';
-      const data = await request(`/products${scopedQuery}`);
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error('Failed to load products:', e);
-    } finally {
-      if (!isSilent) setLoading(false);
-    }
+  const loadProducts = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchProducts({ retailerId, storeId }));
   };
 
   useEffect(() => {
     loadProducts();
-  }, [user]);
+  }, [dispatch, user]);
 
   useDataSync(['products', 'inventory'], () => {
-    loadProducts(true);
+    loadProducts();
   }, { intervalMs: 0 });
 
   const handleDelete = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
       try {
-        await request(`/products/${id}`, { method: 'DELETE' });
+        await dispatch(deleteProduct(id)).unwrap();
         setMessage(`Deleted product "${name}" successfully.`);
         setTimeout(() => setMessage(''), 3000);
-        loadProducts();
       } catch (err) {
-        alert('Failed to delete product: ' + err.message);
+        alert('Failed to delete product: ' + (err.message || err));
       }
     }
   };

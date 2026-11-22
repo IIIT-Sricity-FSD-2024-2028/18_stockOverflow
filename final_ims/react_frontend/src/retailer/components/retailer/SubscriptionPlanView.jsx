@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { request } from '../../api/client';
 import { retailerApi } from '../../api/retailerApi';
+import {
+  fetchActiveSubscription,
+  upgradeSubscriptionPlan,
+  setActivePlan as setActivePlanAction,
+  selectActivePlan,
+} from '../../redux/slices/profileSlice';
 
 export default function SubscriptionPlanView({ onNavigate }) {
   const { user } = useAuth();
-  const [activePlan, setActivePlan] = useState(() => user?.plan || 'starter');
+  const dispatch = useDispatch();
+  const reduxActivePlan = useSelector(selectActivePlan);
+
+  const [activePlan, setActivePlan] = useState(() => reduxActivePlan || user?.plan || 'starter');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState('pro');
   const [payMethod, setPayMethod] = useState('upi');
@@ -122,26 +132,21 @@ export default function SubscriptionPlanView({ onNavigate }) {
 
   const handleSimulatePayment = () => {
     setProcessing(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       setProcessing(false);
       setIsModalOpen(false);
       setActivePlan(selectedTier);
+      dispatch(setActivePlanAction(selectedTier));
 
-      // Persist plan in backend & session
+      // Persist plan in Redux, backend & session
       try {
-        request('/platform-revenue/subscriptions', {
-          method: 'POST',
-          body: JSON.stringify({
+        await dispatch(
+          upgradeSubscriptionPlan({
             userId: user?.id || user?.userId || 'u-retailer-1',
-            userName: user?.name || 'Retailer User',
-            userEmail: user?.email || 'retailer@stockoverflow.com',
-            userRole: 'retailer',
             tier: selectedTier,
-            billingCycle: 'monthly',
             paymentMethod: payMethod === 'upi' ? 'UPI AutoPay' : payMethod === 'card' ? 'Credit Card' : 'NetBanking',
-            paymentReference: 'PAY_SO_' + Math.floor(100000 + Math.random() * 900000),
-          }),
-        }).catch(() => {});
+          })
+        );
         const session = JSON.parse(localStorage.getItem('so_session') || '{}');
         session.plan = selectedTier;
         localStorage.setItem('so_session', JSON.stringify(session));

@@ -1,15 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { retailerApi } from '../../api/retailerApi';
 import { useDataSync } from '../../../context/DataSyncContext';
 import ContactSupportModal from '../../../components/common/ContactSupportModal';
+import {
+  fetchRetailerNotifications,
+  dismissNotification,
+  clearAllNotifications,
+  selectNotifications,
+} from '../../redux/slices/notificationsSlice';
 
 export default function RetailerLayout({ activeView, setActiveView, onSwitchModule, onLogout, children }) {
   const { user, logout, switchStore } = useAuth();
+  const dispatch = useDispatch();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const reduxNotifications = useSelector(selectNotifications);
+  const notifications = reduxNotifications || [];
   const popoverRef = useRef(null);
 
   const viewTitles = {
@@ -56,88 +65,16 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
         .toUpperCase()
     : 'SO';
 
-  // Load real notifications from backend products & returns
+  // Load real notifications from backend via Redux
+  const loadNotifications = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchRetailerNotifications({ retailerId, storeId }));
+  };
+
   useEffect(() => {
-    async function loadNotifications() {
-      try {
-        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-        const storeId = user?.currentStoreId || user?.storeId || '';
-        const [returnsRes, productsRes, reservationsRes] = await Promise.all([
-          retailerApi.getReturns(retailerId, storeId).catch(() => []),
-          retailerApi.getProducts(retailerId, storeId).catch(() => []),
-          retailerApi.getReservationRequests('', storeId).catch(() => []),
-        ]);
-
-        const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
-        const returnList = Array.isArray(returnsRes) ? returnsRes : [];
-        const prodList = Array.isArray(productsRes) ? productsRes : [];
-
-        const notifs = [];
-
-        // 1. Pending Returns
-        returnList.forEach((r) => {
-          const status = String(r.status || '').toLowerCase();
-          if (status === 'pending') {
-            const id = `return-${r.id || Math.random()}`;
-            if (!dismissed.includes(id)) {
-              notifs.push({
-                id,
-                type: 'return',
-                title: 'Return Request Pending',
-                msg: `Customer ${r.customer || 'Consumer'} requested return for ${r.product || 'item'}${r.qty ? ` (Qty: ${r.qty})` : ''}`,
-                time: r.date ? new Date(r.date).toLocaleDateString('en-IN') : 'Recent',
-                view: 'returns',
-              });
-            }
-          }
-        });
-
-        // 2. Low Stock Alerts
-        prodList.forEach((p) => {
-          const qty = Number(p.qty != null ? p.qty : (p.initialQty || 0));
-          const min = Number(p.min != null ? p.min : (p.minStockAlert != null ? p.minStockAlert : 10));
-          if (qty <= min) {
-            const id = `stock-${p.sku || p.id}`;
-            if (!dismissed.includes(id)) {
-              notifs.push({
-                id,
-                type: 'stock',
-                title: qty === 0 ? 'Out of Stock Alert' : 'Low Stock Alert',
-                msg: `${p.name || 'Product'} is at ${qty} units (Min Alert: ${min})`,
-                time: 'Inventory Alert',
-                view: 'low-stocks',
-              });
-            }
-          }
-        });
-
-        // 3. Customer Pre-order Cancellations
-        const resList = Array.isArray(reservationsRes) ? reservationsRes : [];
-        resList.forEach((req) => {
-          if (String(req.status || '').toLowerCase() === 'cancelled') {
-            const id = `res-cancel-${req.requestId}`;
-            if (!dismissed.includes(id)) {
-              notifs.push({
-                id,
-                type: 'cancellation',
-                title: 'Customer Pre-order Cancelled',
-                msg: `${req.customer || 'Customer'} cancelled pre-order for ${req.productName || req.sku} (Qty: ${req.qty || 1}) · Hold released to stock`,
-                time: req.cancelledAt ? new Date(req.cancelledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent',
-                view: 'dashboard',
-                reason: req.cancelReason,
-              });
-            }
-          }
-        });
-
-        setNotifications(notifs);
-      } catch (err) {
-        console.warn('Could not load notifications in layout:', err);
-      }
-    }
-
     loadNotifications();
-  }, [user, activeView]);
+  }, [dispatch, user, activeView]);
 
   useDataSync(['transactions', 'inventory', 'orders'], () => {
     loadNotifications();
@@ -146,23 +83,13 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
   // Dismiss a single notification
   const handleDismissNotif = (e, notifId) => {
     e.stopPropagation();
-    const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
-    if (!dismissed.includes(notifId)) {
-      dismissed.push(notifId);
-      localStorage.setItem('so_dismissed_notifications', JSON.stringify(dismissed));
-    }
-    setNotifications((prev) => prev.filter((n) => n.id !== notifId));
+    dispatch(dismissNotification(notifId));
   };
 
   // Clear all notifications
   const handleClearAllNotifs = (e) => {
     e.stopPropagation();
-    const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
-    notifications.forEach((n) => {
-      if (!dismissed.includes(n.id)) dismissed.push(n.id);
-    });
-    localStorage.setItem('so_dismissed_notifications', JSON.stringify(dismissed));
-    setNotifications([]);
+    dispatch(clearAllNotifications());
   };
 
   // Close popovers on click outside

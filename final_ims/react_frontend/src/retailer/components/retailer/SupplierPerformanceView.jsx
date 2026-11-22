@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import Chart from 'chart.js/auto';
+import { selectSelectedSupplier } from '../../redux/slices/suppliersSlice';
 
 export default function SupplierPerformanceView({ supplier, onBack, onNavigate }) {
+  const reduxSelectedSupplier = useSelector(selectSelectedSupplier);
   const [supplierData, setSupplierData] = useState(
-    supplier || {
+    supplier || reduxSelectedSupplier || {
       id: 'SUP-001',
       name: 'Acme Supplies Ltd',
       email: 'acme@supplies.com',
@@ -13,6 +16,12 @@ export default function SupplierPerformanceView({ supplier, onBack, onNavigate }
       status: 'Active',
     }
   );
+
+  useEffect(() => {
+    if (supplier || reduxSelectedSupplier) {
+      setSupplierData(supplier || reduxSelectedSupplier);
+    }
+  }, [supplier, reduxSelectedSupplier]);
 
   const deliveryChartRef = useRef(null);
   const deliveryChartInstance = useRef(null);

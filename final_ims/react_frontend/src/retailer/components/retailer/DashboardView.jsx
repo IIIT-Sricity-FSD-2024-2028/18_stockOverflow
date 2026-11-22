@@ -1,30 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { useDataSync } from '../../../context/DataSyncContext';
 import { request } from '../../api/client';
 import Chart from 'chart.js/auto';
+import {
+  fetchDashboardData,
+  setDashboardDataLocal,
+  selectDashboardData,
+  selectDashboardLoading,
+  selectDashboardActiveFilter,
+  selectDashboardActiveTransTab,
+  selectDashboardNotifVisible,
+  setActiveFilter,
+  setActiveTransTab,
+  setNotifVisible,
+} from '../../redux/slices/dashboardSlice';
 
 export default function DashboardView({ setActiveView, onNavigate }) {
   const navigate = setActiveView || onNavigate;
   const { user } = useAuth();
+  const dispatch = useDispatch();
 
-  // State
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({
-    products: [],
-    customers: [],
-    transactions: [],
-    purchaseOrders: [],
-    returns: [],
-    suppliers: [],
-    subscription: null,
-    orderActivity: null,
-    reservationRequests: [],
-  });
+  // Redux State
+  const data = useSelector(selectDashboardData);
+  const loading = useSelector(selectDashboardLoading);
+  const activeFilter = useSelector(selectDashboardActiveFilter);
+  const activeTransTab = useSelector(selectDashboardActiveTransTab);
+  const notifVisible = useSelector(selectDashboardNotifVisible);
 
-  const [activeFilter, setActiveFilter] = useState('1D');
-  const [activeTransTab, setActiveTransTab] = useState('Sale');
-  const [notifVisible, setNotifVisible] = useState(true);
   const [toastMessage, setToastMessage] = useState(null);
 
   // Modals
@@ -53,51 +57,11 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const loadAllData = async (isSilent = false) => {
-    try {
-      if (!isSilent) setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const scopedQuery = retailerId
-        ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
-        : '';
-
-      const [productsRes, customersRes, transactionsRes, poRes, returnsRes, suppliersRes, subRes, orderActRes, reservationsRes] =
-        await Promise.all([
-          request(`/products${scopedQuery}`).catch(() => []),
-          request(`/customers${scopedQuery}`).catch(() => []),
-          request(`/transactions${scopedQuery}`).catch(() => []),
-          request(`/purchase-orders${scopedQuery}`).catch(() => []),
-          request(`/returns${scopedQuery}`).catch(() => []),
-          request('/suppliers').catch(() => []),
-          request(`/platform-revenue/subscriptions/active?userId=${encodeURIComponent(user?.id || user?.userId || 'u-retailer-1')}`).catch(() => null),
-          request(`/transactions/order-activity${scopedQuery}`).catch(() => null),
-          request(`/reservations/requests${storeId ? `?storeId=${encodeURIComponent(storeId)}` : ''}`).catch(() => []),
-        ]);
-
-      // Only count/show customers who have purchased something
-      const purchasedCustomers = (Array.isArray(customersRes) ? customersRes : []).filter(
-        (c) =>
-          (Number(c.totalOrders != null ? c.totalOrders : c.orders) || 0) > 0 ||
-          (Number(c.totalSpent != null ? c.totalSpent : c.spent) || 0) > 0,
-      );
-
-      setData({
-        products: Array.isArray(productsRes) ? productsRes : [],
-        customers: purchasedCustomers,
-        transactions: Array.isArray(transactionsRes) ? transactionsRes : [],
-        purchaseOrders: Array.isArray(poRes) ? poRes : [],
-        returns: Array.isArray(returnsRes) ? returnsRes : [],
-        suppliers: Array.isArray(suppliersRes) ? suppliersRes : [],
-        subscription: subRes,
-        orderActivity: orderActRes,
-        reservationRequests: Array.isArray(reservationsRes) ? reservationsRes : [],
-      });
-    } catch (err) {
-      console.error('Error fetching dashboard data:', err);
-    } finally {
-      if (!isSilent) setLoading(false);
-    }
+  const loadAllData = (isSilent = false) => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    const userId = user?.id || user?.userId || 'u-retailer-1';
+    dispatch(fetchDashboardData({ retailerId, storeId, userId, isSilent }));
   };
 
   useEffect(() => {
@@ -751,7 +715,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           billingCycle: 'monthly',
         }),
       });
-      setData((prev) => ({ ...prev, subscription: res }));
+      dispatch(setDashboardDataLocal({ subscription: res }));
       setIsTierModalOpen(false);
       showToast('Plan updated: Starter (₹0/mo) is now active.', 'success');
     } catch (err) {
@@ -774,7 +738,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           paymentReference: 'PAY_SIM_' + Math.floor(100000 + Math.random() * 900000),
         }),
       });
-      setData((prev) => ({ ...prev, subscription: res }));
+      dispatch(setDashboardDataLocal({ subscription: res }));
       setIsPaymentModalOpen(false);
       setIsTierModalOpen(false);
       const tierName = pendingTier === 'enterprise' ? 'Enterprise (₹3,499/mo)' : 'Growth (₹799/mo)';
@@ -792,7 +756,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           userId: user?.id || user?.userId || 'u-retailer-1',
         }),
       });
-      setData((prev) => ({ ...prev, subscription: res }));
+      dispatch(setDashboardDataLocal({ subscription: res }));
       setIsCancelModalOpen(false);
       showToast('Subscription auto-renewal has been cancelled.', 'info');
       if (pendingSwitchTier === 'free') {
@@ -949,7 +913,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             </a>{' '}
             to avoid stockouts.
           </span>
-          <div className="close-btn" onClick={() => setNotifVisible(false)}>
+          <div className="close-btn" onClick={() => dispatch(setNotifVisible(false))}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
@@ -1171,7 +1135,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                 <div
                   key={tab}
                   className={`filter-tab ${activeFilter === tab ? 'active' : ''}`}
-                  onClick={() => setActiveFilter(tab)}
+                  onClick={() => dispatch(setActiveFilter(tab))}
                 >
                   {tab}
                 </div>
@@ -1530,7 +1494,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
               </div>
               <button
                 type="button"
-                onClick={() => setActiveTransTab('Pre-orders')}
+                onClick={() => dispatch(setActiveTransTab('Pre-orders'))}
                 style={{
                   background: '#fff',
                   border: '1px solid #fca5a5',
@@ -1552,7 +1516,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
               <div
                 key={tab}
                 className={`trans-tab ${activeTransTab === tab ? 'active' : ''}`}
-                onClick={() => setActiveTransTab(tab)}
+                onClick={() => dispatch(setActiveTransTab(tab))}
               >
                 {tab}
               </div>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
-import { retailerApi } from '../../api/retailerApi';
+import { updateRetailerProfile } from '../../redux/slices/profileSlice';
 
 export default function ProfileView() {
   const { user, refreshUser } = useAuth();
+  const dispatch = useDispatch();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -24,13 +26,18 @@ export default function ProfileView() {
     setSubmitting(true);
     try {
       if (user?.id) {
-        await retailerApi.updateUser(user.id, {
-          name: formData.name,
-          profile: {
-            ...user.profile,
-            ...formData,
-          },
-        });
+        await dispatch(
+          updateRetailerProfile({
+            id: user.id,
+            data: {
+              name: formData.name,
+              profile: {
+                ...user.profile,
+                ...formData,
+              },
+            },
+          })
+        ).unwrap();
         if (refreshUser) await refreshUser();
       }
       setSuccess(true);

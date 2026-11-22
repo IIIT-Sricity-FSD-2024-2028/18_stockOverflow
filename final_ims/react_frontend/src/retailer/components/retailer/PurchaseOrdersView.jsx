@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { retailerApi } from '../../api/retailerApi';
 import { useAuth } from '../../context/AuthContext';
 import { useDataSync } from '../../../context/DataSyncContext';
+import {
+  fetchPurchaseOrders,
+  createPurchaseOrder,
+  selectPurchaseOrders,
+  selectPOLoading,
+} from '../../redux/slices/purchaseOrdersSlice';
+import {
+  fetchSuppliers,
+  selectSuppliers,
+} from '../../redux/slices/suppliersSlice';
 
 export default function PurchaseOrdersView({ onBrowseCatalogue }) {
   const { user } = useAuth();
+  const dispatch = useDispatch();
+
+  const reduxOrders = useSelector(selectPurchaseOrders);
+  const reduxLoading = useSelector(selectPOLoading);
+  const reduxSuppliers = useSelector(selectSuppliers);
+
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplierId, setSelectedSupplierId] = useState('');
   const [targetStore, setTargetStore] = useState(user?.store ? `${user.store} (Main)` : "Main Store (Main)");
@@ -28,99 +45,54 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
   const [searchHistory, setSearchHistory] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedPODetail, setSelectedPODetail] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const loading = reduxLoading;
 
   const showToast = (msg) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(''), 3500);
   };
 
-  // Load suppliers and existing PO history
-  const loadData = async (isSilent = false) => {
-    try {
-      if (!isSilent) setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const [supRes, poRes] = await Promise.all([
-        retailerApi.getSuppliers().catch(() => []),
-        retailerApi.getPurchaseOrders(retailerId, storeId).catch(() => []),
-      ]);
-
-      const rawSuppliers = Array.isArray(supRes) ? supRes : [];
-      const sList = rawSuppliers.length > 0
-        ? rawSuppliers.map((s) => {
-            const name = s.name || s.companyName || s.business?.companyName || s.company || s.primaryContact?.fullName || 'Supplier';
-            const category = s.category || s.primaryCategory || s.business?.primaryCategory || 'General';
-            return {
-              ...s,
-              id: s.id || s.code || `SUP-${Math.random()}`,
-              name,
-              category,
-              paymentTerms: s.paymentTerms || s.business?.paymentTerms || 'Net 30',
-            };
-          })
-        : [
-            { id: 'SUP-001', name: 'Apex Footwear Co.', category: 'Footwear' },
-            { id: 'SUP-002', name: 'Acme Electronics Ltd', category: 'Electronics' },
-            { id: 'SUP-003', name: 'Zenith Apparel India', category: 'Apparel' },
-            { id: 'SUP-004', name: 'Omni Gadgets Dist.', category: 'Accessories' },
-          ];
-      setSuppliers(sList);
-
-      const savedSupplierId = localStorage.getItem('po_selected_supplier_id');
-      const matched = sList.find((s) => s.id === savedSupplierId);
-      if (matched) {
-        setSelectedSupplierId(matched.id);
-        localStorage.setItem('po_selected_supplier_name', matched.name);
-      } else if (sList.length > 0) {
-        setSelectedSupplierId(sList[0].id);
-        localStorage.setItem('po_selected_supplier_id', sList[0].id);
-        localStorage.setItem('po_selected_supplier_name', sList[0].name);
-      }
-
-      if (Array.isArray(poRes) && poRes.length > 0) {
-        setOrdersList(
-          poRes.map((po) => ({
-            id: po.id,
-            supplier: po.supplierName || po.supplier || 'Supplier',
-            supplierId: po.supplierId || '',
-            date: po.createdAt ? new Date(po.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '18 Sep 2026',
-            deliveryDate: po.deliveryDate || '25 Sep 2026',
-            items: po.items || [],
-            itemsSummary: Array.isArray(po.items) && po.items.length > 0
-              ? `${po.items[0].name || 'Item'}${po.items.length > 1 ? ` (+${po.items.length - 1} more)` : ''}`
-              : 'Inventory Restock',
-            total: Number(po.total || po.subtotal || 0),
-            paymentTerms: po.paymentTerms || 'Net 30',
-            status: po.status || 'Delivered',
-            notes: po.notes || '',
-            storeId: po.storeId || user?.store || "Main Store",
-          }))
-        );
-      } else {
-        setOrdersList([]);
-      }
-
-      // Check if products were returned from po-products
-      const storedProds = JSON.parse(localStorage.getItem('po_products') || '[]');
-      if (Array.isArray(storedProds) && storedProds.length > 0) {
-        setProducts(storedProds);
-        const ts = localStorage.getItem('po_products_ts');
-        const age = ts ? Date.now() - parseInt(ts, 10) : 99999;
-        if (age < 30000) {
-          setBannerMsg(`${storedProds.length} product${storedProds.length > 1 ? 's' : ''} added successfully from catalogue!`);
-        }
-      }
-    } catch (err) {
-      console.error('Error loading PO page data:', err);
-    } finally {
-      if (!isSilent) setLoading(false);
-    }
+  // Load suppliers and existing PO history via Redux
+  const loadData = (isSilent = false) => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchSuppliers());
+    dispatch(fetchPurchaseOrders({ retailerId, storeId }));
   };
 
   useEffect(() => {
     loadData();
-  }, [user]);
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxSuppliers) && reduxSuppliers.length > 0) {
+      setSuppliers(reduxSuppliers);
+      const savedSupplierId = localStorage.getItem('po_selected_supplier_id');
+      if (savedSupplierId && reduxSuppliers.some((s) => s.id === savedSupplierId)) {
+        setSelectedSupplierId(savedSupplierId);
+      } else if (!selectedSupplierId) {
+        setSelectedSupplierId(reduxSuppliers[0].id);
+      }
+    }
+  }, [reduxSuppliers]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxOrders)) {
+      setOrdersList(reduxOrders);
+    }
+  }, [reduxOrders]);
+  useEffect(() => {
+    // Check if products were returned from po-products
+    const storedProds = JSON.parse(localStorage.getItem('po_products') || '[]');
+    if (Array.isArray(storedProds) && storedProds.length > 0) {
+      setProducts(storedProds);
+      const ts = localStorage.getItem('po_products_ts');
+      const age = ts ? Date.now() - parseInt(ts, 10) : 99999;
+      if (age < 30000) {
+        setBannerMsg(`${storedProds.length} product${storedProds.length > 1 ? 's' : ''} added successfully from catalogue!`);
+      }
+    }
+  }, []);
 
   useDataSync(['orders'], () => {
     loadData(true);
@@ -239,12 +211,12 @@ export default function PurchaseOrdersView({ onBrowseCatalogue }) {
     };
 
     try {
-      const created = await retailerApi.createPurchaseOrder(payload).catch(() => ({
+      const res = await dispatch(createPurchaseOrder(payload)).unwrap().catch(() => ({
         ...payload,
       }));
 
       const newHistoryItem = {
-        id: created.id || poNumber,
+        id: res?.id || poNumber,
         supplier: sup?.name || 'Supplier',
         supplierId: sup?.id || '',
         date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),

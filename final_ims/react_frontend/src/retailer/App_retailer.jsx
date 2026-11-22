@@ -1,15 +1,27 @@
 /**
- * App_retailer.jsx - Main Application Controller for Retailer Module
+ * App_retailer.jsx - Main Application Controller for Retailer Module (Redux Integrated)
  * 
  * StockOverflow Retailer & Store Management Portal:
- * - Public/Retailer Landing Page & Quick Sign-in
- * - Dedicated Sign In & Sign Up Auth Page (matching vanilla frontend)
- * - Biller Application & Real-time Pending Approval Waiting Page
- * - Retailer Initial Setup Wizard (matching vanilla frontend wizard)
+ * - Redux Provider Wrapping with retailerStore
+ * - View routing & state management via uiSlice
  * - Retailer Dashboard, Products, Inventory, Stores, Billers, Suppliers, etc.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
+import { Provider, useSelector, useDispatch } from 'react-redux';
+import {
+  retailerStore,
+  selectActiveView,
+  selectEditingProduct,
+  selectSelectProductModalOpen,
+  selectSelectedSupplier,
+  selectSelectedSupplierForPO,
+  setActiveView,
+  setEditingProduct,
+  setSelectProductModalOpen,
+  setSelectedSupplier,
+  setSelectedSupplierForPO,
+} from './redux';
 import { useAuth } from '../context/AuthContext';
 import RetailerLayout from './components/retailer/RetailerLayout';
 import DashboardView from './components/retailer/DashboardView';
@@ -31,31 +43,32 @@ import SubscriptionPlanView from './components/retailer/SubscriptionPlanView';
 import SupplierPerformanceView from './components/retailer/SupplierPerformanceView';
 import POProductsView from './components/retailer/POProductsView';
 
-export default function App_retailer({ onSwitchModule, onLogout }) {
+function RetailerModuleInner({ onSwitchModule, onLogout }) {
   const { user } = useAuth();
-  const [activeView, setActiveView] = useState('dashboard');
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [selectProductModalOpen, setSelectProductModalOpen] = useState(false);
-  const [selectedSupplier, setSelectedSupplier] = useState(null);
-  const [selectedSupplierForPO, setSelectedSupplierForPO] = useState(null);
+  const dispatch = useDispatch();
+
+  const activeView = useSelector(selectActiveView);
+  const editingProduct = useSelector(selectEditingProduct);
+  const selectProductModalOpen = useSelector(selectSelectProductModalOpen);
+  const selectedSupplier = useSelector(selectSelectedSupplier);
+  const selectedSupplierForPO = useSelector(selectSelectedSupplierForPO);
 
   const handleNavigate = (view) => {
-    if (view === 'edit-product' && !editingProduct) {
-      setActiveView('products');
-      setSelectProductModalOpen(true);
-      return;
-    }
-    if (view !== 'edit-product') {
-      setEditingProduct(null);
-    }
-    setActiveView(view);
+    dispatch(setActiveView(view));
+  };
+
+  const handleEditProduct = (product) => {
+    dispatch(setEditingProduct(product));
+  };
+
+  const handleCloseSelectProductModal = () => {
+    dispatch(setSelectProductModalOpen(false));
   };
 
   // If unauthenticated, App.jsx handles the landing page
   if (!user) {
     return null;
   }
-
 
   // Render Full Retailer Module
   return (
@@ -73,10 +86,7 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
         {activeView === 'products' && (
           <ProductListView
             onNavigate={handleNavigate}
-            onEditProduct={(product) => {
-              setEditingProduct(product);
-              setActiveView('edit-product');
-            }}
+            onEditProduct={handleEditProduct}
           />
         )}
 
@@ -92,7 +102,7 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
         )}
 
         {activeView === 'inventory-overview' && (
-          <InventoryView />
+          <InventoryView onNavigate={handleNavigate} />
         )}
 
         {activeView === 'low-stocks' && (
@@ -118,7 +128,7 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
         {activeView === 'suppliers' && (
           <SuppliersView
             onViewPerformance={(supplier) => {
-              setSelectedSupplier(supplier);
+              dispatch(setSelectedSupplier(supplier));
               handleNavigate('supplier-performance');
             }}
           />
@@ -138,7 +148,7 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
         {activeView === 'purchase-orders' && (
           <PurchaseOrdersView
             onBrowseCatalogue={(sup) => {
-              setSelectedSupplierForPO(sup);
+              dispatch(setSelectedSupplierForPO(sup));
               handleNavigate('po-products');
             }}
           />
@@ -181,7 +191,7 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
             padding: '16px',
             animation: 'fadeIn 0.2s ease-out',
           }}
-          onClick={() => setSelectProductModalOpen(false)}
+          onClick={handleCloseSelectProductModal}
         >
           <div
             style={{
@@ -198,7 +208,7 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
           >
             {/* Close button */}
             <button
-              onClick={() => setSelectProductModalOpen(false)}
+              onClick={handleCloseSelectProductModal}
               style={{
                 position: 'absolute',
                 top: '16px',
@@ -292,7 +302,7 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
             {/* Primary Action Button */}
             <button
               id="select-product-confirm-btn"
-              onClick={() => setSelectProductModalOpen(false)}
+              onClick={handleCloseSelectProductModal}
               style={{
                 width: '100%',
                 padding: '12px 18px',
@@ -313,5 +323,13 @@ export default function App_retailer({ onSwitchModule, onLogout }) {
         </div>
       )}
     </>
+  );
+}
+
+export default function App_retailer(props) {
+  return (
+    <Provider store={retailerStore}>
+      <RetailerModuleInner {...props} />
+    </Provider>
   );
 }

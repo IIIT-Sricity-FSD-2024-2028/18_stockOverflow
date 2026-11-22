@@ -1,43 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { retailerApi } from '../../api/retailerApi';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
+import {
+  fetchProducts,
+  selectReorderRecommendations,
+  selectProductsLoading,
+} from '../../redux/slices/productsSlice';
 
 export default function ReorderView({ onNavigate }) {
   const { user } = useAuth();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const products = useSelector(selectReorderRecommendations) || [];
+  const loading = useSelector(selectProductsLoading);
 
   useEffect(() => {
-    async function load() {
-      try {
-        setLoading(true);
-        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-        const storeId = user?.currentStoreId || user?.storeId || '';
-        const data = await retailerApi.getProducts(retailerId, storeId);
-        if (Array.isArray(data)) {
-          const mapped = data.map((p) => ({
-            id: p.id,
-            name: p.name,
-            sku: p.sku,
-            qty: Number(p.qty || 0),
-            min: Number(p.min || 10),
-            suggested: Math.max(20, (Number(p.max || 50)) - (Number(p.qty || 0))),
-            supplier: p.supplier || 'Primary Supplier',
-            leadTime: '3 Days',
-            status: Number(p.qty || 0) <= 5 ? 'Critical' : Number(p.qty || 0) <= Number(p.min || 10) ? 'Low Stock' : 'Adequate',
-            statusColor: Number(p.qty || 0) <= 5 ? '#ef4444' : Number(p.qty || 0) <= Number(p.min || 10) ? '#f59e0b' : '#22c55e',
-          }));
-          setProducts(mapped);
-        }
-      } catch (e) {
-        console.error('Failed to load reorder recommendations:', e);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [user]);
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchProducts({ retailerId, storeId }));
+  }, [dispatch, user]);
 
   return (
     <div className="content" style={{ padding: '24px 28px 40px', flex: 1, overflow: 'auto', boxSizing: 'border-box' }}>

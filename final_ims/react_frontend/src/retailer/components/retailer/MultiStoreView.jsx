@@ -1,9 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { request } from '../../api/client';
+import {
+  fetchStores,
+  fetchStoreDrawerAnalytics,
+  setDrawerStore,
+  closeStoreDrawer,
+  selectStores,
+  selectDrawerStore,
+  selectDrawerStats,
+  selectDrawerLoading,
+  selectStoresLoading,
+} from '../../redux/slices/storesSlice';
 
 export default function MultiStoreView() {
   const { user } = useAuth();
+  const dispatch = useDispatch();
+  const reduxStores = useSelector(selectStores);
+  const reduxDrawerStore = useSelector(selectDrawerStore);
+  const reduxDrawerStats = useSelector(selectDrawerStats);
+  const reduxDrawerLoading = useSelector(selectDrawerLoading);
+
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -15,9 +33,10 @@ export default function MultiStoreView() {
   const [selectedChecks, setSelectedChecks] = useState({});
   const [checkAll, setCheckAll] = useState(false);
 
-  // Drawer state
-  const [activeDrawerStore, setActiveDrawerStore] = useState(null);
-  const [drawerStats, setDrawerStats] = useState({
+  // Drawer state from Redux or local fallback
+  const [localDrawerStore, setLocalDrawerStore] = useState(null);
+  const activeDrawerStore = reduxDrawerStore || localDrawerStore;
+  const [localDrawerStats, setLocalDrawerStats] = useState({
     netProfit: 0,
     netSales: 0,
     netPurchase: 0,
@@ -28,7 +47,9 @@ export default function MultiStoreView() {
     products: [],
     alerts: [],
   });
-  const [drawerLoading, setDrawerLoading] = useState(false);
+  const drawerStats = (reduxDrawerStore && reduxDrawerStats.totalUnits > 0) ? reduxDrawerStats : localDrawerStats;
+  const [localDrawerLoading, setLocalDrawerLoading] = useState(false);
+  const drawerLoading = reduxDrawerLoading || localDrawerLoading;
 
   // Fetch real stores and live product counts matching vanilla
   useEffect(() => {
@@ -137,8 +158,9 @@ export default function MultiStoreView() {
 
   // Open Drawer and load real stats
   const handleOpenDrawer = async (store) => {
-    setActiveDrawerStore(store);
-    setDrawerLoading(true);
+    dispatch(setDrawerStore(store));
+    setLocalDrawerStore(store);
+    setLocalDrawerLoading(true);
 
     try {
       const [transactions, purchaseOrders, returns] = await Promise.all([
@@ -199,7 +221,7 @@ export default function MultiStoreView() {
     } catch (err) {
       console.error('Error fetching drawer stats:', err);
     } finally {
-      setDrawerLoading(false);
+      setLocalDrawerLoading(false);
     }
   };
 
@@ -550,7 +572,7 @@ export default function MultiStoreView() {
       {activeDrawerStore && (
         <div
           className="overlay open"
-          onClick={() => setActiveDrawerStore(null)}
+          onClick={() => { dispatch(closeStoreDrawer()); setLocalDrawerStore(null); }}
         >
           <div
             className="drawer"
@@ -568,7 +590,7 @@ export default function MultiStoreView() {
               </div>
               <div
                 className="drawer-close"
-                onClick={() => setActiveDrawerStore(null)}
+                onClick={() => { dispatch(closeStoreDrawer()); setLocalDrawerStore(null); }}
               >
                 <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="3" y1="3" x2="11" y2="11" />

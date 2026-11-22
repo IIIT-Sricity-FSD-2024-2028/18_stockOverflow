@@ -1,12 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
-import { retailerApi } from '../../api/retailerApi';
+import {
+  fetchBillersAndRequests,
+  createBiller,
+  updateBiller,
+  deleteBiller,
+  approveBiller,
+  rejectBiller,
+  selectBillers,
+  selectPendingBillerRequests,
+  selectBillersLoading,
+} from '../../redux/slices/billersSlice';
 
 export default function BillersView() {
   const { user } = useAuth();
+  const dispatch = useDispatch();
+
+  const reduxBillers = useSelector(selectBillers);
+  const reduxPendingRequests = useSelector(selectPendingBillerRequests);
+  const reduxLoading = useSelector(selectBillersLoading);
+
   const [billers, setBillers] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const loading = reduxLoading;
   const [search, setSearch] = useState('');
   const [showPending, setShowPending] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,69 +39,36 @@ export default function BillersView() {
     status: 'active',
   });
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const [billersRes, requestsRes] = await Promise.all([
-        retailerApi.getBillers(retailerId, storeId).catch(() => []),
-        retailerApi.getBillerRequests().catch(() => []),
-      ]);
-
-      if (Array.isArray(billersRes) && billersRes.length > 0) {
-        setBillers(
-          billersRes.map((b, idx) => ({
-            id: b.id || idx + 1,
-            code: b.code || `BI00${idx + 1}`,
-            name: b.name || 'Biller Staff',
-            company: b.company || b.companyName || user?.store || "Main Store",
-            email: b.email || 'biller@example.com',
-            phone: b.phone || '+91 98200 11223',
-            country: b.country || 'India',
-            status: (b.status || 'active').toLowerCase(),
-            color: b.color || '#2e6bc5',
-          }))
-        );
-      } else {
-        setBillers([]);
-      }
-
-      if (Array.isArray(requestsRes) && requestsRes.length > 0) {
-        const pendingOnly = requestsRes.filter((r) => r.status === 'pending');
-        setPendingRequests(pendingOnly);
-        if (pendingOnly.length > 0) {
-          setShowPending(true);
-        }
-      } else {
-        setPendingRequests([]);
-      }
-    } catch (err) {
-      console.error('Failed to load billers data:', err);
-    } finally {
-      setLoading(false);
-    }
+  const loadData = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchBillersAndRequests({ retailerId, storeId }));
   };
 
   useEffect(() => {
     loadData();
-    // Refresh requests every 4 seconds
     const interval = setInterval(() => {
-      retailerApi
-        .getBillerRequests()
-        .then((res) => {
-          if (Array.isArray(res)) {
-            const pendingOnly = res.filter((r) => r.status === 'pending');
-            setPendingRequests(pendingOnly);
-            if (pendingOnly.length > 0) {
-              setShowPending(true);
-            }
-          }
-        })
-        .catch(() => {});
+      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+      const storeId = user?.currentStoreId || user?.storeId || '';
+      dispatch(fetchBillersAndRequests({ retailerId, storeId }));
     }, 4000);
     return () => clearInterval(interval);
-  }, [user]);
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxBillers)) {
+      setBillers(reduxBillers);
+    }
+  }, [reduxBillers]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxPendingRequests)) {
+      setPendingRequests(reduxPendingRequests);
+      if (reduxPendingRequests.length > 0) {
+        setShowPending(true);
+      }
+    }
+  }, [reduxPendingRequests]);
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -96,13 +80,18 @@ export default function BillersView() {
     if (!req) return;
 
     try {
-      await retailerApi.approveBillerRequest(reqId, {
-        retailerId: user?.retailerId || user?.profileId || user?.id,
-        storeId: user?.storeId || user?.currentStoreId || 'STORE-01',
-      });
+      await dispatch(
+        approveBiller({
+          id: reqId,
+          scope: {
+            retailerId: user?.retailerId || user?.profileId || user?.id,
+            storeId: user?.storeId || user?.currentStoreId || 'STORE-01',
+          },
+        })
+      ).unwrap();
 
       showToast(`Approved ${req.name} as verified store biller.`);
-      await loadData();
+      loadData();
     } catch (err) {
       console.error('Failed to approve biller:', err);
       showToast(err.message || 'Failed to approve biller.', 'err');
@@ -111,9 +100,9 @@ export default function BillersView() {
 
   const handleReject = async (reqId) => {
     try {
-      await retailerApi.rejectBillerRequest(reqId);
+      await dispatch(rejectBiller(reqId)).unwrap();
       showToast('Biller request rejected.');
-      await loadData();
+      loadData();
     } catch (err) {
       console.error('Failed to reject biller:', err);
       showToast(err.message || 'Failed to reject biller.', 'err');
@@ -156,18 +145,19 @@ export default function BillersView() {
 
     try {
       if (editingId) {
+        await dispatch(updateBiller({ id: editingId, billerData: payload }));
         setBillers(billers.map((b) => (b.id === editingId ? { ...b, ...payload } : b)));
         showToast('Biller updated successfully.');
       } else {
-        const created = await retailerApi.createBiller(payload).catch(() => ({
+        const res = await dispatch(createBiller(payload)).unwrap().catch(() => ({
           id: Date.now(),
           code: `BI00${billers.length + 1}`,
           ...payload,
         }));
         setBillers([
           {
-            id: created.id || Date.now(),
-            code: created.code || `BI00${billers.length + 1}`,
+            id: res.id || Date.now(),
+            code: res.code || `BI00${billers.length + 1}`,
             name: form.name,
             company: form.company,
             email: form.email,
@@ -189,7 +179,7 @@ export default function BillersView() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to remove this biller account?')) return;
     try {
-      await retailerApi.deleteBiller(id).catch(() => {});
+      await dispatch(deleteBiller(id));
       setBillers(billers.filter((b) => b.id !== id));
       showToast('Biller removed successfully.');
     } catch (err) {

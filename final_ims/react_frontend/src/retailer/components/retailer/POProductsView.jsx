@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { retailerApi } from '../../api/retailerApi';
 import { useAuth } from '../../context/AuthContext';
+import {
+  fetchPOCatalogue,
+  setStagedPOProducts,
+  selectPOCatalogue,
+  selectCatalogueLoading,
+} from '../../redux/slices/purchaseOrdersSlice';
 
 export default function POProductsView({ supplier, onBack, onAddProducts, initialSelected = [] }) {
   const { user } = useAuth();
+  const dispatch = useDispatch();
+  const reduxCatalogue = useSelector(selectPOCatalogue);
+  const reduxCatalogueLoading = useSelector(selectCatalogueLoading);
+
   const [catalogue, setCatalogue] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState({}); // { [id]: { product, qty } }
@@ -216,6 +227,7 @@ export default function POProductsView({ supplier, onBack, onAddProducts, initia
 
     localStorage.setItem('po_products', JSON.stringify(payload));
     localStorage.setItem('po_products_ts', Date.now().toString());
+    dispatch(setStagedPOProducts(selected));
 
     if (onAddProducts) {
       onAddProducts(payload);
