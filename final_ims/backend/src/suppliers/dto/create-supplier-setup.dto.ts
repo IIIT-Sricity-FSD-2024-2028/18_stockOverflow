@@ -349,6 +349,10 @@ export class CreateSupplierSetupDto {
   @IsString()
   id?: string;
 
+  @IsOptional()
+  @IsString()
+  supplierCode?: string;
+
   @ValidateNested()
   @Type(() => SupplierBusinessInfoDto)
   business: SupplierBusinessInfoDto;

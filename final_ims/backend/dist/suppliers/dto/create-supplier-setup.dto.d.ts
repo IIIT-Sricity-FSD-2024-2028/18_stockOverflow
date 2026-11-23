@@ -79,6 +79,7 @@ export declare class BankDetailsDto {
 }
 export declare class CreateSupplierSetupDto {
     id?: string;
+    supplierCode?: string;
     business: SupplierBusinessInfoDto;
     primaryContact: PrimaryContactDto;
     profileStatus?: 'active' | 'inactive' | 'pending' | 'rejected';

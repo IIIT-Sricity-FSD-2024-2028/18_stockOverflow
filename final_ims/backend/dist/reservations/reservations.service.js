@@ -8,27 +8,84 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var ReservationsService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReservationsService = void 0;
 const common_1 = require("@nestjs/common");
 const json_db_service_1 = require("../common/json-db.service");
 const products_service_1 = require("../products/products.service");
-let ReservationsService = class ReservationsService {
+let ReservationsService = ReservationsService_1 = class ReservationsService {
     constructor(db, productsService) {
         this.db = db;
         this.productsService = productsService;
     }
+    onModuleInit() {
+        this.purgeExpiredReservations();
+        setInterval(() => {
+            try {
+                this.purgeExpiredReservations();
+            }
+            catch (err) {
+            }
+        }, 15000);
+    }
+    purgeExpiredReservations() {
+        const now = Date.now();
+        const nowIso = new Date().toISOString();
+        const reservations = this.db.getCollection('reservations');
+        const requests = this.db.getCollection('reservationRequests');
+        const expiredRequestIds = new Set();
+        reservations.forEach((entry) => {
+            const expiresAtMs = entry.expiresAt
+                ? new Date(entry.expiresAt).getTime()
+                : new Date(entry.reservedAt).getTime() + ReservationsService_1.HOLD_DURATION_MS;
+            if (expiresAtMs <= now) {
+                expiredRequestIds.add(entry.requestId);
+            }
+        });
+        requests.forEach((entry) => {
+            if (entry.status === 'pending') {
+                const expiresAtMs = entry.expiresAt
+                    ? new Date(entry.expiresAt).getTime()
+                    : new Date(entry.createdAt).getTime() + ReservationsService_1.HOLD_DURATION_MS;
+                if (expiresAtMs <= now) {
+                    expiredRequestIds.add(entry.requestId);
+                }
+            }
+        });
+        if (!expiredRequestIds.size) {
+            return { expiredCount: 0 };
+        }
+        const remainingReservations = reservations.filter((entry) => !expiredRequestIds.has(entry.requestId));
+        this.db.saveCollection('reservations', remainingReservations);
+        const updatedRequests = requests.map((entry) => {
+            if (expiredRequestIds.has(entry.requestId) && entry.status === 'pending') {
+                return {
+                    ...entry,
+                    status: 'expired',
+                    expiredAt: nowIso,
+                    cancelReason: entry.cancelReason ||
+                        'Pre-order hold expired: 15-minute payment/pickup confirmation window elapsed',
+                };
+            }
+            return entry;
+        });
+        this.db.saveCollection('reservationRequests', updatedRequests);
+        return { expiredCount: expiredRequestIds.size };
+    }
     findAll(storeId) {
-        const storeKey = this.normalizeText(storeId).toLowerCase();
+        this.purgeExpiredReservations();
+        const storeKey = this.normalizeText(storeId);
         const items = this.db.getCollection('reservations');
         return storeKey
-            ? items.filter((entry) => entry.storeId.toLowerCase() === storeKey)
+            ? items.filter((entry) => this.matchesStore(entry.storeId, storeKey))
             : items;
     }
     findRequests(status, customerLookup, storeId) {
+        this.purgeExpiredReservations();
         const statusKey = this.normalizeText(status).toLowerCase();
         const customerKey = this.normalizeText(customerLookup).toLowerCase();
-        const storeKey = this.normalizeText(storeId).toLowerCase();
+        const storeKey = this.normalizeText(storeId);
         const items = this.db.getCollection('reservationRequests').sort((a, b) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
@@ -36,10 +93,7 @@ let ReservationsService = class ReservationsService {
             if (statusKey && entry.status.toLowerCase() !== statusKey) {
                 return false;
             }
-            if (storeKey &&
-                entry.storeId &&
-                entry.storeId.toLowerCase() !== storeKey &&
-                !entry.storeId.toLowerCase().endsWith(':' + storeKey)) {
+            if (storeKey && !this.matchesStore(entry.storeId, storeKey)) {
                 return false;
             }
             if (customerKey && !this.matchesCustomer(entry, customerKey)) {
@@ -49,6 +103,7 @@ let ReservationsService = class ReservationsService {
         });
     }
     findRequest(requestId) {
+        this.purgeExpiredReservations();
         const request = this.db
             .getCollection('reservationRequests')
             .find((entry) => entry.requestId === requestId);
@@ -58,6 +113,7 @@ let ReservationsService = class ReservationsService {
         return request;
     }
     createRequest(createReservationRequestDto) {
+        this.purgeExpiredReservations();
         const product = this.productsService.findBySku(createReservationRequestDto.sku);
         let storeId = this.normalizeText(createReservationRequestDto.storeId);
         const rawStoreCode = storeId.includes(':') ? storeId.split(':').pop() : storeId;
@@ -80,7 +136,7 @@ let ReservationsService = class ReservationsService {
         }
         const pendingReservedQty = this.db
             .getCollection('reservations')
-            .filter((entry) => entry.sku === product.sku && entry.storeId === storeId)
+            .filter((entry) => entry.sku === product.sku && this.matchesStore(entry.storeId, storeId))
             .reduce((sum, entry) => sum + (entry.qty || 0), 0);
         const availableQty = Math.max(0, (storeEntry.qty || 0) - pendingReservedQty);
         const requestedQty = Math.max(1, Math.trunc(createReservationRequestDto.qty || 1));
@@ -88,7 +144,9 @@ let ReservationsService = class ReservationsService {
             throw new common_1.BadRequestException(`Requested quantity exceeds available stock in the selected store. Only ${availableQty} left.`);
         }
         const requestId = `req-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-        const now = new Date().toISOString();
+        const now = new Date();
+        const nowIso = now.toISOString();
+        const expiresAtIso = new Date(now.getTime() + ReservationsService_1.HOLD_DURATION_MS).toISOString();
         const storeName = this.normalizeText(createReservationRequestDto.store) ||
             this.resolveStoreName(storeId);
         const request = {
@@ -104,7 +162,8 @@ let ReservationsService = class ReservationsService {
             store: storeName,
             paymentMethod: this.normalizeText(createReservationRequestDto.paymentMethod, 'Cash'),
             status: 'pending',
-            createdAt: now,
+            createdAt: nowIso,
+            expiresAt: expiresAtIso,
         };
         const reservation = {
             requestId,
@@ -113,6 +172,7 @@ let ReservationsService = class ReservationsService {
             qty: requestedQty,
             customer: request.customer,
             customerEmail: request.customerEmail,
+            customerPhone: request.customerPhone,
             customerId: request.customerId,
             priceUSD: product.priceUSD,
             productImg: product.productImg,
@@ -122,7 +182,8 @@ let ReservationsService = class ReservationsService {
             store: storeName,
             paymentMethod: request.paymentMethod,
             status: 'Pending POS Approval',
-            reservedAt: now,
+            reservedAt: nowIso,
+            expiresAt: expiresAtIso,
         };
         const requests = this.db.getCollection('reservationRequests');
         requests.unshift(request);
@@ -244,7 +305,8 @@ let ReservationsService = class ReservationsService {
     }
 };
 exports.ReservationsService = ReservationsService;
-exports.ReservationsService = ReservationsService = __decorate([
+ReservationsService.HOLD_DURATION_MS = 15 * 60 * 1000;
+exports.ReservationsService = ReservationsService = ReservationsService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [json_db_service_1.JsonDbService,
         products_service_1.ProductsService])

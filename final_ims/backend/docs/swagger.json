@@ -6848,6 +6848,12 @@
           "email": {
             "type": "string"
           },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -6995,6 +7001,12 @@
             "type": "string"
           },
           "employeeName": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "id": {
@@ -7209,6 +7221,12 @@
             "type": "number"
           },
           "emoji": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "expiryDate": {
@@ -7559,6 +7577,12 @@
           "deliveryDate": {
             "type": "string"
           },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -7720,6 +7744,9 @@
           "emoji": {
             "type": "string"
           },
+          "expiresAt": {
+            "type": "string"
+          },
           "maxAvailable": {
             "type": "number"
           },
@@ -7807,6 +7834,12 @@
             "type": "string"
           },
           "customerPhone": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "orderId": {
@@ -7960,6 +7993,12 @@
             "type": "string"
           },
           "description": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "id": {
@@ -8386,6 +8425,12 @@
           "createdAt": {
             "type": "string"
           },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -8448,6 +8493,12 @@
             "type": "string"
           },
           "email": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "id": {
@@ -10990,6 +11041,9 @@
             },
             "maxItems": 200,
             "type": "array"
+          },
+          "supplierCode": {
+            "type": "string"
           }
         },
         "required": [
@@ -11878,6 +11932,9 @@
               "completed",
               "draft"
             ],
+            "type": "string"
+          },
+          "supplierCode": {
             "type": "string"
           },
           "updatedAt": {

@@ -1,12 +1,18 @@
+import { OnModuleInit } from '@nestjs/common';
 import { ReservationRecord, ReservationRequestRecord } from '../common/database.types';
 import { JsonDbService } from '../common/json-db.service';
 import { ProductsService } from '../products/products.service';
 import { CreateReservationRequestDto } from './dto/create-reservation-request.dto';
 import { UpdateReservationRequestDto } from './dto/update-reservation-request.dto';
-export declare class ReservationsService {
+export declare class ReservationsService implements OnModuleInit {
     private readonly db;
     private readonly productsService;
+    static readonly HOLD_DURATION_MS: number;
     constructor(db: JsonDbService, productsService: ProductsService);
+    onModuleInit(): void;
+    purgeExpiredReservations(): {
+        expiredCount: number;
+    };
     findAll(storeId?: string): ReservationRecord[];
     findRequests(status?: string, customerLookup?: string, storeId?: string): ReservationRequestRecord[];
     findRequest(requestId: string): ReservationRequestRecord;

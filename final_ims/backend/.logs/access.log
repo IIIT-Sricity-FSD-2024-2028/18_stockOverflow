@@ -4494,3 +4494,86 @@
 [2026-10-25T17:39:13.797Z] [GET] /api/users 304 - 79ms - IP: ::1
 [2026-10-25T17:56:20.296Z] [GET] /api/users 200 - 156ms - IP: ::1
 [2026-10-25T17:56:20.378Z] [GET] /api/users 304 - 78ms - IP: ::1
+[2026-11-23T11:20:08.457Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: curl/8.23.0
+[2026-11-23T11:20:08.464Z] [GET] /api/suppliers 200 - 7ms - IP: ::1
+[2026-11-23T11:20:19.768Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers | Client: curl/8.23.0
+[2026-11-23T11:20:19.773Z] [GET] /api/suppliers 200 - 5ms - IP: ::1
+[2026-11-23T11:23:07.848Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5 | Client: node
+[2026-11-23T11:23:07.850Z] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5 200 - 2ms - IP: ::1
+[2026-11-23T11:23:07.889Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5/documents | Client: node
+[2026-11-23T11:23:07.890Z] [GET] /api/suppliers/64aa95dd-c853-4f83-8a05-8994d4e7a1c5/documents 200 - 1ms - IP: ::1
+[2026-11-23T11:23:07.910Z] [GET] /api/purchase-orders 200 - 1ms - IP: ::1
+[2026-11-23T11:27:06.309Z] [GET] /api/users 200 - 625ms - IP: ::1
+[2026-11-23T11:27:06.465Z] [GET] /api/users 304 - 151ms - IP: ::1
+[2026-11-23T11:27:15.136Z] [POST] /api/users/login 201 - 21ms - IP: ::1
+[2026-11-23T11:27:27.164Z] [POST] /api/users/login 201 - 12ms - IP: ::1
+[2026-11-23T11:27:31.748Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:27:31.764Z] [POST] /api/suppliers/setup 400 - 16ms - IP: ::1
+[2026-11-23T11:27:36.670Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:27:36.676Z] [POST] /api/suppliers/setup 400 - 7ms - IP: ::1
+[2026-11-23T11:27:40.703Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:27:40.719Z] [POST] /api/suppliers/setup 400 - 16ms - IP: ::1
+[2026-11-23T11:27:53.898Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:27:53.912Z] [POST] /api/suppliers/setup 400 - 14ms - IP: ::1
+[2026-11-23T11:27:58.514Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:27:58.520Z] [POST] /api/suppliers/setup 400 - 6ms - IP: ::1
+[2026-11-23T11:28:14.327Z] [POST] /api/users/login 201 - 5ms - IP: ::1
+[2026-11-23T11:28:45.615Z] [POST] /api/users 201 - 45ms - IP: ::1
+[2026-11-23T11:28:45.637Z] [POST] /api/platform-revenue/subscriptions 201 - 10ms - IP: ::1
+[2026-11-23T11:28:45.679Z] [POST] /api/employees/assignments/distribute 201 - 32ms - IP: ::1
+[2026-11-23T11:29:06.198Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:29:06.209Z] [POST] /api/suppliers/setup 400 - 11ms - IP: ::1
+[2026-11-23T11:29:11.330Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:29:11.333Z] [POST] /api/suppliers/setup 400 - 4ms - IP: ::1
+[2026-11-23T11:29:15.257Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:29:15.262Z] [POST] /api/suppliers/setup 400 - 5ms - IP: ::1
+[2026-11-23T11:34:17.615Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Unknown-Client
+[2026-11-23T11:34:17.641Z] [POST] /api/suppliers/setup 201 - 26ms - IP: ::1
+[2026-11-23T11:34:25.327Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Unknown-Client
+[2026-11-23T11:34:25.348Z] [POST] /api/suppliers/setup 201 - 21ms - IP: ::1
+[2026-11-23T11:35:00.116Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:35:00.164Z] [POST] /api/suppliers/setup 201 - 49ms - IP: ::1
+[2026-11-23T11:35:00.194Z] [PATCH] /api/users/43116be2-b202-4078-8fb1-e2fa329f1011 200 - 16ms - IP: ::1
+[2026-11-23T11:35:00.251Z] [POST] /api/employees/assignments/distribute 201 - 45ms - IP: ::1
+[2026-11-23T11:35:00.270Z] [GET] /api/users/43116be2-b202-4078-8fb1-e2fa329f1011 200 - 7ms - IP: ::1
+[2026-11-23T11:35:01.509Z] [GET] /api/users/43116be2-b202-4078-8fb1-e2fa329f1011 304 - 19ms - IP: ::1
+[2026-11-23T11:35:04.523Z] [GET] /api/users/43116be2-b202-4078-8fb1-e2fa329f1011 304 - 5ms - IP: ::1
+[2026-11-23T11:35:05.251Z] [GET] /api/users 200 - 207ms - IP: ::1
+[2026-11-23T11:35:05.419Z] [GET] /api/users 304 - 163ms - IP: ::1
+[2026-11-23T11:35:10.761Z] [POST] /api/users/login 201 - 9ms - IP: ::1
+[2026-11-23T11:35:10.826Z] [GET] /api/employees/stats 200 - 33ms - IP: ::1
+[2026-11-23T11:35:10.880Z] [GET] /api/employees/assignments 200 - 51ms - IP: ::1
+[2026-11-23T11:35:10.928Z] [GET] /api/employees/queries 200 - 38ms - IP: ::1
+[2026-11-23T11:35:10.963Z] [GET] /api/employees/stats 304 - 31ms - IP: ::1
+[2026-11-23T11:35:11.011Z] [GET] /api/employees/assignments 304 - 39ms - IP: ::1
+[2026-11-23T11:35:11.049Z] [GET] /api/employees/queries 304 - 36ms - IP: ::1
+[2026-11-23T11:35:15.796Z] [POST] /api/employees/assignments/distribute 201 - 33ms - IP: ::1
+[2026-11-23T11:35:15.838Z] [POST] /api/employees/assignments/distribute 201 - 39ms - IP: ::1
+[2026-11-23T11:35:15.880Z] [GET] /api/employees/assignments 304 - 36ms - IP: ::1
+[2026-11-23T11:35:15.920Z] [GET] /api/employees/assignments 304 - 34ms - IP: ::1
+[2026-11-23T11:35:18.973Z] [PATCH] /api/employees/assignments/asgn-e76b18f7-e13f-4df3-a74b-c82f1dcbf089 200 - 58ms - IP: ::1
+[2026-11-23T11:35:19.075Z] [POST] /api/employees/assignments/distribute 201 - 57ms - IP: ::1
+[2026-11-23T11:35:19.191Z] [POST] /api/employees/assignments/distribute 201 - 56ms - IP: ::1
+[2026-11-23T11:35:19.132Z] [POST] /api/employees/assignments/distribute 201 - 54ms - IP: ::1
+[2026-11-23T11:35:19.243Z] [GET] /api/employees/assignments 200 - 47ms - IP: ::1
+[2026-11-23T11:35:19.284Z] [GET] /api/employees/assignments 304 - 35ms - IP: ::1
+[2026-11-23T11:35:19.355Z] [GET] /api/employees/assignments 304 - 62ms - IP: ::1
+[2026-11-23T11:35:27.893Z] [POST] /api/users/login 201 - 8ms - IP: ::1
+[2026-11-23T11:35:34.833Z] [GET] /api/users 200 - 155ms - IP: ::1
+[2026-11-23T11:35:35.050Z] [GET] /api/users 304 - 214ms - IP: ::1
+[2026-11-23T11:35:47.112Z] [POST] /api/users/login 201 - 6ms - IP: ::1
+[2026-11-23T11:35:47.218Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:35:47.227Z] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f 200 - 10ms - IP: ::1
+[2026-11-23T11:35:47.230Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:35:47.233Z] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f 304 - 3ms - IP: ::1
+[2026-11-23T11:35:47.243Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:35:47.245Z] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f/documents 200 - 2ms - IP: ::1
+[2026-11-23T11:35:47.247Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:35:47.249Z] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f/documents 304 - 2ms - IP: ::1
+[2026-11-23T11:35:47.264Z] [GET] /api/purchase-orders 200 - 1ms - IP: ::1
+[2026-11-23T11:35:47.288Z] [GET] /api/purchase-orders 304 - 2ms - IP: ::1
+[2026-11-23T11:35:49.576Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:35:49.590Z] [SUPPLIER-ROUTER-MIDDLEWARE] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f/documents | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0
+[2026-11-23T11:35:49.593Z] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f/documents 304 - 3ms - IP: ::1
+[2026-11-23T11:35:49.580Z] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f 304 - 4ms - IP: ::1
+[2026-11-23T11:35:49.607Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1

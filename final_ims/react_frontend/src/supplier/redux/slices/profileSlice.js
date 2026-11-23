@@ -182,10 +182,9 @@ export const submitSupplierSetup = createAsyncThunk(
   'supplierProfile/submitSetup',
   async ({ business, contact, products, user, saveSession, refreshUser }, { rejectWithValue }) => {
     try {
-      const cleanSid = business.supplierCode.trim() || `SUP-${Math.floor(1000 + Math.random() * 9000)}`;
+      const cleanSid = (business.supplierCode && business.supplierCode.trim()) || `SUP-${Math.floor(1000 + Math.random() * 9000)}`;
 
       const payload = {
-        supplierCode: cleanSid,
         business: {
           companyName: business.companyName.trim(),
           businessType: business.businessType,

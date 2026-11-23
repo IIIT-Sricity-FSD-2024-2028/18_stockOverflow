@@ -108,3 +108,12 @@
 [2026-10-17T09:19:07.713Z] [ERROR] POST /api/users/login 401 - Invalid email or password
 [2026-10-17T09:20:05.670Z] [ERROR] POST /api/suppliers/setup 400 - products.0.category must be one of the following values: Electronics, Computers, Fashion, Furniture, Mobile, Bags, Appliances, Food & Beverage, Sports, Beauty, Mixed
 [2026-10-17T09:24:22.367Z] [ERROR] POST /api/suppliers/setup 400 - products.0.category must be one of the following values: Electronics, Computers, Fashion, Furniture, Mobile, Bags, Appliances, Food & Beverage, Sports, Beauty, Mixed
+[2026-11-23T11:27:31.759Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
+[2026-11-23T11:27:36.673Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
+[2026-11-23T11:27:40.713Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
+[2026-11-23T11:27:53.906Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
+[2026-11-23T11:27:58.517Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
+[2026-11-23T11:29:06.205Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
+[2026-11-23T11:29:11.332Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
+[2026-11-23T11:29:15.261Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
+[2026-11-23T11:34:02.919Z] [ERROR] POST /api/suppliers/setup 400 - Expected property name or '}' in JSON at position 1 (line 1 column 2)

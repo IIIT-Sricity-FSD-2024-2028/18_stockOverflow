@@ -1,6 +1,261 @@
 {
   "products": [
     {
+      "id": "9eea7aa3-9af0-448a-9741-cea689785149",
+      "retailerId": "",
+      "sku": "PT011",
+      "name": "basmati",
+      "category": "Electronics & Technology",
+      "subcategory": "General",
+      "subCategory": "General",
+      "brand": "—",
+      "priceUSD": 100,
+      "price": 100,
+      "discountType": "none",
+      "finalPrice": 100,
+      "taxType": "Inclusive",
+      "unit": "Pc",
+      "qty": 50,
+      "initialQty": 50,
+      "min": 0,
+      "max": 50,
+      "creator": "Retail Manager",
+      "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%26amp%3B%20Technology%20%E2%80%A2%20PT011%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%26amp%3B%20Technology%20%E2%80%A2%20PT011%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%26amp%3B%20Technology%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%26amp%3B%20Technology%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%26amp%3B%20Technology%20%E2%80%A2%20PT011%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%26amp%3B%20Technology%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EElectronics%20%26amp%3B%20Technology%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 0,
+      "trend": "up",
+      "description": "Supplied by supplier",
+      "descriptionHtml": "",
+      "supplier": "supplier",
+      "supplierSku": "SP-101",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 1,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 50
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 50
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 0,
+      "status": "active",
+      "visibility": "published",
+      "createdAt": "2026-11-23T11:35:00.155Z",
+      "updatedAt": "2026-11-23T11:35:00.155Z",
+      "restockedAt": "2026-11-23T11:35:00.155Z",
+      "lastStockChangeAt": "2026-11-23T11:35:00.155Z"
+    },
+    {
+      "id": "f3786e4b-f079-459e-9df2-e43c29e5b63d",
+      "retailerId": "",
+      "sku": "PT010",
+      "name": "basmati",
+      "category": "General",
+      "subcategory": "General",
+      "subCategory": "General",
+      "brand": "Canonical Supplier Ltd",
+      "priceUSD": 85,
+      "price": 85,
+      "discountType": "none",
+      "finalPrice": 85,
+      "taxType": "Inclusive",
+      "unit": "Pc",
+      "qty": 50,
+      "initialQty": 50,
+      "min": 0,
+      "max": 50,
+      "creator": "Retail Manager",
+      "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20PT010%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20PT010%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20PT010%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3Ebasmati%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 0,
+      "trend": "up",
+      "description": "Supplied by Canonical Supplier Ltd",
+      "descriptionHtml": "",
+      "supplier": "Canonical Supplier Ltd",
+      "supplierSku": "SP-101",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 1,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 50
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 50
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 0,
+      "status": "active",
+      "visibility": "published",
+      "createdAt": "2026-11-23T11:34:25.343Z",
+      "updatedAt": "2026-11-23T11:34:25.343Z",
+      "restockedAt": "2026-11-23T11:34:25.343Z",
+      "lastStockChangeAt": "2026-11-23T11:34:25.343Z"
+    },
+    {
+      "id": "5f8c1fc0-a878-44f0-baca-53d23adfaf00",
+      "retailerId": "",
+      "sku": "PT009",
+      "name": "Test Product",
+      "category": "General",
+      "subcategory": "General",
+      "subCategory": "General",
+      "brand": "Test Supplier Corp",
+      "priceUSD": 100,
+      "price": 100,
+      "discountType": "none",
+      "finalPrice": 100,
+      "taxType": "Inclusive",
+      "unit": "Pc",
+      "qty": 50,
+      "initialQty": 50,
+      "min": 0,
+      "max": 50,
+      "creator": "Retail Manager",
+      "creatorImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20viewBox%3D%220%200%20240%20240%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22240%22%20height%3D%22240%22%20rx%3D%22120%22%20fill%3D%22%234f46e5%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22120%22%20y%3D%22136%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3ERM%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3ETest%20Product%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20PT009%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+      "galleryImages": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3ETest%20Product%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20PT009%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3ETest%20Product%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3ETest%20Product%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "images": [
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3ETest%20Product%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20PT009%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23fee2e2%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3ETest%20Product%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%202%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
+        "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dcfce7%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3ETest%20Product%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EGeneral%20%E2%80%A2%20View%203%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20"
+      ],
+      "emoji": "📦",
+      "soldThisMonth": 0,
+      "trend": "up",
+      "description": "Supplied by Test Supplier Corp",
+      "descriptionHtml": "",
+      "supplier": "Test Supplier Corp",
+      "supplierSku": "SP-TEST-1",
+      "barcode": "",
+      "warehouse": "",
+      "bin": "",
+      "reorderPoint": 0,
+      "reorderQty": 1,
+      "hasVariants": false,
+      "variants": [],
+      "hasExpiry": false,
+      "expiryDate": "",
+      "batchNumber": "",
+      "shippingClass": "Standard",
+      "customFields": [],
+      "tags": [],
+      "highlights": [],
+      "specs": {},
+      "palette": [],
+      "storeInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 50
+        }
+      ],
+      "initialStoreInventory": [
+        {
+          "storeId": "default-store",
+          "qty": 50
+        }
+      ],
+      "feedback": [],
+      "ratingBreakdown": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "ratingCount": 0,
+      "ratingAvg": 0,
+      "revenue": 0,
+      "status": "active",
+      "visibility": "published",
+      "createdAt": "2026-11-23T11:34:17.635Z",
+      "updatedAt": "2026-11-23T11:34:17.635Z",
+      "restockedAt": "2026-11-23T11:34:17.635Z",
+      "lastStockChangeAt": "2026-11-23T11:34:17.635Z"
+    },
+    {
       "id": "7951f6c1-51c2-4c0c-96bd-94f8a287290b",
       "retailerId": "",
       "sku": "PT008",
@@ -1466,80 +1721,7 @@
       "createdAt": "2026-08-28T05:02:22.755Z"
     }
   ],
-  "reservations": [
-    {
-      "requestId": "req-1792938402902-19602",
-      "sku": "PT001",
-      "name": "Product 1",
-      "qty": 10,
-      "customer": "Primary Customer",
-      "customerEmail": "customer@stockoverflow.com",
-      "customerId": "u-consumer-1",
-      "priceUSD": 100,
-      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3EProduct%201%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
-      "emoji": "📦",
-      "maxAvailable": 62,
-      "storeId": "STORE-01",
-      "store": "John's Main Store",
-      "paymentMethod": "UPI",
-      "status": "Pending POS Approval",
-      "reservedAt": "2026-10-25T14:26:42.902Z"
-    },
-    {
-      "requestId": "req-1792230414475-61474",
-      "sku": "PT001",
-      "name": "Product 1",
-      "qty": 1,
-      "customer": "Primary Customer",
-      "customerEmail": "customer@stockoverflow.com",
-      "customerId": "u-consumer-1",
-      "priceUSD": 100,
-      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3EProduct%201%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%E2%80%A2%20PT001%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
-      "emoji": "📦",
-      "maxAvailable": 63,
-      "storeId": "STORE-01",
-      "store": "John's Main Store",
-      "paymentMethod": "UPI",
-      "status": "Pending POS Approval",
-      "reservedAt": "2026-10-17T09:46:54.475Z"
-    },
-    {
-      "requestId": "req-1792230399554-14491",
-      "sku": "PT008",
-      "name": "Mechanical Gaming Keyboard",
-      "qty": 1,
-      "customer": "Primary Customer",
-      "customerEmail": "customer@stockoverflow.com",
-      "customerId": "u-consumer-1",
-      "priceUSD": 1499,
-      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3EMechanical%20Gaming%20Keyboard%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%26amp%3B%20Peripherals%20%E2%80%A2%20PT008%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
-      "emoji": "📦",
-      "maxAvailable": 59,
-      "storeId": "default-store",
-      "store": "Global (All Stores)",
-      "paymentMethod": "UPI",
-      "status": "Pending POS Approval",
-      "reservedAt": "2026-10-17T09:46:39.554Z"
-    },
-    {
-      "requestId": "req-1792230329152-48705",
-      "sku": "PT008",
-      "name": "Mechanical Gaming Keyboard",
-      "qty": 1,
-      "customer": "Primary Customer",
-      "customerEmail": "customer@stackoverflow.com",
-      "customerId": "",
-      "priceUSD": 1499,
-      "productImg": "data:image/svg+xml;utf8,%0A%20%20%20%20%20%20%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22960%22%20height%3D%22720%22%20viewBox%3D%220%200%20960%20720%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%22960%22%20height%3D%22720%22%20rx%3D%2242%22%20fill%3D%22%23dbeafe%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2288%22%20y%3D%2298%22%20width%3D%22784%22%20height%3D%22524%22%20rx%3D%2234%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.86%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22480%22%20cy%3D%22280%22%20r%3D%22142%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.92%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22330%22%20text-anchor%3D%22middle%22%20font-size%3D%22138%22%3E%F0%9F%93%A6%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22548%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2240%22%20font-weight%3D%22700%22%20fill%3D%22%230f172a%22%3EMechanical%20Gaming%20Keyboard%3C%2Ftext%3E%0A%20%20%20%20%20%20%20%20%3Ctext%20x%3D%22480%22%20y%3D%22596%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23475569%22%3EComputers%20%26amp%3B%20Peripherals%20%E2%80%A2%20PT008%3C%2Ftext%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E%0A%20%20%20%20",
-      "emoji": "📦",
-      "maxAvailable": 60,
-      "storeId": "default-store",
-      "store": "Central Fulfillment Store",
-      "paymentMethod": "UPI",
-      "status": "Pending POS Approval",
-      "reservedAt": "2026-10-17T09:45:29.152Z"
-    }
-  ],
+  "reservations": [],
   "reservationRequests": [
     {
       "requestId": "req-1792938429418-58930",
@@ -1569,8 +1751,10 @@
       "storeId": "STORE-01",
       "store": "John's Main Store",
       "paymentMethod": "UPI",
-      "status": "pending",
-      "createdAt": "2026-10-25T14:26:42.902Z"
+      "status": "expired",
+      "createdAt": "2026-10-25T14:26:42.902Z",
+      "expiredAt": "2026-11-23T11:33:51.670Z",
+      "cancelReason": "Pre-order hold expired: 15-minute payment/pickup confirmation window elapsed"
     },
     {
       "requestId": "req-1792938191420-40988",
@@ -1617,8 +1801,10 @@
       "storeId": "STORE-01",
       "store": "John's Main Store",
       "paymentMethod": "UPI",
-      "status": "pending",
-      "createdAt": "2026-10-17T09:46:54.475Z"
+      "status": "expired",
+      "createdAt": "2026-10-17T09:46:54.475Z",
+      "expiredAt": "2026-11-23T11:33:51.670Z",
+      "cancelReason": "Pre-order hold expired: 15-minute payment/pickup confirmation window elapsed"
     },
     {
       "requestId": "req-1792230399554-14491",
@@ -1631,8 +1817,10 @@
       "storeId": "default-store",
       "store": "Global (All Stores)",
       "paymentMethod": "UPI",
-      "status": "pending",
-      "createdAt": "2026-10-17T09:46:39.554Z"
+      "status": "expired",
+      "createdAt": "2026-10-17T09:46:39.554Z",
+      "expiredAt": "2026-11-23T11:33:51.670Z",
+      "cancelReason": "Pre-order hold expired: 15-minute payment/pickup confirmation window elapsed"
     },
     {
       "requestId": "req-1792230329152-48705",
@@ -1645,8 +1833,10 @@
       "storeId": "default-store",
       "store": "Central Fulfillment Store",
       "paymentMethod": "UPI",
-      "status": "pending",
-      "createdAt": "2026-10-17T09:45:29.152Z"
+      "status": "expired",
+      "createdAt": "2026-10-17T09:45:29.152Z",
+      "expiredAt": "2026-11-23T11:33:51.670Z",
+      "cancelReason": "Pre-order hold expired: 15-minute payment/pickup confirmation window elapsed"
     },
     {
       "requestId": "req-1792227445406-53340",
@@ -2178,6 +2368,92 @@
     }
   ],
   "employeeAssignments": [
+    {
+      "id": "asgn-e76b18f7-e13f-4df3-a74b-c82f1dcbf089",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "50c1c24d-9efa-4fd6-acdb-137f8cc8936f",
+      "targetType": "supplier",
+      "title": "Supplier Verification: supplier",
+      "details": {
+        "companyName": "supplier",
+        "ownerName": "supplier",
+        "email": "supplier@gmail.com",
+        "phone": "+91 98765 12345",
+        "address": "",
+        "category": "Electronics & Technology",
+        "supplierCode": "SUP-7770",
+        "paymentTerms": "Net 30",
+        "submittedAt": "2026-11-23T11:35:00.182Z",
+        "gstin": "GSTIN-PENDING",
+        "documents": [
+          "Business Registration Certificate",
+          "GSTIN Certificate",
+          "Bank Account Verification Letter"
+        ]
+      },
+      "status": "approved",
+      "createdAt": "2026-11-23T11:35:00.242Z",
+      "notes": "All business compliance documents and credentials verified successfully.",
+      "resolvedAt": "2026-11-23T11:35:18.917Z"
+    },
+    {
+      "id": "asgn-3bbd9c3e-32bb-4b00-b714-80a85de532ea",
+      "employeeId": "u-employee-2",
+      "employeeName": "Sarah Chen",
+      "employeeEmail": "sarah.employee@stockoverflow.com",
+      "targetId": "d59aa7d4-6633-4041-9459-2460b2e90abf",
+      "targetType": "supplier",
+      "title": "Supplier Verification: Test Supplier Corp",
+      "details": {
+        "companyName": "Test Supplier Corp",
+        "ownerName": "Test Owner",
+        "email": "testsupplier_e2e@example.com",
+        "phone": "9876543210",
+        "address": "",
+        "category": "General",
+        "supplierCode": "SUP-9999",
+        "paymentTerms": "Net 30",
+        "submittedAt": "2026-11-23T11:34:17.622Z",
+        "gstin": "GSTIN-PENDING",
+        "documents": [
+          "Business Registration Certificate",
+          "GSTIN Certificate",
+          "Bank Account Verification Letter"
+        ]
+      },
+      "status": "pending",
+      "createdAt": "2026-11-23T11:35:00.215Z"
+    },
+    {
+      "id": "asgn-1b85e15d-c39c-4893-9e04-ebc74c41a350",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "616b5719-1a5d-4b9b-9be6-a1aafccecbca",
+      "targetType": "supplier",
+      "title": "Supplier Verification: Canonical Supplier Ltd",
+      "details": {
+        "companyName": "Canonical Supplier Ltd",
+        "ownerName": "Jane Doe",
+        "email": "canonical@example.com",
+        "phone": "9123456789",
+        "address": "",
+        "category": "General",
+        "supplierCode": "SUP-1234",
+        "paymentTerms": "Net 30",
+        "submittedAt": "2026-11-23T11:34:25.332Z",
+        "gstin": "GSTIN-PENDING",
+        "documents": [
+          "Business Registration Certificate",
+          "GSTIN Certificate",
+          "Bank Account Verification Letter"
+        ]
+      },
+      "status": "pending",
+      "createdAt": "2026-11-23T11:35:00.215Z"
+    },
     {
       "id": "asgn-75a42b68-eed0-4ad0-98e5-72480194d038",
       "employeeId": "u-employee-2",
@@ -3063,6 +3339,31 @@
       ],
       "maxStores": 5,
       "maxProducts": 10000
+    },
+    {
+      "id": "sub-e0c74f92-b441-483a-a1d1-bf4405b70624",
+      "userId": "43116be2-b202-4078-8fb1-e2fa329f1011",
+      "userName": "supplier",
+      "userEmail": "supplier@gmail.com",
+      "userRole": "supplier",
+      "tier": "free",
+      "tierName": "Starter",
+      "pricePerMonth": 0,
+      "billingCycle": "monthly",
+      "startDate": "2026-11-23T11:28:45.628Z",
+      "endDate": "2026-12-23T11:28:45.628Z",
+      "renewalDate": "2026-12-23T11:28:45.628Z",
+      "status": "active",
+      "autoRenew": true,
+      "paymentMethod": "UPI AutoPay",
+      "features": [
+        "5 Incoming POs / week (Auto-resets weekly)",
+        "Up to 25 Product Listings",
+        "Single Warehouse Dispatch Depot",
+        "Basic Order Tracking & Status"
+      ],
+      "maxStores": 1,
+      "maxProducts": 50
     }
   ]
 }
