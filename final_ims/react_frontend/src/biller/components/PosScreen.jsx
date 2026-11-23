@@ -1,16 +1,125 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { useDataSync } from '../../context/DataSyncContext';
 import { billerApi } from '../api/billerApi';
 import ReceiptModal from './ReceiptModal';
+import {
+  fetchBillerStores,
+  fetchBillerProducts,
+  fetchBillerCustomers,
+  createBillerCustomer,
+  setCurrentStore,
+  setSelectedCustomer,
+  setActiveCategory,
+  setSearchQuery,
+  setSortOrder,
+  selectBillerStores,
+  selectBillerCurrentStoreId,
+  selectBillerCurrentStoreName,
+  selectBillerProducts,
+  selectBillerCustomers,
+  selectBillerSelectedCustomer,
+  selectBillerActiveCategory,
+  selectBillerSearchQuery,
+  selectBillerSortOrder,
+  selectBillerCatalogLoading,
+} from '../redux/slices/billerCatalogSlice';
+import {
+  addToBillerCart,
+  updateBillerCartQty,
+  removeFromBillerCart,
+  clearBillerCart,
+  addReservedHoldToCart,
+  setBillerShipping,
+  setBillerTax,
+  setBillerDiscount,
+  setBillerCoupon,
+  setBillerRoundoffEnabled,
+  setBillerPaymentMethod,
+  selectBillerCart,
+  selectBillerStagedReservationIds,
+  selectBillerShipping,
+  selectBillerTax,
+  selectBillerDiscount,
+  selectBillerCoupon,
+  selectBillerRoundoffEnabled,
+  selectBillerPaymentMethod,
+  selectBillerCartSubtotal,
+  selectBillerCartItemCount,
+  selectBillerRawTotal,
+  selectBillerFinalTotal,
+  selectBillerRoundoffValue,
+} from '../redux/slices/billerCartSlice';
+import {
+  fetchBillerReservations,
+  cancelBillerReservation,
+  setOrdersModalTab,
+  setIsOrdersModalOpen,
+  removeReservedOrderFromList,
+  selectBillerReservedOrders,
+  selectBillerCancelledOrders,
+  selectBillerOrdersModalTab,
+  selectBillerIsOrdersModalOpen,
+  selectBillerCancellingRequestId,
+} from '../redux/slices/billerReservationsSlice';
+import {
+  createBillerTransaction,
+  setCompletedTx,
+  setIsReceiptOpen,
+  closeReceiptModal,
+  selectBillerCompletedTx,
+  selectBillerIsReceiptOpen,
+  selectBillerIsCharging,
+} from '../redux/slices/billerTransactionsSlice';
 
 export default function PosScreen({ onSwitchView, onLogout }) {
+  const dispatch = useDispatch();
   const { user } = useAuth();
   const retailerId =
     user?.retailerId ||
     user?.profile?.retailerId ||
     (user?.role === 'retailer' ? (user?.profileId || user?.id) : '') ||
     '';
+
+  // Redux Selectors
+  const stores = useSelector(selectBillerStores);
+  const currentStoreId = useSelector(selectBillerCurrentStoreId) || user?.currentStoreId || user?.storeId || '';
+  const currentStoreName = useSelector(selectBillerCurrentStoreName) || user?.store || 'Retail Store';
+  const products = useSelector(selectBillerProducts);
+  const customers = useSelector(selectBillerCustomers);
+  const selectedCustomer = useSelector(selectBillerSelectedCustomer);
+  const activeCategory = useSelector(selectBillerActiveCategory);
+  const searchQuery = useSelector(selectBillerSearchQuery);
+  const sortOrder = useSelector(selectBillerSortOrder);
+  const loading = useSelector(selectBillerCatalogLoading);
+
+  // Redux Cart Selectors
+  const cart = useSelector(selectBillerCart);
+  const stagedReservationIds = useSelector(selectBillerStagedReservationIds);
+  const shipping = useSelector(selectBillerShipping);
+  const tax = useSelector(selectBillerTax);
+  const discount = useSelector(selectBillerDiscount);
+  const coupon = useSelector(selectBillerCoupon);
+  const roundoffEnabled = useSelector(selectBillerRoundoffEnabled);
+  const paymentMethod = useSelector(selectBillerPaymentMethod);
+  const subtotal = useSelector(selectBillerCartSubtotal);
+  const totalItemCount = useSelector(selectBillerCartItemCount);
+  const rawTotal = useSelector(selectBillerRawTotal);
+  const finalTotal = useSelector(selectBillerFinalTotal);
+  const roundoffValue = useSelector(selectBillerRoundoffValue);
+
+  // Redux Reservations Selectors
+  const reservedOrders = useSelector(selectBillerReservedOrders);
+  const cancelledOrders = useSelector(selectBillerCancelledOrders);
+  const ordersModalTab = useSelector(selectBillerOrdersModalTab);
+  const isOrdersModalOpen = useSelector(selectBillerIsOrdersModalOpen);
+  const cancellingRequestId = useSelector(selectBillerCancellingRequestId);
+
+  // Redux Transactions Selectors
+  const completedTx = useSelector(selectBillerCompletedTx);
+  const isReceiptOpen = useSelector(selectBillerIsReceiptOpen);
+  const isCharging = useSelector(selectBillerIsCharging);
 
   // Currency Formatter
   const currencyFormatter = new Intl.NumberFormat('en-IN', {
@@ -49,15 +158,6 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     return `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
   };
 
-  // Store Affiliation & Scope
-  const [stores, setStores] = useState([]);
-  const [currentStoreId, setCurrentStoreId] = useState(() => {
-    return user?.currentStoreId || user?.storeId || '';
-  });
-  const [currentStoreName, setCurrentStoreName] = useState(() => {
-    return user?.store || 'Retail Store';
-  });
-
   // Categories
   const CATEGORIES = [
     { id: 'all', label: 'All Items', icon: '🏷️' },
@@ -68,44 +168,11 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     { id: 'appliances', label: 'Appliances', icon: '🔌' },
     { id: 'accessories', label: 'Accessories', icon: '🎒' },
   ];
-  const [activeCategory, setActiveCategory] = useState('all');
 
-  // Products & Catalog
-  const [products, setProducts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('default'); // 'default' | 'asc' | 'desc'
-  const [loading, setLoading] = useState(true);
-
-  // Cart / Line Items: array of { sku, name, price, quantity, total, isReserved, requestIds, maxStock, image, emoji }
-  const [cart, setCart] = useState([]);
-  const [stagedReservationIds, setStagedReservationIds] = useState({});
-
-  // Checkout Calculations State
-  const [shipping, setShipping] = useState(0);
-  const [tax, setTax] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [coupon, setCoupon] = useState(0);
-  const [roundoffEnabled, setRoundoffEnabled] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState('Cash');
-
-  // Customer Management
-  const [customers, setCustomers] = useState(['Walk-in Customer']);
-  const [selectedCustomer, setSelectedCustomer] = useState('Walk-in Customer');
-
-  // Incoming Consumer Orders (Reservations)
-  const [reservedOrders, setReservedOrders] = useState([]);
-  const [cancelledOrders, setCancelledOrders] = useState([]);
-  const [ordersModalTab, setOrdersModalTab] = useState('active');
-  const [cancellingRequestId, setCancellingRequestId] = useState(null);
-  const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
+  // Modals Local State
   const [isNewCustomerModalOpen, setIsNewCustomerModalOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
   const [newCustomerPhone, setNewCustomerPhone] = useState('');
-
-  // Receipt Modal State
-  const [completedTx, setCompletedTx] = useState(null);
-  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
-  const [isCharging, setIsCharging] = useState(false);
 
   // Toast Notification
   const [toastMsg, setToastMsg] = useState('');
@@ -116,15 +183,14 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     toastTimeoutRef.current = setTimeout(() => setToastMsg(''), 2500);
   };
 
-  // 1. Initial Load: Stores, Products, Customers, Reservations
+  // 1. Initial Load: Stores, Products, Customers via Redux Thunks
   useEffect(() => {
     let isMounted = true;
     async function initData() {
-      setLoading(true);
       try {
-        const [storesData, customersData] = await Promise.all([
-          billerApi.getStores(retailerId).catch(() => []),
-          billerApi.getCustomers().catch(() => []),
+        const [storesData] = await Promise.all([
+          dispatch(fetchBillerStores(retailerId)).unwrap().catch(() => []),
+          dispatch(fetchBillerCustomers()).unwrap().catch(() => []),
         ]);
 
         if (!isMounted) return;
@@ -147,48 +213,33 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             storeList = scopedList;
           }
         }
-        setStores(storeList);
 
         // Determine biller's assigned store
         const billerStoreId = user?.currentStoreId || user?.storeId || '';
         let resolvedStoreId = billerStoreId;
+        let resolvedStoreName = user?.store || 'Retail Store';
         const matchedStore = storeList.find(
           (s) => (s.id || s.code) === billerStoreId
         );
 
         if (matchedStore) {
           resolvedStoreId = matchedStore.id || matchedStore.code;
-          setCurrentStoreId(resolvedStoreId);
-          setCurrentStoreName(matchedStore.name);
+          resolvedStoreName = matchedStore.name;
         } else if (billerStoreId) {
           resolvedStoreId = billerStoreId;
-          setCurrentStoreId(billerStoreId);
-          setCurrentStoreName(user?.store || 'Assigned Store');
+          resolvedStoreName = user?.store || 'Assigned Store';
         } else if (storeList.length > 0) {
           resolvedStoreId = storeList[0].id || storeList[0].code;
-          setCurrentStoreId(resolvedStoreId);
-          setCurrentStoreName(storeList[0].name);
+          resolvedStoreName = storeList[0].name;
         }
+
+        dispatch(setCurrentStore({ id: resolvedStoreId, name: resolvedStoreName }));
 
         // Fetch products specifically for this resolved store and retailer
-        const productsData = await billerApi.getProducts(resolvedStoreId, retailerId).catch(() => []);
-        if (isMounted) {
-          setProducts(Array.isArray(productsData) ? productsData : []);
-        }
-
-        // Customers
-        const custList = Array.isArray(customersData) ? customersData : [];
-        const names = ['Walk-in Customer'].concat(
-          custList
-            .map((c) => c.name)
-            .filter((n) => n && n.toLowerCase() !== 'walk-in customer')
-        );
-        setCustomers(Array.from(new Set(names)));
+        dispatch(fetchBillerProducts({ storeId: resolvedStoreId, retailerId }));
       } catch (err) {
         console.error('POS initialization error:', err);
         showToast('Error loading POS catalog.');
-      } finally {
-        if (isMounted) setLoading(false);
       }
     }
 
@@ -196,81 +247,34 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     return () => {
       isMounted = false;
     };
-  }, [user, retailerId]);
+  }, [user, retailerId, dispatch]);
 
   // 1b. Reload Products whenever the active store changes
   useEffect(() => {
     if (!currentStoreId) return;
-    let isMounted = true;
-    billerApi.getProducts(currentStoreId, retailerId)
-      .then((data) => {
-        if (isMounted && Array.isArray(data)) {
-          setProducts(data);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      isMounted = false;
-    };
-  }, [currentStoreId, retailerId]);
+    dispatch(fetchBillerProducts({ storeId: currentStoreId, retailerId }));
+  }, [currentStoreId, retailerId, dispatch]);
 
-  // 2. Real-time Incoming Orders Polling (Every 3.5 seconds)
+  // 2. Real-time Incoming Orders Polling (Every 3.5 seconds) via Redux Thunk
   useEffect(() => {
-    let isMounted = true;
+    const targetStoreId = currentStoreId || user?.storeId || '';
+    dispatch(fetchBillerReservations(targetStoreId));
 
-    async function loadIncomingOrders() {
-      try {
-        const targetStoreId = currentStoreId || user?.storeId || '';
-        const [reservations, cancelledReqs] = await Promise.all([
-          billerApi.getReservations(targetStoreId).catch(() => []),
-          billerApi.getReservationRequests('', targetStoreId).catch(() => []),
-        ]);
-        if (!isMounted) return;
+    const interval = setInterval(() => {
+      dispatch(fetchBillerReservations(targetStoreId));
+    }, 3500);
 
-        if (Array.isArray(reservations)) {
-          // Filter out already staged items in the current transaction
-          const unstaged = reservations.filter((r) => !stagedReservationIds[r.requestId]);
-          setReservedOrders(unstaged);
-        }
-        if (Array.isArray(cancelledReqs)) {
-          const inactive = (Array.isArray(cancelledReqs) ? cancelledReqs : []).filter(
-            (r) => r.status === 'cancelled' || r.status === 'expired'
-          );
-          setCancelledOrders(inactive);
-        }
-      } catch (err) {
-        // silent polling catch
-      }
-    }
-
-    loadIncomingOrders();
-    const interval = setInterval(loadIncomingOrders, 3500);
     return () => {
-      isMounted = false;
       clearInterval(interval);
     };
-  }, [currentStoreId, user, stagedReservationIds]);
+  }, [currentStoreId, user, dispatch]);
 
   // Real-time synchronization across modules
   useDataSync(['products', 'inventory', 'transactions', 'orders'], async () => {
     try {
-      const prods = await billerApi.getProducts(currentStoreId, retailerId).catch(() => []);
-      if (Array.isArray(prods)) setProducts(prods);
+      dispatch(fetchBillerProducts({ storeId: currentStoreId, retailerId }));
       const targetStoreId = currentStoreId || user?.storeId || '';
-      const [reservations, cancelledReqs] = await Promise.all([
-        billerApi.getReservations(targetStoreId).catch(() => []),
-        billerApi.getReservationRequests('', targetStoreId).catch(() => []),
-      ]);
-      if (Array.isArray(reservations)) {
-        const unstaged = reservations.filter((r) => !stagedReservationIds[r.requestId]);
-        setReservedOrders(unstaged);
-      }
-      if (Array.isArray(cancelledReqs)) {
-        const inactive = (Array.isArray(cancelledReqs) ? cancelledReqs : []).filter(
-          (r) => r.status === 'cancelled' || r.status === 'expired'
-        );
-        setCancelledOrders(inactive);
-      }
+      dispatch(fetchBillerReservations(targetStoreId));
     } catch (_e) {}
   });
 
@@ -342,159 +346,45 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     return list;
   }, [products, currentStoreId, retailerId, activeCategory, searchQuery, sortOrder]);
 
-  // Cart Totals
-  const subtotal = useMemo(() => {
-    return cart.reduce((sum, item) => sum + (item.total || 0), 0);
-  }, [cart]);
-
-  const rawTotal = useMemo(() => {
-    const raw = subtotal + Number(shipping) + Number(tax) - Number(discount) - Number(coupon);
-    return Math.max(0, raw);
-  }, [subtotal, shipping, tax, discount, coupon]);
-
-  const finalTotal = useMemo(() => {
-    return roundoffEnabled ? Math.round(rawTotal) : rawTotal;
-  }, [rawTotal, roundoffEnabled]);
-
-  const roundoffValue = useMemo(() => {
-    return finalTotal - rawTotal;
-  }, [finalTotal, rawTotal]);
-
-  const totalItemCount = useMemo(() => {
-    return cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
-  }, [cart]);
-
-  // Cart Operations
+  // Cart Operations via Redux
   const handleAddToCart = (product, addQty = 1) => {
-    const sku = product.sku;
-    const price = Number(product.priceUSD || product.price || 0);
-
-    setCart((prev) => {
-      const idx = prev.findIndex((item) => item.sku === sku);
-      if (idx >= 0) {
-        const existing = prev[idx];
-        const newQty = existing.quantity + addQty;
-        const updated = {
-          ...existing,
-          quantity: newQty,
-          total: newQty * price,
-        };
-        const next = [...prev];
-        next[idx] = updated;
-        return next;
-      } else {
-        return [
-          ...prev,
-          {
-            sku: product.sku,
-            name: product.name || 'Product',
-            price: price,
-            quantity: addQty,
-            total: price * addQty,
-            image: product.productImg || product.image || '',
-            emoji: product.emoji || '📦',
-            maxStock: product.qty || 50,
-            isReserved: false,
-            requestIds: [],
-          },
-        ];
-      }
-    });
-
+    dispatch(addToBillerCart({ product, addQty }));
     showToast(`Added ${product.name} to cart`);
   };
 
   const handleUpdateCartQty = (sku, delta) => {
-    setCart((prev) => {
-      return prev
-        .map((item) => {
-          if (item.sku === sku) {
-            const nextQty = Math.max(0, item.quantity + delta);
-            return {
-              ...item,
-              quantity: nextQty,
-              total: nextQty * item.price,
-            };
-          }
-          return item;
-        })
-        .filter((item) => item.quantity > 0);
-    });
+    dispatch(updateBillerCartQty({ sku, delta }));
   };
 
   const handleRemoveFromCart = (sku) => {
-    setCart((prev) => prev.filter((item) => item.sku !== sku));
+    dispatch(removeFromBillerCart(sku));
     showToast('Item removed from cart');
   };
 
   const handleClearCart = () => {
     if (!cart.length) return;
     if (window.confirm('Clear all items from current order?')) {
-      setCart([]);
-      setStagedReservationIds({});
+      dispatch(clearBillerCart());
       showToast('Order cleared');
     }
   };
 
-  // Add Reserved Order from Consumer to POS Cart
+  // Add Reserved Order from Consumer to POS Cart via Redux
   const handleApproveReservedOrder = (reservation) => {
-    const sku = reservation.sku;
-    const safeQty = Math.max(1, Number(reservation.qty) || 1);
-    const price = Number(reservation.priceUSD || 0);
-    const requestId = reservation.requestId;
-
-    // Track staged reservation
-    if (requestId) {
-      setStagedReservationIds((prev) => ({ ...prev, [requestId]: true }));
-    }
+    dispatch(addReservedHoldToCart(reservation));
 
     // Set Customer name automatically if provided in reservation
     if (reservation.customer && reservation.customer.trim()) {
-      setSelectedCustomer(reservation.customer.trim());
+      dispatch(setSelectedCustomer(reservation.customer.trim()));
     }
 
     // Set payment method if provided
     if (reservation.paymentMethod) {
-      setPaymentMethod(reservation.paymentMethod);
+      dispatch(setBillerPaymentMethod(reservation.paymentMethod));
     }
 
-    setCart((prev) => {
-      const idx = prev.findIndex((item) => item.sku === sku);
-      if (idx >= 0) {
-        const existing = prev[idx];
-        const newQty = existing.quantity + safeQty;
-        const reqIds = Array.from(
-          new Set([...(existing.requestIds || []), requestId].filter(Boolean))
-        );
-        const next = [...prev];
-        next[idx] = {
-          ...existing,
-          quantity: newQty,
-          total: newQty * existing.price,
-          isReserved: true,
-          requestIds: reqIds,
-        };
-        return next;
-      } else {
-        return [
-          ...prev,
-          {
-            sku: reservation.sku,
-            name: reservation.name || reservation.productName || 'Reserved Item',
-            price: price,
-            quantity: safeQty,
-            total: price * safeQty,
-            image: reservation.productImg || '',
-            emoji: reservation.emoji || '📦',
-            isReserved: true,
-            requestIds: requestId ? [requestId] : [],
-          },
-        ];
-      }
-    });
-
     // Remove from UI reserved list
-    setReservedOrders((prev) => prev.filter((r) => r.requestId !== requestId));
+    dispatch(removeReservedOrderFromList(reservation.requestId));
     showToast(`Approved order hold for ${reservation.name || 'product'}`);
   };
 
@@ -506,18 +396,16 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     if (!confirmCancel) return;
 
     try {
-      setCancellingRequestId(requestId);
-      await billerApi.cancelReservationRequest(
-        requestId,
-        'Cancelled by POS store staff',
-        `biller (${user?.name || 'Staff'})`
-      );
-      setReservedOrders((prev) => prev.filter((r) => r.requestId !== requestId));
+      await dispatch(
+        cancelBillerReservation({
+          requestId,
+          reason: 'Cancelled by POS store staff',
+          cancelledBy: `biller (${user?.name || 'Staff'})`,
+        })
+      ).unwrap();
       showToast(`Order hold ${requestId} cancelled and stock released`);
     } catch (err) {
-      alert('Failed to cancel order: ' + (err.message || 'Error'));
-    } finally {
-      setCancellingRequestId(null);
+      alert('Failed to cancel order: ' + (err.message || err || 'Error'));
     }
   };
 
@@ -527,15 +415,16 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     if (!name) return;
 
     if (!customers.includes(name)) {
-      setCustomers((prev) => [...prev, name]);
-      billerApi.createCustomer({
-        name,
-        phone: newCustomerPhone.trim(),
-        email: `${name.toLowerCase().replace(/\s+/g, '')}@walkin.customer`,
-      }).catch(() => {});
+      dispatch(
+        createBillerCustomer({
+          name,
+          phone: newCustomerPhone.trim(),
+          email: `${name.toLowerCase().replace(/\s+/g, '')}@walkin.customer`,
+        })
+      );
     }
 
-    setSelectedCustomer(name);
+    dispatch(setSelectedCustomer(name));
     setNewCustomerName('');
     setNewCustomerPhone('');
     setIsNewCustomerModalOpen(false);
@@ -552,8 +441,6 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     if (!window.confirm(`Confirm payment of ${formatInr(finalTotal)} via ${paymentMethod}?`)) {
       return;
     }
-
-    setIsCharging(true);
 
     try {
       // Gather all linked reservation requestIds
@@ -593,7 +480,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
         status: 'Delivered',
       };
 
-      const result = await billerApi.createTransaction(payload);
+      const result = await dispatch(createBillerTransaction(payload)).unwrap();
 
       // Attach cashier meta for receipt
       const txWithMeta = {
@@ -603,29 +490,26 @@ export default function PosScreen({ onSwitchView, onLogout }) {
         paymentMethod: paymentMethod,
       };
 
-      setCompletedTx(txWithMeta);
-      setIsReceiptOpen(true);
+      dispatch(setCompletedTx(txWithMeta));
+      dispatch(setIsReceiptOpen(true));
 
       // Reset cart and staged items
-      setCart([]);
-      setStagedReservationIds({});
-      setShipping(0);
-      setTax(0);
-      setDiscount(0);
-      setCoupon(0);
-      setSelectedCustomer('Walk-in Customer');
+      dispatch(clearBillerCart());
+      dispatch(setBillerShipping(0));
+      dispatch(setBillerTax(0));
+      dispatch(setBillerDiscount(0));
+      dispatch(setBillerCoupon(0));
+      dispatch(setSelectedCustomer('Walk-in Customer'));
 
       // Refresh catalog and reservations from backend
-      billerApi.getProducts(currentStoreId, retailerId).then((p) => Array.isArray(p) && setProducts(p)).catch(() => {});
-      billerApi.getReservations(currentStoreId).then((r) => Array.isArray(r) && setReservedOrders(r)).catch(() => {});
+      dispatch(fetchBillerProducts({ storeId: currentStoreId, retailerId }));
+      dispatch(fetchBillerReservations(currentStoreId));
 
       showToast(`Sale completed successfully! Total: ${formatInr(finalTotal)}`);
     } catch (err) {
       console.error('POS Checkout failed:', err);
-      const errMsg = err.message || 'Transaction could not be completed.';
+      const errMsg = err.message || err || 'Transaction could not be completed.';
       alert(`Checkout Error: ${errMsg}`);
-    } finally {
-      setIsCharging(false);
     }
   };
 
@@ -687,7 +571,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               <button
                 key={cat.id}
                 type="button"
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => dispatch(setActiveCategory(cat.id))}
                 style={{
                   width: '100%',
                   padding: '8px 4px',
@@ -826,8 +710,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   onChange={(e) => {
                     const selected = stores.find((s) => (s.id || s.code) === e.target.value);
                     if (selected) {
-                      setCurrentStoreId(selected.id || selected.code);
-                      setCurrentStoreName(selected.name);
+                      dispatch(setCurrentStore({ id: selected.id || selected.code, name: selected.name }));
                     }
                   }}
                   style={{
@@ -876,7 +759,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               {/* Incoming Orders Button with Live Pulse */}
               <button
                 type="button"
-                onClick={() => setIsOrdersModalOpen(true)}
+                onClick={() => dispatch(setIsOrdersModalOpen(true))}
                 style={{
                   position: 'relative',
                   padding: '7px 14px',
@@ -948,8 +831,8 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               <button
                 type="button"
                 onClick={() => {
-                  setOrdersModalTab('cancelled');
-                  setIsOrdersModalOpen(true);
+                  dispatch(setOrdersModalTab('cancelled'));
+                  dispatch(setIsOrdersModalOpen(true));
                 }}
                 style={{
                   background: 'none',
@@ -988,7 +871,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsOrdersModalOpen(true)}
+                  onClick={() => dispatch(setIsOrdersModalOpen(true))}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -1082,7 +965,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                 type="text"
                 placeholder="Search products by title, SKU, or category..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => dispatch(setSearchQuery(e.target.value))}
                 style={{
                   width: '100%',
                   height: '38px',
@@ -1099,7 +982,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             {/* Sort Dropdown */}
             <select
               value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
+              onChange={(e) => dispatch(setSortOrder(e.target.value))}
               style={{
                 height: '38px',
                 padding: '0 12px',
@@ -1356,7 +1239,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             <span style={{ fontSize: '14px' }}>👤</span>
             <select
               value={selectedCustomer}
-              onChange={(e) => setSelectedCustomer(e.target.value)}
+              onChange={(e) => dispatch(setSelectedCustomer(e.target.value))}
               style={{
                 flex: 1,
                 height: '34px',
@@ -1526,7 +1409,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   min="0"
                   value={shipping || ''}
                   placeholder="0"
-                  onChange={(e) => setShipping(Math.max(0, Number(e.target.value) || 0))}
+                  onChange={(e) => dispatch(setBillerShipping(Math.max(0, Number(e.target.value) || 0)))}
                   style={{ width: '100%', height: '28px', padding: '0 6px', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '11px' }}
                 />
               </div>
@@ -1540,7 +1423,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   min="0"
                   value={discount || ''}
                   placeholder="0"
-                  onChange={(e) => setDiscount(Math.max(0, Number(e.target.value) || 0))}
+                  onChange={(e) => dispatch(setBillerDiscount(Math.max(0, Number(e.target.value) || 0)))}
                   style={{ width: '100%', height: '28px', padding: '0 6px', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '11px' }}
                 />
               </div>
@@ -1552,7 +1435,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                 <input
                   type="checkbox"
                   checked={roundoffEnabled}
-                  onChange={(e) => setRoundoffEnabled(e.target.checked)}
+                  onChange={(e) => dispatch(setBillerRoundoffEnabled(e.target.checked))}
                 />
                 Auto Roundoff
               </label>
@@ -1590,7 +1473,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   <button
                     key={m}
                     type="button"
-                    onClick={() => setPaymentMethod(m)}
+                    onClick={() => dispatch(setBillerPaymentMethod(m))}
                     style={{
                       padding: '6px 2px',
                       borderRadius: '6px',
@@ -1658,7 +1541,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             padding: '16px',
             backdropFilter: 'blur(3px)',
           }}
-          onClick={() => setIsOrdersModalOpen(false)}
+          onClick={() => dispatch(setIsOrdersModalOpen(false))}
         >
           <div
             style={{
@@ -1697,7 +1580,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               </div>
               <button
                 type="button"
-                onClick={() => setIsOrdersModalOpen(false)}
+                onClick={() => dispatch(setIsOrdersModalOpen(false))}
                 style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#64748b' }}
               >
                 &times;
@@ -1708,7 +1591,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
               <button
                 type="button"
-                onClick={() => setOrdersModalTab('active')}
+                onClick={() => dispatch(setOrdersModalTab('active'))}
                 style={{
                   flex: 1,
                   padding: '12px 14px',
@@ -1729,7 +1612,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               </button>
               <button
                 type="button"
-                onClick={() => setOrdersModalTab('cancelled')}
+                onClick={() => dispatch(setOrdersModalTab('cancelled'))}
                 style={{
                   flex: 1,
                   padding: '12px 14px',
@@ -2025,7 +1908,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
       <ReceiptModal
         isOpen={isReceiptOpen}
         transaction={completedTx}
-        onClose={() => setIsReceiptOpen(false)}
+        onClose={() => dispatch(closeReceiptModal())}
       />
 
       {/* ── FLOATING TOAST NOTIFICATION ── */}
