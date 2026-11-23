@@ -1,14 +1,109 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import './supplier.css';
 import ContactSupportModal from '../components/common/ContactSupportModal';
 import { useDataSync } from '../context/DataSyncContext';
 import {
-  readSupplierId, writeSupplierId, readSession, writeSession,
-  getSupplier, getSupplierByEmail, updateSupplier,
-  fetchRetailers, fetchPurchaseOrders, updatePurchaseOrder,
-  fetchSupplierDocuments, deleteSupplierDocument, uploadSupplierDocument,
-  getApiBase, supplierRequest
+  readSupplierId, readSession,
+  getApiBase
 } from './api/supplierApi';
+
+import {
+  // Profile
+  selectSupplierId,
+  selectSupplierProfile,
+  selectSupplierDocuments,
+  selectProfileLoading,
+  selectProfileSaving,
+  initSupplierProfile,
+  updateSupplierProfile,
+  setProfile as setProfileState,
+  updateProfileField,
+  setPlanTier,
+
+  // Products
+  selectSupplierProducts,
+  selectFilteredProducts,
+  selectProductSearch,
+  selectProductModalOpen,
+  selectEditingProductIdx,
+  selectProductForm,
+  selectProductsLoading,
+  setProducts as setProductsState,
+  setProductSearch as setProductSearchAction,
+  openProductModal,
+  closeProductModal,
+  setProductForm as setProductFormState,
+  updateProductFormField,
+  saveSupplierProduct,
+  deleteSupplierProduct,
+
+  // Orders
+  selectSupplierOrders,
+  selectFilteredOrders,
+  selectOrderSearch,
+  selectOrderStatusFilter,
+  selectOrderDateFrom,
+  selectOrderDateTo,
+  selectOrdersPage,
+  selectOrderModalOpen,
+  selectSelectedOrder,
+  selectOrdersLoading,
+  selectOrdersUpdating,
+  selectSupplierStats,
+  setOrders as setOrdersState,
+  setOrderSearch as setOrderSearchAction,
+  setOrderStatusFilter as setOrderStatusFilterAction,
+  setOrderDateFrom as setOrderDateFromAction,
+  setOrderDateTo as setOrderDateToAction,
+  setOrdersPage as setOrdersPageAction,
+  openOrderModal,
+  closeOrderModal,
+  setSelectedOrder as setSelectedOrderAction,
+  fetchSupplierOrders,
+  updateOrderStatus,
+
+  // Retailers
+  selectSupplierRetailers,
+  selectFilteredRetailers,
+  selectRetailerSearch,
+  selectRetailerTabFilter,
+  selectRetailerModalOpen,
+  selectRetailerViewModalOpen,
+  selectSelectedRetailer,
+  selectRetailerForm,
+  selectRetailersLoading,
+  selectRetailersLinking,
+  setRetailers as setRetailersState,
+  setRetailerSearch as setRetailerSearchAction,
+  setRetailerTabFilter as setRetailerTabFilterAction,
+  openRetailerModal,
+  closeRetailerModal,
+  openRetailerViewModal,
+  closeRetailerViewModal,
+  setRetailerForm as setRetailerFormState,
+  updateRetailerFormField,
+  linkSupplierRetailer,
+
+  // UI
+  selectActiveTab,
+  selectToast,
+  selectProfilePopoverOpen,
+  selectIsSupportModalOpen,
+  selectPaymentModalOpen,
+  selectSelectedPlan,
+  selectPayMethod,
+  selectPayingState,
+  setActiveTab as setActiveTabAction,
+  showToast as showToastAction,
+  hideToast as hideToastAction,
+  setProfilePopoverOpen as setProfilePopoverOpenAction,
+  setSupportModalOpen as setSupportModalOpenAction,
+  openPaymentModal as openPaymentModalAction,
+  closePaymentModal as closePaymentModalAction,
+  setPayMethod as setPayMethodAction,
+  processPaymentThunk,
+} from './redux';
 
 // ── COLOR & STATUS CONSTANTS ──
 const COLORS = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#db2777', '#0891b2', '#4f46e5'];
@@ -32,342 +127,145 @@ const STATES = [
   'Karnataka', 'Maharashtra', 'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal'
 ];
 
-const DEFAULT_DEMO_PRODUCTS = [];
-const DEFAULT_DEMO_RETAILERS = [];
-const DEFAULT_DEMO_ORDERS = [];
-
 export default function SupplierDashboard({ onSwitchModule, onLogout }) {
-  // ── ACTIVE NAVIGATION TAB ──
-  const [activeTab, setActiveTab] = useState(() => {
-    try {
-      const p = new URLSearchParams(window.location.search).get('tab');
-      return ['dashboard', 'profile', 'products', 'orders', 'retailers', 'performance', 'plan'].includes(p) ? p : 'dashboard';
-    } catch {
-      return 'dashboard';
-    }
-  });
+  const dispatch = useDispatch();
 
-  // ── CORE DATA STATE ──
-  const [supplierId, setSupplierId] = useState(() => readSupplierId() || '');
-  const [profile, setProfile] = useState(() => {
-    try {
-      const sess = JSON.parse(localStorage.getItem('so_session') || '{}');
-      const p = sess.profile || {};
-      if (sess && (sess.role === 'supplier' || sess.role === 'wholesale')) {
-        return {
-          supplierName: p.businessName || sess.name || 'Supplier',
-          supplierCode: p.supplierCode || sess.profileId || '',
-          email: p.businessEmail || sess.email || '',
-          phone: p.businessPhone || sess.phone || '',
-          category: p.primaryCategory || sess.category || 'General Wholesale',
-          state: p.state || sess.state || 'Gujarat',
-          paymentTerms: p.paymentTerms || 'Net 30',
-          address: p.address || sess.address || '',
-          website: p.website || sess.website || '',
-          gstNumber: p.taxId || '',
-          taxId: p.taxId || '',
-          leadTime: '3',
-          description: p.description || '',
-          planTier: sess.plan === 'enterprise' ? 'Bharat Enterprise' : (sess.plan === 'growth' ? 'Bharat Growth' : 'Starter Kirana'),
-          planPrice: sess.plan === 'enterprise' ? 3499 : (sess.plan === 'growth' ? 1499 : 0),
-        };
-      }
-    } catch {}
-    return {
-      supplierName: 'Supplier',
-      supplierCode: '',
-      email: '',
-      phone: '',
-      category: 'General Wholesale',
-      state: 'Gujarat',
-      paymentTerms: 'Net 30',
-      address: '',
-      website: '',
-      gstNumber: '',
-      taxId: '',
-      leadTime: '3',
-      description: '',
-      planTier: 'Starter Kirana',
-      planPrice: 0,
-    };
-  });
+  // ── REDUX STATE SELECTORS ──
+  // Profile
+  const supplierId = useSelector(selectSupplierId);
+  const profile = useSelector(selectSupplierProfile);
+  const documents = useSelector(selectSupplierDocuments);
+  const profileLoading = useSelector(selectProfileLoading);
+  const profileSaving = useSelector(selectProfileSaving);
 
-  const [products, setProducts] = useState([]);
-  const [retailers, setRetailers] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [documents, setDocuments] = useState([]);
-  const [profilePopoverOpen, setProfilePopoverOpen] = useState(false);
+  // Products
+  const products = useSelector(selectSupplierProducts);
+  const filteredProducts = useSelector(selectFilteredProducts);
+  const productSearch = useSelector(selectProductSearch);
+  const productModalOpen = useSelector(selectProductModalOpen);
+  const editingProductIdx = useSelector(selectEditingProductIdx);
+  const productForm = useSelector(selectProductForm);
+  const productsLoading = useSelector(selectProductsLoading);
 
-  // ── FILTERS & SEARCHES ──
-  const [productSearch, setProductSearch] = useState('');
-  const [orderSearch, setOrderSearch] = useState('');
-  const [orderStatusFilter, setOrderStatusFilter] = useState('all');
-  const [orderDateFrom, setOrderDateFrom] = useState('');
-  const [orderDateTo, setOrderDateTo] = useState('');
-  const [retailerSearch, setRetailerSearch] = useState('');
-  const [retailerTabFilter, setRetailerTabFilter] = useState('all');
-  const [ordersPage, setOrdersPage] = useState(1);
-  const ORDER_PAGE_SIZE = 5;
+  // Orders
+  const orders = useSelector(selectSupplierOrders);
+  const filteredOrders = useSelector(selectFilteredOrders);
+  const orderSearch = useSelector(selectOrderSearch);
+  const orderStatusFilter = useSelector(selectOrderStatusFilter);
+  const orderDateFrom = useSelector(selectOrderDateFrom);
+  const orderDateTo = useSelector(selectOrderDateTo);
+  const ordersPage = useSelector(selectOrdersPage);
+  const orderModalOpen = useSelector(selectOrderModalOpen);
+  const selectedOrder = useSelector(selectSelectedOrder);
+  const ordersLoading = useSelector(selectOrdersLoading);
+  const ordersUpdating = useSelector(selectOrdersUpdating);
+  const stats = useSelector(selectSupplierStats);
 
-  // ── MODAL STATES ──
-  const [productModalOpen, setProductModalOpen] = useState(false);
-  const [editingProductIdx, setEditingProductIdx] = useState(null);
-  const [productForm, setProductForm] = useState({
-    name: '', sku: '', brand: '', variant: '', cat: 'Electronics', unit: 'Piece', price: '', stock: '', moq: '1', desc: ''
-  });
+  // Retailers
+  const retailers = useSelector(selectSupplierRetailers);
+  const filteredRetailers = useSelector(selectFilteredRetailers);
+  const retailerSearch = useSelector(selectRetailerSearch);
+  const retailerTabFilter = useSelector(selectRetailerTabFilter);
+  const retailerModalOpen = useSelector(selectRetailerModalOpen);
+  const retailerViewModalOpen = useSelector(selectRetailerViewModalOpen);
+  const selectedRetailer = useSelector(selectSelectedRetailer);
+  const retailerForm = useSelector(selectRetailerForm);
+  const retailersLoading = useSelector(selectRetailersLoading);
+  const retailersLinking = useSelector(selectRetailersLinking);
 
-  const [retailerModalOpen, setRetailerModalOpen] = useState(false);
-  const [retailerForm, setRetailerForm] = useState({
-    code: '', name: '', contact: '', email: '', phone: '', state: 'Gujarat', terms: 'Net 30', creditLimit: '500000', addr: ''
-  });
+  // UI
+  const activeTab = useSelector(selectActiveTab);
+  const toast = useSelector(selectToast);
+  const profilePopoverOpen = useSelector(selectProfilePopoverOpen);
+  const isSupportModalOpen = useSelector(selectIsSupportModalOpen);
+  const paymentModalOpen = useSelector(selectPaymentModalOpen);
+  const selectedPlan = useSelector(selectSelectedPlan);
+  const payMethod = useSelector(selectPayMethod);
+  const payingState = useSelector(selectPayingState);
 
-  const [orderModalOpen, setOrderModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  // ── REDUX DISPATCH WRAPPERS ──
+  const showToast = useCallback((message, type = 'ok') => {
+    dispatch(showToastAction({ message, type }));
+    setTimeout(() => {
+      dispatch(hideToastAction());
+    }, 3000);
+  }, [dispatch]);
 
-  const [retailerViewModalOpen, setRetailerViewModalOpen] = useState(false);
-  const [selectedRetailer, setSelectedRetailer] = useState(null);
-
-  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState({ name: 'Vyapar Pro', price: 799 });
-  const [payMethod, setPayMethod] = useState('upi');
-  const [payingState, setPayingState] = useState(false);
-
-  // ── TOAST NOTIFICATION ──
-  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: '' });
-  const showToast = (message) => {
-    setToast({ show: true, message });
-    setTimeout(() => setToast({ show: false, message: '' }), 3000);
+  const handleTabChange = (tab) => {
+    dispatch(setActiveTabAction(tab));
   };
+
+  const setProfile = useCallback((updaterOrObj) => {
+    if (typeof updaterOrObj === 'function') {
+      const next = updaterOrObj(profile);
+      dispatch(setProfileState(next));
+    } else {
+      dispatch(setProfileState(updaterOrObj));
+    }
+  }, [dispatch, profile]);
+
+  const setProductForm = useCallback((updaterOrObj) => {
+    if (typeof updaterOrObj === 'function') {
+      const next = updaterOrObj(productForm);
+      dispatch(setProductFormState(next));
+    } else {
+      dispatch(setProductFormState(updaterOrObj));
+    }
+  }, [dispatch, productForm]);
+
+  const setRetailerForm = useCallback((updaterOrObj) => {
+    if (typeof updaterOrObj === 'function') {
+      const next = updaterOrObj(retailerForm);
+      dispatch(setRetailerFormState(next));
+    } else {
+      dispatch(setRetailerFormState(updaterOrObj));
+    }
+  }, [dispatch, retailerForm]);
+
+  const setProductSearch = (val) => dispatch(setProductSearchAction(val));
+  const setOrderSearch = (val) => dispatch(setOrderSearchAction(val));
+  const setOrderStatusFilter = (val) => dispatch(setOrderStatusFilterAction(val));
+  const setOrderDateFrom = (val) => dispatch(setOrderDateFromAction(val));
+  const setOrderDateTo = (val) => dispatch(setOrderDateToAction(val));
+  const setOrdersPage = (val) => dispatch(setOrdersPageAction(val));
+  const setRetailerSearch = (val) => dispatch(setRetailerSearchAction(val));
+  const setRetailerTabFilter = (val) => dispatch(setRetailerTabFilterAction(val));
+  const setProductModalOpen = (val) => { if (!val) dispatch(closeProductModal()); };
+  const setRetailerModalOpen = (val) => { if (!val) dispatch(closeRetailerModal()); };
+  const setOrderModalOpen = (val) => { if (!val) dispatch(closeOrderModal()); };
+  const setRetailerViewModalOpen = (val) => { if (!val) dispatch(closeRetailerViewModal()); };
+  const setPaymentModalOpen = (val) => { if (!val) dispatch(closePaymentModalAction()); };
+  const setProfilePopoverOpen = (val) => dispatch(setProfilePopoverOpenAction(val));
+  const setIsSupportModalOpen = (val) => dispatch(setSupportModalOpenAction(val));
+  const setPayMethod = (val) => dispatch(setPayMethodAction(val));
+  const setSelectedOrder = (order) => dispatch(setSelectedOrderAction(order));
+  const setSelectedRetailer = (ret) => dispatch(openRetailerViewModal(ret));
 
   // ── INITIAL DATA LOAD ──
   const initSupplierPortal = useCallback(async () => {
     const sess = readSession() || {};
-    let sid = readSupplierId() || sess.profileId || sess.supplierId || '';
-    if (!sid) {
-      try {
-        const p = new URLSearchParams(window.location.search).get('supplierId');
-        if (p) {
-          sid = p;
-          writeSupplierId(p);
-        }
-      } catch {}
-    }
+    const sid = readSupplierId() || sess.profileId || sess.supplierId || '';
 
-    let s = null;
-    if (sid) {
-      try {
-        s = await getSupplier(sid);
-      } catch (err) {
-        console.warn('Failed to load supplier with sid:', sid, err);
-        s = null;
-      }
-    }
+    // Initialize profile, products, retailers, and documents via Redux thunk
+    await dispatch(initSupplierProfile());
 
-    // If s was not found or sid was an invalid/stale/dummy ID, search for the logged-in user's supplier profile
-    if (!s && (sess.email || sess.profileId || sess.supplierId)) {
-      try {
-        const sups = await supplierRequest('/suppliers').catch(() => []);
-        if (Array.isArray(sups) && sups.length > 0) {
-          const userEmail = (sess.email || '').toLowerCase();
-          const matched = sups.find(
-            (sup) =>
-              (sup.id && (sup.id === sess.profileId || sup.id === sess.supplierId)) ||
-              (sup.business?.businessEmail && sup.business.businessEmail.toLowerCase() === userEmail) ||
-              (sup.primaryContact?.directEmail && sup.primaryContact.directEmail.toLowerCase() === userEmail) ||
-              (sup.email && sup.email.toLowerCase() === userEmail)
-          );
-          if (matched) {
-            sid = matched.id;
-            writeSupplierId(sid);
-            s = matched;
-          }
-        }
-      } catch (e) {
-        console.error('Error auto-resolving supplier:', e);
-      }
-    }
-
-    if (sid) {
-      setSupplierId(sid);
-    }
-
-    if (s) {
-      setProfile((prev) => ({
-        ...prev,
-        supplierName:
-          s.business?.companyName || s.supplierName || s.name || prev.supplierName,
-        supplierCode:
-          s.business?.supplierCode || s.supplierCode || s.code || prev.supplierCode,
-        email: s.business?.businessEmail || s.email || prev.email,
-        phone:
-          s.business?.phoneNumber ||
-          s.primaryContact?.mobileNumber ||
-          s.phone ||
-          prev.phone,
-        category:
-          s.business?.primaryCategory || s.category || prev.category,
-        state: s.business?.state || s.state || prev.state,
-        paymentTerms:
-          s.business?.paymentTerms || s.paymentTerms || prev.paymentTerms,
-        address:
-          s.business?.businessAddress || s.address || prev.address,
-        website: s.business?.website || s.website || prev.website,
-        gstNumber:
-          s.business?.gstNumber || s.gstNumber || s.taxId || prev.gstNumber,
-        description:
-          s.business?.description || s.description || prev.description,
-      }));
-      if (Array.isArray(s.products)) {
-        setProducts(s.products.map(p => ({
-          ...p,
-          id: p.sku || p.id || `SKU-${Date.now()}`,
-          sku: p.sku || p.id || '',
-          cat: p.category || p.cat || 'Electronics',
-          category: p.category || p.cat || 'Electronics',
-          price: Number(p.unitPrice ?? p.price ?? 0),
-          unitPrice: Number(p.unitPrice ?? p.price ?? 0),
-          stock: Number(p.stockAvailable ?? p.stock ?? 0),
-          stockAvailable: Number(p.stockAvailable ?? p.stock ?? 0),
-          moq: Number(p.minOrderQty ?? p.moq ?? 1),
-          minOrderQty: Number(p.minOrderQty ?? p.moq ?? 1),
-          unit: p.unit || 'Piece',
-          status: p.status || 'active',
-          desc: p.description || p.desc || ''
-        })));
-      }
-      if (Array.isArray(s.retailers)) {
-        setRetailers(s.retailers);
-      }
-    } else {
-      setProducts([]);
-      setRetailers([]);
-      setOrders([]);
-    }
-
-    if (sid || sess.email) {
-      fetchPurchaseOrders()
-        .then((pos) => {
-          if (Array.isArray(pos)) {
-            const userEmail = (sess.email || '').toLowerCase();
-            const myOrders = pos.filter((po) => {
-              return (
-                (sid && po.supplierId === sid) ||
-                (po.supplierEmail && userEmail && po.supplierEmail.toLowerCase() === userEmail)
-              );
-            });
-
-            const mapped = myOrders.map((po) => {
-              const statusClean = String(po.status || 'pending')
-                .toLowerCase()
-                .replace(/\s+/g, '');
-              return {
-                id: po.orderNumber || po.id || 'PO-0001',
-                retailer: po.retailerName || 'Retail Store',
-                product:
-                  po.items?.[0]?.name ||
-                  po.items?.[0]?.productName ||
-                  po.productName ||
-                  'Product',
-                qty:
-                  po.items?.[0]?.qty ||
-                  po.items?.[0]?.quantity ||
-                  po.quantity ||
-                  1,
-                amount:
-                  po.total ||
-                  po.totalAmount ||
-                  (po.items?.[0]?.price
-                    ? po.items[0].price * (po.items[0].qty || 1)
-                    : 0),
-                date: po.createdAt
-                  ? new Date(po.createdAt).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })
-                  : 'Recent',
-                delivery:
-                  po.deliveryDate ||
-                  (po.expectedDeliveryDate
-                    ? new Date(po.expectedDeliveryDate).toLocaleDateString(
-                        'en-GB',
-                        {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                        },
-                      )
-                    : 'Scheduled'),
-                status: statusClean,
-                rawStatus: po.status || 'Pending',
-                supplierId: po.supplierId,
-                rawOrder: po,
-              };
-            });
-            setOrders(mapped);
-          }
-        })
-        .catch(console.error);
-
-      if (sid) {
-        fetchSupplierDocuments(sid)
-          .then((docs) => {
-            if (Array.isArray(docs)) setDocuments(docs);
-          })
-          .catch(console.error);
-      }
-    }
-  }, []);
+    // Fetch purchase orders via Redux thunk
+    dispatch(fetchSupplierOrders({ supplierId: sid, userEmail: sess.email || '' }));
+  }, [dispatch]);
 
   useEffect(() => {
     initSupplierPortal();
   }, [initSupplierPortal]);
 
-  useDataSync(['orders', 'products'], () => {
+  useDataSync(['orders', 'products', 'users'], () => {
     initSupplierPortal();
   });
-
-  // ── DERIVED METRICS ──
-  const stats = useMemo(() => {
-    const totalSales = orders.reduce((acc, o) => acc + (Number(o.amount) || 0), 0);
-    const fee = totalSales * 0.02;
-    const netPayout = totalSales - fee;
-    const deliveredCount = orders.filter(o => o.status === 'delivered').length;
-    const pendingOrders = orders.filter(o => o.status === 'pending');
-    const pendingCount = pendingOrders.length;
-    const pendingVal = pendingOrders.reduce((acc, o) => acc + (Number(o.amount) || 0), 0);
-    const fulfillmentRate = orders.length > 0 ? Math.round((deliveredCount / orders.length) * 100) : 0;
-    const avgPoVal = orders.length > 0 ? (totalSales / orders.length) : 0;
-
-    return {
-      totalSales,
-      netPayout,
-      fee,
-      deliveredCount,
-      pendingCount,
-      pendingVal,
-      fulfillmentRate,
-      avgPoVal,
-      activeProductsCount: products.filter(p => p.status === 'active').length
-    };
-  }, [orders, products]);
-
-  // ── TAB CHANGE ──
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    try {
-      const url = new URL(window.location);
-      url.searchParams.set('tab', tab);
-      window.history.pushState({}, '', url);
-    } catch {}
-  };
 
   // ── SAVE PROFILE ──
   const handleSaveProfile = async () => {
     try {
       if (supplierId) {
-        await updateSupplier(supplierId, profile);
+        await dispatch(updateSupplierProfile({ supplierId, profileData: profile })).unwrap();
       }
       showToast('Supplier profile updated successfully!');
     } catch {
@@ -377,25 +275,7 @@ export default function SupplierDashboard({ onSwitchModule, onLogout }) {
 
   // ── PRODUCT ACTIONS ──
   const handleOpenProductModal = (idx = null) => {
-    if (idx !== null && products[idx]) {
-      setEditingProductIdx(idx);
-      setProductForm({ ...products[idx] });
-    } else {
-      setEditingProductIdx(null);
-      setProductForm({
-        name: '',
-        sku: `SKU-${Math.floor(1000 + Math.random() * 9000)}`,
-        brand: '',
-        variant: '',
-        cat: 'Electronics',
-        unit: 'Piece',
-        price: '',
-        stock: '100',
-        moq: '1',
-        desc: ''
-      });
-    }
-    setProductModalOpen(true);
+    dispatch(openProductModal(idx));
   };
 
   const handleSaveProduct = async () => {
@@ -403,74 +283,40 @@ export default function SupplierDashboard({ onSwitchModule, onLogout }) {
       showToast('Please fill in Product Name and Unit Price.');
       return;
     }
-    const newProd = {
-      ...productForm,
-      id: productForm.sku || productForm.id || `SKU-${Date.now()}`,
-      sku: productForm.sku || productForm.id || `SKU-${Date.now()}`,
-      name: productForm.name.trim(),
-      brand: productForm.brand?.trim() || '—',
-      variant: productForm.variant?.trim() || '',
-      cat: productForm.cat || 'Electronics',
-      category: productForm.cat || 'Electronics',
-      unit: productForm.unit || 'Piece',
-      price: Number(productForm.price),
-      unitPrice: Number(productForm.price),
-      stock: Number(productForm.stock || 0),
-      stockAvailable: Number(productForm.stock || 0),
-      moq: Number(productForm.moq || 1),
-      minOrderQty: Number(productForm.moq || 1),
-      status: 'active',
-      desc: productForm.desc?.trim() || '',
-      description: productForm.desc?.trim() || ''
-    };
-
-    let updated;
-    if (editingProductIdx !== null) {
-      updated = products.map((p, i) => i === editingProductIdx ? newProd : p);
-    } else {
-      updated = [newProd, ...products];
-    }
-    setProducts(updated);
-    setProductModalOpen(false);
-    showToast(editingProductIdx !== null ? 'Product updated successfully!' : 'New product added to catalog!');
-
-    const sess = readSession() || {};
-    const sid = supplierId || readSupplierId() || sess.profileId || sess.supplierId;
-    if (sid) {
-      try {
-        await updateSupplier(sid, { products: updated });
-      } catch (e) {
-        console.warn('Failed to update products in backend:', e);
-      }
+    try {
+      await dispatch(
+        saveSupplierProduct({
+          productForm,
+          editingProductIdx,
+          supplierId,
+          currentProducts: products,
+        })
+      ).unwrap();
+      showToast(editingProductIdx !== null ? 'Product updated successfully!' : 'New product added to catalog!');
+    } catch (err) {
+      showToast(err?.message || err || 'Failed to save product.', 'err');
     }
   };
 
   const handleDeleteProduct = async (id) => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
-    const updated = products.filter(p => p.id !== id);
-    setProducts(updated);
-    showToast('Product removed from catalog.');
-    if (supplierId) {
-      try {
-        await updateSupplier(supplierId, { products: updated });
-      } catch {}
+    try {
+      await dispatch(
+        deleteSupplierProduct({
+          productId: id,
+          supplierId,
+          currentProducts: products,
+        })
+      ).unwrap();
+      showToast('Product removed from catalog.');
+    } catch (err) {
+      showToast(err?.message || err || 'Failed to delete product', 'err');
     }
   };
 
   // ── RETAILER ACTIONS ──
   const handleOpenRetailerModal = () => {
-    setRetailerForm({
-      code: `RET-${Math.floor(100 + Math.random() * 900)}`,
-      name: '',
-      contact: '',
-      email: '',
-      phone: '',
-      state: 'Gujarat',
-      terms: 'Net 30',
-      creditLimit: '500000',
-      addr: ''
-    });
-    setRetailerModalOpen(true);
+    dispatch(openRetailerModal());
   };
 
   const handleSaveRetailer = async () => {
@@ -478,66 +324,35 @@ export default function SupplierDashboard({ onSwitchModule, onLogout }) {
       alert('Please enter Retailer Name and Email.');
       return;
     }
-    const newRet = {
-      id: retailerForm.code || `RET-${Date.now()}`,
-      code: retailerForm.code,
-      name: retailerForm.name,
-      contact: retailerForm.contact || retailerForm.name,
-      email: retailerForm.email,
-      phone: retailerForm.phone,
-      state: retailerForm.state,
-      terms: retailerForm.terms,
-      status: 'active',
-      lastOrder: 'Just Now',
-      fulfilment: 100,
-      ratingGiven: 5.0,
-      orders: 0
-    };
-    const updated = [newRet, ...retailers];
-    setRetailers(updated);
-    setRetailerModalOpen(false);
-    showToast('Retailer linked successfully!');
-
-    if (supplierId) {
-      try {
-        await updateSupplier(supplierId, { retailers: updated });
-      } catch {}
+    try {
+      await dispatch(
+        linkSupplierRetailer({
+          retailerForm,
+          supplierId,
+          currentRetailers: retailers,
+        })
+      ).unwrap();
+      showToast('Retailer linked successfully!');
+    } catch (err) {
+      alert(err?.message || err || 'Please enter Retailer Name and Email.');
     }
   };
 
   // ── ORDER ACTIONS ──
   const handleOpenOrderModal = (order) => {
-    setSelectedOrder(order);
-    setOrderModalOpen(true);
+    dispatch(openOrderModal(order));
   };
 
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
-    let backendStatus = 'Pending';
-    const s = String(newStatus).toLowerCase();
-    if (s === 'approved') backendStatus = 'Approved';
-    else if (s === 'confirmed') backendStatus = 'Confirmed';
-    else if (s === 'indelivery' || s === 'in delivery') backendStatus = 'In Delivery';
-    else if (s === 'delivered') backendStatus = 'Delivered';
-    else if (s === 'cancelled') backendStatus = 'Cancelled';
-
     try {
-      await updatePurchaseOrder(orderId, { status: backendStatus });
+      const res = await dispatch(
+        updateOrderStatus({ orderId, newStatus })
+      ).unwrap();
+      showToast(`Order ${orderId} updated to ${res.rawStatus.toUpperCase()}`);
     } catch (err) {
       console.error('Failed to update PO status on backend:', err);
+      showToast(`Failed to update order ${orderId}`, 'err');
     }
-    const cleanStatus = s.replace(/\s+/g, '');
-    const updated = orders.map((o) =>
-      o.id === orderId ? { ...o, status: cleanStatus, rawStatus: backendStatus } : o,
-    );
-    setOrders(updated);
-    if (selectedOrder && selectedOrder.id === orderId) {
-      setSelectedOrder((prev) => ({
-        ...prev,
-        status: cleanStatus,
-        rawStatus: backendStatus,
-      }));
-    }
-    showToast(`Order ${orderId} updated to ${backendStatus.toUpperCase()}`);
   };
 
   // ── EXPORT CSV ──
@@ -566,53 +381,16 @@ export default function SupplierDashboard({ onSwitchModule, onLogout }) {
 
   // ── PAYMENT UPGRADE ──
   const handleOpenPaymentModal = (planName, price) => {
-    setSelectedPlan({ name: planName, price });
-    setPaymentModalOpen(true);
+    dispatch(openPaymentModalAction({ name: planName, price }));
   };
 
-  const handleProcessPayment = () => {
-    setPayingState(true);
-    setTimeout(() => {
-      setPayingState(false);
-      setPaymentModalOpen(false);
-      setProfile(prev => ({ ...prev, planTier: selectedPlan.name, planPrice: selectedPlan.price }));
-      showToast(`Payment Successful! Plan activated: ${selectedPlan.name}`);
-    }, 1200);
+  const handleProcessPayment = async () => {
+    try {
+      await dispatch(processPaymentThunk(selectedPlan)).unwrap();
+    } catch (err) {
+      showToast('Payment processing failed', 'err');
+    }
   };
-
-  // ── FILTERED DATA LISTS ──
-  const filteredProducts = useMemo(() => {
-    const q = productSearch.toLowerCase().trim();
-    if (!q) return products;
-    return products.filter(p =>
-      (p.name && p.name.toLowerCase().includes(q)) ||
-      (p.id && p.id.toLowerCase().includes(q)) ||
-      (p.cat && p.cat.toLowerCase().includes(q)) ||
-      (p.brand && p.brand.toLowerCase().includes(q))
-    );
-  }, [products, productSearch]);
-
-  const filteredOrders = useMemo(() => {
-    return orders.filter(o => {
-      const matchQ = !orderSearch ||
-        o.id.toLowerCase().includes(orderSearch.toLowerCase()) ||
-        (o.retailer && o.retailer.toLowerCase().includes(orderSearch.toLowerCase())) ||
-        (o.product && o.product.toLowerCase().includes(orderSearch.toLowerCase()));
-      const matchStatus = orderStatusFilter === 'all' || o.status === orderStatusFilter;
-      return matchQ && matchStatus;
-    });
-  }, [orders, orderSearch, orderStatusFilter]);
-
-  const filteredRetailers = useMemo(() => {
-    return retailers.filter(r => {
-      const matchQ = !retailerSearch ||
-        r.name.toLowerCase().includes(retailerSearch.toLowerCase()) ||
-        r.code.toLowerCase().includes(retailerSearch.toLowerCase()) ||
-        (r.contact && r.contact.toLowerCase().includes(retailerSearch.toLowerCase()));
-      const matchTab = retailerTabFilter === 'all' || r.status === retailerTabFilter;
-      return matchQ && matchTab;
-    });
-  }, [retailers, retailerSearch, retailerTabFilter]);
 
   // Breadcrumb helper
   const getTabTitle = () => {
