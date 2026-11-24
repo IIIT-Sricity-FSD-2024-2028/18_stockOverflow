@@ -87,3 +87,4 @@ Implemented centralized **Redux state management** using the slice + async thunk
 - Ran `npm run build` in `final_ims/react_frontend` (`vite build`, 187 modules transformed) — passed with exit code `0`.
 - Ran `npm run build` in `final_ims/backend` (`nest build`) — passed with exit code `0`.
 - Tested live backend CRUD routes against a temporary server instance (`POST /users/login`, CRUD on `/admin/users`, `/admin/roles`, `/admin/stores`, `/admin/settings`, `/admin/dashboard/stats`, `/admin/reports/summary`, `/employees/queries`, `/employees/assignments`, `/employees/stats`) and confirmed persistence and clean build.
+
