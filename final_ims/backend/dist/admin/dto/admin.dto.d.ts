@@ -43,14 +43,17 @@ export declare class UpdateRoleDto {
 }
 export declare class CreateStoreDto {
     name: string;
+    code?: string;
     location: string;
     manager: string;
     retailerId?: string;
 }
 export declare class UpdateStoreDto {
     name?: string;
+    code?: string;
     location?: string;
     manager?: string;
+    status?: string;
     retailerId?: string;
 }
 export declare class SystemSettingsDto {

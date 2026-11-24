@@ -107,9 +107,26 @@ export const billerApi = {
     return await request(`/reservations${query}`);
   },
 
-  getReservationRequests: async (status = 'pending') => {
-    const query = status ? `?status=${encodeURIComponent(status)}` : '';
-    return await request(`/reservations/requests${query}`);
+  getReservationRequests: async (status = 'pending', storeId = '') => {
+    const params = new URLSearchParams();
+    if (status) params.set('status', status);
+    if (storeId) params.set('storeId', storeId);
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    return await request(`/reservations/requests${qs}`);
+  },
+
+  cancelReservationRequest: async (requestId, reason = '', cancelledBy = 'biller') => {
+    const res = await request(`/reservations/requests/${encodeURIComponent(requestId)}/cancel`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        reason: reason || 'Cancelled from POS',
+        cancelledBy,
+      }),
+    });
+    emitDataSync('transactions', res);
+    emitDataSync('inventory', res);
+    emitDataSync('orders', res);
+    return res;
   },
 
   // Transactions & POS Checkout

@@ -1,14 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { retailerApi } from '../../api/retailerApi';
+import { useDataSync } from '../../../context/DataSyncContext';
 import ContactSupportModal from '../../../components/common/ContactSupportModal';
+import {
+  fetchRetailerNotifications,
+  dismissNotification,
+  clearAllNotifications,
+  selectNotifications,
+} from '../../redux/slices/notificationsSlice';
 
 export default function RetailerLayout({ activeView, setActiveView, onSwitchModule, onLogout, children }) {
   const { user, logout, switchStore } = useAuth();
+  const dispatch = useDispatch();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const reduxNotifications = useSelector(selectNotifications);
+  const notifications = reduxNotifications || [];
   const popoverRef = useRef(null);
 
   const viewTitles = {
@@ -55,89 +65,31 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
         .toUpperCase()
     : 'SO';
 
-  // Load real notifications from backend products & returns
+  // Load real notifications from backend via Redux
+  const loadNotifications = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchRetailerNotifications({ retailerId, storeId }));
+  };
+
   useEffect(() => {
-    async function loadNotifications() {
-      try {
-        const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-        const storeId = user?.currentStoreId || user?.storeId || '';
-        const [returnsRes, productsRes] = await Promise.all([
-          retailerApi.getReturns(retailerId, storeId).catch(() => []),
-          retailerApi.getProducts(retailerId, storeId).catch(() => []),
-        ]);
-
-        const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
-        const returnList = Array.isArray(returnsRes) ? returnsRes : [];
-        const prodList = Array.isArray(productsRes) ? productsRes : [];
-
-        const notifs = [];
-
-        // 1. Pending Returns
-        returnList.forEach((r) => {
-          const status = String(r.status || '').toLowerCase();
-          if (status === 'pending') {
-            const id = `return-${r.id || Math.random()}`;
-            if (!dismissed.includes(id)) {
-              notifs.push({
-                id,
-                type: 'return',
-                title: 'Return Request Pending',
-                msg: `Customer ${r.customer || 'Consumer'} requested return for ${r.product || 'item'}${r.qty ? ` (Qty: ${r.qty})` : ''}`,
-                time: r.date ? new Date(r.date).toLocaleDateString('en-IN') : 'Recent',
-                view: 'returns',
-              });
-            }
-          }
-        });
-
-        // 2. Low Stock Alerts
-        prodList.forEach((p) => {
-          const qty = Number(p.qty != null ? p.qty : (p.initialQty || 0));
-          const min = Number(p.min != null ? p.min : (p.minStockAlert != null ? p.minStockAlert : 10));
-          if (qty <= min) {
-            const id = `stock-${p.sku || p.id}`;
-            if (!dismissed.includes(id)) {
-              notifs.push({
-                id,
-                type: 'stock',
-                title: qty === 0 ? 'Out of Stock Alert' : 'Low Stock Alert',
-                msg: `${p.name || 'Product'} is at ${qty} units (Min Alert: ${min})`,
-                time: 'Inventory Alert',
-                view: 'low-stocks',
-              });
-            }
-          }
-        });
-
-        setNotifications(notifs);
-      } catch (err) {
-        console.warn('Could not load notifications in layout:', err);
-      }
-    }
-
     loadNotifications();
-  }, [user, activeView]);
+  }, [dispatch, user, activeView]);
+
+  useDataSync(['transactions', 'inventory', 'orders'], () => {
+    loadNotifications();
+  });
 
   // Dismiss a single notification
   const handleDismissNotif = (e, notifId) => {
     e.stopPropagation();
-    const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
-    if (!dismissed.includes(notifId)) {
-      dismissed.push(notifId);
-      localStorage.setItem('so_dismissed_notifications', JSON.stringify(dismissed));
-    }
-    setNotifications((prev) => prev.filter((n) => n.id !== notifId));
+    dispatch(dismissNotification(notifId));
   };
 
   // Clear all notifications
   const handleClearAllNotifs = (e) => {
     e.stopPropagation();
-    const dismissed = JSON.parse(localStorage.getItem('so_dismissed_notifications') || '[]');
-    notifications.forEach((n) => {
-      if (!dismissed.includes(n.id)) dismissed.push(n.id);
-    });
-    localStorage.setItem('so_dismissed_notifications', JSON.stringify(dismissed));
-    setNotifications([]);
+    dispatch(clearAllNotifications());
   };
 
   // Close popovers on click outside
@@ -730,8 +682,9 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                   ) : (
                     notifications.map((n) => {
                       const isReturn = n.type === 'return';
-                      const iconBg = isReturn ? '#ede9fe' : '#fef3c7';
-                      const iconColor = isReturn ? '#7c3aed' : '#d97706';
+                      const isCancellation = n.type === 'cancellation';
+                      const iconBg = isCancellation ? '#fee2e2' : isReturn ? '#ede9fe' : '#fef3c7';
+                      const iconColor = isCancellation ? '#dc2626' : isReturn ? '#7c3aed' : '#d97706';
 
                       return (
                         <div
@@ -768,7 +721,13 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                               marginTop: '2px',
                             }}
                           >
-                            {isReturn ? (
+                            {isCancellation ? (
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="15" y1="9" x2="9" y2="15" />
+                                <line x1="9" y1="9" x2="15" y2="15" />
+                              </svg>
+                            ) : isReturn ? (
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="9 14 4 9 9 4" />
                                 <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
@@ -795,11 +754,11 @@ export default function RetailerLayout({ activeView, setActiveView, onSwitchModu
                                 style={{
                                   fontSize: '11px',
                                   fontWeight: 600,
-                                  color: isReturn ? '#6d28d9' : '#b45309',
-                                  background: isReturn ? '#f5f3ff' : '#fffbeb',
+                                  color: isCancellation ? '#b91c1c' : isReturn ? '#6d28d9' : '#b45309',
+                                  background: isCancellation ? '#fef2f2' : isReturn ? '#f5f3ff' : '#fffbeb',
                                   padding: '1px 7px',
                                   borderRadius: '4px',
-                                  border: `1px solid ${isReturn ? '#ddd6fe' : '#fde68a'}`,
+                                  border: `1px solid ${isCancellation ? '#fca5a5' : isReturn ? '#ddd6fe' : '#fde68a'}`,
                                 }}
                               >
                                 {n.time}

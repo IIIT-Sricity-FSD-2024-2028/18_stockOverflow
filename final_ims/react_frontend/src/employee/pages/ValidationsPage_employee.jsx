@@ -5,13 +5,12 @@
  * Zero mock fallbacks - all operations reflect live backend verification queue.
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useDataSync } from '../../context/DataSyncContext';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  fetchEmployeeAssignments,
-  resolveEmployeeAssignment,
-  distributeEmployeeWork,
-} from '../utils/api_employee';
+  fetchAssignmentsData,
+  resolveAssignmentData,
+} from '../../store/assignments-actions';
 import DossierModal_employee from '../components/DossierModal_employee';
 import VerificationActionModal from '../components/VerificationActionModal';
 
@@ -37,15 +36,15 @@ function mapAssignmentToEntity(asgn) {
 }
 
 export default function ValidationsPage_employee() {
-  const [assignments, setAssignments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const assignments = useSelector((state) => state.assignments.assignments);
+  const loading = useSelector((state) => state.assignments.loading);
+  const error = useSelector((state) => state.assignments.error);
 
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedEntity, setSelectedEntity] = useState(null);
 
-  // Dedicated Action Modal & Toast notification state
   const [actionModal, setActionModal] = useState({
     isOpen: false,
     mode: 'approve',
@@ -58,30 +57,13 @@ export default function ValidationsPage_employee() {
     setTimeout(() => setToast(null), 4000);
   };
 
-  const loadAssignments = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      // First ensure work is distributed to employees
-      await distributeEmployeeWork().catch(() => {});
-      const data = await fetchEmployeeAssignments();
-      const list = Array.isArray(data) ? data : [];
-      setAssignments(list);
-    } catch (err) {
-      console.error('Failed to load employee assignments:', err);
-      setError(err.message || 'Failed to load verification queue from backend');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const loadAssignments = () => {
+    dispatch(fetchAssignmentsData());
+  };
 
   useEffect(() => {
-    loadAssignments();
-  }, [loadAssignments]);
-
-  useDataSync(['assignments', 'users'], () => {
-    loadAssignments();
-  });
+    dispatch(fetchAssignmentsData());
+  }, [dispatch]);
 
   const entities = useMemo(() => {
     return assignments.map(mapAssignmentToEntity);
@@ -112,13 +94,14 @@ export default function ValidationsPage_employee() {
     try {
       const isApprove = newStatus === 'approved' || newStatus === 'active';
       const action = isApprove ? 'approve' : 'reject';
-      await resolveEmployeeAssignment(id, {
-        action,
-        status: newStatus,
-        rejectionReason: reason || undefined,
-        notes: reason || undefined,
-      });
-      await loadAssignments();
+      await dispatch(
+        resolveAssignmentData(id, {
+          action,
+          status: newStatus,
+          rejectionReason: reason || undefined,
+          notes: reason || undefined,
+        })
+      );
       if (selectedEntity && selectedEntity.id === id) {
         setSelectedEntity((prev) => ({
           ...prev,

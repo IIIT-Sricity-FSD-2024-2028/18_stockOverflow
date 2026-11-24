@@ -1,10 +1,16 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import './setup.css';
 import { useAuth } from '../context/AuthContext';
 import {
   writeSupplierId, writeSession,
   createSupplierSetup, updateSupplier, updateUser
 } from './api/supplierApi';
+import {
+  supplierStore,
+  submitSupplierSetup,
+  selectSetupLoading,
+} from './redux';
 
 const STEPS = [
   { id: 1, label: 'Profile' },
@@ -72,8 +78,10 @@ const EMOJIS = {
 
 const DEFAULT_PRODUCTS = [];
 
-export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
+function SupplierSetupInner({ onNavigateToDashboard, onLogout }) {
   const { user, saveSession, refreshUser } = useAuth();
+  const dispatch = useDispatch();
+  const setupLoading = useSelector(selectSetupLoading);
   const [currentStep, setCurrentStep] = useState(1);
   const [setupComplete, setSetupComplete] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'ok' });
@@ -273,114 +281,17 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
   }, [products]);
 
   const handleCompleteSetup = async () => {
-    const existingSid = user?.profileId || readSupplierId() || undefined;
-    const cleanSid = existingSid && !existingSid.startsWith('sup-17') ? existingSid : undefined;
-
-    const payload = {
-      id: cleanSid,
-      business: {
-        companyName: business.companyName.trim(),
-        businessType: business.businessType || 'Wholesaler',
-        businessEmail: business.businessEmail.trim(),
-        phoneNumber: business.phoneNumber.trim() || undefined,
-        gstNumber: business.gstNumber.trim() || undefined,
-        supplierCode: business.supplierCode.trim() || undefined,
-        currency: business.currency || 'INR',
-        businessAddress: business.businessAddress.trim() || undefined,
-        state: business.state || undefined,
-        website: business.website.trim() || undefined,
-        primaryCategory: business.primaryCategory || 'General',
-        paymentTerms: business.paymentTerms || 'Net 30',
-        sellingType: business.sellingType || 'Wholesale',
-        description: business.description.trim() || undefined
-      },
-      primaryContact: {
-        fullName: contact.fullName.trim(),
-        designation: contact.designation.trim() || undefined,
-        directEmail: contact.directEmail.trim() || undefined
-      },
-      retailers: [],
-      products: products.map(p => ({
-        sku: p.sku || `SKU-${Date.now()}`,
-        name: p.name,
-        brand: p.brand || undefined,
-        variant: p.variant || undefined,
-        category: p.cat || p.category || 'General',
-        stockAvailable: Number(p.stock || 0),
-        unitPrice: Number(p.price || 0),
-        minOrderQty: Number(p.moq || 1),
-        unit: p.unit || 'Piece',
-        expiryDate: p.expiryDate || undefined,
-        reviewSummary: p.reviewSummary || undefined,
-        description: p.description || undefined
-      })),
-      profileStatus: user?.profile?.profileStatus === 'active' ? 'active' : 'pending'
-    };
-
     try {
-      const res = await createSupplierSetup(payload);
-      const supplierId = res?.id || res?.supplier?.id || cleanSid || `sup-${Date.now()}`;
-      writeSupplierId(supplierId);
-
-      if (user?.id) {
-        try {
-          await updateUser(user.id, { profileId: supplierId, status: user.status === 'Active' ? 'Active' : 'Pending' });
-        } catch (e) {
-          console.warn('Could not link profileId to user in backend:', e);
-        }
-        try {
-          localStorage.setItem(`so_supplier_setup_completed_${user.id}`, 'true');
-        } catch {}
-      }
-
-      // Trigger employee task distribution in round-robin
-      try {
-        await fetch('/api/employees/assignments/distribute', { method: 'POST' });
-      } catch (_distErr) {
-        console.warn('Distribution trigger note:', _distErr);
-      }
-
-      const updatedProfile = {
-        businessName: business.companyName.trim(),
-        businessEmail: business.businessEmail.trim(),
-        businessPhone: business.phoneNumber.trim(),
-        supplierCode: business.supplierCode.trim(),
-        address: business.businessAddress.trim(),
-        website: business.website.trim(),
-        businessType: business.businessType,
-        currency: business.currency,
-        primaryCategory: business.primaryCategory,
-        paymentTerms: business.paymentTerms,
-        sellingType: business.sellingType,
-        description: business.description.trim(),
-        state: business.state,
-        ownerName: contact.fullName.trim(),
-        ownerTitle: contact.designation.trim(),
-        ownerEmail: contact.directEmail.trim(),
-        profileStatus: user?.profile?.profileStatus === 'active' ? 'active' : 'pending',
-        retailers: [],
-        productCount: products.length
-      };
-
-      writeSession({
-        ...user,
-        supplierId,
-        profileId: supplierId,
-        supplierName: business.companyName,
-        email: business.businessEmail,
-        role: 'supplier',
-        status: user?.status === 'Active' ? 'Active' : 'Pending',
-        profile: updatedProfile
-      });
-
-      if (saveSession) {
-        saveSession({
-          ...user,
-          status: user?.status === 'Active' ? 'Active' : 'Pending',
-          profileId: supplierId,
-          profile: updatedProfile
-        });
-      }
+      await dispatch(
+        submitSupplierSetup({
+          business,
+          contact,
+          products,
+          user,
+          saveSession,
+          refreshUser,
+        })
+      ).unwrap();
 
       showToast('Setup submitted! Product catalog saved.');
       setSetupComplete(true);
@@ -388,8 +299,8 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         setTimeout(() => onNavigateToDashboard(), 1200);
       }
     } catch (err) {
-      console.error('Failed to submit supplier setup:', err);
-      showToast(err.message || 'Setup submission failed. Please check the fields.', 'err');
+      console.error('Failed to submit supplier setup via Redux:', err);
+      showToast(err?.message || err || 'Setup submission failed. Please check the fields.', 'err');
     }
   };
 
@@ -1028,13 +939,14 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
                   <button
                     type="button"
                     className="btn btn-dark"
-                    style={{ padding: '12px 32px', fontSize: '14px' }}
+                    style={{ padding: '12px 32px', fontSize: '14px', opacity: setupLoading ? 0.7 : 1 }}
                     onClick={handleCompleteSetup}
+                    disabled={setupLoading}
                   >
                     <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
                       <polyline points="2,7 5.5,10.5 12,3.5" />
                     </svg>
-                    Complete Setup &amp; Launch Dashboard
+                    {setupLoading ? 'Submitting Setup...' : 'Complete Setup & Launch Dashboard'}
                   </button>
                 </div>
               </div>
@@ -1310,5 +1222,13 @@ export default function SupplierSetup({ onNavigateToDashboard, onLogout }) {
         <span>{toast.message}</span>
       </div>
     </div>
+  );
+}
+
+export default function SupplierSetup(props) {
+  return (
+    <Provider store={supplierStore}>
+      <SupplierSetupInner {...props} />
+    </Provider>
   );
 }

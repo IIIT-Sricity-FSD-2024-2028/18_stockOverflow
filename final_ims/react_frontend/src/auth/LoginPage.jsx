@@ -1,87 +1,54 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { authActions } from '../store/auth-slice';
+import { loginUser } from '../store/auth-actions';
 import './auth.css';
 
 export default function LoginPage({ onNavigate, onLoginSuccess }) {
-  const { saveSession } = useAuth();
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.auth.loading);
+  const authError = useSelector((state) => state.auth.error);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [validationError, setValidationError] = useState('');
+
+  const errorMessage = validationError || authError || '';
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
+    setValidationError('');
+    dispatch(authActions.clearAuthError());
 
     if (!email || !email.includes('@')) {
-      setErrorMessage('Please enter a valid email address.');
+      setValidationError('Please enter a valid email address.');
       return;
     }
     if (!password) {
-      setErrorMessage('Password is required.');
+      setValidationError('Password is required.');
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      const API_BASE = typeof window !== 'undefined' && window.IMS_API_BASE_URL
-        ? window.IMS_API_BASE_URL
-        : '/api';
-
-      const res = await fetch(`${API_BASE}/users/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), password }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Invalid email or password.');
-      }
-
-      const user = await res.json();
-      const role = String(user.role || 'consumer').toLowerCase();
-      const status = String(user.profile?.profileStatus || user.status || 'Active').toLowerCase();
-
-      // Store canonical session and auth token
-      const session = {
-        ...user,
-        id: user.id || 'usr-' + Date.now(),
-        name: user.name || 'User',
-        email: user.email || email,
-        role: role === 'customer' ? 'consumer' : role,
-        status: user.status || 'Active',
-        profile: user.profile || null,
-        token: user.token || `sotk_${user.id}_${Date.now()}`,
-      };
-
-      if (saveSession) {
-        saveSession(session);
-      } else {
-        localStorage.setItem('so_session', JSON.stringify(session));
-        if (session.token) {
-          localStorage.setItem('so_token', session.token);
-        }
-      }
+      const session = await dispatch(loginUser(email, password));
+      const role = String(session.role || 'consumer').toLowerCase();
+      const status = String(session.profile?.profileStatus || session.status || 'Active').toLowerCase();
 
       if (onLoginSuccess) {
         onLoginSuccess(session);
       }
 
-      // Check whether profile is configured
       const hasRetailerProfile = Boolean(
-        user.profileId ||
-        (user.profile && (user.profile.businessName || (Array.isArray(user.profile.stores) && user.profile.stores.length > 0)))
+        session.profileId ||
+        (session.profile && (session.profile.businessName || (Array.isArray(session.profile.stores) && session.profile.stores.length > 0)))
       );
       const hasSupplierProfile = Boolean(
-        user.profileId ||
-        (user.profile && (user.profile.businessName || user.profile.companyName))
+        session.profileId ||
+        (session.profile && (session.profile.businessName || session.profile.companyName))
       );
 
-      // Role and Verification Gate Routing
       if (role === 'admin') {
         onNavigate('admin');
       } else if (role === 'employee') {
@@ -109,17 +76,16 @@ export default function LoginPage({ onNavigate, onLoginSuccess }) {
       } else {
         onNavigate('landing');
       }
-    } catch (err) {
-      setErrorMessage(err.message || 'Unable to log in. Please check your credentials.');
-    } finally {
-      setIsLoading(false);
+    } catch {
+      // Error is handled in Redux auth slice
     }
   };
 
   const quickFill = (demoEmail, demoPass) => {
     setEmail(demoEmail);
     setPassword(demoPass);
-    setErrorMessage('');
+    setValidationError('');
+    dispatch(authActions.clearAuthError());
   };
 
   return (

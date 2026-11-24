@@ -3,6 +3,7 @@ export declare class CreateReservationRequestDto {
     qty: number;
     customer?: string;
     customerEmail?: string;
+    customerPhone?: string;
     customerId?: string;
     storeId: string;
     store?: string;

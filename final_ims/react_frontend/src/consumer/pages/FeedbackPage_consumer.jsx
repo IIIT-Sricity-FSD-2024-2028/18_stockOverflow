@@ -9,8 +9,12 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
-import { fetchProducts, submitProductFeedback } from '../utils/api_consumer';
+import { selectCartCount } from '../redux/slices/cartSlice';
+import { submitReview } from '../redux/slices/feedbackSlice';
+import { selectProducts } from '../redux/slices/catalogSlice';
+import { fetchProducts } from '../utils/api_consumer';
 
 export default function FeedbackPage_consumer({
   initialSku = '',
@@ -20,7 +24,11 @@ export default function FeedbackPage_consumer({
   onLogout,
   showToast,
 }) {
-  const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
+  const reduxCartCount = useSelector(selectCartCount);
+  const reduxProducts = useSelector(selectProducts);
+
+  const [products, setProducts] = useState(reduxProducts && reduxProducts.length > 0 ? reduxProducts : []);
   const [selectedSku, setSelectedSku] = useState(initialSku);
   const [feedbackType, setFeedbackType] = useState('quality');
   const [rating, setRating] = useState(5);
@@ -29,12 +37,15 @@ export default function FeedbackPage_consumer({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const cartCount = useMemo(() => {
-    return cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
-  }, [cart]);
+  const cartCount = reduxCartCount || cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
 
   useEffect(() => {
     async function loadCatalog() {
+      if (reduxProducts && reduxProducts.length > 0) {
+        setProducts(reduxProducts);
+        if (!selectedSku) setSelectedSku(reduxProducts[0].sku);
+        return;
+      }
       const data = await fetchProducts();
       setProducts(data);
       if (!selectedSku && data.length > 0) {
@@ -42,7 +53,7 @@ export default function FeedbackPage_consumer({
       }
     }
     loadCatalog();
-  }, [selectedSku]);
+  }, [selectedSku, reduxProducts]);
 
   useEffect(() => {
     if (userSession?.name) setCustomerName(userSession.name);
@@ -75,11 +86,11 @@ export default function FeedbackPage_consumer({
         date: new Date().toISOString(),
       };
 
-      await submitProductFeedback(selectedSku, payload);
+      await dispatch(submitReview({ sku: selectedSku, feedbackData: payload })).unwrap();
       setIsSubmitted(true);
       showToast('⭐ Thank you for your feedback!');
     } catch (err) {
-      showToast(err.message || 'Failed to submit feedback.');
+      showToast(err.message || err || 'Failed to submit feedback.');
     } finally {
       setIsSubmitting(false);
     }

@@ -99,6 +99,8 @@ export interface ProductRecord {
     status: ProductStatus | string;
     visibility: ProductVisibility | string;
     createdAt: string;
+    expiresAt?: string;
+    expiredAt?: string;
     updatedAt: string;
     restockedAt?: string;
     stockHistory?: Array<{
@@ -232,6 +234,8 @@ export interface PurchaseOrder {
     units: number;
     status: PurchaseOrderStatus | string;
     createdAt: string;
+    expiresAt?: string;
+    expiredAt?: string;
 }
 export interface ReservationRecord {
     requestId: string;
@@ -240,6 +244,7 @@ export interface ReservationRecord {
     qty: number;
     customer?: string;
     customerEmail?: string;
+    customerPhone?: string;
     customerId?: string;
     priceUSD: number;
     productImg: string;
@@ -250,6 +255,7 @@ export interface ReservationRecord {
     paymentMethod: string;
     status: string;
     reservedAt: string;
+    expiresAt?: string;
 }
 export interface ReservationRequestRecord {
     requestId: string;
@@ -258,14 +264,20 @@ export interface ReservationRequestRecord {
     qty: number;
     customer?: string;
     customerEmail?: string;
+    customerPhone?: string;
     customerId?: string;
     storeId: string;
     store: string;
     paymentMethod: string;
     status: string;
     createdAt: string;
+    expiresAt?: string;
+    expiredAt?: string;
     completedAt?: string;
     completedBy?: string;
+    cancelledAt?: string;
+    cancelledBy?: string;
+    cancelReason?: string;
     confirmationShownAt?: string;
     orderId?: string;
 }
@@ -284,6 +296,7 @@ export interface TransactionRecord {
     timestamp: string;
     customer: string;
     customerEmail?: string;
+    customerPhone?: string;
     customerId?: string;
     store: string;
     storeId: string;
@@ -358,6 +371,8 @@ export interface BillerRequest {
     password?: string;
     status: 'pending' | 'approved' | 'rejected';
     createdAt: string;
+    expiresAt?: string;
+    expiredAt?: string;
     approvedAt?: string;
     rejectedAt?: string;
 }
@@ -375,6 +390,8 @@ export interface EmployeeAssignment {
     status: EmployeeAssignmentStatus;
     notes?: string;
     createdAt: string;
+    expiresAt?: string;
+    expiredAt?: string;
     resolvedAt?: string;
 }
 export interface UserQuery {
@@ -391,6 +408,8 @@ export interface UserQuery {
     assignedEmployeeName?: string;
     response?: string;
     createdAt: string;
+    expiresAt?: string;
+    expiredAt?: string;
     resolvedAt?: string;
 }
 export type UserRole = 'admin' | 'employee' | 'retailer' | 'supplier' | 'consumer' | 'biller';
@@ -408,6 +427,8 @@ export interface UserRecord {
     profileId?: string;
     plan?: string;
     createdAt: string;
+    expiresAt?: string;
+    expiredAt?: string;
     updatedAt: string;
 }
 export interface RoleRecord {
@@ -416,6 +437,8 @@ export interface RoleRecord {
     description: string;
     permissions: Record<string, boolean>;
     createdAt: string;
+    expiresAt?: string;
+    expiredAt?: string;
     updatedAt: string;
 }
 export interface SystemSettingsRecord {

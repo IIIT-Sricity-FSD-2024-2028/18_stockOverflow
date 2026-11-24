@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
-import { billerApi } from '../api/billerApi';
 import ReceiptModal from './ReceiptModal';
+import {
+  fetchBillerTransactions,
+  selectBillerTransactions,
+  selectBillerTransactionsLoading,
+} from '../redux/slices/billerTransactionsSlice';
 
 export default function BillerTransactionsView({ onBackToPos, onLogout }) {
+  const dispatch = useDispatch();
   const { user } = useAuth();
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const reduxTransactions = useSelector(selectBillerTransactions);
+  const loading = useSelector(selectBillerTransactionsLoading);
+
   const [search, setSearch] = useState('');
   const [paymentFilter, setPaymentFilter] = useState('');
   const [selectedTx, setSelectedTx] = useState(null);
@@ -22,23 +29,11 @@ export default function BillerTransactionsView({ onBackToPos, onLogout }) {
   const effectiveRetailerId =
     user?.retailerId || user?.profile?.retailerId || (user?.role === 'retailer' ? user?.id : '') || '';
 
-  const loadTransactions = async () => {
-    setLoading(true);
-    try {
-      const data = await billerApi.getTransactions(currentStoreId, effectiveRetailerId);
-      if (Array.isArray(data)) {
-        setTransactions(data);
-      }
-    } catch (err) {
-      console.error('Failed to load transactions:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const transactions = reduxTransactions;
 
   useEffect(() => {
-    loadTransactions();
-  }, [currentStoreId, effectiveRetailerId]);
+    dispatch(fetchBillerTransactions({ storeId: currentStoreId, retailerId: effectiveRetailerId }));
+  }, [currentStoreId, effectiveRetailerId, dispatch]);
 
   // Filtered transactions
   const filtered = useMemo(() => {

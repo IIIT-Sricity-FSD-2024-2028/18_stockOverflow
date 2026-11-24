@@ -8,6 +8,8 @@ export default function UserModal_admin({
   isOpen,
   editingUser,
   formData,
+  stores = [],
+  saving = false,
   onChange,
   onClose,
   onSave,
@@ -142,7 +144,7 @@ export default function UserModal_admin({
                 }}
               >
                 <option value="Active">Active</option>
-                <option value="Warning">Warning</option>
+                <option value="Pending">Pending</option>
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
@@ -165,10 +167,11 @@ export default function UserModal_admin({
               }}
             >
               <option value="Global Hub">Global Hub</option>
-              <option value="Downtown Store">Downtown Store</option>
-              <option value="Uptown Mall">Uptown Mall</option>
-              <option value="Westside Outlet">Westside Outlet</option>
-              <option value="Central Warehouse">Central Warehouse</option>
+              {stores.map((s) => (
+                <option key={s.id || s.name} value={s.name}>
+                  {s.name}
+                </option>
+              ))}
             </select>
           </div>
 

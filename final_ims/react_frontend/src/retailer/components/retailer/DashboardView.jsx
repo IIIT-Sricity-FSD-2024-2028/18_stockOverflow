@@ -1,29 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { useDataSync } from '../../../context/DataSyncContext';
 import { request } from '../../api/client';
 import Chart from 'chart.js/auto';
+import {
+  fetchDashboardData,
+  setDashboardDataLocal,
+  selectDashboardData,
+  selectDashboardLoading,
+  selectDashboardActiveFilter,
+  selectDashboardActiveTransTab,
+  selectDashboardNotifVisible,
+  setActiveFilter,
+  setActiveTransTab,
+  setNotifVisible,
+} from '../../redux/slices/dashboardSlice';
 
 export default function DashboardView({ setActiveView, onNavigate }) {
   const navigate = setActiveView || onNavigate;
   const { user } = useAuth();
+  const dispatch = useDispatch();
 
-  // State
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({
-    products: [],
-    customers: [],
-    transactions: [],
-    purchaseOrders: [],
-    returns: [],
-    suppliers: [],
-    subscription: null,
-    orderActivity: null,
-  });
+  // Redux State
+  const data = useSelector(selectDashboardData);
+  const loading = useSelector(selectDashboardLoading);
+  const activeFilter = useSelector(selectDashboardActiveFilter);
+  const activeTransTab = useSelector(selectDashboardActiveTransTab);
+  const notifVisible = useSelector(selectDashboardNotifVisible);
 
-  const [activeFilter, setActiveFilter] = useState('1D');
-  const [activeTransTab, setActiveTransTab] = useState('Sale');
-  const [notifVisible, setNotifVisible] = useState(true);
   const [toastMessage, setToastMessage] = useState(null);
 
   // Modals
@@ -52,49 +57,11 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const loadAllData = async (isSilent = false) => {
-    try {
-      if (!isSilent) setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const scopedQuery = retailerId
-        ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
-        : '';
-
-      const [productsRes, customersRes, transactionsRes, poRes, returnsRes, suppliersRes, subRes, orderActRes] =
-        await Promise.all([
-          request(`/products${scopedQuery}`).catch(() => []),
-          request(`/customers${scopedQuery}`).catch(() => []),
-          request(`/transactions${scopedQuery}`).catch(() => []),
-          request(`/purchase-orders${scopedQuery}`).catch(() => []),
-          request(`/returns${scopedQuery}`).catch(() => []),
-          request('/suppliers').catch(() => []),
-          request(`/platform-revenue/subscriptions/active?userId=${encodeURIComponent(user?.id || user?.userId || 'u-retailer-1')}`).catch(() => null),
-          request(`/transactions/order-activity${scopedQuery}`).catch(() => null),
-        ]);
-
-      // Only count/show customers who have purchased something
-      const purchasedCustomers = (Array.isArray(customersRes) ? customersRes : []).filter(
-        (c) =>
-          (Number(c.totalOrders != null ? c.totalOrders : c.orders) || 0) > 0 ||
-          (Number(c.totalSpent != null ? c.totalSpent : c.spent) || 0) > 0,
-      );
-
-      setData({
-        products: Array.isArray(productsRes) ? productsRes : [],
-        customers: purchasedCustomers,
-        transactions: Array.isArray(transactionsRes) ? transactionsRes : [],
-        purchaseOrders: Array.isArray(poRes) ? poRes : [],
-        returns: Array.isArray(returnsRes) ? returnsRes : [],
-        suppliers: Array.isArray(suppliersRes) ? suppliersRes : [],
-        subscription: subRes,
-        orderActivity: orderActRes,
-      });
-    } catch (err) {
-      console.error('Error fetching dashboard data:', err);
-    } finally {
-      if (!isSilent) setLoading(false);
-    }
+  const loadAllData = (isSilent = false) => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    const userId = user?.id || user?.userId || 'u-retailer-1';
+    dispatch(fetchDashboardData({ retailerId, storeId, userId, isSilent }));
   };
 
   useEffect(() => {
@@ -217,9 +184,31 @@ export default function DashboardView({ setActiveView, onNavigate }) {
     total: formatCurrency(po.total),
   }));
 
+  const preorderRows = (data.reservationRequests || []).slice(0, 10).map((req) => {
+    const isCancelled = String(req.status || '').toLowerCase() === 'cancelled';
+    const isExpired = String(req.status || '').toLowerCase() === 'expired';
+    const isCompleted = String(req.status || '').toLowerCase() === 'completed';
+    return {
+      date: formatDate(req.createdAt),
+      name: `${req.customer || 'Consumer'}${req.customerEmail ? ` (${req.customerEmail})` : ''}`,
+      id: `${req.productName || req.sku} (Qty: ${req.qty || 1}) · Hold: ${req.requestId}`,
+      color: isExpired ? '#ea580c' : isCancelled ? '#ef4444' : isCompleted ? '#10b981' : '#f59e0b',
+      status: isExpired ? 'returned' : isCancelled ? 'returned' : isCompleted ? 'delivered' : 'pending',
+      statusLabel: isExpired
+        ? '⌛ Expired (15m Timeout)'
+        : isCancelled
+        ? `❌ Cancelled (${req.cancelReason || 'by consumer'})`
+        : isCompleted
+        ? '✓ Completed'
+        : '⏳ Pre-order Hold',
+      total: req.store || 'Store Pickup',
+    };
+  });
+
   const transTabs = {
     Sale: salesRows,
     Purchase: purchaseRows,
+    'Pre-orders': preorderRows,
     Quotation: [],
     Expenses: [],
     Invoices: [],
@@ -726,7 +715,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           billingCycle: 'monthly',
         }),
       });
-      setData((prev) => ({ ...prev, subscription: res }));
+      dispatch(setDashboardDataLocal({ subscription: res }));
       setIsTierModalOpen(false);
       showToast('Plan updated: Starter (₹0/mo) is now active.', 'success');
     } catch (err) {
@@ -749,7 +738,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           paymentReference: 'PAY_SIM_' + Math.floor(100000 + Math.random() * 900000),
         }),
       });
-      setData((prev) => ({ ...prev, subscription: res }));
+      dispatch(setDashboardDataLocal({ subscription: res }));
       setIsPaymentModalOpen(false);
       setIsTierModalOpen(false);
       const tierName = pendingTier === 'enterprise' ? 'Enterprise (₹3,499/mo)' : 'Growth (₹799/mo)';
@@ -767,7 +756,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
           userId: user?.id || user?.userId || 'u-retailer-1',
         }),
       });
-      setData((prev) => ({ ...prev, subscription: res }));
+      dispatch(setDashboardDataLocal({ subscription: res }));
       setIsCancelModalOpen(false);
       showToast('Subscription auto-renewal has been cancelled.', 'info');
       if (pendingSwitchTier === 'free') {
@@ -924,7 +913,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
             </a>{' '}
             to avoid stockouts.
           </span>
-          <div className="close-btn" onClick={() => setNotifVisible(false)}>
+          <div className="close-btn" onClick={() => dispatch(setNotifVisible(false))}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
@@ -1146,7 +1135,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                 <div
                   key={tab}
                   className={`filter-tab ${activeFilter === tab ? 'active' : ''}`}
-                  onClick={() => setActiveFilter(tab)}
+                  onClick={() => dispatch(setActiveFilter(tab))}
                 >
                   {tab}
                 </div>
@@ -1479,17 +1468,55 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                 <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
               </svg>
             </div>
-            <div className="panel-title">Recent Transactions</div>
+            <div className="panel-title">Recent Transactions & Pre-orders</div>
             <a className="panel-link" onClick={() => setActiveView('purchase-orders')}>
               View All
             </a>
           </div>
+          {(data.reservationRequests || []).some((r) => String(r.status || '').toLowerCase() === 'cancelled') && (
+            <div
+              style={{
+                margin: '0 16px 12px 16px',
+                backgroundColor: '#fef2f2',
+                border: '1.5px solid #fecaca',
+                borderRadius: '8px',
+                padding: '8px 12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>⚠️</span>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>
+                  {(data.reservationRequests || []).filter((r) => String(r.status || '').toLowerCase() === 'cancelled').length} Customer Pre-order(s) Cancelled
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => dispatch(setActiveTransTab('Pre-orders'))}
+                style={{
+                  background: '#fff',
+                  border: '1px solid #fca5a5',
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#dc2626',
+                  cursor: 'pointer',
+                }}
+              >
+                View Pre-orders &rarr;
+              </button>
+            </div>
+          )}
+
           <div className="trans-tabs">
-            {['Sale', 'Purchase', 'Quotation', 'Expenses', 'Invoices'].map((tab) => (
+            {['Sale', 'Purchase', 'Pre-orders', 'Quotation', 'Expenses', 'Invoices'].map((tab) => (
               <div
                 key={tab}
                 className={`trans-tab ${activeTransTab === tab ? 'active' : ''}`}
-                onClick={() => setActiveTransTab(tab)}
+                onClick={() => dispatch(setActiveTransTab(tab))}
               >
                 {tab}
               </div>
@@ -1528,7 +1555,7 @@ export default function DashboardView({ setActiveView, onNavigate }) {
                       </td>
                       <td>
                         <span className={`status-pill ${row.status}`}>
-                          {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+                          {row.statusLabel || (row.status.charAt(0).toUpperCase() + row.status.slice(1))}
                         </span>
                       </td>
                       <td style={{ fontWeight: 700, fontSize: '13px' }}>{row.total}</td>

@@ -1,29 +1,60 @@
 /**
- * ProductSearchPage_consumer.jsx - Exact Product Search & Catalog Portal
+ * ProductSearchPage_consumer.jsx - Exact Product Search & Catalog Portal (Redux Integrated)
  * 
  * IN LAYMAN'S TERMS:
  * This page matches `productsearch.html` identically.
- * It contains the left sidebar, the top header bar, the filter bar (search input, store location filter,
- * category selector, stock filter, sorting selector), and the 3-column products grid with stock status badges.
+ * It connects to Redux (`catalogSlice` and `cartSlice`):
+ * - Reads product catalog and physical store locations from Redux state.
+ * - Reads live cart count from Redux state.
+ * - Dispatches store selection changes to Redux.
+ * - Features dynamic search, store filter, category filter, brand filter, stock status filter,
+ *   sorting selector, and responsive 3-column product cards grid.
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
+import {
+  selectProducts,
+  selectStores,
+  selectSelectedStoreName,
+  selectSelectedStoreId,
+  setSelectedStore,
+  selectCatalogLoading,
+} from '../redux/slices/catalogSlice';
+import { selectCartCount } from '../redux/slices/cartSlice';
 
 export default function ProductSearchPage_consumer({
-  products = [],
-  stores = [],
-  selectedStore = 'Global (All Stores)',
-  selectedStoreId = '',
-  onSelectStore,
-  cart = [],
+  products: propProducts,
+  stores: propStores,
+  selectedStore: propSelectedStore,
+  selectedStoreId: propSelectedStoreId,
+  cart: propCart,
   userSession,
-  loading = false,
+  loading: propLoading,
   onAddToCart,
   onViewProduct,
   onNavigate,
   onLogout,
 }) {
+  const dispatch = useDispatch();
+
+  // Redux Selectors with prop fallbacks
+  const reduxProducts = useSelector(selectProducts);
+  const reduxStores = useSelector(selectStores);
+  const reduxSelectedStore = useSelector(selectSelectedStoreName);
+  const reduxSelectedStoreId = useSelector(selectSelectedStoreId);
+  const reduxLoading = useSelector(selectCatalogLoading);
+  const reduxCartCount = useSelector(selectCartCount);
+
+  const products = propProducts || reduxProducts || [];
+  const stores = propStores || reduxStores || [];
+  const selectedStore = propSelectedStore || reduxSelectedStore || 'Downtown Store';
+  const selectedStoreId = propSelectedStoreId || reduxSelectedStoreId || '';
+  const loading = propLoading !== undefined ? propLoading : reduxLoading;
+  const cartCount = propCart ? propCart.reduce((t, i) => t + (Number(i.qty) || 1), 0) : reduxCartCount;
+
+  // Local filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [storeFilter, setStoreFilter] = useState(selectedStoreId || '');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -31,33 +62,26 @@ export default function ProductSearchPage_consumer({
   const [stockFilter, setStockFilter] = useState('');
   const [sortFilter, setSortFilter] = useState('featured');
 
-  useEffect(() => {
-    setStoreFilter(selectedStoreId || '');
-  }, [selectedStoreId]);
-
-  const handleStoreChange = (val) => {
-    setStoreFilter(val);
-    if (typeof onSelectStore === 'function') {
-      onSelectStore(val);
-    }
-  };
-
-  // Total quantity of items in our cart (for the top cart badge)
-  const cartCount = useMemo(() => {
-    return cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
-  }, [cart]);
-
-  // Extract unique categories from catalog list (in layman's terms: collect all distinct category tags)
+  // Extract unique categories from catalog list
   const categories = useMemo(() => {
     const list = Array.from(new Set(products.map((p) => p.category).filter(Boolean)));
     return list.sort();
   }, [products]);
 
-  // Extract unique brands from catalog list (in layman's terms: collect all distinct brand names)
+  // Extract unique brands from catalog list
   const brands = useMemo(() => {
     const list = Array.from(new Set(products.map((p) => p.brand).filter(Boolean)));
     return list.sort();
   }, [products]);
+
+  // Handle store filter change and synchronize with Redux
+  const handleStoreFilterChange = (e) => {
+    const newStoreId = e.target.value;
+    setStoreFilter(newStoreId);
+    if (newStoreId) {
+      dispatch(setSelectedStore(newStoreId));
+    }
+  };
 
   // Filter products by search text, category, brand, and stock status
   const filteredProducts = useMemo(() => {
@@ -74,24 +98,13 @@ export default function ProductSearchPage_consumer({
         const matchesCategory = !categoryFilter || product.category === categoryFilter;
         const matchesBrand = !brandFilter || product.brand === brandFilter;
 
-        const matchesStore =
-          !storeFilter ||
-          String(product.storeId) === String(storeFilter) ||
-          String(product.storeName) === String(storeFilter) ||
-          (Array.isArray(product.storeInventory) &&
-            product.storeInventory.some(
-              (si) =>
-                String(si.storeId) === String(storeFilter) ||
-                storeFilter.endsWith(':' + si.storeId),
-            ));
-
         const qty = product.qty !== undefined ? product.qty : 10;
         let matchesStock = true;
         if (stockFilter === 'in-stock') matchesStock = qty > 10;
         else if (stockFilter === 'low-stock') matchesStock = qty > 0 && qty <= 10;
         else if (stockFilter === 'out-stock') matchesStock = qty <= 0;
 
-        return matchesSearch && matchesCategory && matchesBrand && matchesStock && matchesStore;
+        return matchesSearch && matchesCategory && matchesBrand && matchesStock;
       })
       .sort((a, b) => {
         const priceA = Number(a.priceUSD || a.price || 0);
@@ -101,7 +114,7 @@ export default function ProductSearchPage_consumer({
         if (sortFilter === 'name-asc') return (a.name || '').localeCompare(b.name || '');
         return 0;
       });
-  }, [products, searchQuery, categoryFilter, brandFilter, stockFilter, sortFilter, storeFilter]);
+  }, [products, searchQuery, categoryFilter, brandFilter, stockFilter, sortFilter]);
 
   return (
     <CustomerLayout_consumer
@@ -130,7 +143,7 @@ export default function ProductSearchPage_consumer({
         <div className="filter-select">
           <select
             value={storeFilter}
-            onChange={(e) => handleStoreChange(e.target.value)}
+            onChange={handleStoreFilterChange}
             style={{ fontWeight: 500 }}
           >
             <option value="">Global (All Stores)</option>
@@ -157,7 +170,7 @@ export default function ProductSearchPage_consumer({
           </select>
         </div>
 
-        {/* Brand Filter (matching vanilla productsearch.html) */}
+        {/* Brand Filter */}
         <div className="filter-select">
           <select
             value={brandFilter}
@@ -233,7 +246,7 @@ export default function ProductSearchPage_consumer({
                 onClick={() => onViewProduct(p.sku || p.id || p.name)}
                 style={{ cursor: 'pointer' }}
               >
-                {/* Product Image & Stock Badge (in layman's terms: thumbnail showing photo and stock tag) */}
+                {/* Product Image & Stock Badge */}
                 <div className="prod-img">
                   {p.productImg ? (
                     <img
@@ -270,7 +283,7 @@ export default function ProductSearchPage_consumer({
                     {p.name}
                   </div>
                   <div style={{ fontSize: '11.5px', color: '#0284c7', fontWeight: 600, marginTop: '2px' }}>
-                    Store: {p.storeName || (selectedStore && selectedStore !== 'Global (All Stores)' && selectedStore !== 'Downtown Store' ? selectedStore : p.retailerName) || "John's Main Store"}
+                    Store: {p.retailerName || selectedStore || "John's Retail Store"}
                   </div>
 
                   <hr className="prod-divider" />

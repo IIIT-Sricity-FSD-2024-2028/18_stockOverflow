@@ -1,15 +1,35 @@
 import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectToast, hideToast } from '../redux/slices/uiSlice';
 
 /**
- * Toast notification for the supplier module.
+ * Toast notification for the supplier module (Redux & Prop integrated).
  * Auto-dismisses after 3 seconds.
  */
-export default function SupplierToast({ message, type = 'success', onClose }) {
+export default function SupplierToast({ message: propMessage, type: propType, onClose }) {
+  const dispatch = useDispatch();
+  let reduxToast = { show: false, message: '', type: 'ok' };
+  try {
+    reduxToast = useSelector(selectToast) || reduxToast;
+  } catch {
+    // Graceful fallback if rendered outside Redux provider
+  }
+
+  const message = propMessage !== undefined ? propMessage : (reduxToast.show ? reduxToast.message : '');
+  const type = propType || reduxToast.type || 'success';
+
+  const handleClose = () => {
+    if (onClose) onClose();
+    try {
+      dispatch(hideToast());
+    } catch {}
+  };
+
   useEffect(() => {
     if (!message) return;
-    const timer = setTimeout(() => onClose?.(), 3000);
+    const timer = setTimeout(() => handleClose(), 3000);
     return () => clearTimeout(timer);
-  }, [message, onClose]);
+  }, [message]);
 
   if (!message) return null;
 

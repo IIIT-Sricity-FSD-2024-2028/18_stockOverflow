@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { retailerApi } from '../../api/retailerApi';
 import { useAuth } from '../../context/AuthContext';
+import {
+  fetchReturns,
+  createReturn,
+  updateReturn,
+  setSelectedReturn as setSelectedReturnAction,
+  selectReturns,
+  selectSelectedReturn,
+  selectReturnsLoading,
+} from '../../redux/slices/returnsSlice';
 
 export default function ReturnsView() {
   const { user } = useAuth();
+  const dispatch = useDispatch();
+
+  const reduxReturns = useSelector(selectReturns);
+  const reduxLoading = useSelector(selectReturnsLoading);
+  const reduxSelectedReturn = useSelector(selectSelectedReturn);
+
   const [returns, setReturns] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const loading = reduxLoading;
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedReturn, setSelectedReturn] = useState(null);
@@ -25,43 +41,24 @@ export default function ReturnsView() {
     method: 'Original Payment',
   });
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const data = await retailerApi.getReturns(retailerId, storeId).catch(() => []);
-      if (Array.isArray(data) && data.length > 0) {
-        const mapped = data.map((r) => ({
-          id: r.id,
-          orderId: r.orderId || 'ORD-2026-001',
-          party: r.customer || r.party || r.supplier || 'Customer',
-          email: r.email || 'customer@example.com',
-          productName: r.productName || r.product || 'Purchased Item',
-          sku: r.sku || 'SKU-ITEM',
-          qty: Number(r.qty) || 1,
-          amount: Number(r.refundAmount || r.amount) || 1500,
-          reason: r.reason || 'Damaged Goods',
-          method: r.refundMethod || r.method || 'Store Credit',
-          status: r.status || 'Pending',
-          date: r.date || (r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Today'),
-        }));
-        setReturns(mapped);
-        if (!selectedReturn && mapped.length > 0) setSelectedReturn(mapped[0]);
-      } else {
-        setReturns([]);
-        setSelectedReturn(null);
-      }
-    } catch (err) {
-      console.error('Failed to load returns:', err);
-    } finally {
-      setLoading(false);
-    }
+  const loadData = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchReturns({ retailerId, storeId }));
   };
 
   useEffect(() => {
     loadData();
-  }, [user]);
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxReturns)) {
+      setReturns(reduxReturns);
+      if (!selectedReturn && reduxReturns.length > 0) {
+        setSelectedReturn(reduxReturns[0]);
+      }
+    }
+  }, [reduxReturns]);
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -88,13 +85,13 @@ export default function ReturnsView() {
     };
 
     try {
-      const created = await retailerApi.createReturn(payload).catch(() => ({
+      const res = await dispatch(createReturn(payload)).unwrap().catch(() => ({
         id: `RET-00${returns.length + 1}`,
         ...payload,
       }));
 
       const newEntry = {
-        id: created.id || `RET-00${returns.length + 1}`,
+        id: res?.id || `RET-00${returns.length + 1}`,
         ...payload,
         party: form.party,
       };
@@ -117,7 +114,7 @@ export default function ReturnsView() {
     }
 
     try {
-      await retailerApi.updateReturn(id, { status: newStatus, notes });
+      await dispatch(updateReturn({ id, returnData: { status: newStatus, notes } }));
       const updatedList = returns.map((r) => (r.id === id ? { ...r, status: newStatus, notes: notes || r.notes } : r));
       setReturns(updatedList);
       if (selectedReturn?.id === id) {

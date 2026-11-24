@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { request } from '../../api/client';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
+import {
+  fetchProducts,
+  selectProducts,
+  selectProductsLoading,
+} from '../../redux/slices/productsSlice';
 
 export default function LowStocksView({ onNavigate }) {
   const { user } = useAuth();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const reduxProducts = useSelector(selectProducts);
+  const reduxLoading = useSelector(selectProductsLoading);
+
+  const products = reduxProducts || [];
+  const loading = reduxLoading;
   const [searchQuery, setSearchQuery] = useState('');
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const scopedQuery = retailerId
-        ? `?retailerId=${encodeURIComponent(retailerId)}${storeId ? `&storeId=${encodeURIComponent(storeId)}` : ''}`
-        : '';
-      const data = await request(`/products${scopedQuery}`);
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error('Failed to load low stocks:', e);
-    } finally {
-      setLoading(false);
-    }
+  const loadData = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchProducts({ retailerId, storeId }));
   };
 
   useEffect(() => {
     loadData();
-  }, [user]);
+  }, [dispatch, user]);
 
   const lowStockItems = products.filter((p) => Number(p.qty || 0) <= Number(p.min || 10));
   const outOfStockItems = products.filter((p) => Number(p.qty || 0) === 0);

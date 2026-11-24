@@ -6,6 +6,8 @@
  */
 
 import React, { useState } from 'react';
+import { Provider } from 'react-redux';
+import { billerStore } from './redux';
 import PosScreen from './components/PosScreen';
 import BillerTransactionsView from './components/BillerTransactionsView';
 
@@ -14,20 +16,22 @@ export default function App_biller({ onLogout }) {
   const [currentView, setCurrentView] = useState('pos'); // 'pos' | 'transactions'
 
   return (
-    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#f1f5f9' }}>
-      {currentView === 'pos' && (
-        <PosScreen
-          onSwitchView={(view) => setCurrentView(view)}
-          onLogout={onLogout}
-        />
-      )}
+    <Provider store={billerStore}>
+      <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#f1f5f9' }}>
+        {currentView === 'pos' && (
+          <PosScreen
+            onSwitchView={(view) => setCurrentView(view)}
+            onLogout={onLogout}
+          />
+        )}
 
-      {currentView === 'transactions' && (
-        <BillerTransactionsView
-          onBackToPos={() => setCurrentView('pos')}
-          onLogout={onLogout}
-        />
-      )}
-    </div>
+        {currentView === 'transactions' && (
+          <BillerTransactionsView
+            onBackToPos={() => setCurrentView('pos')}
+            onLogout={onLogout}
+          />
+        )}
+      </div>
+    </Provider>
   );
 }

@@ -4936,6 +4936,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "description": "Query parameter: storeId",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -5091,6 +5100,65 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/reservations_dto_update_reservation_request_dto_UpdateReservationRequestDto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reservations/requests/{requestId}/cancel": {
+      "patch": {
+        "tags": [
+          "Reservations"
+        ],
+        "operationId": "Reservations_cancelRequest",
+        "summary": "Cancel Request",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RoleHeader"
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "description": "Path parameter: requestId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/common_database_types_ReservationRequestRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "cancelledBy": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
               }
             }
           }
@@ -6443,6 +6511,9 @@
       },
       "admin_dto_admin_dto_CreateStoreDto": {
         "properties": {
+          "code": {
+            "type": "string"
+          },
           "location": {
             "type": "string"
           },
@@ -6554,6 +6625,9 @@
       },
       "admin_dto_admin_dto_UpdateStoreDto": {
         "properties": {
+          "code": {
+            "type": "string"
+          },
           "location": {
             "type": "string"
           },
@@ -6564,6 +6638,9 @@
             "type": "string"
           },
           "retailerId": {
+            "type": "string"
+          },
+          "status": {
             "type": "string"
           }
         },
@@ -6780,6 +6857,12 @@
           "email": {
             "type": "string"
           },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -6927,6 +7010,12 @@
             "type": "string"
           },
           "employeeName": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "id": {
@@ -7141,6 +7230,12 @@
             "type": "number"
           },
           "emoji": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "expiryDate": {
@@ -7491,6 +7586,12 @@
           "deliveryDate": {
             "type": "string"
           },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -7646,7 +7747,13 @@
           "customerId": {
             "type": "string"
           },
+          "customerPhone": {
+            "type": "string"
+          },
           "emoji": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "maxAvailable": {
@@ -7705,6 +7812,15 @@
       },
       "common_database_types_ReservationRequestRecord": {
         "properties": {
+          "cancelReason": {
+            "type": "string"
+          },
+          "cancelledAt": {
+            "type": "string"
+          },
+          "cancelledBy": {
+            "type": "string"
+          },
           "completedAt": {
             "type": "string"
           },
@@ -7724,6 +7840,15 @@
             "type": "string"
           },
           "customerId": {
+            "type": "string"
+          },
+          "customerPhone": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "orderId": {
@@ -7877,6 +8002,12 @@
             "type": "string"
           },
           "description": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "id": {
@@ -8180,6 +8311,9 @@
           "customerId": {
             "type": "string"
           },
+          "customerPhone": {
+            "type": "string"
+          },
           "discount": {
             "type": "number"
           },
@@ -8300,6 +8434,12 @@
           "createdAt": {
             "type": "string"
           },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
@@ -8362,6 +8502,12 @@
             "type": "string"
           },
           "email": {
+            "type": "string"
+          },
+          "expiredAt": {
+            "type": "string"
+          },
+          "expiresAt": {
             "type": "string"
           },
           "id": {
@@ -9530,6 +9676,9 @@
           "customerId": {
             "type": "string"
           },
+          "customerPhone": {
+            "type": "string"
+          },
           "paymentMethod": {
             "type": "string"
           },
@@ -9557,6 +9706,15 @@
       },
       "reservations_dto_update_reservation_request_dto_UpdateReservationRequestDto": {
         "properties": {
+          "cancelReason": {
+            "type": "string"
+          },
+          "cancelledAt": {
+            "type": "string"
+          },
+          "cancelledBy": {
+            "type": "string"
+          },
           "completedAt": {
             "type": "string"
           },
@@ -10892,6 +11050,9 @@
             },
             "maxItems": 200,
             "type": "array"
+          },
+          "supplierCode": {
+            "type": "string"
           }
         },
         "required": [
@@ -11780,6 +11941,9 @@
               "completed",
               "draft"
             ],
+            "type": "string"
+          },
+          "supplierCode": {
             "type": "string"
           },
           "updatedAt": {

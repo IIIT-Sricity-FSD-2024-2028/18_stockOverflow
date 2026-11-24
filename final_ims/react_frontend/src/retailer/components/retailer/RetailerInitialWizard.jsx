@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Provider, useDispatch } from 'react-redux';
+import { retailerStore } from '../../redux';
 import { useAuth } from '../../context/AuthContext';
-import { retailerApi } from '../../api/retailerApi';
+import { submitRetailerSetup } from '../../redux/slices/profileSlice';
 
 const STEP_META = [
   { label: 'Business', sub: 'Profile' },
@@ -14,8 +16,9 @@ const HERO_META = [
   { pill: 'Step 3', title: 'Review & Complete Setup', sub: 'Everything looks good? Launch your StockOverflow dashboard and start selling.' },
 ];
 
-export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
+function RetailerInitialWizardInner({ onCompleteSetup, onCancel }) {
   const { user, saveSession } = useAuth();
+  const dispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -248,8 +251,8 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
         products: [],
       };
 
-      // Call backend retailer setup API
-      const retailerRecord = await retailerApi.setupRetailer(retailerPayload).catch((e) => {
+      // Call backend retailer setup API via Redux
+      const retailerRecord = await dispatch(submitRetailerSetup(retailerPayload)).unwrap().catch((e) => {
         console.warn('API setup warning, fallback simulated:', e);
         return {
           id: `RET-${Date.now()}`,
@@ -1225,5 +1228,13 @@ export default function RetailerInitialWizard({ onCompleteSetup, onCancel }) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function RetailerInitialWizard(props) {
+  return (
+    <Provider store={retailerStore}>
+      <RetailerInitialWizardInner {...props} />
+    </Provider>
   );
 }

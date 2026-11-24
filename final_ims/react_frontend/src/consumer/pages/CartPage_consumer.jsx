@@ -1,40 +1,66 @@
 /**
- * CartPage_consumer.jsx - Exact Shopping & Reservation Cart View
+ * CartPage_consumer.jsx - Exact Shopping & Reservation Cart View (Redux Integrated)
  * 
  * IN LAYMAN'S TERMS:
  * This page matches `cart.html` identically.
  * It is wrapped in the Customer Sidebar & Header layout.
- * Left Side: Cart items list with quantity steppers (`−` `+`) and red Remove button.
- * Right Side: Reservation summary card with subtotal, estimated total, and "Proceed to Checkout" button.
+ * Directly integrates with Redux `cartSlice`:
+ * - Selects items, count, and subtotal from Redux state.
+ * - Dispatches quantity stepper actions (+ / -) to update store and localStorage.
+ * - Dispatches item removal and checkout navigation.
  */
 
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
+import {
+  selectCartItems,
+  selectCartCount,
+  selectCartSubtotal,
+  updateCartQty,
+  removeFromCart,
+} from '../redux/slices/cartSlice';
 
 export default function CartPage_consumer({
-  cart = [],
+  cart: propCart,
   userSession,
-  onUpdateQty,
-  onRemoveItem,
+  onUpdateQty: propOnUpdateQty,
+  onRemoveItem: propOnRemoveItem,
   onNavigate,
   onLogout,
 }) {
-  const cartCount = useMemo(() => {
-    return cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
-  }, [cart]);
+  const dispatch = useDispatch();
 
-  const subtotal = useMemo(() => {
-    return cart.reduce((sum, item) => {
-      const p = Number(item.priceUSD || item.price || 0);
-      const q = Number(item.qty || 1);
-      return sum + p * q;
-    }, 0);
-  }, [cart]);
+  const reduxCart = useSelector(selectCartItems);
+  const reduxCartCount = useSelector(selectCartCount);
+  const reduxCartSubtotal = useSelector(selectCartSubtotal);
+
+  const cart = propCart || reduxCart || [];
+  const cartCount = propCart ? propCart.reduce((total, item) => total + (Number(item.qty) || 1), 0) : reduxCartCount;
+  const subtotal = propCart
+    ? propCart.reduce((sum, item) => sum + Number(item.priceUSD || item.price || 0) * Number(item.qty || 1), 0)
+    : reduxCartSubtotal;
+
+  const handleUpdateQty = (sku, newQty, storeId = '') => {
+    if (propOnUpdateQty) {
+      propOnUpdateQty(sku, newQty, storeId);
+    } else {
+      dispatch(updateCartQty({ sku, qty: newQty, storeId }));
+    }
+  };
+
+  const handleRemove = (sku, storeId = '') => {
+    if (propOnRemoveItem) {
+      propOnRemoveItem(sku, storeId);
+    } else {
+      dispatch(removeFromCart({ sku, storeId }));
+    }
+  };
 
   return (
     <CustomerLayout_consumer
       activeMenu="cart"
-      pageTitle="Order / Pre-order Cart"
+      pageTitle="Reservation Cart"
       pageSub="Review and finalize your items for pickup"
       cartCount={cartCount}
       userSession={userSession}
@@ -46,8 +72,8 @@ export default function CartPage_consumer({
         <div className="cart-items">
           {cart.length === 0 ? (
             <div className="empty-state">
-              <h2>No items in cart</h2>
-              <p>Looks like you haven't added anything to your order yet.</p>
+              <h2>No items reserved</h2>
+              <p>Looks like you haven't added anything to reserve yet.</p>
               <button
                 type="button"
                 className="checkout-btn"
@@ -93,7 +119,7 @@ export default function CartPage_consumer({
                     <button
                       type="button"
                       className="qty-btn"
-                      onClick={() => onUpdateQty(item.sku, itemQty - 1, item.storeId)}
+                      onClick={() => handleUpdateQty(item.sku, itemQty - 1, item.storeId)}
                     >
                       −
                     </button>
@@ -101,7 +127,7 @@ export default function CartPage_consumer({
                     <button
                       type="button"
                       className="qty-btn"
-                      onClick={() => onUpdateQty(item.sku, itemQty + 1, item.storeId)}
+                      onClick={() => handleUpdateQty(item.sku, itemQty + 1, item.storeId)}
                     >
                       +
                     </button>
@@ -116,7 +142,7 @@ export default function CartPage_consumer({
                   <button
                     type="button"
                     className="remove-btn"
-                    onClick={() => onRemoveItem(item.sku, item.storeId)}
+                    onClick={() => handleRemove(item.sku, item.storeId)}
                   >
                     Remove
                   </button>
@@ -128,7 +154,7 @@ export default function CartPage_consumer({
 
         {/* Right Side: Reservation Summary Card */}
         <div className="summary-card">
-          <div className="summary-title">Order Summary</div>
+          <div className="summary-title">Reservation Summary</div>
           <div className="summary-row">
             <span>Estimated Subtotal</span>
             <span>₹{subtotal.toLocaleString('en-IN')}</span>

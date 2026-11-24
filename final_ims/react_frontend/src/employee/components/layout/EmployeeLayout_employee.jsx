@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 export default function EmployeeLayout_employee({
   activeMenu = 'dashboard',
@@ -14,6 +15,13 @@ export default function EmployeeLayout_employee({
   onLogout,
   children,
 }) {
+  const assignments = useSelector((state) => state.assignments.assignments);
+  const queries = useSelector((state) => state.queries.queries);
+  const user = useSelector((state) => state.auth.user);
+
+  const pendingValidationsCount = assignments.filter((a) => a.status === 'pending').length;
+  const openQueriesCount = queries.filter((q) => q.status !== 'resolved').length;
+  const initials = user?.initials || 'EM';
   return (
     <div className="emp-shell">
       {/* ── Fixed Left Sidebar ── */}
@@ -55,7 +63,7 @@ export default function EmployeeLayout_employee({
                 <path d="M14 5l-7 7-4-4"/><circle cx="8" cy="8" r="7"/>
               </svg>
               <span>All Validations</span>
-              <span className="emp-sb-badge">2</span>
+              <span className="emp-sb-badge">{pendingValidationsCount}</span>
             </button>
           </div>
 
@@ -73,7 +81,7 @@ export default function EmployeeLayout_employee({
                 <path d="M14 10a2 2 0 01-2 2H5l-3 3V4a2 2 0 012-2h8a2 2 0 012 2v6z"/>
               </svg>
               <span>User Queries</span>
-              <span className="emp-sb-badge">3</span>
+              <span className="emp-sb-badge">{openQueriesCount}</span>
             </button>
           </div>
         </div>
@@ -135,7 +143,7 @@ export default function EmployeeLayout_employee({
               </svg>
               <input type="text" placeholder="Search desk..." />
             </div>
-            <button type="button" className="emp-topbar-avatar" title="Employee Profile">EM</button>
+            <button type="button" className="emp-topbar-avatar" title="Employee Profile">{initials}</button>
 
             {/* Header Logout Button */}
             <button

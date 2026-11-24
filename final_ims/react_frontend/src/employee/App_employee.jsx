@@ -7,7 +7,7 @@
  *    - Validations Queue ('validations') -> matching employee-validations.html
  *    - User Queries ('queries') -> matching employee-queries.html
  * 2. Universal layout shell via <EmployeeLayout_employee />.
- * 3. Centralized API and data services in `utils/api_employee.js` and `data/mockData_employee.js`.
+ * 3. Centralized Redux slices in `src/store/` and API helpers in `utils/api_employee.js`.
  */
 
 import React, { useState } from 'react';

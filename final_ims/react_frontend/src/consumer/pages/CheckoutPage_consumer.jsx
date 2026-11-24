@@ -9,19 +9,35 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import CustomerLayout_consumer from '../components/layout/CustomerLayout_consumer';
-import { createReservationRequest } from '../utils/api_consumer';
+import { clearCart, selectCartItems, selectCartCount } from '../redux/slices/cartSlice';
+import { submitReservationHold } from '../redux/slices/ordersSlice';
+import { selectSelectedStoreName, selectStores } from '../redux/slices/catalogSlice';
 
 export default function CheckoutPage_consumer({
-  cart = [],
-  selectedStore = 'Downtown Store',
-  stores = [],
+  cart: propsCart,
+  selectedStore: propsSelectedStore,
+  stores: propsStores,
   userSession,
   onReservationsSubmitted,
   onNavigate,
   onLogout,
   showToast,
 }) {
+  const dispatch = useDispatch();
+
+  // Redux state selectors with fallback to props
+  const reduxCart = useSelector(selectCartItems);
+  const reduxCartCount = useSelector(selectCartCount);
+  const reduxSelectedStore = useSelector(selectSelectedStoreName);
+  const reduxStores = useSelector(selectStores);
+
+  const cart = (reduxCart && reduxCart.length > 0) ? reduxCart : (propsCart || []);
+  const cartCount = reduxCartCount || cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
+  const selectedStore = reduxSelectedStore || propsSelectedStore || 'Downtown Store';
+  const stores = (reduxStores && reduxStores.length > 0) ? reduxStores : (propsStores || []);
+
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Card');
@@ -33,18 +49,6 @@ export default function CheckoutPage_consumer({
     if (userSession?.email) setCustomerEmail(userSession.email);
   }, [userSession]);
 
-  const cartCount = useMemo(() => {
-    return cart.reduce((total, item) => total + (Number(item.qty) || 1), 0);
-  }, [cart]);
-
-  const subtotal = useMemo(() => {
-    return cart.reduce((sum, item) => {
-      const p = Number(item.priceUSD || item.price || 0);
-      const q = Number(item.qty || 1);
-      return sum + p * q;
-    }, 0);
-  }, [cart]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!cart.length) {
@@ -54,13 +58,10 @@ export default function CheckoutPage_consumer({
 
     setIsSubmitting(true);
     try {
-      // Checkout places pending pickup holds. The retailer creates the sale
-      // when the customer arrives and the request is fulfilled at POS.
-      // ── CHECKOUT RESERVATION SUBMISSION (LAYMAN EXPLANATION) ──
-      // In layman's terms: When the customer clicks "Confirm Reservation", we create an in-store
-      // pickup hold for every item in their cart. We check which store branch was selected when
-      // adding the product to cart, or fall back to the product's primary stocking branch.
-      const createdRequests = await Promise.all(cart.map(async (item) => {
+      // ── CHECKOUT RESERVATION SUBMISSION VIA REDUX (LAYMAN EXPLANATION) ──
+      // In layman's terms: When the customer clicks "Confirm Reservation", we dispatch
+      // submitReservationHold to create an in-store pickup hold for the cart items.
+      const reservationItems = cart.map((item) => {
         let storeId = item.storeId;
         let storeName = item.storeName;
 
@@ -78,24 +79,31 @@ export default function CheckoutPage_consumer({
           storeName = selectedStore || 'Central Fulfillment Store';
         }
 
-        return createReservationRequest({
+        return {
           sku: item.sku,
           qty: Number(item.qty || 1),
-          customer: customerName.trim(),
-          customerEmail,
-          customerId: userSession?.id || undefined,
           storeId,
           store: storeName || selectedStore,
-          paymentMethod,
-        });
-      }));
+        };
+      });
 
-      showToast('🎉 Pre-order placed successfully!');
+      const result = await dispatch(submitReservationHold({
+        items: reservationItems,
+        customerName: customerName.trim(),
+        customerEmail: customerEmail.trim(),
+        customerId: userSession?.id || undefined,
+        paymentMethod,
+      })).unwrap();
+
+      // Clear cart in Redux
+      dispatch(clearCart());
+
+      showToast('🎉 Reservation confirmed!');
       if (onReservationsSubmitted) {
-        onReservationsSubmitted(createdRequests);
+        onReservationsSubmitted(result);
       }
     } catch (err) {
-      showToast(err.message || 'Failed to place order.');
+      showToast(err.message || err || 'Failed to place reservation.');
     } finally {
       setIsSubmitting(false);
     }
@@ -104,8 +112,8 @@ export default function CheckoutPage_consumer({
   return (
     <CustomerLayout_consumer
       activeMenu="cart"
-      pageTitle="Finalize Pre-order"
-      pageSub="Provide your contact info to complete your store order"
+      pageTitle="Finalize Reservation"
+      pageSub="Provide your contact info to complete your request"
       cartCount={cartCount}
       userSession={userSession}
       onNavigate={onNavigate}
@@ -166,7 +174,7 @@ export default function CheckoutPage_consumer({
               className="submit-btn"
               disabled={isSubmitting || cart.length === 0}
             >
-              {isSubmitting ? 'Processing Order...' : 'Confirm Pre-order'}
+              {isSubmitting ? 'Processing Reservation...' : 'Confirm Reservation'}
             </button>
           </form>
 

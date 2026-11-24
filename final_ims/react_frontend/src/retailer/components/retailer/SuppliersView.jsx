@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { retailerApi } from '../../api/retailerApi';
+import {
+  fetchSuppliers,
+  createSupplier,
+  setSelectedSupplier,
+  selectSuppliers,
+  selectSuppliersLoading,
+} from '../../redux/slices/suppliersSlice';
 
 export default function SuppliersView({ onViewPerformance }) {
+  const dispatch = useDispatch();
+  const reduxSuppliers = useSelector(selectSuppliers);
+  const reduxLoading = useSelector(selectSuppliersLoading);
+
   const [suppliers, setSuppliers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const loading = reduxLoading;
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState({
@@ -16,31 +28,25 @@ export default function SuppliersView({ onViewPerformance }) {
   });
 
   useEffect(() => {
-    async function load() {
-      try {
-        setLoading(true);
-        const data = await retailerApi.getSuppliers();
-        setSuppliers(Array.isArray(data) ? data : []);
-      } catch (e) {
-        console.error('Failed to load suppliers:', e);
-        setSuppliers([]);
-      } finally {
-        setLoading(false);
-      }
+    dispatch(fetchSuppliers());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxSuppliers)) {
+      setSuppliers(reduxSuppliers);
     }
-    load();
-  }, []);
+  }, [reduxSuppliers]);
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
-      const created = await retailerApi.createSupplier(form).catch(() => ({
+      const res = await dispatch(createSupplier(form)).unwrap().catch(() => ({
         id: `SUP-00${suppliers.length + 1}`,
         ...form,
         rating: '5.0',
         status: 'Active',
       }));
-      setSuppliers([created, ...suppliers]);
+      setSuppliers([res, ...suppliers]);
       setIsModalOpen(false);
       setForm({ name: '', email: '', phone: '', contact: '', category: 'General', paymentTerms: 'Net 30' });
     } catch (err) {

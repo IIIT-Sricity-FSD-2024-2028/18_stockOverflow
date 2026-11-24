@@ -1,13 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { retailerApi } from '../../api/retailerApi';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { useDataSync } from '../../../context/DataSyncContext';
 import Chart from 'chart.js/auto';
+import {
+  fetchProducts,
+  selectProducts,
+  selectProductsLoading,
+} from '../../redux/slices/productsSlice';
 
 export default function InventoryView() {
   const { user } = useAuth();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const reduxProducts = useSelector(selectProducts);
+  const reduxLoading = useSelector(selectProductsLoading);
+
+  const products = reduxProducts || [];
+  const loading = reduxLoading;
   const [alertDismissed, setAlertDismissed] = useState(false);
 
   const donutChartRef = useRef(null);
@@ -15,26 +24,18 @@ export default function InventoryView() {
   const barChartRef = useRef(null);
   const barChartInstance = useRef(null);
 
-  const load = async (isSilent = false) => {
-    try {
-      if (!isSilent) setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const data = await retailerApi.getProducts(retailerId, storeId);
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error('Failed to load products for inventory overview:', e);
-    } finally {
-      if (!isSilent) setLoading(false);
-    }
+  const load = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchProducts({ retailerId, storeId }));
   };
 
   useEffect(() => {
     load();
-  }, [user]);
+  }, [dispatch, user]);
 
   useDataSync(['inventory', 'products'], () => {
-    load(true);
+    load();
   }, { intervalMs: 0 });
 
   const totalSKUs = products.length;

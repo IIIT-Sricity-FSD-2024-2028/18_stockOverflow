@@ -95,6 +95,8 @@ export declare class ProductsService {
         status: import("../common/database.types").ProductStatus | string;
         visibility: import("../common/database.types").ProductVisibility | string;
         createdAt: string;
+        expiresAt?: string;
+        expiredAt?: string;
         updatedAt: string;
         restockedAt?: string;
         stockHistory?: Array<{

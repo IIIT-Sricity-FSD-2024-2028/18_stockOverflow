@@ -39,4 +39,19 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateReservationRequestDto.prototype, "confirmationShownAt", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateReservationRequestDto.prototype, "cancelledAt", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateReservationRequestDto.prototype, "cancelledBy", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateReservationRequestDto.prototype, "cancelReason", void 0);
 //# sourceMappingURL=update-reservation-request.dto.js.map

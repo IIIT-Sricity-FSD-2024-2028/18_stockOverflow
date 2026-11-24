@@ -1,43 +1,53 @@
 /**
- * RolesPage_admin.jsx - Admin Roles & Permissions Matrix Page View
- * 
- * Connected to live backend endpoints (/api/admin/roles)
- * Zero mock fallbacks - all operations reflect live backend state.
+ * RolesPage_admin.jsx - Admin Roles & Permissions Matrix (Redux connected)
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { fetchAdminRoles, updateAdminRole } from '../utils/api_admin';
-import { PERMISSION_DEFINITIONS } from '../data/mockData_admin';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchRolesData,
+  createRoleData,
+  updateRoleData,
+  deleteRoleData,
+} from '../../store/roles-actions';
+
+const PERMISSION_DEFINITIONS = [
+  { key: 'viewInventory', label: 'View Inventory', description: 'Can inspect stock levels and warehouse items' },
+  { key: 'editInventory', label: 'Edit Inventory', description: 'Can add, edit, or adjust product quantities' },
+  { key: 'manageOrders', label: 'Manage Orders', description: 'Can create, approve, and cancel orders' },
+  { key: 'updateDeliveryStatus', label: 'Update Delivery Status', description: 'Can mark shipments as dispatched or delivered' },
+  { key: 'viewReports', label: 'View Reports', description: 'Can access sales, inventory, and revenue reports' },
+  { key: 'manageUsers', label: 'Manage Users & Roles', description: 'Can add, edit, or delete user accounts and roles' },
+];
 
 export default function RolesPage_admin() {
-  const [roles, setRoles] = useState([]);
+  const dispatch = useDispatch();
+  const roles = useSelector((state) => state.roles.roles);
+  const loading = useSelector((state) => state.roles.loading);
+  const reduxError = useSelector((state) => state.roles.error);
+
   const [selectedRoleId, setSelectedRoleId] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [draftPermissions, setDraftPermissions] = useState({});
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [error, setError] = useState(null);
+  const [localError, setLocalError] = useState(null);
 
-  const loadRoles = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchAdminRoles();
-      const roleList = Array.isArray(data) ? data : [];
-      setRoles(roleList);
-      if (roleList.length > 0 && !selectedRoleId) {
-        setSelectedRoleId(roleList[0].id);
-      }
-    } catch (err) {
-      console.error('Failed to load admin roles:', err);
-      setError(err.message || 'Failed to load roles from backend');
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedRoleId]);
+  // Add role modal state
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newRoleName, setNewRoleName] = useState('');
+  const [newRoleDesc, setNewRoleDesc] = useState('');
+
+  const error = localError || reduxError;
 
   useEffect(() => {
-    loadRoles();
-  }, [loadRoles]);
+    dispatch(fetchRolesData());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (roles.length > 0 && !selectedRoleId) {
+      setSelectedRoleId(roles[0].id);
+    }
+  }, [roles, selectedRoleId]);
 
   const currentRole = roles.find((r) => r.id === selectedRoleId) || roles[0] || {
     id: '',
@@ -46,41 +56,77 @@ export default function RolesPage_admin() {
     permissions: {},
   };
 
+  useEffect(() => {
+    setDraftPermissions(currentRole.permissions || {});
+  }, [currentRole.id, currentRole.permissions]);
+
   const handleTogglePermission = (permKey) => {
-    setRoles((prev) =>
-      prev.map((role) => {
-        if (role.id === selectedRoleId) {
-          return {
-            ...role,
-            permissions: {
-              ...(role.permissions || {}),
-              [permKey]: !(role.permissions && role.permissions[permKey]),
-            },
-          };
-        }
-        return role;
-      })
-    );
+    setDraftPermissions((prev) => ({
+      ...prev,
+      [permKey]: !prev[permKey],
+    }));
   };
 
   const handleSave = async () => {
     if (!currentRole.id) return;
     try {
       setSaving(true);
-      setError(null);
-      await updateAdminRole(currentRole.id, {
-        name: currentRole.name,
-        description: currentRole.description,
-        permissions: currentRole.permissions || {},
-      });
+      setLocalError(null);
+      await dispatch(
+        updateRoleData(currentRole.id, {
+          name: currentRole.name,
+          description: currentRole.description,
+          permissions: draftPermissions,
+        })
+      );
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
-      await loadRoles();
     } catch (err) {
-      console.error('Failed to save role permissions:', err);
-      setError(err.message || 'Failed to update permissions');
+      setLocalError(err.message || 'Failed to update permissions');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleCreateRole = async (e) => {
+    e.preventDefault();
+    if (!newRoleName.trim() || !newRoleDesc.trim()) return;
+    try {
+      setSaving(true);
+      setLocalError(null);
+      const created = await dispatch(
+        createRoleData({
+          name: newRoleName.trim(),
+          description: newRoleDesc.trim(),
+          permissions: {
+            viewInventory: true,
+            editInventory: false,
+            manageOrders: false,
+            updateDeliveryStatus: false,
+            viewReports: false,
+            manageUsers: false,
+          },
+        })
+      );
+      setShowAddForm(false);
+      setNewRoleName('');
+      setNewRoleDesc('');
+      if (created?.id) setSelectedRoleId(created.id);
+    } catch (err) {
+      setLocalError(err.message || 'Failed to create role');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteRole = async (role) => {
+    if (!window.confirm(`Delete role "${role.name}"?`)) return;
+    try {
+      setLocalError(null);
+      await dispatch(deleteRoleData(role.id));
+      setSelectedRoleId('');
+    } catch (err) {
+      setLocalError(err.message || 'Default system roles cannot be deleted unless customized first.');
     }
   };
 
@@ -100,10 +146,17 @@ export default function RolesPage_admin() {
           <button
             type="button"
             className="admin-btn admin-btn-outline"
-            onClick={loadRoles}
+            onClick={() => dispatch(fetchRolesData())}
             disabled={loading}
           >
             {loading ? 'Refreshing...' : '↻ Refresh Roles'}
+          </button>
+          <button
+            type="button"
+            className="admin-btn admin-btn-primary"
+            onClick={() => setShowAddForm((v) => !v)}
+          >
+            + Add Role
           </button>
         </div>
       </div>
@@ -112,6 +165,47 @@ export default function RolesPage_admin() {
         <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px' }}>
           <strong>Error:</strong> {error}
         </div>
+      )}
+
+      {showAddForm && (
+        <form
+          onSubmit={handleCreateRole}
+          className="admin-card"
+          style={{ marginBottom: '1.5rem', display: 'flex', gap: '12px', alignItems: 'flex-end', flexWrap: 'wrap' }}
+        >
+          <div style={{ flex: '1 1 200px' }}>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>
+              Role Name *
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. Auditor"
+              value={newRoleName}
+              onChange={(e) => setNewRoleName(e.target.value)}
+              style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', boxSizing: 'border-box' }}
+            />
+          </div>
+          <div style={{ flex: '2 1 260px' }}>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>
+              Description *
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. Read-only compliance auditor"
+              value={newRoleDesc}
+              onChange={(e) => setNewRoleDesc(e.target.value)}
+              style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', boxSizing: 'border-box' }}
+            />
+          </div>
+          <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
+            {saving ? 'Creating...' : 'Create Role'}
+          </button>
+          <button type="button" className="admin-btn admin-btn-outline" onClick={() => setShowAddForm(false)}>
+            Cancel
+          </button>
+        </form>
       )}
 
       {loading && roles.length === 0 ? (
@@ -133,7 +227,7 @@ export default function RolesPage_admin() {
                 margin: 0,
               }}
             >
-              System Roles
+              System Roles ({roles.length})
             </h3>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {roles.map((role) => {
@@ -189,15 +283,27 @@ export default function RolesPage_admin() {
                   {currentRole.description}
                 </p>
               </div>
-              <button
-                type="button"
-                className="admin-btn admin-btn-primary"
-                style={{ backgroundColor: '#10b981' }}
-                onClick={handleSave}
-                disabled={saving || !currentRole.id}
-              >
-                {saving ? 'Saving...' : 'Save Changes'}
-              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {currentRole.id && !String(currentRole.id).startsWith('role-') && (
+                  <button
+                    type="button"
+                    className="admin-btn admin-btn-outline"
+                    style={{ color: '#dc2626', borderColor: '#fca5a5', background: '#fef2f2' }}
+                    onClick={() => handleDeleteRole(currentRole)}
+                  >
+                    Delete Role
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-primary"
+                  style={{ backgroundColor: '#10b981' }}
+                  onClick={handleSave}
+                  disabled={saving || !currentRole.id}
+                >
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
             </div>
 
             <table className="admin-table">
@@ -210,7 +316,7 @@ export default function RolesPage_admin() {
               </thead>
               <tbody>
                 {PERMISSION_DEFINITIONS.map((perm) => {
-                  const hasAccess = !!(currentRole.permissions && currentRole.permissions[perm.key]);
+                  const hasAccess = !!draftPermissions[perm.key];
                   return (
                     <tr key={perm.key}>
                       <td style={{ fontWeight: 600, color: '#0f172a' }}>{perm.label}</td>

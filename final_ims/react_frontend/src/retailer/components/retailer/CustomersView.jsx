@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { retailerApi } from '../../api/retailerApi';
 import { useAuth } from '../../context/AuthContext';
+import {
+  fetchCustomers,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+  selectCustomers,
+  selectCustomersLoading,
+} from '../../redux/slices/customersSlice';
 
 export default function CustomersView() {
   const { user } = useAuth();
+  const dispatch = useDispatch();
+  const reduxCustomers = useSelector(selectCustomers);
+  const reduxLoading = useSelector(selectCustomersLoading);
+
   const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const loading = reduxLoading;
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,48 +37,21 @@ export default function CustomersView() {
     notes: '',
   });
 
-  const loadCustomers = async () => {
-    try {
-      setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const rawData = await retailerApi.getCustomers(retailerId, storeId).catch(() => []);
-      const purchasedOnly = (Array.isArray(rawData) ? rawData : []).filter(
-        (c) =>
-          (Number(c.totalOrders != null ? c.totalOrders : c.orders) || 0) > 0 ||
-          (Number(c.totalSpent != null ? c.totalSpent : c.spent) || 0) > 0,
-      );
-      if (purchasedOnly.length > 0) {
-        setCustomers(
-          purchasedOnly.map((c) => ({
-            id: c.id,
-            name: c.name || `${c.fname || ''} ${c.lname || ''}`.trim() || 'Valued Customer',
-            fname: c.fname || (c.name ? c.name.split(' ')[0] : 'Customer'),
-            lname: c.lname || (c.name ? c.name.split(' ').slice(1).join(' ') : ''),
-            email: c.email || 'customer@example.com',
-            phone: c.phone || '+91 98765 43210',
-            city: c.city || c.location || 'Mumbai',
-            country: c.country || 'India',
-            status: (c.status || 'Active').toLowerCase(),
-            totalSpent: Number(c.totalSpent != null ? c.totalSpent : c.spent) || 0,
-            totalOrders: Number(c.totalOrders != null ? c.totalOrders : c.orders) || 0,
-            notes: c.notes || '',
-            created: c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Jan 2025',
-          }))
-        );
-      } else {
-        setCustomers([]);
-      }
-    } catch (err) {
-      console.error('Failed to load customers:', err);
-    } finally {
-      setLoading(false);
-    }
+  const loadCustomers = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchCustomers({ retailerId, storeId }));
   };
 
   useEffect(() => {
     loadCustomers();
-  }, [user]);
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxCustomers)) {
+      setCustomers(reduxCustomers);
+    }
+  }, [reduxCustomers]);
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -115,7 +101,7 @@ export default function CustomersView() {
 
     try {
       if (editingId) {
-        await retailerApi.updateCustomer(editingId, payload).catch(() => {});
+        await dispatch(updateCustomer({ id: editingId, customerData: payload }));
         setCustomers(
           customers.map((c) =>
             c.id === editingId
@@ -130,16 +116,13 @@ export default function CustomersView() {
         );
         showToast('Customer updated successfully.');
       } else {
-        const created = await retailerApi.createCustomer(payload).catch(() => ({
+        const res = await dispatch(createCustomer(payload)).unwrap().catch(() => ({
           id: `CUST-00${customers.length + 1}`,
           ...payload,
-          totalSpent: 0,
-          totalOrders: 0,
-          created: 'Just now',
         }));
         setCustomers([
           {
-            id: created.id || `CUST-00${customers.length + 1}`,
+            id: res.id || `CUST-00${customers.length + 1}`,
             name: fullName,
             fname: form.fname,
             lname: form.lname,
@@ -166,7 +149,7 @@ export default function CustomersView() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this customer record?')) return;
     try {
-      await retailerApi.deleteCustomer(id).catch(() => {});
+      await dispatch(deleteCustomer(id));
       setCustomers(customers.filter((c) => c.id !== id));
       if (selectedDrawerCustomer?.id === id) setSelectedDrawerCustomer(null);
       showToast('Customer deleted successfully.');

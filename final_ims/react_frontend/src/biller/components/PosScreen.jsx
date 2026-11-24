@@ -1,16 +1,125 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { useDataSync } from '../../context/DataSyncContext';
 import { billerApi } from '../api/billerApi';
 import ReceiptModal from './ReceiptModal';
+import {
+  fetchBillerStores,
+  fetchBillerProducts,
+  fetchBillerCustomers,
+  createBillerCustomer,
+  setCurrentStore,
+  setSelectedCustomer,
+  setActiveCategory,
+  setSearchQuery,
+  setSortOrder,
+  selectBillerStores,
+  selectBillerCurrentStoreId,
+  selectBillerCurrentStoreName,
+  selectBillerProducts,
+  selectBillerCustomers,
+  selectBillerSelectedCustomer,
+  selectBillerActiveCategory,
+  selectBillerSearchQuery,
+  selectBillerSortOrder,
+  selectBillerCatalogLoading,
+} from '../redux/slices/billerCatalogSlice';
+import {
+  addToBillerCart,
+  updateBillerCartQty,
+  removeFromBillerCart,
+  clearBillerCart,
+  addReservedHoldToCart,
+  setBillerShipping,
+  setBillerTax,
+  setBillerDiscount,
+  setBillerCoupon,
+  setBillerRoundoffEnabled,
+  setBillerPaymentMethod,
+  selectBillerCart,
+  selectBillerStagedReservationIds,
+  selectBillerShipping,
+  selectBillerTax,
+  selectBillerDiscount,
+  selectBillerCoupon,
+  selectBillerRoundoffEnabled,
+  selectBillerPaymentMethod,
+  selectBillerCartSubtotal,
+  selectBillerCartItemCount,
+  selectBillerRawTotal,
+  selectBillerFinalTotal,
+  selectBillerRoundoffValue,
+} from '../redux/slices/billerCartSlice';
+import {
+  fetchBillerReservations,
+  cancelBillerReservation,
+  setOrdersModalTab,
+  setIsOrdersModalOpen,
+  removeReservedOrderFromList,
+  selectBillerReservedOrders,
+  selectBillerCancelledOrders,
+  selectBillerOrdersModalTab,
+  selectBillerIsOrdersModalOpen,
+  selectBillerCancellingRequestId,
+} from '../redux/slices/billerReservationsSlice';
+import {
+  createBillerTransaction,
+  setCompletedTx,
+  setIsReceiptOpen,
+  closeReceiptModal,
+  selectBillerCompletedTx,
+  selectBillerIsReceiptOpen,
+  selectBillerIsCharging,
+} from '../redux/slices/billerTransactionsSlice';
 
 export default function PosScreen({ onSwitchView, onLogout }) {
+  const dispatch = useDispatch();
   const { user } = useAuth();
   const retailerId =
     user?.retailerId ||
     user?.profile?.retailerId ||
     (user?.role === 'retailer' ? (user?.profileId || user?.id) : '') ||
     '';
+
+  // Redux Selectors
+  const stores = useSelector(selectBillerStores);
+  const currentStoreId = useSelector(selectBillerCurrentStoreId) || user?.currentStoreId || user?.storeId || '';
+  const currentStoreName = useSelector(selectBillerCurrentStoreName) || user?.store || 'Retail Store';
+  const products = useSelector(selectBillerProducts);
+  const customers = useSelector(selectBillerCustomers);
+  const selectedCustomer = useSelector(selectBillerSelectedCustomer);
+  const activeCategory = useSelector(selectBillerActiveCategory);
+  const searchQuery = useSelector(selectBillerSearchQuery);
+  const sortOrder = useSelector(selectBillerSortOrder);
+  const loading = useSelector(selectBillerCatalogLoading);
+
+  // Redux Cart Selectors
+  const cart = useSelector(selectBillerCart);
+  const stagedReservationIds = useSelector(selectBillerStagedReservationIds);
+  const shipping = useSelector(selectBillerShipping);
+  const tax = useSelector(selectBillerTax);
+  const discount = useSelector(selectBillerDiscount);
+  const coupon = useSelector(selectBillerCoupon);
+  const roundoffEnabled = useSelector(selectBillerRoundoffEnabled);
+  const paymentMethod = useSelector(selectBillerPaymentMethod);
+  const subtotal = useSelector(selectBillerCartSubtotal);
+  const totalItemCount = useSelector(selectBillerCartItemCount);
+  const rawTotal = useSelector(selectBillerRawTotal);
+  const finalTotal = useSelector(selectBillerFinalTotal);
+  const roundoffValue = useSelector(selectBillerRoundoffValue);
+
+  // Redux Reservations Selectors
+  const reservedOrders = useSelector(selectBillerReservedOrders);
+  const cancelledOrders = useSelector(selectBillerCancelledOrders);
+  const ordersModalTab = useSelector(selectBillerOrdersModalTab);
+  const isOrdersModalOpen = useSelector(selectBillerIsOrdersModalOpen);
+  const cancellingRequestId = useSelector(selectBillerCancellingRequestId);
+
+  // Redux Transactions Selectors
+  const completedTx = useSelector(selectBillerCompletedTx);
+  const isReceiptOpen = useSelector(selectBillerIsReceiptOpen);
+  const isCharging = useSelector(selectBillerIsCharging);
 
   // Currency Formatter
   const currencyFormatter = new Intl.NumberFormat('en-IN', {
@@ -38,14 +147,16 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Store Affiliation & Scope
-  const [stores, setStores] = useState([]);
-  const [currentStoreId, setCurrentStoreId] = useState(() => {
-    return user?.currentStoreId || user?.storeId || '';
-  });
-  const [currentStoreName, setCurrentStoreName] = useState(() => {
-    return user?.store || 'Retail Store';
-  });
+  const formatHoldTimeRemaining = (expiresAt, reservedAt) => {
+    const target = expiresAt
+      ? new Date(expiresAt).getTime()
+      : new Date(reservedAt || Date.now()).getTime() + 15 * 60 * 1000;
+    const diffMs = target - Date.now();
+    if (diffMs <= 0) return '00:00';
+    const mins = Math.floor(diffMs / 60000);
+    const secs = Math.floor((diffMs % 60000) / 1000);
+    return `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+  };
 
   // Categories
   const CATEGORIES = [
@@ -57,41 +168,11 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     { id: 'appliances', label: 'Appliances', icon: '🔌' },
     { id: 'accessories', label: 'Accessories', icon: '🎒' },
   ];
-  const [activeCategory, setActiveCategory] = useState('all');
 
-  // Products & Catalog
-  const [products, setProducts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('default'); // 'default' | 'asc' | 'desc'
-  const [loading, setLoading] = useState(true);
-
-  // Cart / Line Items: array of { sku, name, price, quantity, total, isReserved, requestIds, maxStock, image, emoji }
-  const [cart, setCart] = useState([]);
-  const [stagedReservationIds, setStagedReservationIds] = useState({});
-
-  // Checkout Calculations State
-  const [shipping, setShipping] = useState(0);
-  const [tax, setTax] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [coupon, setCoupon] = useState(0);
-  const [roundoffEnabled, setRoundoffEnabled] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState('Cash');
-
-  // Customer Management
-  const [customers, setCustomers] = useState(['Walk-in Customer']);
-  const [selectedCustomer, setSelectedCustomer] = useState('Walk-in Customer');
-
-  // Incoming Consumer Orders (Reservations)
-  const [reservedOrders, setReservedOrders] = useState([]);
-  const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
+  // Modals Local State
   const [isNewCustomerModalOpen, setIsNewCustomerModalOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
   const [newCustomerPhone, setNewCustomerPhone] = useState('');
-
-  // Receipt Modal State
-  const [completedTx, setCompletedTx] = useState(null);
-  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
-  const [isCharging, setIsCharging] = useState(false);
 
   // Toast Notification
   const [toastMsg, setToastMsg] = useState('');
@@ -102,15 +183,14 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     toastTimeoutRef.current = setTimeout(() => setToastMsg(''), 2500);
   };
 
-  // 1. Initial Load: Stores, Products, Customers, Reservations
+  // 1. Initial Load: Stores, Products, Customers via Redux Thunks
   useEffect(() => {
     let isMounted = true;
     async function initData() {
-      setLoading(true);
       try {
-        const [storesData, customersData] = await Promise.all([
-          billerApi.getStores(retailerId).catch(() => []),
-          billerApi.getCustomers().catch(() => []),
+        const [storesData] = await Promise.all([
+          dispatch(fetchBillerStores(retailerId)).unwrap().catch(() => []),
+          dispatch(fetchBillerCustomers()).unwrap().catch(() => []),
         ]);
 
         if (!isMounted) return;
@@ -133,48 +213,33 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             storeList = scopedList;
           }
         }
-        setStores(storeList);
 
         // Determine biller's assigned store
         const billerStoreId = user?.currentStoreId || user?.storeId || '';
         let resolvedStoreId = billerStoreId;
+        let resolvedStoreName = user?.store || 'Retail Store';
         const matchedStore = storeList.find(
           (s) => (s.id || s.code) === billerStoreId
         );
 
         if (matchedStore) {
           resolvedStoreId = matchedStore.id || matchedStore.code;
-          setCurrentStoreId(resolvedStoreId);
-          setCurrentStoreName(matchedStore.name);
+          resolvedStoreName = matchedStore.name;
         } else if (billerStoreId) {
           resolvedStoreId = billerStoreId;
-          setCurrentStoreId(billerStoreId);
-          setCurrentStoreName(user?.store || 'Assigned Store');
+          resolvedStoreName = user?.store || 'Assigned Store';
         } else if (storeList.length > 0) {
           resolvedStoreId = storeList[0].id || storeList[0].code;
-          setCurrentStoreId(resolvedStoreId);
-          setCurrentStoreName(storeList[0].name);
+          resolvedStoreName = storeList[0].name;
         }
+
+        dispatch(setCurrentStore({ id: resolvedStoreId, name: resolvedStoreName }));
 
         // Fetch products specifically for this resolved store and retailer
-        const productsData = await billerApi.getProducts(resolvedStoreId, retailerId).catch(() => []);
-        if (isMounted) {
-          setProducts(Array.isArray(productsData) ? productsData : []);
-        }
-
-        // Customers
-        const custList = Array.isArray(customersData) ? customersData : [];
-        const names = ['Walk-in Customer'].concat(
-          custList
-            .map((c) => c.name)
-            .filter((n) => n && n.toLowerCase() !== 'walk-in customer')
-        );
-        setCustomers(Array.from(new Set(names)));
+        dispatch(fetchBillerProducts({ storeId: resolvedStoreId, retailerId }));
       } catch (err) {
         console.error('POS initialization error:', err);
         showToast('Error loading POS catalog.');
-      } finally {
-        if (isMounted) setLoading(false);
       }
     }
 
@@ -182,63 +247,34 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     return () => {
       isMounted = false;
     };
-  }, [user, retailerId]);
+  }, [user, retailerId, dispatch]);
 
   // 1b. Reload Products whenever the active store changes
   useEffect(() => {
     if (!currentStoreId) return;
-    let isMounted = true;
-    billerApi.getProducts(currentStoreId, retailerId)
-      .then((data) => {
-        if (isMounted && Array.isArray(data)) {
-          setProducts(data);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      isMounted = false;
-    };
-  }, [currentStoreId, retailerId]);
+    dispatch(fetchBillerProducts({ storeId: currentStoreId, retailerId }));
+  }, [currentStoreId, retailerId, dispatch]);
 
-  // 2. Real-time Incoming Orders Polling (Every 3.5 seconds)
+  // 2. Real-time Incoming Orders Polling (Every 3.5 seconds) via Redux Thunk
   useEffect(() => {
-    let isMounted = true;
+    const targetStoreId = currentStoreId || user?.storeId || '';
+    dispatch(fetchBillerReservations(targetStoreId));
 
-    async function loadIncomingOrders() {
-      try {
-        const targetStoreId = currentStoreId || user?.storeId || '';
-        const reservations = await billerApi.getReservations(targetStoreId).catch(() => []);
-        if (!isMounted) return;
+    const interval = setInterval(() => {
+      dispatch(fetchBillerReservations(targetStoreId));
+    }, 3500);
 
-        if (Array.isArray(reservations)) {
-          // Filter out already staged items in the current transaction
-          const unstaged = reservations.filter((r) => !stagedReservationIds[r.requestId]);
-          setReservedOrders(unstaged);
-        }
-      } catch (err) {
-        // silent polling catch
-      }
-    }
-
-    loadIncomingOrders();
-    const interval = setInterval(loadIncomingOrders, 3500);
     return () => {
-      isMounted = false;
       clearInterval(interval);
     };
-  }, [currentStoreId, user, stagedReservationIds]);
+  }, [currentStoreId, user, dispatch]);
 
   // Real-time synchronization across modules
-  useDataSync(['products', 'inventory', 'transactions'], async () => {
+  useDataSync(['products', 'inventory', 'transactions', 'orders'], async () => {
     try {
-      const prods = await billerApi.getProducts(currentStoreId, retailerId).catch(() => []);
-      if (Array.isArray(prods)) setProducts(prods);
+      dispatch(fetchBillerProducts({ storeId: currentStoreId, retailerId }));
       const targetStoreId = currentStoreId || user?.storeId || '';
-      const reservations = await billerApi.getReservations(targetStoreId).catch(() => []);
-      if (Array.isArray(reservations)) {
-        const unstaged = reservations.filter((r) => !stagedReservationIds[r.requestId]);
-        setReservedOrders(unstaged);
-      }
+      dispatch(fetchBillerReservations(targetStoreId));
     } catch (_e) {}
   });
 
@@ -310,160 +346,67 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     return list;
   }, [products, currentStoreId, retailerId, activeCategory, searchQuery, sortOrder]);
 
-  // Cart Totals
-  const subtotal = useMemo(() => {
-    return cart.reduce((sum, item) => sum + (item.total || 0), 0);
-  }, [cart]);
-
-  const rawTotal = useMemo(() => {
-    const raw = subtotal + Number(shipping) + Number(tax) - Number(discount) - Number(coupon);
-    return Math.max(0, raw);
-  }, [subtotal, shipping, tax, discount, coupon]);
-
-  const finalTotal = useMemo(() => {
-    return roundoffEnabled ? Math.round(rawTotal) : rawTotal;
-  }, [rawTotal, roundoffEnabled]);
-
-  const roundoffValue = useMemo(() => {
-    return finalTotal - rawTotal;
-  }, [finalTotal, rawTotal]);
-
-  const totalItemCount = useMemo(() => {
-    return cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
-  }, [cart]);
-
-  // Cart Operations
+  // Cart Operations via Redux
   const handleAddToCart = (product, addQty = 1) => {
-    const sku = product.sku;
-    const price = Number(product.priceUSD || product.price || 0);
-
-    setCart((prev) => {
-      const idx = prev.findIndex((item) => item.sku === sku);
-      if (idx >= 0) {
-        const existing = prev[idx];
-        const newQty = existing.quantity + addQty;
-        const updated = {
-          ...existing,
-          quantity: newQty,
-          total: newQty * price,
-        };
-        const next = [...prev];
-        next[idx] = updated;
-        return next;
-      } else {
-        return [
-          ...prev,
-          {
-            sku: product.sku,
-            name: product.name || 'Product',
-            price: price,
-            quantity: addQty,
-            total: price * addQty,
-            image: product.productImg || product.image || '',
-            emoji: product.emoji || '📦',
-            maxStock: product.qty || 50,
-            isReserved: false,
-            requestIds: [],
-          },
-        ];
-      }
-    });
-
+    dispatch(addToBillerCart({ product, addQty }));
     showToast(`Added ${product.name} to cart`);
   };
 
   const handleUpdateCartQty = (sku, delta) => {
-    setCart((prev) => {
-      return prev
-        .map((item) => {
-          if (item.sku === sku) {
-            const nextQty = Math.max(0, item.quantity + delta);
-            return {
-              ...item,
-              quantity: nextQty,
-              total: nextQty * item.price,
-            };
-          }
-          return item;
-        })
-        .filter((item) => item.quantity > 0);
-    });
+    dispatch(updateBillerCartQty({ sku, delta }));
   };
 
   const handleRemoveFromCart = (sku) => {
-    setCart((prev) => prev.filter((item) => item.sku !== sku));
+    dispatch(removeFromBillerCart(sku));
     showToast('Item removed from cart');
   };
 
   const handleClearCart = () => {
     if (!cart.length) return;
     if (window.confirm('Clear all items from current order?')) {
-      setCart([]);
-      setStagedReservationIds({});
+      dispatch(clearBillerCart());
       showToast('Order cleared');
     }
   };
 
-  // Add Reserved Order from Consumer to POS Cart
+  // Add Reserved Order from Consumer to POS Cart via Redux
   const handleApproveReservedOrder = (reservation) => {
-    const sku = reservation.sku;
-    const safeQty = Math.max(1, Number(reservation.qty) || 1);
-    const price = Number(reservation.priceUSD || 0);
-    const requestId = reservation.requestId;
-
-    // Track staged reservation
-    if (requestId) {
-      setStagedReservationIds((prev) => ({ ...prev, [requestId]: true }));
-    }
+    dispatch(addReservedHoldToCart(reservation));
 
     // Set Customer name automatically if provided in reservation
     if (reservation.customer && reservation.customer.trim()) {
-      setSelectedCustomer(reservation.customer.trim());
+      dispatch(setSelectedCustomer(reservation.customer.trim()));
     }
 
     // Set payment method if provided
     if (reservation.paymentMethod) {
-      setPaymentMethod(reservation.paymentMethod);
+      dispatch(setBillerPaymentMethod(reservation.paymentMethod));
     }
 
-    setCart((prev) => {
-      const idx = prev.findIndex((item) => item.sku === sku);
-      if (idx >= 0) {
-        const existing = prev[idx];
-        const newQty = existing.quantity + safeQty;
-        const reqIds = Array.from(
-          new Set([...(existing.requestIds || []), requestId].filter(Boolean))
-        );
-        const next = [...prev];
-        next[idx] = {
-          ...existing,
-          quantity: newQty,
-          total: newQty * existing.price,
-          isReserved: true,
-          requestIds: reqIds,
-        };
-        return next;
-      } else {
-        return [
-          ...prev,
-          {
-            sku: reservation.sku,
-            name: reservation.name || reservation.productName || 'Reserved Item',
-            price: price,
-            quantity: safeQty,
-            total: price * safeQty,
-            image: reservation.productImg || '',
-            emoji: reservation.emoji || '📦',
-            isReserved: true,
-            requestIds: requestId ? [requestId] : [],
-          },
-        ];
-      }
-    });
-
     // Remove from UI reserved list
-    setReservedOrders((prev) => prev.filter((r) => r.requestId !== requestId));
+    dispatch(removeReservedOrderFromList(reservation.requestId));
     showToast(`Approved order hold for ${reservation.name || 'product'}`);
+  };
+
+  const handleCancelOrderFromPos = async (reservation) => {
+    const requestId = reservation.requestId;
+    const confirmCancel = window.confirm(
+      `Cancel pre-order ${requestId} for ${reservation.name || reservation.sku}? This will release the stock hold back to store inventory.`
+    );
+    if (!confirmCancel) return;
+
+    try {
+      await dispatch(
+        cancelBillerReservation({
+          requestId,
+          reason: 'Cancelled by POS store staff',
+          cancelledBy: `biller (${user?.name || 'Staff'})`,
+        })
+      ).unwrap();
+      showToast(`Order hold ${requestId} cancelled and stock released`);
+    } catch (err) {
+      alert('Failed to cancel order: ' + (err.message || err || 'Error'));
+    }
   };
 
   // Add Custom Walk-in Customer
@@ -472,15 +415,16 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     if (!name) return;
 
     if (!customers.includes(name)) {
-      setCustomers((prev) => [...prev, name]);
-      billerApi.createCustomer({
-        name,
-        phone: newCustomerPhone.trim(),
-        email: `${name.toLowerCase().replace(/\s+/g, '')}@walkin.customer`,
-      }).catch(() => {});
+      dispatch(
+        createBillerCustomer({
+          name,
+          phone: newCustomerPhone.trim(),
+          email: `${name.toLowerCase().replace(/\s+/g, '')}@walkin.customer`,
+        })
+      );
     }
 
-    setSelectedCustomer(name);
+    dispatch(setSelectedCustomer(name));
     setNewCustomerName('');
     setNewCustomerPhone('');
     setIsNewCustomerModalOpen(false);
@@ -497,8 +441,6 @@ export default function PosScreen({ onSwitchView, onLogout }) {
     if (!window.confirm(`Confirm payment of ${formatInr(finalTotal)} via ${paymentMethod}?`)) {
       return;
     }
-
-    setIsCharging(true);
 
     try {
       // Gather all linked reservation requestIds
@@ -538,7 +480,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
         status: 'Delivered',
       };
 
-      const result = await billerApi.createTransaction(payload);
+      const result = await dispatch(createBillerTransaction(payload)).unwrap();
 
       // Attach cashier meta for receipt
       const txWithMeta = {
@@ -548,29 +490,26 @@ export default function PosScreen({ onSwitchView, onLogout }) {
         paymentMethod: paymentMethod,
       };
 
-      setCompletedTx(txWithMeta);
-      setIsReceiptOpen(true);
+      dispatch(setCompletedTx(txWithMeta));
+      dispatch(setIsReceiptOpen(true));
 
       // Reset cart and staged items
-      setCart([]);
-      setStagedReservationIds({});
-      setShipping(0);
-      setTax(0);
-      setDiscount(0);
-      setCoupon(0);
-      setSelectedCustomer('Walk-in Customer');
+      dispatch(clearBillerCart());
+      dispatch(setBillerShipping(0));
+      dispatch(setBillerTax(0));
+      dispatch(setBillerDiscount(0));
+      dispatch(setBillerCoupon(0));
+      dispatch(setSelectedCustomer('Walk-in Customer'));
 
       // Refresh catalog and reservations from backend
-      billerApi.getProducts(currentStoreId, retailerId).then((p) => Array.isArray(p) && setProducts(p)).catch(() => {});
-      billerApi.getReservations(currentStoreId).then((r) => Array.isArray(r) && setReservedOrders(r)).catch(() => {});
+      dispatch(fetchBillerProducts({ storeId: currentStoreId, retailerId }));
+      dispatch(fetchBillerReservations(currentStoreId));
 
       showToast(`Sale completed successfully! Total: ${formatInr(finalTotal)}`);
     } catch (err) {
       console.error('POS Checkout failed:', err);
-      const errMsg = err.message || 'Transaction could not be completed.';
+      const errMsg = err.message || err || 'Transaction could not be completed.';
       alert(`Checkout Error: ${errMsg}`);
-    } finally {
-      setIsCharging(false);
     }
   };
 
@@ -632,7 +571,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               <button
                 key={cat.id}
                 type="button"
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => dispatch(setActiveCategory(cat.id))}
                 style={{
                   width: '100%',
                   padding: '8px 4px',
@@ -771,8 +710,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   onChange={(e) => {
                     const selected = stores.find((s) => (s.id || s.code) === e.target.value);
                     if (selected) {
-                      setCurrentStoreId(selected.id || selected.code);
-                      setCurrentStoreName(selected.name);
+                      dispatch(setCurrentStore({ id: selected.id || selected.code, name: selected.name }));
                     }
                   }}
                   style={{
@@ -821,7 +759,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               {/* Incoming Orders Button with Live Pulse */}
               <button
                 type="button"
-                onClick={() => setIsOrdersModalOpen(true)}
+                onClick={() => dispatch(setIsOrdersModalOpen(true))}
                 style={{
                   position: 'relative',
                   padding: '7px 14px',
@@ -852,9 +790,64 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                     {reservedOrders.length}
                   </span>
                 )}
+                {cancelledOrders.length > 0 && (
+                  <span
+                    title={`${cancelledOrders.length} pre-order(s) cancelled`}
+                    style={{
+                      background: '#dc2626',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      padding: '2px 6px',
+                      borderRadius: '10px',
+                    }}
+                  >
+                    {cancelledOrders.length} Cancelled
+                  </span>
+                )}
               </button>
             </div>
           </header>
+
+          {/* Cancelled Pre-orders Alert Banner */}
+          {cancelledOrders.length > 0 && (
+            <div
+              style={{
+                backgroundColor: '#fef2f2',
+                border: '1.5px solid #fecaca',
+                borderRadius: '12px',
+                padding: '10px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '18px' }}>⚠️</span>
+                <span style={{ fontWeight: 800, fontSize: '13px', color: '#991b1b' }}>
+                  {cancelledOrders.length} Customer Pre-order(s) Cancelled (Inventory Released)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  dispatch(setOrdersModalTab('cancelled'));
+                  dispatch(setIsOrdersModalOpen(true));
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#dc2626',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                }}
+              >
+                View Cancelled &rarr;
+              </button>
+            </div>
+          )}
 
           {/* Incoming Customer Orders Banner (Real-time Arrival) */}
           {reservedOrders.length > 0 && (
@@ -878,7 +871,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsOrdersModalOpen(true)}
+                  onClick={() => dispatch(setIsOrdersModalOpen(true))}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -972,7 +965,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                 type="text"
                 placeholder="Search products by title, SKU, or category..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => dispatch(setSearchQuery(e.target.value))}
                 style={{
                   width: '100%',
                   height: '38px',
@@ -989,7 +982,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             {/* Sort Dropdown */}
             <select
               value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
+              onChange={(e) => dispatch(setSortOrder(e.target.value))}
               style={{
                 height: '38px',
                 padding: '0 12px',
@@ -1246,7 +1239,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             <span style={{ fontSize: '14px' }}>👤</span>
             <select
               value={selectedCustomer}
-              onChange={(e) => setSelectedCustomer(e.target.value)}
+              onChange={(e) => dispatch(setSelectedCustomer(e.target.value))}
               style={{
                 flex: 1,
                 height: '34px',
@@ -1416,7 +1409,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   min="0"
                   value={shipping || ''}
                   placeholder="0"
-                  onChange={(e) => setShipping(Math.max(0, Number(e.target.value) || 0))}
+                  onChange={(e) => dispatch(setBillerShipping(Math.max(0, Number(e.target.value) || 0)))}
                   style={{ width: '100%', height: '28px', padding: '0 6px', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '11px' }}
                 />
               </div>
@@ -1430,7 +1423,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   min="0"
                   value={discount || ''}
                   placeholder="0"
-                  onChange={(e) => setDiscount(Math.max(0, Number(e.target.value) || 0))}
+                  onChange={(e) => dispatch(setBillerDiscount(Math.max(0, Number(e.target.value) || 0)))}
                   style={{ width: '100%', height: '28px', padding: '0 6px', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '11px' }}
                 />
               </div>
@@ -1442,7 +1435,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                 <input
                   type="checkbox"
                   checked={roundoffEnabled}
-                  onChange={(e) => setRoundoffEnabled(e.target.checked)}
+                  onChange={(e) => dispatch(setBillerRoundoffEnabled(e.target.checked))}
                 />
                 Auto Roundoff
               </label>
@@ -1480,7 +1473,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
                   <button
                     key={m}
                     type="button"
-                    onClick={() => setPaymentMethod(m)}
+                    onClick={() => dispatch(setBillerPaymentMethod(m))}
                     style={{
                       padding: '6px 2px',
                       borderRadius: '6px',
@@ -1540,25 +1533,26 @@ export default function PosScreen({ onSwitchView, onLogout }) {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(15,23,42,0.6)',
+            backgroundColor: 'rgba(15,23,42,0.65)',
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '16px',
+            backdropFilter: 'blur(3px)',
           }}
-          onClick={() => setIsOrdersModalOpen(false)}
+          onClick={() => dispatch(setIsOrdersModalOpen(false))}
         >
           <div
             style={{
               backgroundColor: '#fff',
               borderRadius: '16px',
               width: '100%',
-              maxWidth: '600px',
+              maxWidth: '680px',
               maxHeight: '85vh',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
               overflow: 'hidden',
             }}
             onClick={(e) => e.stopPropagation()}
@@ -1566,7 +1560,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
             {/* Modal Header */}
             <div
               style={{
-                padding: '16px 20px',
+                padding: '16px 22px',
                 borderBottom: '1px solid #e2e8f0',
                 display: 'flex',
                 alignItems: 'center',
@@ -1574,98 +1568,245 @@ export default function PosScreen({ onSwitchView, onLogout }) {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '20px' }}>📥</span>
+                <span style={{ fontSize: '22px' }}>📥</span>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800 }}>
-                    Incoming Customer Orders for Pickup
+                    Customer Pre-orders & Reservations
                   </h3>
                   <div style={{ fontSize: '11px', color: '#64748b' }}>
-                    Reservations placed by consumers for {currentStoreName}
+                    Pickup pre-orders for {currentStoreName}
                   </div>
                 </div>
               </div>
               <button
                 type="button"
-                onClick={() => setIsOrdersModalOpen(false)}
-                style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#64748b' }}
+                onClick={() => dispatch(setIsOrdersModalOpen(false))}
+                style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#64748b' }}
               >
                 &times;
               </button>
             </div>
 
-            {/* Orders List */}
-            <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {reservedOrders.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎉</div>
-                  <div style={{ fontWeight: 700, fontSize: '14px' }}>All Orders Handled!</div>
-                  <div style={{ fontSize: '12px', marginTop: '4px' }}>
-                    There are no pending customer pickups right now.
-                  </div>
-                </div>
-              ) : (
-                reservedOrders.map((res) => (
-                  <div
-                    key={res.requestId}
-                    style={{
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '10px',
-                      padding: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      backgroundColor: '#f8fafc',
-                    }}
-                  >
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontWeight: 800, fontSize: '13px', color: '#0f172a' }}>
-                          {res.customer || 'Walk-in Customer'}
-                        </span>
-                        {res.customerEmail && (
-                          <span style={{ fontSize: '11px', color: '#64748b' }}>({res.customerEmail})</span>
-                        )}
-                        <span style={{ fontSize: '10px', background: '#e0e7ff', color: '#3730a3', padding: '1px 5px', borderRadius: '4px', fontWeight: 700 }}>
-                          Hold ID: {res.requestId}
-                        </span>
-                      </div>
+            {/* Modal Navigation Tabs */}
+            <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+              <button
+                type="button"
+                onClick={() => dispatch(setOrdersModalTab('active'))}
+                style={{
+                  flex: 1,
+                  padding: '12px 14px',
+                  border: 'none',
+                  background: ordersModalTab === 'active' ? '#fff' : 'transparent',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                  color: ordersModalTab === 'active' ? '#2563eb' : '#64748b',
+                  borderBottom: ordersModalTab === 'active' ? '2.5px solid #2563eb' : 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>📦</span> Active for Pickup ({reservedOrders.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => dispatch(setOrdersModalTab('cancelled'))}
+                style={{
+                  flex: 1,
+                  padding: '12px 14px',
+                  border: 'none',
+                  background: ordersModalTab === 'cancelled' ? '#fff' : 'transparent',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                  color: ordersModalTab === 'cancelled' ? '#dc2626' : '#64748b',
+                  borderBottom: ordersModalTab === 'cancelled' ? '2.5px solid #dc2626' : 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>❌</span> Cancelled & Expired ({cancelledOrders.length})
+              </button>
+            </div>
 
-                      <div style={{ fontSize: '12.5px', color: '#334155', marginTop: '4px', fontWeight: 600 }}>
-                        {res.name || res.productName} &times; {res.qty || 1}
-                      </div>
-
-                      <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
-                        Payment: <strong>{res.paymentMethod || 'Cash'}</strong> | Total:{' '}
-                        <strong style={{ color: '#0284c7' }}>
-                          {formatInr((Number(res.priceUSD || 0)) * (Number(res.qty) || 1))}
-                        </strong>
-                      </div>
+            {/* Orders List Body */}
+            <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {ordersModalTab === 'active' ? (
+                reservedOrders.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎉</div>
+                    <div style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>All Orders Handled!</div>
+                    <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                      There are no pending customer pickups for this store right now.
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleApproveReservedOrder(res);
-                        setIsOrdersModalOpen(false);
-                      }}
+                  </div>
+                ) : (
+                  reservedOrders.map((res) => (
+                    <div
+                      key={res.requestId}
                       style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#16a34a',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontWeight: 700,
-                        fontSize: '12px',
-                        cursor: 'pointer',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '14px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px',
+                        justifyContent: 'space-between',
+                        backgroundColor: '#f8fafc',
                       }}
                     >
-                      <span>+</span> Approve Order
-                    </button>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 800, fontSize: '13.5px', color: '#0f172a' }}>
+                            👤 Consumer: {res.customer || 'Valued Consumer'}
+                          </span>
+                          {res.customerEmail && (
+                            <span style={{ fontSize: '11px', color: '#64748b' }}>({res.customerEmail})</span>
+                          )}
+                          {res.customerPhone && (
+                            <span style={{ fontSize: '11px', color: '#64748b' }}>📞 {res.customerPhone}</span>
+                          )}
+                          <span style={{ fontSize: '10px', background: '#e0e7ff', color: '#3730a3', padding: '1px 5px', borderRadius: '4px', fontWeight: 700 }}>
+                            Hold ID: {res.requestId}
+                          </span>
+                        </div>
+
+                        <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px', fontWeight: 600 }}>
+                          📦 {res.name || res.productName} &times; {res.qty || 1} units
+                        </div>
+
+                        <div style={{ fontSize: '11.5px', color: '#64748b', marginTop: '2px' }}>
+                          Payment: <strong>{res.paymentMethod || 'Cash'}</strong> | Total:{' '}
+                          <strong style={{ color: '#0284c7' }}>
+                            {formatInr((Number(res.priceUSD || 0)) * (Number(res.qty) || 1))}
+                          </strong> · Store: {res.store || currentStoreName}
+                          <span style={{ marginLeft: '8px', background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '1px 7px', borderRadius: '10px', fontSize: '10.5px', fontWeight: 700 }}>
+                            ⏱️ {formatHoldTimeRemaining(res.expiresAt, res.reservedAt)} left
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleCancelOrderFromPos(res)}
+                          disabled={cancellingRequestId === res.requestId}
+                          style={{
+                            padding: '8px 12px',
+                            backgroundColor: '#fff',
+                            color: '#ef4444',
+                            border: '1px solid #fca5a5',
+                            borderRadius: '8px',
+                            fontWeight: 700,
+                            fontSize: '11.5px',
+                            cursor: cancellingRequestId === res.requestId ? 'not-allowed' : 'pointer',
+                          }}
+                        >
+                          {cancellingRequestId === res.requestId ? 'Cancelling...' : '✕ Cancel Hold'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleApproveReservedOrder(res);
+                            setIsOrdersModalOpen(false);
+                          }}
+                          style={{
+                            padding: '8px 16px',
+                            backgroundColor: '#16a34a',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <span>+</span> Approve Order
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )
+              ) : (
+                cancelledOrders.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>✨</div>
+                    <div style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>No Cancelled Pre-orders</div>
+                    <div style={{ fontSize: '12px', marginTop: '4px' }}>
+                      No customers have cancelled orders for this store.
+                    </div>
                   </div>
-                ))
+                ) : (
+                  <>
+                    <div style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '10px 14px', fontSize: '12px', color: '#991b1b', lineHeight: 1.4 }}>
+                      ⚠️ <strong>Customer Cancellation & Expiration Notice:</strong> The pre-orders below were cancelled or expired after the 15-minute hold timeout.
+                      Do not fulfill or pack these items for pickup. Held stock has been automatically returned to store inventory.
+                    </div>
+                    {cancelledOrders.map((res) => (
+                      <div
+                        key={res.requestId}
+                        style={{
+                          border: '1.5px solid #fecaca',
+                          borderRadius: '12px',
+                          padding: '14px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          backgroundColor: '#fffafb',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{ fontWeight: 800, fontSize: '13.5px', color: '#0f172a' }}>
+                              👤 Consumer: {res.customer || 'Valued Consumer'}
+                            </span>
+                            {res.status === 'expired' ? (
+                              <span style={{ fontSize: '10px', background: '#ffedd5', color: '#9a3412', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
+                                ⌛ EXPIRED (15m Timeout)
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '10px', background: '#fee2e2', color: '#991b1b', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
+                                ❌ CANCELLED
+                              </span>
+                            )}
+                          </div>
+                          <span style={{ fontSize: '10px', background: '#f1f5f9', color: '#475569', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                            Hold ID: {res.requestId}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '16px', fontSize: '11.5px', color: '#64748b', flexWrap: 'wrap' }}>
+                          {res.customerEmail && <span>✉️ {res.customerEmail}</span>}
+                          {res.customerPhone && <span>📞 {res.customerPhone}</span>}
+                          <span>🏪 Store: {res.store || currentStoreName}</span>
+                        </div>
+
+                        <div style={{ fontSize: '13px', color: '#1e293b', fontWeight: 600, background: '#fff', padding: '8px 10px', borderRadius: '6px', border: '1px solid #f1f5f9' }}>
+                          📦 {res.productName || res.sku} &times; {res.qty || 1} units
+                        </div>
+
+                        <div style={{ fontSize: '12px', color: '#991b1b', fontWeight: 600, background: '#fef2f2', padding: '6px 10px', borderRadius: '6px' }}>
+                          Reason: {res.cancelReason || 'Cancelled by customer'}
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', color: '#64748b' }}>
+                          <span>
+                            Cancelled on: {res.cancelledAt ? new Date(res.cancelledAt).toLocaleString() : 'Recently'} (By: {res.cancelledBy || 'Consumer'})
+                          </span>
+                          <span style={{ color: '#16a34a', fontWeight: 700 }}>
+                            ✅ +{res.qty || 1} restored to available stock
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )
               )}
             </div>
 
@@ -1767,7 +1908,7 @@ export default function PosScreen({ onSwitchView, onLogout }) {
       <ReceiptModal
         isOpen={isReceiptOpen}
         transaction={completedTx}
-        onClose={() => setIsReceiptOpen(false)}
+        onClose={() => dispatch(closeReceiptModal())}
       />
 
       {/* ── FLOATING TOAST NOTIFICATION ── */}

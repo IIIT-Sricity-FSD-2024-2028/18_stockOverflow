@@ -1,9 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { retailerApi } from '../../api/retailerApi';
 import { useAuth } from '../../context/AuthContext';
+import {
+  fetchStockAdjustments,
+  createStockAdjustment,
+  deleteStockAdjustment,
+  selectStockAdjustments,
+  selectStockAdjustLoading,
+} from '../../redux/slices/stockAdjustSlice';
+import {
+  fetchProducts,
+  updateProduct,
+  selectProducts,
+} from '../../redux/slices/productsSlice';
 
 export default function StockAdjustView() {
   const { user } = useAuth();
+  const dispatch = useDispatch();
+
+  const reduxProducts = useSelector(selectProducts);
+  const reduxAdjustments = useSelector(selectStockAdjustments);
+  const reduxLoading = useSelector(selectStockAdjustLoading);
+
   const [products, setProducts] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState('');
   const [warehouse, setWarehouse] = useState('');
@@ -12,7 +31,7 @@ export default function StockAdjustView() {
   const [reason, setReason] = useState('Recount');
   const [notes, setNotes] = useState('');
   const [adjustments, setAdjustments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const loading = reduxLoading;
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -33,50 +52,37 @@ export default function StockAdjustView() {
     'Fulfillment Hub',
   ];
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
-      const storeId = user?.currentStoreId || user?.storeId || '';
-      const [pList, adjList] = await Promise.all([
-        retailerApi.getProducts(retailerId, storeId).catch(() => []),
-        retailerApi.getStockAdjustments(retailerId, storeId).catch(() => []),
-      ]);
-
-      const prods = Array.isArray(pList) ? pList : [];
-      setProducts(prods);
-      if (prods.length > 0 && !selectedProductId) {
-        setSelectedProductId(prods[0].id);
-      }
-      if (!warehouse) {
-        setWarehouse(user?.store || "Main Store");
-      }
-
-      if (Array.isArray(adjList) && adjList.length > 0) {
-        setAdjustments(
-          adjList.map((a) => ({
-            id: a.id,
-            date: a.date || (a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Today'),
-            product: a.productName || a.product || a.productSku || 'Product Item',
-            sku: a.productSku || a.sku || 'SKU',
-            warehouse: a.warehouse || a.store || user?.store || "Main Store",
-            type: a.type || 'add',
-            qty: a.qty || 0,
-            reason: a.reason || 'Inventory Adjustment',
-            person: a.person || a.user || user?.name || 'Retailer',
-            status: a.status || 'completed',
-            notes: a.notes || '',
-          }))
-        );
-      } else {
-        setAdjustments([]);
-      }
-    } catch (err) {
-      console.error('Error loading stock adjustment view:', err);
-    } finally {
-      setLoading(false);
-    }
+  const loadData = () => {
+    const retailerId = user?.retailerId || user?.profileId || (user?.role === 'retailer' ? user?.id : '') || '';
+    const storeId = user?.currentStoreId || user?.storeId || '';
+    dispatch(fetchProducts({ retailerId, storeId }));
+    dispatch(fetchStockAdjustments({ retailerId, storeId }));
   };
+
+  useEffect(() => {
+    loadData();
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxProducts) && reduxProducts.length > 0) {
+      setProducts(reduxProducts);
+      if (!selectedProductId) {
+        setSelectedProductId(reduxProducts[0].id);
+      }
+    }
+  }, [reduxProducts]);
+
+  useEffect(() => {
+    if (Array.isArray(reduxAdjustments)) {
+      setAdjustments(reduxAdjustments);
+    }
+  }, [reduxAdjustments]);
+
+  useEffect(() => {
+    if (!warehouse) {
+      setWarehouse(user?.store || "Main Store");
+    }
+  }, [user]);
 
   useEffect(() => {
     loadData();
@@ -120,22 +126,22 @@ export default function StockAdjustView() {
     };
 
     try {
-      const created = await retailerApi.createStockAdjustment(payload).catch(() => ({
+      const res = await dispatch(createStockAdjustment(payload)).unwrap().catch(() => ({
         id: Date.now(),
         ...payload,
       }));
 
-      // Update product quantity live in inventory
+      // Update product quantity live in inventory via Redux
       const currentQty = parseInt(selProduct.qty || selProduct.quantity || 0, 10);
       const newQty = adjustType === 'add' ? currentQty + qtyNum : Math.max(0, currentQty - qtyNum);
-      await retailerApi.updateProduct(selProduct.id, { qty: newQty, quantity: newQty }).catch(() => {});
+      dispatch(updateProduct({ id: selProduct.id, productData: { qty: newQty, quantity: newQty } }));
 
-      // Refresh product list state
+      // Refresh local product and adjustment state
       setProducts(products.map((p) => (p.id === selProduct.id ? { ...p, qty: newQty, quantity: newQty } : p)));
 
       setAdjustments([
         {
-          id: created.id || Date.now(),
+          id: res.id || Date.now(),
           date: today,
           product: selProduct.name,
           sku: selProduct.sku,
@@ -161,7 +167,7 @@ export default function StockAdjustView() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this stock adjustment record?')) return;
     try {
-      await retailerApi.deleteStockAdjustment(id).catch(() => {});
+      await dispatch(deleteStockAdjustment(id));
       setAdjustments(adjustments.filter((a) => a.id !== id));
     } catch (err) {
       console.error('Failed to delete adjustment:', err);

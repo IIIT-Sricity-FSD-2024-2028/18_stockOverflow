@@ -1,12 +1,11 @@
 /**
- * App_supplier.jsx - Main Application Controller for Supplier Module
+ * App_supplier.jsx - Main Application Controller for Supplier Module (Redux Integrated)
  * 
  * StockOverflow Supplier Module
  * Provides:
- * 1. 5-Step Supplier Setup Wizard (<SupplierSetup />)
- *    Ported from vanilla supplier-landing-page.html & supplier-initial.html
- * 2. Complete Supplier Operations Portal (<SupplierDashboard />)
- *    Ported from vanilla supplier-dashboard.html
+ * - Redux Provider Wrapping with supplierStore
+ * - 5-Step Supplier Setup Wizard (<SupplierSetup />)
+ * - Complete Supplier Operations Portal (<SupplierDashboard />)
  *    - Overview Metrics & Inventory Health
  *    - Profile Management & Legal Document Vault
  *    - Wholesale Product Catalog with Add/Edit/Delete & Stock Status
@@ -17,16 +16,20 @@
  */
 
 import React from 'react';
+import { Provider } from 'react-redux';
+import { supplierStore } from './redux';
 import SupplierDashboard from './SupplierDashboard';
 import '../css/supplier.css';
 
 export default function App_supplier({ onSwitchModule, onLogout }) {
   return (
-    <div className="supplier-portal-container">
-      <SupplierDashboard
-        onSwitchModule={onSwitchModule}
-        onLogout={onLogout}
-      />
-    </div>
+    <Provider store={supplierStore}>
+      <div className="supplier-portal-container">
+        <SupplierDashboard
+          onSwitchModule={onSwitchModule}
+          onLogout={onLogout}
+        />
+      </div>
+    </Provider>
   );
 }

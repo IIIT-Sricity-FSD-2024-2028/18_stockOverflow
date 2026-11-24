@@ -14,7 +14,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { refreshAuthUser, logoutUser } from './store/auth-actions';
 
 // Landing & Auth
 import LandingPage from './landing/LandingPage';
@@ -33,7 +34,11 @@ import RetailerInitialWizard from './retailer/components/retailer/RetailerInitia
 import SupplierSetup from './supplier/SupplierSetup';
 
 export default function App() {
-  const { user, logout, refreshUser } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+
+  const logout = () => dispatch(logoutUser());
+  const refreshUser = () => dispatch(refreshAuthUser());
 
   // Current active view: 'landing' | 'login' | 'register' | 'verification-pending' | 'admin' | 'employee' | 'consumer' | 'retailer' | 'supplier' | 'biller'
   const [currentView, setCurrentView] = useState(() => {

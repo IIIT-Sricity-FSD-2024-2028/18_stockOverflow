@@ -20,6 +20,10 @@ export class CreateReservationRequestDto {
 
   @IsOptional()
   @IsString()
+  customerPhone?: string;
+
+  @IsOptional()
+  @IsString()
   customerId?: string;
 
   @IsString()

@@ -119,8 +119,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateRoleDto.prototype, "description", void 0);
 __decorate([
-    (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsObject)(),
     __metadata("design:type", Object)
 ], CreateRoleDto.prototype, "permissions", void 0);
 class UpdateRoleDto {
@@ -138,6 +137,7 @@ __decorate([
 ], UpdateRoleDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsObject)(),
     __metadata("design:type", Object)
 ], UpdateRoleDto.prototype, "permissions", void 0);
 class CreateStoreDto {
@@ -147,6 +147,11 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateStoreDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateStoreDto.prototype, "code", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
@@ -172,12 +177,22 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
+], UpdateStoreDto.prototype, "code", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
 ], UpdateStoreDto.prototype, "location", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateStoreDto.prototype, "manager", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateStoreDto.prototype, "status", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),

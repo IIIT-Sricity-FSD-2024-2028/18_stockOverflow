@@ -1,5 +1,123 @@
 [
   {
+    "id": "50c1c24d-9efa-4fd6-acdb-137f8cc8936f",
+    "status": "completed",
+    "profileStatus": "active",
+    "validationStatus": "approved",
+    "assignedEmployeeId": "EMP-1002",
+    "assignedAt": "2026-08-27T19:26:09.951Z",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-11-23T11:35:18.917Z",
+    "business": {
+      "companyName": "supplier",
+      "businessType": "Wholesaler",
+      "businessEmail": "supplier@gmail.com",
+      "phoneNumber": "+91 98765 12345",
+      "primaryCategory": "Electronics & Technology",
+      "state": "Gujarat",
+      "paymentTerms": "Net 30",
+      "businessAddress": "",
+      "website": "",
+      "gstNumber": "",
+      "description": "",
+      "currency": "INR",
+      "sellingType": "Wholesale",
+      "supplierCode": "SUP-7770"
+    },
+    "primaryContact": {
+      "fullName": "supplier",
+      "designation": "Managing Director",
+      "directEmail": "supplier@gmail.com",
+      "mobileNumber": "+91 98765 12345",
+      "directPhone": "+91 98765 12345"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP-101",
+        "name": "basmati",
+        "brand": "—",
+        "category": "Electronics & Technology",
+        "stockAvailable": 50,
+        "unitPrice": 100,
+        "minOrderQty": 5
+      }
+    ],
+    "pricingPolicies": [],
+    "bankDetails": [],
+    "documents": []
+  },
+  {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "Canonical Supplier Ltd",
+      "businessType": "Wholesaler",
+      "businessEmail": "canonical@example.com",
+      "phoneNumber": "9123456789",
+      "gstNumber": "27AAPFU0939F1ZV",
+      "supplierCode": "SUP-1234"
+    },
+    "primaryContact": {
+      "fullName": "Jane Doe",
+      "directEmail": "canonical@example.com",
+      "directPhone": "9123456789"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP-101",
+        "name": "basmati",
+        "stockAvailable": 50,
+        "unitPrice": 85
+      }
+    ],
+    "profileStatus": "pending",
+    "documents": [],
+    "id": "616b5719-1a5d-4b9b-9be6-a1aafccecbca",
+    "status": "completed",
+    "createdAt": "2026-11-23T11:34:25.332Z",
+    "updatedAt": "2026-11-23T11:34:25.332Z"
+  },
+  {
+    "supplierCode": "SUP-9999",
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "Test Supplier Corp",
+      "businessType": "Wholesaler",
+      "businessEmail": "testsupplier_e2e@example.com",
+      "phoneNumber": "9876543210",
+      "gstNumber": "27AAPFU0939F1ZV",
+      "supplierCode": "SUP-9999"
+    },
+    "primaryContact": {
+      "fullName": "Test Owner",
+      "directEmail": "testsupplier_e2e@example.com",
+      "directPhone": "9876543210"
+    },
+    "retailers": [],
+    "products": [
+      {
+        "unit": "Piece",
+        "sku": "SP-TEST-1",
+        "name": "Test Product",
+        "stockAvailable": 50,
+        "unitPrice": 100
+      }
+    ],
+    "documents": [],
+    "id": "d59aa7d4-6633-4041-9459-2460b2e90abf",
+    "status": "completed",
+    "profileStatus": "pending",
+    "createdAt": "2026-11-23T11:34:17.622Z",
+    "updatedAt": "2026-11-23T11:34:17.622Z"
+  },
+  {
     "id": "64aa95dd-c853-4f83-8a05-8994d4e7a1c5",
     "profileStatus": "active",
     "business": {
@@ -211,43 +329,6 @@
     "profileStatus": "active",
     "createdAt": "2026-08-30T15:48:50.561Z",
     "updatedAt": "2026-08-30T15:48:50.561Z"
-  },
-  {
-    "id": "50c1c24d-9efa-4fd6-acdb-137f8cc8936f",
-    "status": "completed",
-    "profileStatus": "active",
-    "validationStatus": "approved",
-    "assignedEmployeeId": "EMP-1002",
-    "assignedAt": "2026-08-27T19:26:09.951Z",
-    "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-08-27T19:26:09.951Z",
-    "business": {
-      "companyName": "Arun Singh",
-      "businessType": "Wholesaler",
-      "businessEmail": "supplier@gmail.com",
-      "phoneNumber": "+91 98765 12345",
-      "primaryCategory": "Electronics & Technology",
-      "state": "Maharashtra",
-      "paymentTerms": "Net 30",
-      "businessAddress": "456 Commercial Hub, Mumbai",
-      "website": "https://arunsingh.local",
-      "gstNumber": "27BBBBB1111B1Z2",
-      "description": "Wholesale Electronics & Peripherals",
-      "currency": "INR",
-      "sellingType": "Wholesale",
-      "supplierCode": "SUP-ARUN-002"
-    },
-    "primaryContact": {
-      "fullName": "Arun Singh",
-      "designation": "Owner",
-      "directEmail": "supplier@gmail.com",
-      "mobileNumber": "+91 98765 12345"
-    },
-    "retailers": [],
-    "products": [],
-    "pricingPolicies": [],
-    "bankDetails": [],
-    "documents": []
   },
   {
     "business": {
