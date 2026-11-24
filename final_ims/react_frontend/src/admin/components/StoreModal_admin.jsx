@@ -1,12 +1,14 @@
 /**
- * StoreModal_admin.jsx - Add New Store Hub Dialog Modal for Admin
+ * StoreModal_admin.jsx - Add / Edit Store Hub Dialog Modal for Admin
  */
 
 import React from 'react';
 
 export default function StoreModal_admin({
   isOpen,
+  editingStore = null,
   newStore,
+  saving = false,
   onChange,
   onClose,
   onSave,
@@ -45,7 +47,9 @@ export default function StoreModal_admin({
             alignItems: 'center',
           }}
         >
-          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>Add New Store Hub</h3>
+          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>
+            {editingStore ? 'Edit Store Hub' : 'Add New Store Hub'}
+          </h3>
           <button
             type="button"
             onClick={onClose}
@@ -100,10 +104,11 @@ export default function StoreModal_admin({
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>
-                Store Manager
+                Store Manager *
               </label>
               <input
                 type="text"
+                required
                 placeholder="e.g. Alex Morgan"
                 value={newStore.manager}
                 onChange={(e) => onChange('manager', e.target.value)}
@@ -121,10 +126,11 @@ export default function StoreModal_admin({
 
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>
-              Address / Location
+              Address / Location *
             </label>
             <input
               type="text"
+              required
               placeholder="e.g. Galleria Mall, Sector 9"
               value={newStore.location}
               onChange={(e) => onChange('location', e.target.value)}
@@ -147,8 +153,8 @@ export default function StoreModal_admin({
             >
               Cancel
             </button>
-            <button type="submit" className="admin-btn admin-btn-primary">
-              Create Store
+            <button type="submit" className="admin-btn admin-btn-primary" disabled={saving}>
+              {saving ? 'Saving...' : editingStore ? 'Save Changes' : 'Create Store'}
             </button>
           </div>
         </form>

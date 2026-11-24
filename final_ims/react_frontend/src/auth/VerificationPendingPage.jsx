@@ -1,80 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { useDataSync } from '../context/DataSyncContext';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { refreshAuthUser } from '../store/auth-actions';
 
 /**
- * VerificationPendingPage.jsx - React port of verification-pending.html
- * 
+ * VerificationPendingPage.jsx
  * Displayed when an unverified Retailer or Supplier logs in.
- * Shows 'Pending Review' or 'Rejected' (with employee rejection reason).
  */
-export default function VerificationPendingPage({ user, onRefreshUser, onLogout, onNavigate }) {
+export default function VerificationPendingPage({ user: propUser, onRefreshUser, onLogout, onNavigate }) {
+  const dispatch = useDispatch();
+  const reduxUser = useSelector((state) => state.auth.user);
+  const userData = reduxUser || propUser || {};
+
   const [checking, setChecking] = useState(false);
-  const [userData, setUserData] = useState(user || {});
-  const [rejectionReason, setRejectionReason] = useState(
-    user?.profile?.rejectionReason || user?.rejectionReason || ''
-  );
-  const [status, setStatus] = useState(
-    user?.profile?.profileStatus || user?.status || 'pending'
-  );
 
-  useEffect(() => {
-    if (user) {
-      setUserData(user);
-      const st = user?.profile?.profileStatus || user?.status || 'pending';
-      setStatus(st);
-      setRejectionReason(user?.profile?.rejectionReason || user?.rejectionReason || '');
-    }
-  }, [user]);
-
-  // Real-time synchronization: automatically unlocks when employee approves
-  useDataSync(['users', 'assignments'], () => {
-    checkStatus();
-  }, { intervalMs: 3000 });
-
+  const status = userData?.profile?.profileStatus || userData?.status || 'pending';
+  const rejectionReason = userData?.profile?.rejectionReason || userData?.rejectionReason || '';
   const isRejected = String(status).toLowerCase() === 'rejected';
 
-  const checkStatus = async () => {
+  const checkStatus = useCallback(async () => {
     setChecking(true);
     try {
-      if (onRefreshUser) {
-        const updated = await onRefreshUser();
-        if (updated) {
-          setUserData(updated);
-          const st = updated?.profile?.profileStatus || updated?.status || 'pending';
-          setStatus(st);
-          setRejectionReason(updated?.profile?.rejectionReason || updated?.rejectionReason || '');
-          if (String(st).toLowerCase() === 'active') {
-            // Unlocked!
-            if (onNavigate) {
-              onNavigate(updated?.role || userData?.role || 'retailer');
-            } else {
-              window.location.reload();
-            }
-          }
-        }
-      } else if (userData?.id) {
-        const res = await fetch(`/api/users/${userData.id}`);
-        if (res.ok) {
-          const fresh = await res.json();
-          setUserData(fresh);
-          const st = fresh?.profile?.profileStatus || fresh?.status || 'pending';
-          setStatus(st);
-          setRejectionReason(fresh?.profile?.rejectionReason || fresh?.rejectionReason || '');
-          if (String(st).toLowerCase() === 'active') {
-            if (onNavigate) {
-              onNavigate(fresh?.role || userData?.role || 'retailer');
-            } else {
-              window.location.reload();
-            }
-          }
+      const updated = onRefreshUser
+        ? await onRefreshUser()
+        : await dispatch(refreshAuthUser());
+
+      const nextStatus = updated?.profile?.profileStatus || updated?.status || 'pending';
+      if (updated && String(nextStatus).toLowerCase() === 'active') {
+        if (onNavigate) {
+          onNavigate(updated.role || userData.role || 'retailer');
         }
       }
     } catch (err) {
       console.warn('Failed to check status:', err);
     } finally {
-      setTimeout(() => setChecking(false), 500);
+      setTimeout(() => setChecking(false), 400);
     }
-  };
+  }, [dispatch, onRefreshUser, onNavigate, userData.role]);
+
+  useEffect(() => {
+    const timer = setInterval(checkStatus, 4000);
+    return () => clearInterval(timer);
+  }, [checkStatus]);
 
   return (
     <div style={{

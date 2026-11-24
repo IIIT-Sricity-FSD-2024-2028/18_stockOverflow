@@ -212,6 +212,7 @@ export class AdminService {
     const newStore: StoreRecord = {
       id: this.generateId(),
       name: createStoreDto.name,
+      code: createStoreDto.code,
       location: createStoreDto.location,
       manager: createStoreDto.manager,
       retailerId: createStoreDto.retailerId,

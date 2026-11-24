@@ -175,6 +175,7 @@ let AdminService = class AdminService {
         const newStore = {
             id: this.generateId(),
             name: createStoreDto.name,
+            code: createStoreDto.code,
             location: createStoreDto.location,
             manager: createStoreDto.manager,
             retailerId: createStoreDto.retailerId,

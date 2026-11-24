@@ -9,165 +9,102 @@
  * - Quick Store Switcher & Operational Status Management
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useDataSync } from '../../context/DataSyncContext';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeActions } from '../../store/stores-slice';
 import {
-  fetchAdminStores,
-  updateAdminStore,
-  fetchAdminProducts,
-  fetchAdminTransactions,
-  fetchAdminUsers,
-  fetchPlatformRevenueSummary,
-} from '../utils/api_admin';
+  fetchStoresData,
+  fetchStoreDetailsData,
+} from '../../store/stores-actions';
+import { fetchUsersData } from '../../store/users-actions';
+import { fetchPlatformRevenueData } from '../../store/revenue-actions';
 
 export default function StoreDashboardPage_admin({ storeId, onNavigate, onBack }) {
-  const [allStores, setAllStores] = useState([]);
-  const [selectedStoreId, setSelectedStoreId] = useState(() => {
-    return storeId || (typeof window !== 'undefined' ? localStorage.getItem('stockoverflow_active_store_id') : '') || '';
-  });
+  const dispatch = useDispatch();
+  const allStores = useSelector((state) => state.stores.stores);
+  const allProds = useSelector((state) => state.stores.storeProducts);
+  const allTx = useSelector((state) => state.stores.storeTransactions);
+  const activeStoreId = useSelector((state) => state.stores.activeStoreId);
+  const allUsers = useSelector((state) => state.users.users);
+  const loading = useSelector((state) => state.stores.loading);
+  const error = useSelector((state) => state.stores.error);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Store scoped datasets
-  const [storeData, setStoreData] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [revenueSummary, setRevenueSummary] = useState(null);
+  const [selectedStoreId, setSelectedStoreId] = useState(
+    () => storeId || activeStoreId || ''
+  );
 
   // UI state
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'inventory' | 'orders' | 'staff'
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusUpdating, setStatusUpdating] = useState(false);
 
-  // Keep selectedStoreId in sync with props
   useEffect(() => {
     if (storeId && storeId !== selectedStoreId) {
       setSelectedStoreId(storeId);
     }
-  }, [storeId]);
-
-  // Load all data
-  const loadScopedData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const [storesRes, prodsRes, txRes, usersRes, revRes] = await Promise.allSettled([
-        fetchAdminStores(),
-        fetchAdminProducts(),
-        fetchAdminTransactions(),
-        fetchAdminUsers(),
-        fetchPlatformRevenueSummary(),
-      ]);
-
-      const storeList = storesRes.status === 'fulfilled' && Array.isArray(storesRes.value) ? storesRes.value : [];
-      setAllStores(storeList);
-
-      const allProds = prodsRes.status === 'fulfilled' && Array.isArray(prodsRes.value) ? prodsRes.value : [];
-      const allTx = txRes.status === 'fulfilled' && Array.isArray(txRes.value) ? txRes.value : [];
-      const allUsers = usersRes.status === 'fulfilled' && Array.isArray(usersRes.value) ? usersRes.value : [];
-
-      if (revRes.status === 'fulfilled') {
-        setRevenueSummary(revRes.value);
-      }
-
-      // Identify active store
-      let current = null;
-      if (selectedStoreId) {
-        current = storeList.find(
-          (s) =>
-            String(s.id || '').toLowerCase() === String(selectedStoreId).toLowerCase() ||
-            String(s.storeCode || s.code || '').toLowerCase() === String(selectedStoreId).toLowerCase() ||
-            String(s.name || '').toLowerCase() === String(selectedStoreId).toLowerCase()
-        );
-      }
-      if (!current && storeList.length > 0) {
-        current = storeList[0];
-        setSelectedStoreId(current.id || current.storeCode);
-      }
-
-      setStoreData(current);
-
-      if (current) {
-        const curId = String(current.id || '').toLowerCase();
-        const curCode = String(current.code || current.storeCode || '').toLowerCase();
-        const curName = String(current.name || '').toLowerCase();
-
-        // Filter products scoped to this store
-        const scopedProds = allProds.filter((p) => {
-          if (!p.storeId && !p.store) return true; // Global catalog item available
-          const pStoreId = String(p.storeId || '').toLowerCase();
-          const pStoreName = String(p.store || '').toLowerCase();
-          return pStoreId === curId || pStoreId === curCode || pStoreName === curName;
-        });
-        setProducts(scopedProds);
-
-        // Filter transactions scoped to this store
-        const scopedTx = allTx.filter((t) => {
-          const tStoreId = String(t.storeId || '').toLowerCase();
-          const tStoreName = String(t.store || t.storeName || '').toLowerCase();
-          return tStoreId === curId || tStoreId === curCode || tStoreName === curName || tStoreName.includes(curName);
-        });
-        setTransactions(scopedTx);
-
-        // Filter staff assigned to this store or retailer
-        const scopedStaff = allUsers.filter((u) => {
-          const uStoreId = String(u.storeId || '').toLowerCase();
-          const uStoreName = String(u.store || '').toLowerCase();
-          const role = String(u.role || '').toLowerCase();
-          return (
-            (role === 'biller' || role === 'employee' || role === 'retailer') &&
-            (uStoreId === curId || uStoreId === curCode || uStoreName === curName || uStoreName.includes(curName))
-          );
-        });
-        setUsers(scopedStaff);
-      }
-    } catch (err) {
-      console.error('Failed to load scoped store dashboard:', err);
-      setError(err.message || 'Failed to load store dashboard data');
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedStoreId]);
+  }, [storeId, selectedStoreId]);
 
   useEffect(() => {
-    loadScopedData();
-  }, [loadScopedData]);
+    dispatch(fetchStoresData());
+    dispatch(fetchStoreDetailsData());
+    dispatch(fetchUsersData());
+    dispatch(fetchPlatformRevenueData());
+  }, [dispatch]);
 
-  // Real-time synchronization
-  useDataSync(['stores', 'products', 'transactions', 'revenue', 'users'], () => {
-    loadScopedData();
-  });
+  const storeData = useMemo(() => {
+    let current = null;
+    if (selectedStoreId) {
+      current = allStores.find(
+        (s) =>
+          String(s.id || '').toLowerCase() === String(selectedStoreId).toLowerCase() ||
+          String(s.storeCode || s.code || '').toLowerCase() === String(selectedStoreId).toLowerCase() ||
+          String(s.name || '').toLowerCase() === String(selectedStoreId).toLowerCase()
+      );
+    }
+    return current || allStores[0] || null;
+  }, [allStores, selectedStoreId]);
 
-  // Switch store handler
+  const { products, transactions, users } = useMemo(() => {
+    if (!storeData) return { products: [], transactions: [], users: [] };
+    const curId = String(storeData.id || '').toLowerCase();
+    const curCode = String(storeData.code || storeData.storeCode || '').toLowerCase();
+    const curName = String(storeData.name || '').toLowerCase();
+
+    const scopedProds = allProds.filter((p) => {
+      if (!p.storeId && !p.store) return true;
+      const pStoreId = String(p.storeId || '').toLowerCase();
+      const pStoreName = String(p.store || '').toLowerCase();
+      return pStoreId === curId || pStoreId === curCode || pStoreName === curName;
+    });
+
+    const scopedTx = allTx.filter((t) => {
+      const tStoreId = String(t.storeId || '').toLowerCase();
+      const tStoreName = String(t.store || t.storeName || '').toLowerCase();
+      return tStoreId === curId || tStoreId === curCode || tStoreName === curName || tStoreName.includes(curName);
+    });
+
+    const scopedStaff = allUsers.filter((u) => {
+      const uStoreId = String(u.storeId || '').toLowerCase();
+      const uStoreName = String(u.store || '').toLowerCase();
+      const role = String(u.role || '').toLowerCase();
+      return (
+        (role === 'biller' || role === 'employee' || role === 'retailer') &&
+        (uStoreId === curId || uStoreId === curCode || uStoreName === curName || uStoreName.includes(curName))
+      );
+    });
+
+    return { products: scopedProds, transactions: scopedTx, users: scopedStaff };
+  }, [storeData, allProds, allTx, allUsers]);
+
   const handleSwitchStore = (newId) => {
     setSelectedStoreId(newId);
-    try {
-      localStorage.setItem('stockoverflow_active_store_id', newId);
-      window.dispatchEvent(new Event('storage'));
-    } catch (e) {
-      console.warn(e);
-    }
+    dispatch(storeActions.setActiveStoreId(newId));
   };
 
-  // Toggle store operating status
-  const handleToggleStatus = async () => {
-    if (!storeData?.id) return;
-    try {
-      setStatusUpdating(true);
-      const nextStatus = (storeData.status || 'Active').toLowerCase() === 'active' ? 'Maintenance' : 'Active';
-      await updateAdminStore(storeData.id, {
-        ...storeData,
-        status: nextStatus,
-      });
-      setStoreData((prev) => ({ ...prev, status: nextStatus }));
-    } catch (err) {
-      alert(`Failed to update store status: ${err.message}`);
-    } finally {
-      setStatusUpdating(false);
-    }
+  const handleRefresh = () => {
+    dispatch(fetchStoresData());
+    dispatch(fetchStoreDetailsData());
+    dispatch(fetchUsersData());
+    dispatch(fetchPlatformRevenueData());
   };
 
   // Compute live scoped KPIs
@@ -312,6 +249,23 @@ export default function StoreDashboardPage_admin({ storeId, onNavigate, onBack }
         </div>
       )}
 
+      {/* ── Empty / Not Found Fallback ── */}
+      {!loading && !storeData ? (
+        <div className="admin-card" style={{ padding: '2.5rem', textAlign: 'center', color: '#64748b' }}>
+          <h3 style={{ margin: '0 0 8px 0', color: '#0f172a' }}>No Store Branch Found</h3>
+          <p style={{ margin: '0 0 16px 0', fontSize: '0.9rem' }}>
+            No matching store branch exists yet. Return to the stores list to select or create a branch.
+          </p>
+          <button
+            type="button"
+            className="admin-btn admin-btn-primary"
+            onClick={() => (onBack ? onBack() : onNavigate && onNavigate('stores'))}
+          >
+            ← Back to Stores List
+          </button>
+        </div>
+      ) : (
+        <>
       {/* ── Main Store Header Hero Card (High-Contrast Dark Aesthetic) ── */}
       {storeData && (
         <div
@@ -378,25 +332,6 @@ export default function StoreDashboardPage_admin({ storeId, onNavigate, onBack }
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <button
                 type="button"
-                className="admin-btn"
-                style={{
-                  background: (storeData.status || 'Active').toLowerCase() === 'active' ? '#f59e0b' : '#10b981',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontSize: '12.5px',
-                  fontWeight: 700,
-                  padding: '9px 16px',
-                  cursor: 'pointer',
-                  borderRadius: '8px',
-                }}
-                onClick={handleToggleStatus}
-                disabled={statusUpdating}
-              >
-                {statusUpdating ? 'Updating...' : (storeData.status || 'Active').toLowerCase() === 'active' ? 'Set to Maintenance' : 'Activate Branch'}
-              </button>
-
-              <button
-                type="button"
                 className="admin-btn admin-btn-outline"
                 style={{
                   background: '#334155',
@@ -408,9 +343,9 @@ export default function StoreDashboardPage_admin({ storeId, onNavigate, onBack }
                   cursor: 'pointer',
                   borderRadius: '8px',
                 }}
-                onClick={loadScopedData}
+                onClick={handleRefresh}
               >
-                ↻ Refresh Telemetry
+                ↻ Refresh Store Data
               </button>
             </div>
           </div>
@@ -882,6 +817,8 @@ export default function StoreDashboardPage_admin({ storeId, onNavigate, onBack }
             </table>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

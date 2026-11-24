@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsArray, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsObject } from 'class-validator';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -85,8 +85,7 @@ export class CreateRoleDto {
   @IsString()
   description: string;
 
-  @IsArray()
-  @IsBoolean()
+  @IsObject()
   permissions: Record<string, boolean>;
 }
 
@@ -100,12 +99,17 @@ export class UpdateRoleDto {
   description?: string;
 
   @IsOptional()
+  @IsObject()
   permissions?: Record<string, boolean>;
 }
 
 export class CreateStoreDto {
   @IsString()
   name: string;
+
+  @IsOptional()
+  @IsString()
+  code?: string;
 
   @IsString()
   location: string;
@@ -125,11 +129,19 @@ export class UpdateStoreDto {
 
   @IsOptional()
   @IsString()
+  code?: string;
+
+  @IsOptional()
+  @IsString()
   location?: string;
 
   @IsOptional()
   @IsString()
   manager?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
 
   @IsOptional()
   @IsString()

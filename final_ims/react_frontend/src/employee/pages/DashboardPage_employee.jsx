@@ -5,13 +5,12 @@
  * Zero mock fallbacks - all operations reflect live backend state.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useDataSync } from '../../context/DataSyncContext';
-import {
-  fetchEmployeeStats,
-  fetchEmployeeAssignments,
-  fetchEmployeeQueries,
-} from '../utils/api_employee';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { employeeStatsActions } from '../../store/employee-stats-slice';
+import { fetchEmployeeStatsData } from '../../store/employee-stats-actions';
+import { fetchAssignmentsData } from '../../store/assignments-actions';
+import { fetchQueriesData } from '../../store/queries-actions';
 
 function mapBackendAssignment(asgn) {
   const d = asgn.details || {};
@@ -36,64 +35,35 @@ function mapBackendQuery(q) {
 }
 
 export default function DashboardPage_employee({ onNavigate }) {
-  const [isOnDuty, setIsOnDuty] = useState(() => {
-    try {
-      const saved = localStorage.getItem('stockoverflow_emp_duty');
-      return saved !== null ? JSON.parse(saved) : true;
-    } catch {
-      return true;
-    }
-  });
+  const dispatch = useDispatch();
+  const isOnDuty = useSelector((state) => state.employeeStats.isOnDuty);
+  const stats = useSelector((state) => state.employeeStats.stats);
+  const rawAssignments = useSelector((state) => state.assignments.assignments);
+  const rawQueries = useSelector((state) => state.queries.queries);
+  const loading = useSelector(
+    (state) => state.employeeStats.loading || state.assignments.loading || state.queries.loading
+  );
+  const error = useSelector(
+    (state) => state.employeeStats.error || state.assignments.error || state.queries.error
+  );
 
-  const [stats, setStats] = useState(null);
-  const [assignments, setAssignments] = useState([]);
-  const [queries, setQueries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const loadDashboardData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [statsData, asgnsData, queriesData] = await Promise.allSettled([
-        fetchEmployeeStats(),
-        fetchEmployeeAssignments(),
-        fetchEmployeeQueries(),
-      ]);
-
-      if (statsData.status === 'fulfilled') {
-        setStats(statsData.value);
-      }
-      if (asgnsData.status === 'fulfilled' && Array.isArray(asgnsData.value)) {
-        setAssignments(asgnsData.value.map(mapBackendAssignment));
-      }
-      if (queriesData.status === 'fulfilled' && Array.isArray(queriesData.value)) {
-        setQueries(queriesData.value.map(mapBackendQuery));
-      }
-    } catch (err) {
-      console.error('Failed to load employee dashboard:', err);
-      setError(err.message || 'Failed to load employee dashboard data');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const loadDashboardData = () => {
+    dispatch(fetchEmployeeStatsData());
+    dispatch(fetchAssignmentsData());
+    dispatch(fetchQueriesData());
+  };
 
   useEffect(() => {
-    loadDashboardData();
-  }, [loadDashboardData]);
+    dispatch(fetchEmployeeStatsData());
+    dispatch(fetchAssignmentsData());
+    dispatch(fetchQueriesData());
+  }, [dispatch]);
 
-  useDataSync(['assignments', 'users'], () => {
-    loadDashboardData();
-  });
+  const assignments = useMemo(() => rawAssignments.map(mapBackendAssignment), [rawAssignments]);
+  const queries = useMemo(() => rawQueries.map(mapBackendQuery), [rawQueries]);
 
   const handleToggleDuty = () => {
-    const next = !isOnDuty;
-    setIsOnDuty(next);
-    try {
-      localStorage.setItem('stockoverflow_emp_duty', JSON.stringify(next));
-    } catch (err) {
-      console.warn(err);
-    }
+    dispatch(employeeStatsActions.toggleOnDuty());
   };
 
   // Dynamic calculated counts from live records or stats endpoint

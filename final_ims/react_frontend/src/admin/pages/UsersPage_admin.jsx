@@ -5,26 +5,29 @@
  * Zero mock fallbacks - all operations reflect live backend state.
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useDataSync } from '../../context/DataSyncContext';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  fetchAdminUsers,
-  createAdminUser,
-  updateAdminUser,
-  deleteAdminUser,
-} from '../utils/api_admin';
+  fetchUsersData,
+  createUserData,
+  updateUserData,
+  deleteUserData,
+} from '../../store/users-actions';
+import { fetchStoresData } from '../../store/stores-actions';
 import UserModal_admin from '../components/UserModal_admin';
 
 export default function UsersPage_admin() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const users = useSelector((state) => state.users.users);
+  const loading = useSelector((state) => state.users.loading);
+  const error = useSelector((state) => state.users.error);
+  const stores = useSelector((state) => state.stores.stores);
 
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  // Modal State
+  // Form / Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -32,32 +35,16 @@ export default function UsersPage_admin() {
     name: '',
     email: '',
     role: 'employee',
-    store: 'Downtown Store',
+    store: 'Global Hub',
     status: 'Active',
-    phone: '',
   });
-
-  const loadUsers = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchAdminUsers();
-      setUsers(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error('Failed to load admin users:', err);
-      setError(err.message || 'Failed to load users from backend');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
-
-  useDataSync(['users', 'assignments'], () => {
-    loadUsers();
-  });
+    dispatch(fetchUsersData());
+    if (stores.length === 0) {
+      dispatch(fetchStoresData());
+    }
+  }, [dispatch, stores.length]);
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
@@ -77,9 +64,8 @@ export default function UsersPage_admin() {
       name: '',
       email: '',
       role: 'employee',
-      store: 'Downtown Store',
+      store: stores[0]?.name || 'Global Hub',
       status: 'Active',
-      phone: '',
     });
     setIsModalOpen(true);
   };
@@ -92,7 +78,6 @@ export default function UsersPage_admin() {
       role: user.role || 'employee',
       store: user.store || 'Global Hub',
       status: user.status || 'Active',
-      phone: user.phone || '',
     });
     setIsModalOpen(true);
   };
@@ -111,25 +96,28 @@ export default function UsersPage_admin() {
     try {
       setSaving(true);
       if (editingUser) {
-        await updateAdminUser(editingUser.id, {
-          name: formData.name,
-          email: formData.email,
-          role: formData.role,
-          store: formData.store,
-          status: formData.status,
-        });
+        await dispatch(
+          updateUserData(editingUser.id, {
+            name: formData.name,
+            email: formData.email,
+            role: formData.role,
+            store: formData.store,
+            status: formData.status,
+          })
+        );
       } else {
-        await createAdminUser({
-          name: formData.name,
-          email: formData.email,
-          role: formData.role,
-          store: formData.store,
-          status: formData.status,
-          password: 'Password123!',
-        });
+        await dispatch(
+          createUserData({
+            name: formData.name,
+            email: formData.email,
+            role: formData.role,
+            store: formData.store,
+            status: formData.status,
+            password: 'Password123!',
+          })
+        );
       }
       setIsModalOpen(false);
-      await loadUsers();
     } catch (err) {
       alert(`Error saving user: ${err.message}`);
     } finally {
@@ -140,8 +128,7 @@ export default function UsersPage_admin() {
   const handleDeleteUser = async (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}?`)) {
       try {
-        await deleteAdminUser(id);
-        await loadUsers();
+        await dispatch(deleteUserData(id));
       } catch (err) {
         alert(`Error deleting user: ${err.message}`);
       }
@@ -184,7 +171,7 @@ export default function UsersPage_admin() {
           <button
             type="button"
             className="admin-btn admin-btn-outline"
-            onClick={loadUsers}
+            onClick={() => dispatch(fetchUsersData())}
             disabled={loading}
             title="Refresh from backend"
           >
@@ -275,7 +262,7 @@ export default function UsersPage_admin() {
           >
             <option value="">All Statuses</option>
             <option value="Active">Active</option>
-            <option value="Warning">Warning</option>
+            <option value="Pending">Pending</option>
             <option value="Inactive">Inactive</option>
           </select>
         </div>
@@ -399,6 +386,7 @@ export default function UsersPage_admin() {
         isOpen={isModalOpen}
         editingUser={editingUser}
         formData={formData}
+        stores={stores}
         onChange={handleFormChange}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveUser}

@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { authActions } from '../store/auth-slice';
+import { registerUser } from '../store/auth-actions';
 import './auth.css';
 
 export default function RegisterPage({ onNavigate, onRegisterSuccess, initialRole = 'retailer', initialPlan = 'free' }) {
-  const { saveSession } = useAuth();
+  const dispatch = useDispatch();
+  const isSubmitting = useSelector((state) => state.auth.loading);
+  const authError = useSelector((state) => state.auth.error);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,12 +20,12 @@ export default function RegisterPage({ onNavigate, onRegisterSuccess, initialRol
 
   // Payment Modal state
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [paymentTab, setPaymentTab] = useState('upi'); // 'upi' | 'card' | 'netbanking'
+  const [paymentTab, setPaymentTab] = useState('upi');
   const [upiId, setUpiId] = useState('business@okhdfcbank');
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const errorMessage = validationError || authError || '';
 
   useEffect(() => {
     if (initialRole) setRole(initialRole);
@@ -61,105 +66,55 @@ export default function RegisterPage({ onNavigate, onRegisterSuccess, initialRol
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
-    setErrorMessage('');
+    setValidationError('');
+    dispatch(authActions.clearAuthError());
 
     try {
       validateForm();
-      // If paid tier selected for retailer/supplier, open payment modal simulator
       if ((role === 'retailer' || role === 'supplier') && selectedPlan !== 'free') {
         setPaymentModalOpen(true);
         return;
       }
-      // Otherwise proceed immediately
       executeRegistration();
     } catch (err) {
-      setErrorMessage(err.message);
+      setValidationError(err.message);
     }
   };
 
   const executeRegistration = async () => {
-    setIsSubmitting(true);
-    setErrorMessage('');
-
+    setValidationError('');
     try {
       const payload = validateForm();
-      const dummyPaymentId = selectedPlan !== 'free' ? 'PAY-SO-' + Math.floor(100000 + Math.random() * 900000) : undefined;
-      const paymentMethodName = paymentTab === 'upi' ? 'UPI AutoPay' : paymentTab === 'card' ? 'Credit/Debit Card' : 'NetBanking';
+      const dummyPaymentId =
+        selectedPlan !== 'free'
+          ? 'PAY-SO-' + Math.floor(100000 + Math.random() * 900000)
+          : undefined;
+      const paymentMethodName =
+        paymentTab === 'upi'
+          ? 'UPI AutoPay'
+          : paymentTab === 'card'
+          ? 'Credit/Debit Card'
+          : 'NetBanking';
 
-      let createdUser = null;
-
-      const API_BASE = typeof window !== 'undefined' && window.IMS_API_BASE_URL
-        ? window.IMS_API_BASE_URL
-        : '/api';
-
-      const res = await fetch(`${API_BASE}/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...payload,
-          plan: selectedPlan || 'free',
-        }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Unable to register account.');
-      }
-
-      createdUser = await res.json();
-
-      // 2. Activate Subscription on backend if retailer or supplier
-      if (payload.role === 'retailer' || payload.role === 'supplier') {
-        try {
-          await fetch(`${API_BASE}/platform-revenue/subscriptions`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              userId: createdUser.id,
-              userName: createdUser.name,
-              userEmail: createdUser.email,
-              userRole: payload.role,
+      const subscriptionData =
+        payload.role === 'retailer' || payload.role === 'supplier'
+          ? {
               tier: selectedPlan,
               billingCycle: 'monthly',
               paymentMethod: paymentMethodName,
               paymentId: dummyPaymentId,
-            }),
-          });
-        } catch (_subErr) {
-          console.warn('Subscription activation note:', _subErr);
-        }
+            }
+          : null;
 
-        // Trigger employee assignment distribution for immediate review
-        try {
-          await fetch(`${API_BASE}/employees/assignments/distribute`, { method: 'POST' });
-        } catch (_distErr) {
-          console.warn('Assignment distribution trigger note:', _distErr);
-        }
-      }
-
-      // Save user session
-      const token = createdUser.token || `sotk_${createdUser.id}_${Date.now()}`;
-      const session = {
-        ...createdUser,
-        role: payload.role,
-        status: (payload.role === 'retailer' || payload.role === 'supplier') ? 'Pending' : 'Active',
-        profile: createdUser.profile || { profileStatus: 'pending' },
-        subscriptionPlan: selectedPlan,
-        paymentId: dummyPaymentId,
-        token: token,
-      };
-
-      if (saveSession) {
-        saveSession(session);
-      } else {
-        localStorage.setItem('so_session', JSON.stringify(session));
-        localStorage.setItem('so_token', token);
-      }
+      await dispatch(
+        registerUser({ ...payload, plan: selectedPlan || 'free' }, subscriptionData)
+      );
 
       setPaymentModalOpen(false);
+      if (onRegisterSuccess) {
+        onRegisterSuccess(payload.role);
+      }
 
-      // Route to destination:
-      // Retailer & Supplier go to wizard to fill additional information
       if (payload.role === 'retailer') {
         onNavigate('retailer-wizard');
       } else if (payload.role === 'supplier') {
@@ -171,12 +126,10 @@ export default function RegisterPage({ onNavigate, onRegisterSuccess, initialRol
       } else {
         onNavigate('landing');
       }
-
     } catch (err) {
-      setErrorMessage(err.message || 'Unable to create account');
+      setValidationError(err.message || 'Unable to create account');
       setPaymentModalOpen(false);
     } finally {
-      setIsSubmitting(false);
       setIsProcessingPayment(false);
     }
   };

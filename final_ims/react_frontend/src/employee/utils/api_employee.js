@@ -1,12 +1,6 @@
 /**
- * api_employee.js - Real Backend API Service for React Employee Operations
- * 
- * Directly connects to the NestJS employees endpoints via Vite proxy (/api)
- * or window.IMS_API_BASE_URL (http://localhost:3001/api).
- * Zero mock fallbacks - all operations reflect live backend assignments and tickets.
+ * api_employee.js - HTTP client for Employee Backend API (/api/employees/*)
  */
-
-import { emitDataSync } from '../../context/DataSyncContext';
 
 const API_BASE_URL =
   typeof window !== 'undefined' && window.IMS_API_BASE_URL
@@ -41,13 +35,11 @@ async function apiRequest(endpoint, options = {}) {
   return data;
 }
 
-// ─── 1. Employee Dashboard & Statistics ──────────────────────────────────────
 export async function fetchEmployeeStats(employeeId) {
   const qs = employeeId ? `?employeeId=${encodeURIComponent(employeeId)}` : '';
   return await apiRequest(`/employees/stats${qs}`);
 }
 
-// ─── 2. Verification Assignments (Work Distribution) ──────────────────────────
 export async function distributeEmployeeWork() {
   return await apiRequest('/employees/assignments/distribute', {
     method: 'POST',
@@ -62,26 +54,19 @@ export async function fetchEmployeeAssignments(employeeId, status) {
   return await apiRequest(`/employees/assignments${qs ? `?${qs}` : ''}`);
 }
 
-export async function fetchEmployeeAssignmentById(id) {
-  return await apiRequest(`/employees/assignments/${id}`);
-}
-
 export async function resolveEmployeeAssignment(id, { action, status, rejectionReason, notes }) {
-  const resolvedAction = action || (status === 'approved' || status === 'active' ? 'approve' : 'reject');
+  const resolvedAction =
+    action || (status === 'approved' || status === 'active' ? 'approve' : 'reject');
   const resolvedNotes = notes || rejectionReason || '';
-  const res = await apiRequest(`/employees/assignments/${id}`, {
+  return await apiRequest(`/employees/assignments/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({
       action: resolvedAction,
       notes: resolvedNotes || undefined,
     }),
   });
-  emitDataSync('assignments', res);
-  emitDataSync('users', res);
-  return res;
 }
 
-// ─── 3. Employee Support Helpdesk & Queries ──────────────────────────────────
 export async function fetchEmployeeQueries(employeeId, status) {
   const params = new URLSearchParams();
   if (employeeId) params.set('employeeId', employeeId);
@@ -91,31 +76,18 @@ export async function fetchEmployeeQueries(employeeId, status) {
 }
 
 export async function createEmployeeQuery(queryData) {
-  const res = await apiRequest('/employees/queries', {
+  return await apiRequest('/employees/queries', {
     method: 'POST',
     body: JSON.stringify(queryData),
   });
-  emitDataSync('assignments', res);
-  return res;
 }
 
-export async function resolveEmployeeQuery(id, { status, resolutionNotes }) {
-  const res = await apiRequest(`/employees/queries/${id}`, {
+export async function resolveEmployeeQuery(id, { status, response, resolutionNotes }) {
+  return await apiRequest(`/employees/queries/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({
-      status, // 'in_progress' | 'resolved' | 'closed'
-      resolutionNotes,
+      status,
+      response: response !== undefined ? response : resolutionNotes || '',
     }),
   });
-  emitDataSync('assignments', res);
-  return res;
-}
-
-// ─── 4. Aliases for legacy component calls ───────────────────────────────────
-export async function fetchValidations(employeeId, status) {
-  return await fetchEmployeeAssignments(employeeId, status);
-}
-
-export async function fetchEmployeeTasks(employeeId, status) {
-  return await fetchEmployeeAssignments(employeeId, status);
 }

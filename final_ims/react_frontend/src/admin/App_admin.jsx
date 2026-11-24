@@ -12,10 +12,11 @@
  *    - Reports ('reports') -> matching reports.html
  *    - Settings ('settings') -> matching settings.html
  * 2. Universal layout shell via <AdminLayout_admin />.
- * 3. Centralized API and data services in `utils/api_admin.js` and `data/mockData_admin.js`.
+ * 3. Centralized Redux slices in `src/store/` and API helpers in `utils/api_admin.js`.
  */
 
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import './admin.css';
 
 // Layout
@@ -32,6 +33,7 @@ import ReportsPage_admin from './pages/ReportsPage_admin';
 import SettingsPage_admin from './pages/SettingsPage_admin';
 
 export default function App_admin({ onSwitchModule, onLogout }) {
+  const activeStoreId = useSelector((state) => state.stores.activeStoreId);
   // ─── 1. Navigation & View Routing State ───
   const [currentView, setCurrentView] = useState('dashboard');
   const [viewParams, setViewParams] = useState({});
@@ -57,7 +59,7 @@ export default function App_admin({ onSwitchModule, onLogout }) {
       case 'store-dashboard':
         return (
           <StoreDashboardPage_admin
-            storeId={viewParams.storeId || (typeof window !== 'undefined' ? localStorage.getItem('stockoverflow_active_store_id') : '')}
+            storeId={viewParams.storeId || activeStoreId}
             onNavigate={handleNavigate}
             onBack={() => handleNavigate('stores')}
           />
