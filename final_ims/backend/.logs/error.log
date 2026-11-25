@@ -117,3 +117,8 @@
 [2026-11-23T11:29:11.332Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
 [2026-11-23T11:29:15.261Z] [ERROR] POST /api/suppliers/setup 400 - property supplierCode should not exist
 [2026-11-23T11:34:02.919Z] [ERROR] POST /api/suppliers/setup 400 - Expected property name or '}' in JSON at position 1 (line 1 column 2)
+[2026-11-25T01:53:34.176Z] [ERROR] POST /api/users 400 - email must be an email
+[2026-11-25T01:53:39.633Z] [ERROR] POST /api/users 400 - email must be an email
+[2026-11-25T01:54:04.676Z] [ERROR] POST /api/users 400 - email must be an email
+[2026-11-25T01:54:15.099Z] [ERROR] POST /api/users 400 - email must be an email
+[2026-11-25T02:02:13.424Z] [ERROR] POST /api/users 400 - email must be an email

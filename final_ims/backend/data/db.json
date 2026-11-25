@@ -2369,6 +2369,90 @@
   ],
   "employeeAssignments": [
     {
+      "id": "asgn-d409e5f7-ff8e-44b9-af5d-06af0ba1afda",
+      "employeeId": "u-employee-2",
+      "employeeName": "Sarah Chen",
+      "employeeEmail": "sarah.employee@stockoverflow.com",
+      "targetId": "b01519a9-a1ef-46d6-9a03-de42c20dd6ed",
+      "targetType": "supplier",
+      "title": "Supplier Verification: wwe",
+      "details": {
+        "companyName": "wwe",
+        "ownerName": "wwe",
+        "email": "wwe@supplier.com",
+        "phone": "",
+        "address": "Gujarat",
+        "category": "Electronics & Technology",
+        "supplierCode": "SUP-2112",
+        "paymentTerms": "Net 30",
+        "submittedAt": "2026-11-25T02:13:59.433Z",
+        "gstin": "GSTIN-PENDING",
+        "documents": [
+          "Business Registration Certificate",
+          "GSTIN Certificate",
+          "Bank Account Verification Letter"
+        ]
+      },
+      "status": "pending",
+      "createdAt": "2026-11-25T02:13:29.237Z"
+    },
+    {
+      "id": "asgn-a79d28f3-abe2-435d-a686-8c60358fc9b0",
+      "employeeId": "u-employee-1",
+      "employeeName": "Alex Morgan",
+      "employeeEmail": "employee@stockoverflow.com",
+      "targetId": "f03fb902-a3aa-4150-bb8b-6e29aa4002f6",
+      "targetType": "supplier",
+      "title": "Supplier Verification: rrr Supplies",
+      "details": {
+        "companyName": "rrr Supplies",
+        "ownerName": "rrr",
+        "email": "rrr@supplier.com",
+        "phone": "",
+        "address": "",
+        "category": "General",
+        "supplierCode": "SUP-6449",
+        "paymentTerms": "Net 30",
+        "submittedAt": "2026-11-25T02:02:44.005Z",
+        "gstin": "GSTIN-PENDING",
+        "documents": [
+          "Business Registration Certificate",
+          "GSTIN Certificate",
+          "Bank Account Verification Letter"
+        ]
+      },
+      "status": "pending",
+      "createdAt": "2026-11-25T02:02:44.024Z"
+    },
+    {
+      "id": "asgn-7cf975ee-9518-41a7-a86b-134783f4ff2f",
+      "employeeId": "u-employee-2",
+      "employeeName": "Sarah Chen",
+      "employeeEmail": "sarah.employee@stockoverflow.com",
+      "targetId": "3d62d2ff-b2ba-499e-a064-94ff1b86c635",
+      "targetType": "supplier",
+      "title": "Supplier Verification: Primary Supplier",
+      "details": {
+        "companyName": "Primary Supplier",
+        "ownerName": "Primary Supplier",
+        "email": "supplier@stockoverflow.com",
+        "phone": "",
+        "address": "Gujarat",
+        "category": "Electronics & Technology",
+        "supplierCode": "SUP-9614",
+        "paymentTerms": "Net 30",
+        "submittedAt": "2026-11-25T01:59:24.500Z",
+        "gstin": "GSTIN-PENDING",
+        "documents": [
+          "Business Registration Certificate",
+          "GSTIN Certificate",
+          "Bank Account Verification Letter"
+        ]
+      },
+      "status": "pending",
+      "createdAt": "2026-11-25T01:59:24.557Z"
+    },
+    {
       "id": "asgn-e76b18f7-e13f-4df3-a74b-c82f1dcbf089",
       "employeeId": "u-employee-1",
       "employeeName": "Alex Morgan",
@@ -3364,6 +3448,59 @@
       ],
       "maxStores": 1,
       "maxProducts": 50
+    },
+    {
+      "id": "sub-6c747038-548a-41cf-9fba-b9a6ba90feef",
+      "userId": "5954a909-5915-4c93-9032-830b3af92dde",
+      "userName": "rrr",
+      "userEmail": "rrr@supplier.com",
+      "userRole": "supplier",
+      "tier": "free",
+      "tierName": "Starter",
+      "pricePerMonth": 0,
+      "billingCycle": "monthly",
+      "startDate": "2026-11-25T02:02:44.063Z",
+      "endDate": "2026-12-25T02:02:44.063Z",
+      "renewalDate": "2026-12-25T02:02:44.063Z",
+      "status": "active",
+      "autoRenew": true,
+      "paymentMethod": "UPI AutoPay",
+      "features": [
+        "5 Incoming POs / week (Auto-resets weekly)",
+        "Up to 25 Product Listings",
+        "Single Warehouse Dispatch Depot",
+        "Basic Order Tracking & Status"
+      ],
+      "maxStores": 1,
+      "maxProducts": 50
+    },
+    {
+      "id": "sub-1e6533fc-b345-4de9-a894-4ecc8bbbb690",
+      "userId": "20a09d18-c716-42b3-be60-62e496cacdbb",
+      "userName": "wwe",
+      "userEmail": "wwe@supplier.com",
+      "userRole": "supplier",
+      "tier": "pro",
+      "tierName": "Growth",
+      "pricePerMonth": 799,
+      "billingCycle": "monthly",
+      "startDate": "2026-11-25T02:13:29.286Z",
+      "endDate": "2026-12-25T02:13:29.286Z",
+      "renewalDate": "2026-12-25T02:13:29.286Z",
+      "status": "active",
+      "autoRenew": true,
+      "paymentId": "PAY-SO-256356",
+      "paymentMethod": "UPI AutoPay",
+      "features": [
+        "30 Incoming POs / week (Auto-resets weekly)",
+        "Unlimited Product Listings",
+        "Up to 3 Regional Depots",
+        "Bulk CSV/Excel Catalog Import & Export",
+        "Automated Dispatch Alerts",
+        "Priority Buyer Discovery"
+      ],
+      "maxStores": 5,
+      "maxProducts": 10000
     }
   ]
 }
