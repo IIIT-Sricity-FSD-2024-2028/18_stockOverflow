@@ -3,12 +3,11 @@
  * 
  * Features:
  * 1. Clean, de-duplicated sidebar navigation.
- * 2. Active Store Scope Picker in topbar header.
+ * 2. Clean topbar header with Admin Portal badge and profile/logout controls.
  * 3. Quick module navigation to Employee Desk and Landing.
  */
 
-import React, { useState } from 'react';
-import { STORES_DATA } from '../../data/mockData_admin';
+import React from 'react';
 
 export default function AdminLayout_admin({
   activeMenu = 'dashboard',
@@ -17,25 +16,6 @@ export default function AdminLayout_admin({
   onLogout,
   children,
 }) {
-  const [activeStoreId, setActiveStoreId] = useState(() => {
-    try {
-      return localStorage.getItem('stockoverflow_active_store_id') || 'store-1';
-    } catch {
-      return 'store-1';
-    }
-  });
-
-  const handleScopeChange = (e) => {
-    const val = e.target.value;
-    setActiveStoreId(val);
-    try {
-      localStorage.setItem('stockoverflow_active_store_id', val);
-      // Trigger a window event so current page knows store scope changed
-      window.dispatchEvent(new Event('storage'));
-    } catch (err) {
-      console.warn(err);
-    }
-  };
 
   return (
     <div className="admin-shell">
@@ -179,35 +159,10 @@ export default function AdminLayout_admin({
       <div className="admin-main">
         {/* Topbar Header */}
         <header className="admin-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {/* Active Store Scope Picker */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
-                Store Scope:
-              </span>
-              <select
-                value={activeStoreId}
-                onChange={handleScopeChange}
-                style={{
-                  padding: '5px 10px',
-                  borderRadius: '6px',
-                  border: '1px solid #cbd5e1',
-                  background: '#ffffff',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: '#0f172a',
-                  outline: 'none',
-                  cursor: 'pointer',
-                }}
-              >
-                <option value="all">🌐 All Store Branches (Global)</option>
-                {STORES_DATA.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    🏬 {s.name} ({s.code})
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Admin Portal
+            </span>
           </div>
 
           <div className="admin-topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

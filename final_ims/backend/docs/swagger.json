@@ -6511,6 +6511,9 @@
       },
       "admin_dto_admin_dto_CreateStoreDto": {
         "properties": {
+          "code": {
+            "type": "string"
+          },
           "location": {
             "type": "string"
           },
@@ -6622,6 +6625,9 @@
       },
       "admin_dto_admin_dto_UpdateStoreDto": {
         "properties": {
+          "code": {
+            "type": "string"
+          },
           "location": {
             "type": "string"
           },
@@ -6632,6 +6638,9 @@
             "type": "string"
           },
           "retailerId": {
+            "type": "string"
+          },
+          "status": {
             "type": "string"
           }
         },

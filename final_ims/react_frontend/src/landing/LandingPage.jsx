@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchRetailersForLanding,
+  applyBillerRequest,
+  loginUser,
+} from '../store/auth-actions';
 import './landing.css';
 
 export default function LandingPage({ onNavigate, onLoginSuccess }) {
-  const { saveSession } = useAuth();
+  const dispatch = useDispatch();
+  const retailersList = useSelector((state) => state.auth.retailers);
+
   const [scrollProgress, setScrollProgress] = useState(0);
   const [billerModalOpen, setBillerModalOpen] = useState(false);
   const [billerTab, setBillerTab] = useState('apply');
-  const [retailersList, setRetailersList] = useState([
-    { id: 'ret-1', name: 'Downtown Supermart' },
-    { id: 'ret-2', name: 'Metro Fresh Grocers' },
-    { id: 'ret-3', name: 'Apex Electronics' },
-  ]);
 
   // Biller Apply Form
   const [billerForm, setBillerForm] = useState({
@@ -108,22 +110,10 @@ export default function LandingPage({ onNavigate, onLoginSuccess }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Load retailers for biller selection from real backend
+  // Load retailers for biller selection from Redux
   useEffect(() => {
-    fetch('http://localhost:3001/api/users')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const rets = data.filter(u => u.role === 'retailer');
-          if (rets.length > 0) {
-            setRetailersList(rets.map(r => ({ id: r.id, name: r.name || r.businessName || r.email })));
-          }
-        }
-      })
-      .catch(() => {
-        // Fallback already pre-populated
-      });
-  }, []);
+    dispatch(fetchRetailersForLanding());
+  }, [dispatch]);
 
   const handleBillerApply = async (e) => {
     e.preventDefault();
@@ -135,14 +125,8 @@ export default function LandingPage({ onNavigate, onLoginSuccess }) {
     setBillerApplyStatus('Submitting application to backend...');
 
     try {
-      const API_BASE = typeof window !== 'undefined' && window.IMS_API_BASE_URL
-        ? window.IMS_API_BASE_URL
-        : '/api';
-
-      const res = await fetch(`${API_BASE}/billers/requests`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      await dispatch(
+        applyBillerRequest({
           name: billerForm.name,
           email: billerForm.email,
           password: billerForm.password,
@@ -150,13 +134,8 @@ export default function LandingPage({ onNavigate, onLoginSuccess }) {
           company: billerForm.company,
           country: billerForm.country,
           retailerId: billerForm.retailerId || retailersList[0]?.id,
-        }),
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || 'Application submission failed');
-      }
+        })
+      );
 
       setBillerApplyStatus('Application submitted successfully! Your retailer will review it.');
       setTimeout(() => {
@@ -176,42 +155,9 @@ export default function LandingPage({ onNavigate, onLoginSuccess }) {
     setIsSubmitting(true);
 
     try {
-      const API_BASE = typeof window !== 'undefined' && window.IMS_API_BASE_URL
-        ? window.IMS_API_BASE_URL
-        : '/api';
-
-      const res = await fetch(`${API_BASE}/users/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: billerLoginEmail.trim(),
-          password: billerLoginPassword,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'Invalid biller credentials');
-      }
-
-      const user = await res.json();
-      if (user.role !== 'biller') {
+      const session = await dispatch(loginUser(billerLoginEmail, billerLoginPassword));
+      if (session.role !== 'biller') {
         throw new Error('This portal is only for store billers. Please use standard login.');
-      }
-
-      const session = {
-        ...user,
-        role: 'biller',
-        token: user.token || `sotk_${user.id}_${Date.now()}`,
-      };
-
-      if (saveSession) {
-        saveSession(session);
-      } else {
-        localStorage.setItem('so_session', JSON.stringify(session));
-        if (session.token) {
-          localStorage.setItem('so_token', session.token);
-        }
       }
 
       setBillerModalOpen(false);

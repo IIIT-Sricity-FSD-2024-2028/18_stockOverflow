@@ -5,72 +5,46 @@
  * Provides multi-store retail branch management and direct navigation to scoped store dashboards.
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useDataSync } from '../../context/DataSyncContext';
-import { fetchAdminStores, createAdminStore, fetchPlatformRevenueSummary } from '../utils/api_admin';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeActions } from '../../store/stores-slice';
+import {
+  fetchStoresData,
+  createStoreData,
+  updateStoreData,
+  deleteStoreData,
+} from '../../store/stores-actions';
+import { fetchPlatformRevenueData } from '../../store/revenue-actions';
 import StoreModal_admin from '../components/StoreModal_admin';
 
 export default function StoresPage_admin({ onNavigate }) {
-  const [stores, setStores] = useState([]);
-  const [revenueSummary, setRevenueSummary] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const stores = useSelector((state) => state.stores.stores);
+  const loading = useSelector((state) => state.stores.loading);
+  const error = useSelector((state) => state.stores.error);
+  const activeStoreId = useSelector((state) => state.stores.activeStoreId);
+  const revenueSummary = useSelector((state) => state.revenue.summary);
 
-  // Modal states
+  // Modal & form states
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingStore, setEditingStore] = useState(null);
   const [saving, setSaving] = useState(false);
 
   const [newStore, setNewStore] = useState({
     name: '',
     code: '',
     location: '',
-    retailerName: 'Downtown Retail Corp',
     manager: '',
-    stockCount: 0,
-    staffCount: 1,
   });
-
-  const loadStores = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [storesData, revData] = await Promise.allSettled([
-        fetchAdminStores(),
-        fetchPlatformRevenueSummary(),
-      ]);
-
-      const list = storesData.status === 'fulfilled' && Array.isArray(storesData.value) ? storesData.value : [];
-      setStores(list);
-
-      if (revData.status === 'fulfilled' && revData.value) {
-        setRevenueSummary(revData.value);
-      }
-    } catch (err) {
-      console.error('Failed to load stores from backend:', err);
-      setError(err.message || 'Failed to load stores');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
-    loadStores();
-  }, [loadStores]);
+    dispatch(fetchStoresData());
+    dispatch(fetchPlatformRevenueData());
+  }, [dispatch]);
 
-  // Real-time synchronization
-  useDataSync(['stores', 'transactions', 'revenue'], () => {
-    loadStores();
-  });
-
-  // Navigate to Dashboard scoped to the chosen store
   const handleViewScopedDashboard = (storeObj) => {
     const targetId = storeObj?.id || storeObj?.storeCode || activeStoreId || 'all';
-    try {
-      localStorage.setItem('stockoverflow_active_store_id', targetId);
-      window.dispatchEvent(new Event('storage'));
-    } catch (e) {
-      console.warn(e);
-    }
+    dispatch(storeActions.setActiveStoreId(targetId));
     if (onNavigate) {
       onNavigate('store-dashboard', { storeId: targetId });
     }
@@ -80,35 +54,56 @@ export default function StoresPage_admin({ onNavigate }) {
     setNewStore((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleAddStore = async (e) => {
+  const handleOpenAdd = () => {
+    setEditingStore(null);
+    setNewStore({ name: '', code: '', location: '', manager: '' });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (store) => {
+    setEditingStore(store);
+    setNewStore({
+      name: store.name || '',
+      code: store.code || '',
+      location: store.location || '',
+      manager: store.manager || '',
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleSaveStore = async (e) => {
     e.preventDefault();
-    if (!newStore.name || !newStore.code) {
+    if (!newStore.name.trim() || !newStore.code.trim()) {
       alert('Please provide store name and branch code.');
       return;
     }
     try {
       setSaving(true);
-      await createAdminStore({
-        name: newStore.name,
-        location: newStore.location,
-        manager: newStore.manager,
-        code: newStore.code,
-      });
+      const payload = {
+        name: newStore.name.trim(),
+        code: newStore.code.trim(),
+        location: newStore.location.trim() || 'Main Street',
+        manager: newStore.manager.trim() || 'Assigned Staff',
+      };
+      if (editingStore) {
+        await dispatch(updateStoreData(editingStore.id, payload));
+      } else {
+        await dispatch(createStoreData(payload));
+      }
       setIsModalOpen(false);
-      setNewStore({
-        name: '',
-        code: '',
-        location: '',
-        retailerName: 'Downtown Retail Corp',
-        manager: '',
-        stockCount: 0,
-        staffCount: 1,
-      });
-      await loadStores();
     } catch (err) {
-      alert(`Error creating store: ${err.message}`);
+      alert(`Error saving store: ${err.message}`);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteStore = async (store) => {
+    if (!window.confirm(`Delete store "${store.name}"?`)) return;
+    try {
+      await dispatch(deleteStoreData(store.id));
+    } catch (err) {
+      alert(`Error deleting store: ${err.message}`);
     }
   };
 
@@ -138,7 +133,7 @@ export default function StoresPage_admin({ onNavigate }) {
           <button
             type="button"
             className="admin-btn admin-btn-outline"
-            onClick={loadStores}
+            onClick={() => dispatch(fetchStoresData())}
             disabled={loading}
           >
             {loading ? 'Refreshing...' : '↻ Refresh Branches'}
@@ -146,7 +141,7 @@ export default function StoresPage_admin({ onNavigate }) {
           <button
             type="button"
             className="admin-btn admin-btn-primary"
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleOpenAdd}
           >
             + Add New Store Hub
           </button>
@@ -307,7 +302,7 @@ export default function StoresPage_admin({ onNavigate }) {
                   </div>
                 </div>
 
-                <div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <button
                     type="button"
                     className="admin-btn admin-btn-primary"
@@ -324,6 +319,24 @@ export default function StoresPage_admin({ onNavigate }) {
                   >
                     Open Store Dashboard →
                   </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn-outline admin-btn-sm"
+                      style={{ flex: 1, justifyContent: 'center' }}
+                      onClick={() => handleOpenEdit(store)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn-outline admin-btn-sm"
+                      style={{ flex: 1, justifyContent: 'center', color: '#dc2626', borderColor: '#fca5a5', background: '#fef2f2' }}
+                      onClick={() => handleDeleteStore(store)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -331,13 +344,14 @@ export default function StoresPage_admin({ onNavigate }) {
         </div>
       )}
 
-      {/* Add New Store Hub Modal */}
+      {/* Add / Edit Store Hub Modal */}
       <StoreModal_admin
         isOpen={isModalOpen}
+        editingStore={editingStore}
         newStore={newStore}
         onChange={handleFormChange}
         onClose={() => setIsModalOpen(false)}
-        onSave={handleAddStore}
+        onSave={handleSaveStore}
         saving={saving}
       />
     </div>

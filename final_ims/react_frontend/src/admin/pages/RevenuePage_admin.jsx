@@ -5,15 +5,10 @@
  * Zero mock fallbacks - all operations reflect live backend state.
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useDataSync } from '../../context/DataSyncContext';
-import {
-  fetchPlatformRevenueSummary,
-  fetchPlatformCommissions,
-  fetchPlatformSubscriptions,
-  fetchPricingTiers,
-  fetchAdminUsers,
-} from '../utils/api_admin';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPlatformRevenueData } from '../../store/revenue-actions';
+import { fetchUsersData } from '../../store/users-actions';
 
 const FALLBACK_TIERS = [
   {
@@ -41,182 +36,154 @@ const FALLBACK_TIERS = [
 ];
 
 export default function RevenuePage_admin() {
+  const dispatch = useDispatch();
+  const summaryData = useSelector((state) => state.revenue.summary);
+  const commList = useSelector((state) => state.revenue.commissions);
+  const subList = useSelector((state) => state.revenue.subscriptions);
+  const rawTiers = useSelector((state) => state.revenue.tiers);
+  const userList = useSelector((state) => state.users.users);
+  const loading = useSelector((state) => state.revenue.loading || state.users.loading);
+  const error = useSelector((state) => state.revenue.error);
+
   const [activeView, setActiveView] = useState('platform');
   const [roleFilter, setRoleFilter] = useState('all');
   const [search, setSearch] = useState('');
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const [summaryData, setSummaryData] = useState(null);
-  const [stakeholders, setStakeholders] = useState([]);
-  const [pricingTiers, setPricingTiers] = useState(FALLBACK_TIERS);
-
-  const loadRevenueData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const [summary, commissions, subscriptions, users, tiers] = await Promise.allSettled([
-        fetchPlatformRevenueSummary(),
-        fetchPlatformCommissions(),
-        fetchPlatformSubscriptions(),
-        fetchAdminUsers(),
-        fetchPricingTiers('retailer'),
-      ]);
-
-      const summ = summary.status === 'fulfilled' ? summary.value : null;
-      setSummaryData(summ);
-
-      const commList = commissions.status === 'fulfilled' && Array.isArray(commissions.value) ? commissions.value : [];
-      const subList = subscriptions.status === 'fulfilled' && Array.isArray(subscriptions.value) ? subscriptions.value : [];
-      const userList = users.status === 'fulfilled' && Array.isArray(users.value) ? users.value : [];
-
-      if (tiers.status === 'fulfilled' && Array.isArray(tiers.value) && tiers.value.length > 0) {
-        setPricingTiers(
-          tiers.value.map((t) => ({
-            name: t.name || t.tier,
-            price: `₹${t.price}`,
-            period: `/${t.billingInterval || 'month'}`,
-            orderLimit: `${t.weeklyOrderLimit} POs/wk`,
-            featured: t.tier === 'pro',
-            features: Array.isArray(t.features) ? t.features : [],
-          }))
-        );
-      }
-
-      // Set of matched commission IDs to track any transactions not tied to user accounts
-      const matchedCommIds = new Set();
-
-      // Group commissions and subscriptions by user/retailer
-      const records = userList
-        .filter((u) => ['retailer', 'supplier', 'consumer'].includes(String(u.role || '').toLowerCase()))
-        .map((u) => {
-          const uid = String(u.id || '');
-          const uProfileId = String(u.profileId || '');
-          const uRetailerId = String(u.retailerId || '');
-          const uStoreId = String(u.storeId || '');
-          const uStoreName = String(u.store || '').toLowerCase().trim();
-          const uName = String(u.name || '').toLowerCase().trim();
-          const uEmail = String(u.email || '').toLowerCase().trim();
-          const urole = String(u.role || '').toLowerCase();
-
-          // Subscriptions for this user
-          const userSubs = subList.filter(
-            (s) =>
-              (s.userId && (String(s.userId) === uid || String(s.userId) === uProfileId)) ||
-              (s.retailerId && (String(s.retailerId) === uid || String(s.retailerId) === uProfileId || String(s.retailerId) === uRetailerId))
-          );
-          const subFee = userSubs
-            .filter((s) => s.status === 'active')
-            .reduce((acc, s) => acc + Number(s.pricePerMonth || 0), 0);
-          const planName =
-            userSubs.length > 0
-              ? userSubs[0].tierName || userSubs[0].tier
-              : u.plan || 'Starter (Free)';
-
-          // Commissions & Orders for this user
-          const userComms = commList.filter((c) => {
-            const cRetId = String(c.retailerId || c.userId || '');
-            const cStoreId = String(c.storeId || '');
-            const cStoreName = String(c.storeName || c.retailerName || '').toLowerCase().trim();
-            const cCust = String(c.customerName || '').toLowerCase().trim();
-            const cEmail = String(c.customerEmail || '').toLowerCase().trim();
-
-            let matched = false;
-            if (urole === 'retailer') {
-              if (cRetId && (cRetId === uid || cRetId === uProfileId || cRetId === uRetailerId)) matched = true;
-              else if (uStoreId && cStoreId && uStoreId === cStoreId) matched = true;
-              else if (uStoreName && cStoreName && (cStoreName === uStoreName || cStoreName.includes(uName))) matched = true;
-              else if (uName && cStoreName && cStoreName.includes(uName)) matched = true;
-            } else if (urole === 'consumer') {
-              if (uName && cCust && (cCust === uName || cCust.includes(uName))) matched = true;
-              else if (uEmail && cEmail && cEmail === uEmail) matched = true;
-            }
-
-            if (matched && c.id) {
-              matchedCommIds.add(c.id);
-            }
-            return matched;
-          });
-
-          const commissionEarned = userComms.reduce((acc, c) => acc + Number(c.commissionAmount || 0), 0);
-          const grossVolume = userComms.reduce((acc, c) => acc + Number(c.orderTotal || c.grossAmount || 0), 0);
-          const userEarnings = userComms.reduce(
-            (acc, c) => acc + Number(c.netRetailerAmount || (c.orderTotal - c.commissionAmount) || 0),
-            0
-          );
-          const transactionCount = userComms.length;
-
-          const platformRevenue = Number((subFee + commissionEarned).toFixed(2));
-
-          return {
-            id: u.id,
-            name: u.name || u.email,
-            role: urole,
-            store: u.store || 'Main Store',
-            plan: planName,
-            subscriptionFee: subFee,
-            commissionEarned: Number(commissionEarned.toFixed(2)),
-            platformRevenue,
-            grossVolume: Number(grossVolume.toFixed(2)),
-            userEarnings: Number(userEarnings.toFixed(2)),
-            transactionCount,
-            status: u.status || 'Active',
-          };
-        });
-
-      // Capture any store transactions not tied to a registered user account
-      const unmappedComms = commList.filter((c) => !matchedCommIds.has(c.id));
-      if (unmappedComms.length > 0) {
-        // Group unmapped by store/retailer name
-        const storeGroups = new Map();
-        unmappedComms.forEach((c) => {
-          const key = c.storeName || c.retailerName || c.storeId || 'Central Branch';
-          if (!storeGroups.has(key)) {
-            storeGroups.set(key, []);
-          }
-          storeGroups.get(key).push(c);
-        });
-
-        storeGroups.forEach((comms, storeKey) => {
-          const gross = comms.reduce((sum, c) => sum + Number(c.orderTotal || 0), 0);
-          const comm = comms.reduce((sum, c) => sum + Number(c.commissionAmount || (c.orderTotal * 0.02) || 0), 0);
-          const net = comms.reduce((sum, c) => sum + Number(c.netRetailerAmount || (c.orderTotal - comm) || 0), 0);
-
-          records.push({
-            id: comms[0]?.retailerId || `store-${storeKey.toLowerCase().replace(/\s+/g, '-')}`,
-            name: comms[0]?.retailerName || storeKey,
-            role: 'retailer',
-            store: storeKey,
-            plan: 'Starter (Free)',
-            subscriptionFee: 0,
-            commissionEarned: Number(comm.toFixed(2)),
-            platformRevenue: Number(comm.toFixed(2)),
-            grossVolume: Number(gross.toFixed(2)),
-            userEarnings: Number(net.toFixed(2)),
-            transactionCount: comms.length,
-            status: 'Active',
-          });
-        });
-      }
-
-      setStakeholders(records);
-    } catch (err) {
-      console.error('Failed to load revenue data:', err);
-      setError(err.message || 'Failed to load platform revenue from backend');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const loadRevenueData = () => {
+    dispatch(fetchPlatformRevenueData());
+    dispatch(fetchUsersData());
+  };
 
   useEffect(() => {
-    loadRevenueData();
-  }, [loadRevenueData]);
+    dispatch(fetchPlatformRevenueData());
+    dispatch(fetchUsersData());
+  }, [dispatch]);
 
-  useDataSync(['revenue', 'transactions'], () => {
-    loadRevenueData();
-  });
+  const pricingTiers = useMemo(() => {
+    if (Array.isArray(rawTiers) && rawTiers.length > 0) {
+      return rawTiers.map((t) => ({
+        name: t.name || t.tier,
+        price: `₹${t.price}`,
+        period: `/${t.billingInterval || 'month'}`,
+        orderLimit: `${t.weeklyOrderLimit} POs/wk`,
+        featured: t.tier === 'pro',
+        features: Array.isArray(t.features) ? t.features : [],
+      }));
+    }
+    return FALLBACK_TIERS;
+  }, [rawTiers]);
+
+  const stakeholders = useMemo(() => {
+    const matchedCommIds = new Set();
+
+    const records = userList
+      .filter((u) => ['retailer', 'supplier', 'consumer'].includes(String(u.role || '').toLowerCase()))
+      .map((u) => {
+        const uid = String(u.id || '');
+        const uProfileId = String(u.profileId || '');
+        const uRetailerId = String(u.retailerId || '');
+        const uStoreId = String(u.storeId || '');
+        const uStoreName = String(u.store || '').toLowerCase().trim();
+        const uName = String(u.name || '').toLowerCase().trim();
+        const uEmail = String(u.email || '').toLowerCase().trim();
+        const urole = String(u.role || '').toLowerCase();
+
+        const userSubs = subList.filter(
+          (s) =>
+            (s.userId && (String(s.userId) === uid || String(s.userId) === uProfileId)) ||
+            (s.retailerId && (String(s.retailerId) === uid || String(s.retailerId) === uProfileId || String(s.retailerId) === uRetailerId))
+        );
+        const subFee = userSubs
+          .filter((s) => s.status === 'active')
+          .reduce((acc, s) => acc + Number(s.pricePerMonth || 0), 0);
+        const planName =
+          userSubs.length > 0
+            ? userSubs[0].tierName || userSubs[0].tier
+            : u.plan || 'Starter (Free)';
+
+        const userComms = commList.filter((c) => {
+          const cRetId = String(c.retailerId || c.userId || '');
+          const cStoreId = String(c.storeId || '');
+          const cStoreName = String(c.storeName || c.retailerName || '').toLowerCase().trim();
+          const cCust = String(c.customerName || '').toLowerCase().trim();
+          const cEmail = String(c.customerEmail || '').toLowerCase().trim();
+
+          let matched = false;
+          if (urole === 'retailer') {
+            if (cRetId && (cRetId === uid || cRetId === uProfileId || cRetId === uRetailerId)) matched = true;
+            else if (uStoreId && cStoreId && uStoreId === cStoreId) matched = true;
+            else if (uStoreName && cStoreName && cStoreName === uStoreName) matched = true;
+          } else if (urole === 'consumer') {
+            if (uEmail && cEmail && cEmail === uEmail) matched = true;
+            else if (uName && cCust && cCust === uName) matched = true;
+          }
+
+          if (matched && c.id) {
+            matchedCommIds.add(c.id);
+          }
+          return matched;
+        });
+
+        const commissionEarned = userComms.reduce((acc, c) => acc + Number(c.commissionAmount || 0), 0);
+        const grossVolume = userComms.reduce((acc, c) => acc + Number(c.orderTotal || c.grossAmount || 0), 0);
+        const userEarnings = userComms.reduce(
+          (acc, c) => acc + Number(c.netRetailerAmount || (c.orderTotal - c.commissionAmount) || 0),
+          0
+        );
+        const transactionCount = userComms.length;
+        const platformRevenue = Number((subFee + commissionEarned).toFixed(2));
+
+        return {
+          id: u.id,
+          name: u.name || u.email,
+          role: urole,
+          store: u.store || 'Main Store',
+          plan: planName,
+          subscriptionFee: subFee,
+          commissionEarned: Number(commissionEarned.toFixed(2)),
+          platformRevenue,
+          grossVolume: Number(grossVolume.toFixed(2)),
+          userEarnings: Number(userEarnings.toFixed(2)),
+          transactionCount,
+          status: u.status || 'Active',
+        };
+      });
+
+    const unmappedComms = commList.filter((c) => !matchedCommIds.has(c.id));
+    if (unmappedComms.length > 0) {
+      const storeGroups = new Map();
+      unmappedComms.forEach((c) => {
+        const key = c.storeName || c.retailerName || c.storeId || 'Central Branch';
+        if (!storeGroups.has(key)) {
+          storeGroups.set(key, []);
+        }
+        storeGroups.get(key).push(c);
+      });
+
+      storeGroups.forEach((comms, storeKey) => {
+        const gross = comms.reduce((sum, c) => sum + Number(c.orderTotal || 0), 0);
+        const comm = comms.reduce((sum, c) => sum + Number(c.commissionAmount || (c.orderTotal * 0.02) || 0), 0);
+        const net = comms.reduce((sum, c) => sum + Number(c.netRetailerAmount || (c.orderTotal - comm) || 0), 0);
+
+        records.push({
+          id: comms[0]?.retailerId || `store-${storeKey.toLowerCase().replace(/\s+/g, '-')}`,
+          name: comms[0]?.retailerName || storeKey,
+          role: 'retailer',
+          store: storeKey,
+          plan: 'Starter (Free)',
+          subscriptionFee: 0,
+          commissionEarned: Number(comm.toFixed(2)),
+          platformRevenue: Number(comm.toFixed(2)),
+          grossVolume: Number(gross.toFixed(2)),
+          userEarnings: Number(net.toFixed(2)),
+          transactionCount: comms.length,
+          status: 'Active',
+        });
+      });
+    }
+
+    return records;
+  }, [userList, subList, commList]);
 
   // Filtered records
   const filteredRecords = useMemo(() => {
@@ -342,6 +309,7 @@ export default function RevenuePage_admin() {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             type="button"
+            title="Platform Revenue = Monthly SaaS Subscription Fee + 2% POS Commission paid to StockOverflow"
             onClick={() => setActiveView('platform')}
             style={{
               padding: '8px 16px',
@@ -363,6 +331,7 @@ export default function RevenuePage_admin() {
 
           <button
             type="button"
+            title="Transaction Volume = Gross sales volume (GMV) minus 2% fee = 98% net payout kept by businesses"
             onClick={() => setActiveView('gross')}
             style={{
               padding: '8px 16px',
@@ -385,8 +354,8 @@ export default function RevenuePage_admin() {
 
         <div style={{ fontSize: '12px', color: '#64748b', fontStyle: 'italic' }}>
           {activeView === 'platform'
-            ? 'Showing StockOverflow net platform take (Subscriptions + 2% commission)'
-            : 'Showing total commerce generated by retailers, suppliers, and shoppers'}
+            ? 'Showing StockOverflow take: Active monthly subscription + 2% commission per POS order'
+            : 'Showing business commerce: Gross GMV, 2% fee deducted, and 98% net business payout'}
         </div>
       </div>
 
@@ -476,13 +445,13 @@ export default function RevenuePage_admin() {
 
           <div className="admin-metric-card" style={{ borderLeft: '4px solid #8b5cf6' }}>
             <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-              SaaS Subscriptions
+              SaaS Subscriptions (Monthly Recurring)
             </span>
             <div className="admin-metric-value" style={{ color: '#8b5cf6' }}>
               ₹{totals.subscriptionFee.toLocaleString('en-IN')}
             </div>
             <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-              Recurring monthly tiers collected
+              Active monthly plan total (not cumulative)
             </div>
           </div>
 

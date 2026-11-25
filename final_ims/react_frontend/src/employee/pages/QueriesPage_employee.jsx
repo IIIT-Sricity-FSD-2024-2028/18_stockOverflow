@@ -5,8 +5,12 @@
  * Zero mock fallbacks - all operations reflect live customer and supplier tickets.
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { fetchEmployeeQueries, resolveEmployeeQuery } from '../utils/api_employee';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchQueriesData,
+  resolveQueryData,
+} from '../../store/queries-actions';
 
 function mapBackendQuery(q) {
   const statusStr =
@@ -31,7 +35,7 @@ function mapBackendQuery(q) {
     replies: q.response
       ? [
           {
-            sender: q.assignedEmployeeName || 'Support Agent (Sarah Connor)',
+            sender: q.assignedEmployeeName || 'Support Agent',
             message: q.response,
             timestamp: q.resolvedAt ? new Date(q.resolvedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent',
           },
@@ -41,38 +45,32 @@ function mapBackendQuery(q) {
 }
 
 export default function QueriesPage_employee() {
-  const [queries, setQueries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const rawQueries = useSelector((state) => state.queries.queries);
+  const loading = useSelector((state) => state.queries.loading);
+  const error = useSelector((state) => state.queries.error);
 
   const [selectedQueryId, setSelectedQueryId] = useState('');
   const [filterTab, setFilterTab] = useState('all');
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
 
-  const loadQueries = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchEmployeeQueries();
-      const list = Array.isArray(data) ? data.map(mapBackendQuery) : [];
-      setQueries(list);
-      if (list.length > 0 && !selectedQueryId) {
-        setSelectedQueryId(list[0].id);
-      }
-    } catch (err) {
-      console.error('Failed to load employee queries:', err);
-      setError(err.message || 'Failed to load support queries from backend');
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedQueryId]);
+  const queries = useMemo(() => rawQueries.map(mapBackendQuery), [rawQueries]);
+
+  const loadQueries = () => {
+    dispatch(fetchQueriesData());
+  };
 
   useEffect(() => {
-    loadQueries();
-  }, [loadQueries]);
+    dispatch(fetchQueriesData());
+  }, [dispatch]);
 
-  // Filter queries based on status tab
+  useEffect(() => {
+    if (queries.length > 0 && !selectedQueryId) {
+      setSelectedQueryId(queries[0].id);
+    }
+  }, [queries, selectedQueryId]);
+
   const filteredQueries = useMemo(() => {
     if (filterTab === 'all') return queries;
     return queries.filter((q) => q.status.toLowerCase() === filterTab.toLowerCase());
@@ -87,8 +85,12 @@ export default function QueriesPage_employee() {
       'pending';
 
     try {
-      await resolveEmployeeQuery(id, { status: backendStatus });
-      await loadQueries();
+      await dispatch(
+        resolveQueryData(id, {
+          status: backendStatus,
+          response: selectedQuery?.replies?.[0]?.message || 'Status updated by staff',
+        })
+      );
     } catch (err) {
       alert(`Error updating ticket status: ${err.message}`);
     }
@@ -100,13 +102,13 @@ export default function QueriesPage_employee() {
 
     try {
       setSending(true);
-      await resolveEmployeeQuery(selectedQuery.id, {
-        status: 'resolved',
-        resolutionNotes: replyText.trim(),
-      });
-      alert(`Reply sent and ticket resolved: "${replyText.trim()}"`);
+      await dispatch(
+        resolveQueryData(selectedQuery.id, {
+          status: 'resolved',
+          response: replyText.trim(),
+        })
+      );
       setReplyText('');
-      await loadQueries();
     } catch (err) {
       alert(`Error sending ticket reply: ${err.message}`);
     } finally {
