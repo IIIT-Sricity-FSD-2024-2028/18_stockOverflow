@@ -4577,3 +4577,71 @@
 [2026-11-23T11:35:49.593Z] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f/documents 304 - 3ms - IP: ::1
 [2026-11-23T11:35:49.580Z] [GET] /api/suppliers/50c1c24d-9efa-4fd6-acdb-137f8cc8936f 304 - 4ms - IP: ::1
 [2026-11-23T11:35:49.607Z] [GET] /api/purchase-orders 304 - 1ms - IP: ::1
+[2026-11-25T01:49:27.478Z] [HEAD] /api/suppliers 200 - 5ms - IP: ::1
+[2026-11-25T01:49:33.134Z] [HEAD] /api/suppliers 200 - 5ms - IP: ::1
+[2026-11-25T01:50:46.412Z] [GET] /api/users 200 - 138ms - IP: ::1
+[2026-11-25T01:50:46.596Z] [GET] /api/users 304 - 180ms - IP: ::1
+[2026-11-25T01:53:34.183Z] [POST] /api/users 400 - 19ms - IP: ::1
+[2026-11-25T01:53:39.637Z] [POST] /api/users 400 - 5ms - IP: ::1
+[2026-11-25T01:54:04.683Z] [POST] /api/users 400 - 9ms - IP: ::1
+[2026-11-25T01:54:15.103Z] [POST] /api/users 400 - 5ms - IP: ::1
+[2026-11-25T01:54:54.266Z] [POST] /api/users/login 201 - 8ms - IP: ::1
+[2026-11-25T01:57:50.884Z] [POST] /api/users/login 201 - 9ms - IP: ::1
+[2026-11-25T01:59:24.477Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36
+[2026-11-25T01:59:24.514Z] [POST] /api/suppliers/setup 201 - 37ms - IP: ::1
+[2026-11-25T01:59:24.535Z] [PATCH] /api/users/u-supplier-1 200 - 8ms - IP: ::1
+[2026-11-25T01:59:24.604Z] [POST] /api/employees/assignments/distribute 201 - 62ms - IP: ::1
+[2026-11-25T01:59:24.622Z] [GET] /api/users/u-supplier-1 200 - 6ms - IP: ::1
+[2026-11-25T01:59:25.837Z] [GET] /api/users/u-supplier-1 304 - 4ms - IP: ::1
+[2026-11-25T01:59:28.858Z] [GET] /api/users/u-supplier-1 304 - 3ms - IP: ::1
+[2026-11-25T01:59:31.865Z] [GET] /api/users/u-supplier-1 304 - 4ms - IP: ::1
+[2026-11-25T01:59:34.854Z] [GET] /api/users/u-supplier-1 304 - 5ms - IP: ::1
+[2026-11-25T01:59:37.710Z] [GET] /api/users/u-supplier-1 304 - 5ms - IP: ::1
+[2026-11-25T01:59:37.865Z] [GET] /api/users/u-supplier-1 304 - 6ms - IP: ::1
+[2026-11-25T01:59:40.862Z] [GET] /api/users/u-supplier-1 304 - 4ms - IP: ::1
+[2026-11-25T01:59:43.855Z] [GET] /api/users/u-supplier-1 304 - 5ms - IP: ::1
+[2026-11-25T01:59:46.857Z] [GET] /api/users/u-supplier-1 304 - 3ms - IP: ::1
+[2026-11-25T01:59:48.833Z] [GET] /api/users 200 - 153ms - IP: ::1
+[2026-11-25T01:59:49.011Z] [GET] /api/users 304 - 175ms - IP: ::1
+[2026-11-25T02:02:13.428Z] [POST] /api/users 400 - 5ms - IP: ::1
+[2026-11-25T02:02:44.050Z] [POST] /api/users 201 - 47ms - IP: ::1
+[2026-11-25T02:02:44.072Z] [POST] /api/platform-revenue/subscriptions 201 - 11ms - IP: ::1
+[2026-11-25T02:02:44.130Z] [POST] /api/employees/assignments/distribute 201 - 47ms - IP: ::1
+[2026-11-25T02:03:25.935Z] [GET] /api/users 200 - 143ms - IP: ::1
+[2026-11-25T02:03:26.093Z] [GET] /api/users 304 - 154ms - IP: ::1
+[2026-11-25T02:04:40.138Z] [POST] /api/users 201 - 79ms - IP: ::1
+[2026-11-25T02:04:40.226Z] [GET] /api/products 200 - 42ms - IP: ::1
+[2026-11-25T02:04:40.235Z] [GET] /api/stores 200 - 6ms - IP: ::1
+[2026-11-25T02:04:40.264Z] [GET] /api/products 304 - 27ms - IP: ::1
+[2026-11-25T02:04:40.273Z] [GET] /api/stores 304 - 5ms - IP: ::1
+[2026-11-25T02:04:44.653Z] [GET] /api/products 304 - 29ms - IP: ::1
+[2026-11-25T02:04:44.665Z] [GET] /api/stores 304 - 7ms - IP: ::1
+[2026-11-25T02:04:46.587Z] [GET] /api/products 304 - 24ms - IP: ::1
+[2026-11-25T02:04:46.594Z] [GET] /api/stores 304 - 5ms - IP: ::1
+[2026-11-25T02:05:33.550Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=rerr
+[2026-11-25T02:05:33.558Z] [GET] /api/transactions/purchased-products?customer=rerr 200 - 9ms - IP: ::1
+[2026-11-25T02:05:33.561Z] [GET] /api/reservations/requests?status=pending&customer=rerr 200 - 1ms - IP: ::1
+[2026-11-25T02:05:33.564Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=rerr
+[2026-11-25T02:05:33.573Z] [GET] /api/transactions/purchased-products?customer=rerr 304 - 9ms - IP: ::1
+[2026-11-25T02:05:33.580Z] [GET] /api/reservations/requests?status=pending&customer=rerr 304 - 2ms - IP: ::1
+[2026-11-25T02:05:40.494Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=rerr
+[2026-11-25T02:05:40.497Z] [GET] /api/transactions/purchased-products?customer=rerr 304 - 3ms - IP: ::1
+[2026-11-25T02:05:40.503Z] [GET] /api/transactions/purchased-products?customer=rerr 304 - 3ms - IP: ::1
+[2026-11-25T02:05:40.500Z] [AUDIT] Action invoked on route: [GET] /api/transactions/purchased-products?customer=rerr
+[2026-11-25T02:05:40.506Z] [GET] /api/reservations/requests?status=pending&customer=rerr 304 - 1ms - IP: ::1
+[2026-11-25T02:05:40.508Z] [GET] /api/reservations/requests?status=pending&customer=rerr 304 - 0ms - IP: ::1
+[2026-11-25T02:11:38.964Z] [GET] /api/users 200 - 136ms - IP: ::1
+[2026-11-25T02:11:39.111Z] [GET] /api/users 304 - 143ms - IP: ::1
+[2026-11-25T02:13:29.273Z] [POST] /api/users 201 - 61ms - IP: ::1
+[2026-11-25T02:13:29.298Z] [POST] /api/platform-revenue/subscriptions 201 - 13ms - IP: ::1
+[2026-11-25T02:13:29.360Z] [POST] /api/employees/assignments/distribute 201 - 50ms - IP: ::1
+[2026-11-25T02:13:59.426Z] [SUPPLIER-ROUTER-MIDDLEWARE] [POST] /api/suppliers/setup | Client: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36
+[2026-11-25T02:13:59.441Z] [POST] /api/suppliers/setup 201 - 15ms - IP: ::1
+[2026-11-25T02:13:59.456Z] [PATCH] /api/users/20a09d18-c716-42b3-be60-62e496cacdbb 200 - 10ms - IP: ::1
+[2026-11-25T02:13:59.515Z] [POST] /api/employees/assignments/distribute 201 - 50ms - IP: ::1
+[2026-11-25T02:13:59.528Z] [GET] /api/users/20a09d18-c716-42b3-be60-62e496cacdbb 200 - 3ms - IP: ::1
+[2026-11-25T02:14:00.758Z] [GET] /api/users/20a09d18-c716-42b3-be60-62e496cacdbb 304 - 5ms - IP: ::1
+[2026-11-25T02:14:03.531Z] [GET] /api/users/20a09d18-c716-42b3-be60-62e496cacdbb 304 - 3ms - IP: ::1
+[2026-11-25T02:14:03.779Z] [GET] /api/users/20a09d18-c716-42b3-be60-62e496cacdbb 304 - 3ms - IP: ::1
+[2026-11-25T02:14:06.785Z] [GET] /api/users/20a09d18-c716-42b3-be60-62e496cacdbb 304 - 3ms - IP: ::1
+[2026-11-25T02:14:09.787Z] [GET] /api/users/20a09d18-c716-42b3-be60-62e496cacdbb 304 - 5ms - IP: ::1

@@ -1,5 +1,90 @@
 [
   {
+    "id": "b01519a9-a1ef-46d6-9a03-de42c20dd6ed",
+    "profileStatus": "pending",
+    "business": {
+      "companyName": "wwe",
+      "businessType": "Wholesaler",
+      "businessEmail": "wwe@supplier.com",
+      "supplierCode": "SUP-2112",
+      "currency": "INR",
+      "primaryCategory": "Electronics & Technology",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "phoneNumber": "",
+      "gstNumber": "",
+      "businessAddress": "",
+      "state": "Gujarat",
+      "website": "",
+      "description": ""
+    },
+    "primaryContact": {
+      "fullName": "wwe",
+      "directEmail": "wwe@supplier.com",
+      "designation": "Managing Director",
+      "directPhone": ""
+    },
+    "retailers": [],
+    "products": [],
+    "createdAt": "2026-11-25T02:13:29.215Z",
+    "updatedAt": "2026-11-25T02:13:59.433Z",
+    "documents": [],
+    "status": "completed"
+  },
+  {
+    "id": "f03fb902-a3aa-4150-bb8b-6e29aa4002f6",
+    "profileStatus": "pending",
+    "business": {
+      "companyName": "rrr Supplies",
+      "businessType": "Wholesaler",
+      "businessEmail": "rrr@supplier.com",
+      "supplierCode": "SUP-6449",
+      "currency": "INR",
+      "primaryCategory": "General"
+    },
+    "primaryContact": {
+      "fullName": "rrr",
+      "directEmail": "rrr@supplier.com"
+    },
+    "retailers": [],
+    "products": [],
+    "createdAt": "2026-11-25T02:02:44.005Z",
+    "updatedAt": "2026-11-25T02:02:44.005Z",
+    "documents": []
+  },
+  {
+    "business": {
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "sellingType": "Wholesale",
+      "companyName": "Primary Supplier",
+      "businessType": "Wholesaler",
+      "businessEmail": "supplier@stockoverflow.com",
+      "phoneNumber": "",
+      "gstNumber": "",
+      "supplierCode": "SUP-9614",
+      "businessAddress": "",
+      "state": "Gujarat",
+      "website": "",
+      "primaryCategory": "Electronics & Technology",
+      "description": ""
+    },
+    "primaryContact": {
+      "fullName": "Primary Supplier",
+      "designation": "Managing Director",
+      "directEmail": "supplier@stockoverflow.com",
+      "directPhone": ""
+    },
+    "retailers": [],
+    "products": [],
+    "profileStatus": "pending",
+    "documents": [],
+    "id": "3d62d2ff-b2ba-499e-a064-94ff1b86c635",
+    "status": "completed",
+    "createdAt": "2026-11-25T01:59:24.500Z",
+    "updatedAt": "2026-11-25T01:59:24.500Z"
+  },
+  {
     "id": "50c1c24d-9efa-4fd6-acdb-137f8cc8936f",
     "status": "completed",
     "profileStatus": "active",

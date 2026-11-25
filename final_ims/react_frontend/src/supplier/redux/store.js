@@ -31,4 +31,9 @@ export const store = configureStore({
     }),
 });
 
+// Expose store on window for quick browser console validation & debugging
+if (typeof window !== 'undefined') {
+  window.supplierStore = store;
+}
+
 export default store;
